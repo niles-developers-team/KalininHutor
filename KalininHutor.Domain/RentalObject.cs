@@ -1,0 +1,84 @@
+using KalininHutor.Domain.BillBoard.Enums;
+
+namespace KalininHutor.Domain.BillBoard;
+public class RentalObject : IEntity<Guid>
+{
+    private HashSet<FileObject>? _photos;
+    private HashSet<RoomVariant>? _roomVariants;
+    private HashSet<Booking>? _bookings;
+
+    public Guid Id { get; protected set; }
+
+    public string Address { get; protected set; } = string.Empty;
+
+    public string Name { get; protected set; } = string.Empty;
+
+    public string Description { get; protected set; } = string.Empty;
+
+    public TimeOnly? CheckinTime { get; protected set; }
+
+    public TimeOnly? CheckoutTime { get; protected set; }
+
+    public IReadOnlyList<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
+
+    public IReadOnlyList<RoomVariant>? RoomVariants { get => _roomVariants?.ToList(); }
+
+    public IReadOnlyList<Booking>? Bookings { get => _bookings?.ToList(); }
+
+    protected RentalObject() { }
+
+    public RentalObject(string name, string description, string address, 
+                        TimeOnly? checkinTime, TimeOnly? checkoutTime)
+    {
+        if (string.IsNullOrEmpty(description))
+            throw new ApplicationException("Не указано описание.");
+
+        if (string.IsNullOrEmpty(address))
+            throw new ApplicationException("Не указан адрес.");
+
+        Name = name;
+        Description = description;
+        Address = address;
+        CheckinTime = checkinTime;
+        CheckoutTime = checkoutTime;
+    }
+
+    public void AddPhoto(FileObject photo)
+    {
+        if(_photos == null)
+            throw new MissingFieldException("Фотографии объекта аренды не были загружены");
+
+        _photos.Add(photo);
+    }
+
+    public RoomVariant CreateRoomVariant(string name, string description, decimal priceForAdult,
+                                        decimal priceForChild, int maxPersonsCount, int width, int length, bool isFreeCancellationEnabled,
+                                        int freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
+    {
+        if(_roomVariants == null)
+            throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
+
+        var roomVariant = new RoomVariant(Id, name, description, priceForAdult, priceForChild, maxPersonsCount, width, length, isFreeCancellationEnabled, freeCancelationPeriod, paymentOption, amount, freeAmount);
+            _roomVariants.Add(roomVariant);
+
+        return roomVariant;
+    }
+
+    public BookingRoomVariant CreateBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, IEnumerable<Guid> roomVariantsIds, IEnumerable<BedTypes> bedTypes)
+    {
+        foreach ()
+            IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
+    }
+
+    private void IsRoomVariantAvailableForBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, Guid roomVariantId)
+    {
+        var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == roomVariantId);
+        if (roomVariant == null)
+            throw new ApplicationException("Выбран неизвестный вариант номера.");
+
+
+        var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == roomVariantId).Distinct();
+        if (bookedRoomVariants.Count() == _roomVariants.Count)
+            throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
+    }
+}

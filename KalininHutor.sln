@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain", "KalininHutor.Domain\KalininHutor.Domain.csproj", "{E1DCE747-CC6F-470B-B15A-1966F8E06406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Common", "KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj", "{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1DCE747-CC6F-470B-B15A-1966F8E06406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1DCE747-CC6F-470B-B15A-1966F8E06406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1DCE747-CC6F-470B-B15A-1966F8E06406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1DCE747-CC6F-470B-B15A-1966F8E06406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
