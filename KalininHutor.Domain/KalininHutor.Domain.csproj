@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\KailininHutor.Domain.Common\KailininHutor.Domain.Common.csproj" />
+    <ProjectReference Include="..\KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

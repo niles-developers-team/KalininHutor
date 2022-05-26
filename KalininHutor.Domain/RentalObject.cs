@@ -66,8 +66,10 @@ public class RentalObject : IEntity<Guid>
 
     public BookingRoomVariant CreateBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, IEnumerable<Guid> roomVariantsIds, IEnumerable<BedTypes> bedTypes)
     {
-        foreach ()
-            IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
+        //foreach ()
+            //IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
+
+            return null;
     }
 
     private void IsRoomVariantAvailableForBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, Guid roomVariantId)
