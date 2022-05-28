@@ -27,7 +27,7 @@ public class RentalObject : IEntity<Guid>
 
     protected RentalObject() { }
 
-    public RentalObject(string name, string description, string address, 
+    public RentalObject(string name, string description, string address,
                         TimeOnly? checkinTime, TimeOnly? checkoutTime)
     {
         if (string.IsNullOrEmpty(description))
@@ -45,7 +45,7 @@ public class RentalObject : IEntity<Guid>
 
     public void AddPhoto(FileObject photo)
     {
-        if(_photos == null)
+        if (_photos == null)
             throw new MissingFieldException("Фотографии объекта аренды не были загружены");
 
         _photos.Add(photo);
@@ -55,11 +55,11 @@ public class RentalObject : IEntity<Guid>
                                         decimal priceForChild, int maxPersonsCount, int width, int length, bool isFreeCancellationEnabled,
                                         int freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
     {
-        if(_roomVariants == null)
+        if (_roomVariants == null)
             throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
 
         var roomVariant = new RoomVariant(Id, name, description, priceForAdult, priceForChild, maxPersonsCount, width, length, isFreeCancellationEnabled, freeCancelationPeriod, paymentOption, amount, freeAmount);
-            _roomVariants.Add(roomVariant);
+        _roomVariants.Add(roomVariant);
 
         return roomVariant;
     }
@@ -67,9 +67,9 @@ public class RentalObject : IEntity<Guid>
     public BookingRoomVariant CreateBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, IEnumerable<Guid> roomVariantsIds, IEnumerable<BedTypes> bedTypes)
     {
         //foreach ()
-            //IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
+        //IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
 
-            return null;
+        return null;
     }
 
     private void IsRoomVariantAvailableForBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, Guid roomVariantId)
@@ -78,9 +78,10 @@ public class RentalObject : IEntity<Guid>
         if (roomVariant == null)
             throw new ApplicationException("Выбран неизвестный вариант номера.");
 
-
         var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == roomVariantId).Distinct();
-        if (bookedRoomVariants.Count() == _roomVariants.Count)
+        if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Amount))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
+
+        
     }
 }

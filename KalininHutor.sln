@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain", "KalininHutor.Domain\KalininHutor.Domain.csproj", "{E1DCE747-CC6F-470B-B15A-1966F8E06406}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Booking", "KalininHutor.Domain\KalininHutor.Domain.Booking.csproj", "{E1DCE747-CC6F-470B-B15A-1966F8E06406}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Common", "KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj", "{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Requests.Booking", "KalininHutor.Requests\KalininHutor.Requests.Booking.csproj", "{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Queries.Booking", "KalininHutor.Queries.Booking\KalininHutor.Queries.Booking.csproj", "{F568D472-50F3-4270-AAB2-A944E9C23F49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,13 @@ Global
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
