@@ -1,4 +1,4 @@
-namespace KalininHutor.Domain.BillBoard;
+namespace KalininHutor.Domain.Booking;
 
 public class Booking : IEntity<Guid>
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace KalininHutor.Domain.BillBoard.Enums
+namespace KalininHutor.Domain.Booking.Enums
 {
     ///<summary>Возможные способов оплаты на объектах аренды</summary>
     public enum PaymentOptions

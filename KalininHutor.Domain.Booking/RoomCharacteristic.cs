@@ -1,6 +1,6 @@
-using KalininHutor.Domain.BillBoard.Enums;
+using KalininHutor.Domain.Booking.Enums;
 
-namespace KalininHutor.Domain.BillBoard;
+namespace KalininHutor.Domain.Booking;
 public class RoomCharacteristic : IEntity<Guid>
 {
     public Guid Id { get; protected set; }

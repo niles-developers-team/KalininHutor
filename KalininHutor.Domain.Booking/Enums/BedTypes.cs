@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace KalininHutor.Domain.BillBoard.Enums
+namespace KalininHutor.Domain.Booking.Enums
 {
     ///<summary>Возможные вариантов кроватей в номере</summary>
     public enum BedTypes
