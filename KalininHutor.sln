@@ -7,11 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Booking
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Common", "KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj", "{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Requests.Booking", "KalininHutor.Requests.Booking\KalininHutor.Requests.Booking.csproj", "{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Queries.Booking", "KalininHutor.Queries.Booking\KalininHutor.Queries.Booking.csproj", "{F568D472-50F3-4270-AAB2-A944E9C23F49}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.API.Booking", "KalininHutor.API.Booking\KalininHutor.API.Booking.csproj", "{B05B29F7-5BAD-4285-9A62-BBBDB503A432}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Booking", "KalininHutor.DAL.Booking\KalininHutor.DAL.Booking.csproj", "{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,17 +28,13 @@ Global
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF740BC6-EEB8-4B3D-82A8-B9BB11FCF765}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F568D472-50F3-4270-AAB2-A944E9C23F49}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B05B29F7-5BAD-4285-9A62-BBBDB503A432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B05B29F7-5BAD-4285-9A62-BBBDB503A432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B05B29F7-5BAD-4285-9A62-BBBDB503A432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B05B29F7-5BAD-4285-9A62-BBBDB503A432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

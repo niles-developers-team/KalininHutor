@@ -43,6 +43,18 @@ public class RentalObject : IEntity<Guid>
         CheckoutTime = checkoutTime;
     }
 
+    public void SetInfo(string name, string description)
+    {
+        Name = name;
+        Description = description;
+    }
+
+    public void SetCheckTime(TimeOnly checkinTime, TimeOnly checkoutTime)
+    {
+        CheckinTime = checkinTime;
+        CheckoutTime = checkoutTime;
+    }
+
     public void AddPhoto(FileObject photo)
     {
         if (_photos == null)
