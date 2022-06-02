@@ -1,7 +1,8 @@
 using MediatR;
+using AutoMapper;
+
 using KalininHutor.Domain.Booking;
 using KalininHutor.DAL.Booking;
-using AutoMapper;
 
 namespace KalininHutor.API.Booking.Requests;
 
@@ -19,7 +20,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<CreateRentalObjectReq
     public async Task<Guid> Handle(CreateRentalObjectRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new RentalObject(request.Name, request.Description,
-                        request.Address, request.CheckinTime, request.CheckoutTime);
+                        request.Address, request.CheckinTime, request.CheckoutTime, request.OwnerId);
 
         var id = await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
@@ -33,6 +34,8 @@ public class CreateRentalObjectRequest : IRequest<Guid>
     public string Name { get; set; }
     public string Description { get; set; }
     public string Address { get; set; }
+
+    public Guid OwnerId { get; set; }
 
     public TimeOnly CheckinTime { get; set; }
     public TimeOnly CheckoutTime { get; set; }

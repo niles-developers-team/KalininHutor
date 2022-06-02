@@ -1,3 +1,5 @@
+using System;
+
 namespace KalininHutor.Domain.Booking;
 
 public class Booking : IEntity<Guid>

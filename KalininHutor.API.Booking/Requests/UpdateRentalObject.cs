@@ -27,6 +27,7 @@ public class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReque
 
 public class UpdateRentalObjectRequest : IRequest<Unit>
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public TimeOnly CheckinTime { get; set; }

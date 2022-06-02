@@ -3,6 +3,7 @@ namespace KalininHutor.DAL.Booking;
 public class RentalObjectEntity
 {
     public Guid Id { get; protected set; }
+    public Guid OwnerId { get; protected set; }
     public string Name { get; protected set; }
     public string Description { get; protected set; }
     public TimeOnly CheckinTime { get; protected set; }

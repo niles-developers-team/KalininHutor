@@ -9,6 +9,8 @@ public class RentalObject : IEntity<Guid>
 
     public Guid Id { get; protected set; }
 
+    public Guid OwnerId { get; protected set; }
+
     public string Address { get; protected set; } = string.Empty;
 
     public string Name { get; protected set; } = string.Empty;
@@ -28,7 +30,7 @@ public class RentalObject : IEntity<Guid>
     protected RentalObject() { }
 
     public RentalObject(string name, string description, string address,
-                        TimeOnly? checkinTime, TimeOnly? checkoutTime)
+                        TimeOnly? checkinTime, TimeOnly? checkoutTime, Guid ownerId)
     {
         if (string.IsNullOrEmpty(description))
             throw new ApplicationException("Не указано описание.");
@@ -41,6 +43,7 @@ public class RentalObject : IEntity<Guid>
         Address = address;
         CheckinTime = checkinTime;
         CheckoutTime = checkoutTime;
+        OwnerId = ownerId;
     }
 
     public void SetInfo(string name, string description)
@@ -78,6 +81,9 @@ public class RentalObject : IEntity<Guid>
 
     public BookingRoomVariant CreateBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, IEnumerable<Guid> roomVariantsIds, IEnumerable<BedTypes> bedTypes)
     {
+        if (_roomVariants == null)
+            throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
+
         //foreach ()
         //IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
 
@@ -94,6 +100,6 @@ public class RentalObject : IEntity<Guid>
         if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Amount))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
 
-        
+
     }
 }
