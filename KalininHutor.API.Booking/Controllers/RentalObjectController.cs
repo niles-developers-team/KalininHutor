@@ -16,11 +16,12 @@ public class RentalObjectController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost()]
-    public async Task Create([FromBody]CreateRentalObjectRequest request) => Ok(await _mediator.Send(request));
 
     [HttpGet()]
     public async Task Get([FromQuery]GetRentalObjectsQuery query) => Ok(await _mediator.Send(query));
+
+    [HttpPost()]
+    public async Task Create([FromBody]CreateRentalObjectRequest request) => Ok(await _mediator.Send(request));
 
     [HttpPut()]
     public async Task Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _mediator.Send(request));
