@@ -1,6 +1,5 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Booking.Queries;
@@ -19,16 +18,16 @@ public class GetRentalObjectsHandler : IRequestHandler<GetRentalObjectsQuery, IE
     public async Task<IEnumerable<GetRentalObjectResponse>> Handle(GetRentalObjectsQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RentalObjectSearchOptions>(request));
-        return result.Select(_mapper.Map<GetRentalObjectResponse>);
+        return result.Select(_mapper.Map<GetRentalObjectResponse>).ToList();
     }
 }
 
 public class GetRentalObjectsQuery : IRequest<IEnumerable<GetRentalObjectResponse>>
 {    
-    public Guid Id { get; set; }
-    public string SearchText { get; set; }
-    public TimeOnly CheckinTime { get; set; }
-    public TimeOnly CheckoutTime { get; set; }
+    public Guid? Id { get; set; }
+    public string? SearchText { get; set; }
+    public TimeOnly? CheckinTime { get; set; }
+    public TimeOnly? CheckoutTime { get; set; }
 }
 
 public class GetRentalObjectResponse

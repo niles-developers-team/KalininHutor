@@ -1,3 +1,5 @@
+using System;
+
 using MediatR;
 using AutoMapper;
 
@@ -20,23 +22,28 @@ internal class CreateRentalObjectHandler : IRequestHandler<CreateRentalObjectReq
     public async Task<Guid> Handle(CreateRentalObjectRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new RentalObject(request.Name, request.Description,
-                        request.Address, request.CheckinTime, request.CheckoutTime, request.OwnerId);
+                        request.Address, TimeOnly.FromDateTime(request.CheckinTime), TimeOnly.FromDateTime(request.CheckoutTime), request.OwnerId);
+        await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
-        var id = await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
-
-        return id;
+        return rentalObject.Id;
     }
 }
 
 ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
 public class CreateRentalObjectRequest : IRequest<Guid>
 {
+    ///<summary> Название объекта аренды </summary>
     public string Name { get; set; }
+    ///<summary> Описание объекта аренды </summary>
     public string Description { get; set; }
+    ///<summary> Адрес объекта аренды </summary>
     public string Address { get; set; }
 
+    ///<summary> Идентификатор владельца </summary>
     public Guid OwnerId { get; set; }
 
-    public TimeOnly CheckinTime { get; set; }
-    public TimeOnly CheckoutTime { get; set; }
+    ///<summary> Время заезда </summary>
+    public DateTime CheckinTime { get; set; }
+    ///<summary> Время отъезда </summary>
+    public DateTime CheckoutTime { get; set; }
 }

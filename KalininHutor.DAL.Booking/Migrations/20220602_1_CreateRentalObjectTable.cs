@@ -17,5 +17,24 @@ public class CreateRentalObjectTable : ForwardOnlyMigration
             .WithColumn("Description").AsString().NotNullable().WithColumnDescription("Описание объекта аренды")
             .WithColumn("CheckinTime").AsTime().NotNullable().WithColumnDescription("Время заезда")
             .WithColumn("CheckoutTime").AsTime().NotNullable().WithColumnDescription("Время отъезда");
+
+
+            // create table RentalObjects (
+            //     Id uuid primary key,
+            //     OwnerId uuid not null,
+            //     Name varchar(100) not null,
+            //     Description text not null,
+            //     CheckinTime time not null,
+            //     CheckoutTime time not null
+            // );
+
+            // comment on table RentalObjects is 'Таблица объектов аренды';
+
+            // comment on column RentalObjects.Id is 'Идентификатор объекта аренды';
+            // comment on column RentalObjects.OwnerId is 'Идентификатор владельца';
+            // comment on column RentalObjects.Name is 'Название объекта аренды';
+            // comment on column RentalObjects.Description is 'Описание объекта аренды';
+            // comment on column RentalObjects.CheckinTime is 'Время заезда';
+            // comment on column RentalObjects.CheckoutTime is 'Время отъезда';
     }
 }

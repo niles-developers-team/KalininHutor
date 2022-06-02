@@ -1,24 +1,74 @@
+using DapperQueryBuilder;
+using Microsoft.Extensions.Logging;
+using Npgsql;
+
 namespace KalininHutor.DAL.Booking;
 
 public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObjectSearchOptions>
 {
-    public Task<Guid> Create(RentalObjectEntity entity)
+    private readonly ILogger<RentalObjectRepository> _logger;
+    private readonly string _connectionString;
+
+    public RentalObjectRepository(string connectionString, ILogger<RentalObjectRepository> logger)
     {
-        throw new NotImplementedException();
+        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public Task Delete(Guid id)
+    public async Task Create(RentalObjectEntity entity)
     {
-        throw new NotImplementedException();
+        using var connection = new NpgsqlConnection(_connectionString);
+
+        await connection.QueryBuilder($@"
+            insert into RentalObjects(Id, OwnerId, Name, Description, CheckinTime, CheckoutTime)
+            values (
+                {entity.Id}, 
+                {entity.OwnerId}, 
+                {entity.Name}, 
+                {entity.Description}, 
+                {entity.CheckinTimeSpan}, 
+                {entity.CheckoutTimeSpan}
+            );
+        ").ExecuteAsync();
     }
 
-    public Task Update(RentalObjectEntity entity)
+    public async Task Delete(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = new NpgsqlConnection(_connectionString);
+        
+        await connection.QueryBuilder($@"
+            delete from RentalObjects
+            where Id = {id}
+        ").ExecuteAsync();
     }
 
-    public Task<List<RentalObjectEntity>> Get(RentalObjectSearchOptions options)
+    public async Task Update(RentalObjectEntity entity)
     {
-        throw new NotImplementedException();
+        using var connection = new NpgsqlConnection(_connectionString);
+
+        await connection.QueryBuilder($@"
+            update RentalObjects
+            set Name = {entity.Name}, 
+                Description = {entity.Description}, 
+                CheckinTime = {entity.CheckinTimeSpan}, 
+                CheckoutTime = {entity.CheckoutTimeSpan}
+            );
+        ").ExecuteAsync();
+    }
+
+    public async Task<IEnumerable<RentalObjectEntity>> Get(RentalObjectSearchOptions options)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+
+        return await connection.QueryBuilder($@"
+            select
+                Id,
+                OwnerId,
+                Name,
+                Description,
+                CheckinTime as CheckinTimeSpan,
+                CheckoutTime as CheckoutTimeSpan
+            from RentalObjects
+        ").QueryAsync<RentalObjectEntity>();
     }
 }

@@ -9,23 +9,28 @@ namespace KalininHutor.API.Booking.Controllers;
 [ApiController]
 public class RentalObjectController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
 
-    public RentalObjectController(IMediator mediator)
+    public RentalObjectController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
 
     [HttpGet()]
-    public async Task Get([FromQuery]GetRentalObjectsQuery query) => Ok(await _mediator.Send(query));
+    public async Task<IActionResult> Get([FromQuery]GetRentalObjectsQuery query)
+    {
+        var result = await _sender.Send(query);
+
+        return Ok(result);
+    }
 
     [HttpPost()]
-    public async Task Create([FromBody]CreateRentalObjectRequest request) => Ok(await _mediator.Send(request));
+    public async Task Create([FromBody]CreateRentalObjectRequest request) => Ok(await _sender.Send(request));
 
     [HttpPut()]
-    public async Task Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _mediator.Send(request));
+    public async Task Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _sender.Send(request));
 
     [HttpDelete()]
-    public async Task Delete([FromQuery]DeleteRentalObjectRequest request) => Ok(await _mediator.Send(request));
+    public async Task Delete([FromQuery]DeleteRentalObjectRequest request) => Ok(await _sender.Send(request));
 }

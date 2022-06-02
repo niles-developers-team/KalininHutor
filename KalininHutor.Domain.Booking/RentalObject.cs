@@ -38,6 +38,8 @@ public class RentalObject : IEntity<Guid>
         if (string.IsNullOrEmpty(address))
             throw new ApplicationException("Не указан адрес.");
 
+        Id = Guid.NewGuid();
+
         Name = name;
         Description = description;
         Address = address;
