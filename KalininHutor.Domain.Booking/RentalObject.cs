@@ -23,9 +23,9 @@ public class RentalObject : IEntity<Guid>
 
     public IReadOnlyList<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
 
-    public IReadOnlyList<RoomVariant>? RoomVariants { get => _roomVariants?.ToList(); }
+    public IReadOnlyList<RoomVariant>? RoomVariants { get => _roomVariants?.ToList(); protected set => _roomVariants = value?.ToHashSet(); }
 
-    public IReadOnlyList<Booking>? Bookings { get => _bookings?.ToList(); }
+    public IReadOnlyList<Booking>? Bookings { get => _bookings?.ToList(); protected set => _bookings = value?.ToHashSet(); }
 
     protected RentalObject() { }
 
