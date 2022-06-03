@@ -29,14 +29,21 @@ public class RentalObject : IEntity<Guid>
 
     protected RentalObject() { }
 
-    public RentalObject(string name, string description, string address,
+    public RentalObject(string? name, string? description, string? address,
                         TimeOnly? checkinTime, TimeOnly? checkoutTime, Guid ownerId)
     {
+        if(string.IsNullOrEmpty(name))
+            throw new ApplicationException("Не указано название.");
+
         if (string.IsNullOrEmpty(description))
             throw new ApplicationException("Не указано описание.");
 
         if (string.IsNullOrEmpty(address))
             throw new ApplicationException("Не указан адрес.");
+
+        if((checkinTime.HasValue && !checkoutTime.HasValue) ||
+            !checkinTime.HasValue && checkoutTime.HasValue)
+            throw new ArgumentException("Время заезда и отъезда должны быть указаны.");
 
         Id = Guid.NewGuid();
 

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace KalininHutor.API.Booking.Requests;
 
-public class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectRequest, Unit>
+internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectRequest, Unit>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,8 @@ public class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReque
 
     public async Task<Unit> Handle(UpdateRentalObjectRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<Domain.Booking.RentalObject>(await _repository.Get(new RentalObjectSearchOptions { Id = request.Id }));
+        var rentalObjects = await _repository.Get(new RentalObjectSearchOptions { Id = request.Id });
+        var entity = _mapper.Map<Domain.Booking.RentalObject>(rentalObjects.SingleOrDefault());
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
@@ -25,11 +26,22 @@ public class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReque
     }
 }
 
+///<summary> Запрос обновления объекта аренды </summary>
 public class UpdateRentalObjectRequest : IRequest<Unit>
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
+    ///<summary> Идентификатор объекта аренды </summary>
+    ///<remarks> Не изменяется, нужен только для поиска </remarks>
+    public Guid Id { get; protected set; }
+    
+    ///<summary> Название объекта аренды </summary>
+    public string Name { get; set; } = string.Empty;
+    
+    ///<summary> Идентификатор объекта аренды </summary>
+    public string Description { get; set; } = string.Empty;
+    
+    ///<summary> Идентификатор объекта аренды </summary>
     public TimeOnly CheckinTime { get; set; }
+    
+    ///<summary> Идентификатор объекта аренды </summary>
     public TimeOnly CheckoutTime { get; set; }
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace KalininHutor.API.Booking.Queries;
 
-public class GetRentalObjectsHandler : IRequestHandler<GetRentalObjectsQuery, IEnumerable<GetRentalObjectResponse>>
+internal class GetRentalObjectsHandler : IRequestHandler<GetRentalObjectsQuery, IEnumerable<GetRentalObjectResponse>>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -22,19 +22,30 @@ public class GetRentalObjectsHandler : IRequestHandler<GetRentalObjectsQuery, IE
     }
 }
 
+///<summary> Очередь получения объектов аренды </summary>
 public class GetRentalObjectsQuery : IRequest<IEnumerable<GetRentalObjectResponse>>
-{    
+{
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid? Id { get; set; }
+    ///<summary> Строка поиска </summary>
     public string? SearchText { get; set; }
+    ///<summary> Время заезда </summary>
     public TimeOnly? CheckinTime { get; set; }
+    ///<summary> Время отъезда </summary>
     public TimeOnly? CheckoutTime { get; set; }
 }
 
+///<summary> Модель чтения объекта аренды </summary>
 public class GetRentalObjectResponse
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public TimeOnly CheckinTime { get; set; }
-    public TimeOnly CheckoutTime { get; set; }
+    ///<summary> Идентификатор объекта аренды </summary>
+    public Guid Id { get; protected set; }
+    ///<summary> Название объекта аренды  </summary>
+    public string Name { get; protected set; } = string.Empty;
+    ///<summary> Описание объекта аренды </summary>
+    public string Description { get; protected set; } = string.Empty;
+    ///<summary> Время заезда объекта аренды </summary>
+    public TimeOnly CheckinTime { get; protected set; }
+    ///<summary> Время отъезда объекта аренды </summary>
+    public TimeOnly CheckoutTime { get; protected set; }
 }

@@ -35,7 +35,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
     public async Task Delete(Guid id)
     {
         using var connection = new NpgsqlConnection(_connectionString);
-        
+
         await connection.QueryBuilder($@"
             delete from RentalObjects
             where Id = {id}
@@ -52,7 +52,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 Description = {entity.Description}, 
                 CheckinTime = {entity.CheckinTimeSpan}, 
                 CheckoutTime = {entity.CheckoutTimeSpan}
-            );
+            where Id = {entity.Id}
         ").ExecuteAsync();
     }
 
@@ -60,7 +60,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
     {
         using var connection = new NpgsqlConnection(_connectionString);
 
-        return await connection.QueryBuilder($@"
+        var query = connection.QueryBuilder($@"
             select
                 Id,
                 OwnerId,
@@ -68,7 +68,22 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 Description,
                 CheckinTime as CheckinTimeSpan,
                 CheckoutTime as CheckoutTimeSpan
-            from RentalObjects
-        ").QueryAsync<RentalObjectEntity>();
+            from RentalObjects            
+            /**where**/
+        ");
+
+        if (options.Id.HasValue)
+            query.Where($"(Id = {options.Id})");
+
+        if (!string.IsNullOrEmpty(options.SearchText))
+            query.Where($"(Name like %{options.SearchText}% or Address like %{options.SearchText}%)");
+
+        if(options.CheckinTime.HasValue)
+            query.Where($"(CheckinTime > {options.CheckinTimeSpan})");
+
+        if(options.CheckoutTime.HasValue)
+            query.Where($"(CheckoutTime < {options.CheckoutTimeSpan})");
+
+        return await query.QueryAsync<RentalObjectEntity>();
     }
 }

@@ -5,18 +5,20 @@ using KalininHutor.API.Booking.Queries;
 
 namespace KalininHutor.API.Booking.Controllers;
 
+///<summary> Контроллер  объектов аренды </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class RentalObjectController : ControllerBase
 {
     private readonly ISender _sender;
 
+    ///<summary> Конструктор контроллера </summary>
     public RentalObjectController(ISender sender)
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
-
+    ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
     public async Task<IActionResult> Get([FromQuery]GetRentalObjectsQuery query)
     {
@@ -25,12 +27,15 @@ public class RentalObjectController : ControllerBase
         return Ok(result);
     }
 
+    ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
-    public async Task Create([FromBody]CreateRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody]CreateRentalObjectRequest request) => Ok(await _sender.Send(request));
 
+    ///<summary> Метод обновления объекта аренды </summary>
     [HttpPut()]
-    public async Task Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _sender.Send(request));
 
+    ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
-    public async Task Delete([FromQuery]DeleteRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromQuery]DeleteRentalObjectRequest request) => Ok(await _sender.Send(request));
 }

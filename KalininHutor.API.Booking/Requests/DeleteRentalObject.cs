@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Booking.Requests;
 
-public class DeleteRentalObjectHandler : IRequestHandler<DeleteRentalObjectRequest, Unit>
+internal class DeleteRentalObjectHandler : IRequestHandler<DeleteRentalObjectRequest, Unit>
 {
     private readonly RentalObjectRepository _repository;
 
@@ -20,7 +20,9 @@ public class DeleteRentalObjectHandler : IRequestHandler<DeleteRentalObjectReque
     }
 }
 
+///<summary> Запрос удаления объекта аренды </summary>
 public class DeleteRentalObjectRequest : IRequest<Unit>
 {
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid Id { get; set; }
 }
