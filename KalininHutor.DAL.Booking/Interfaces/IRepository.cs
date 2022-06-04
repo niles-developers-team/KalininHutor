@@ -6,7 +6,7 @@ public interface IRepository<TResult, TSearchOptions>
 
     Task Update(TResult entity);
 
-    Task<IEnumerable<RentalObjectEntity>> Get(TSearchOptions options);
+    Task<IEnumerable<TResult>> Get(TSearchOptions options);
 
     Task Delete(Guid id);
 }

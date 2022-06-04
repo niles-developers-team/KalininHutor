@@ -7,3 +7,9 @@ public class BookingRoomVariantBedTypeEntity
     public int BedType { get; protected set; }
     public int Count { get; protected set; }
 }
+
+public class BookingRoomVariantBedTypeSearchOptions
+{
+    public Guid Id { get; protected set; }
+    public Guid BookingRoomVariant { get; protected set; }
+}

@@ -7,3 +7,9 @@ public class RoomVariantCharacteristicEntity
     public Guid RoomCharacteristicId { get; protected set; }
     public decimal Price { get; protected set; }
 }
+
+public class RoomVariantCharacteristicSearchOptions
+{
+    public Guid? Id { get; set; }
+    public Guid? RoomVariantId { get; set; }
+}

@@ -1,7 +1,7 @@
 namespace KalininHutor.DAL.Booking;
 
 ///<summary> Справочник харакетристик варианта номера </summary>
-public class RoomCharacteristic
+public class RoomCharacteristicEntity
 {
     ///<summary> Идентификатор характеристики </summary>
     public Guid Id { get; protected set; }
@@ -11,4 +11,10 @@ public class RoomCharacteristic
     public string Description { get; protected set; } = string.Empty;
     ///<summary> Тип (Зона) харакетистики </summary>
     public int Type { get; protected set; }
+}
+
+public class RoomCharacteristicSearchOptions
+{
+    public Guid Id { get; set; }
+    public string SearchText { get; set; }
 }

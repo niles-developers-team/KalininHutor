@@ -32,3 +32,9 @@ public class RoomVariantEntity
     ///<symmary> Всего номеров свободно </summary>
     public int FreeAmount { get; protected set; }
 }
+
+public class RoomVariantSearchOptions
+{
+    public Guid? Id { get; set; }
+    public Guid? RentalObjectId { get; set; }
+}

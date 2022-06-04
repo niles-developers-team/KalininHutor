@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace KalininHutor.DAL.Migrations;
+namespace KalininHutor.DAL.Booking.Migrations;
 
 [Migration(202206045)]
 public class CreateRoomVariantCharacteristics : ForwardOnlyMigration

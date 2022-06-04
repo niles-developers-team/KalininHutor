@@ -1,10 +1,12 @@
-using KalininHutor.API.Booking.Mappers;
-using FluentMigrator.Runner;
-using KalininHutor.DAL.Migrations;
-using KalininHutor.DAL.Booking;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
+
+using FluentMigrator.Runner;
+using MediatR;
 using TinyHelpers.Json.Serialization;
+
+using KalininHutor.API.Booking.Mappers;
+using KalininHutor.DAL.Booking;
+using KalininHutor.DAL.Booking.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
