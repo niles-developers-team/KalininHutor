@@ -2,7 +2,7 @@ using FluentMigrator;
 
 namespace KalininHutor.DAL.Migrations;
 
-[Migration(202206023)]
+[Migration(202206022)]
 public class CreateRoomCharacteristic : ForwardOnlyMigration
 {
     public override void Up()

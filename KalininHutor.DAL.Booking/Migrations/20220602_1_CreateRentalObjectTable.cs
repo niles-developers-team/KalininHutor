@@ -15,6 +15,7 @@ public class CreateRentalObjectTable : ForwardOnlyMigration
             .WithColumn("OwnerId").AsGuid().NotNullable().WithColumnDescription("Идентификатор владельца")
             .WithColumn("Name").AsString().NotNullable().WithColumnDescription("Название объекта аренды")
             .WithColumn("Description").AsString().NotNullable().WithColumnDescription("Описание объекта аренды")
+            .WithColumn("Address").AsString().NotNullable().WithColumnDescription("Адрес объекта аренды")
             .WithColumn("CheckinTime").AsTime().NotNullable().WithColumnDescription("Время заезда")
             .WithColumn("CheckoutTime").AsTime().NotNullable().WithColumnDescription("Время отъезда");
     }
