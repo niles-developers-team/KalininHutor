@@ -82,13 +82,13 @@ public class RentalObject : IEntity<Guid>
     }
 
     public RoomVariant CreateRoomVariant(string name, string description, decimal priceForAdult,
-                                        decimal priceForChild, int maxPersonsCount, int width, int length, bool isFreeCancellationEnabled,
-                                        int freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
+                                        decimal priceForChild, int maxPersonsCount, int width, int length,
+                                        int? freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
     {
         if (_roomVariants == null)
             throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
 
-        var roomVariant = new RoomVariant(Id, name, description, priceForAdult, priceForChild, maxPersonsCount, width, length, isFreeCancellationEnabled, freeCancelationPeriod, paymentOption, amount, freeAmount);
+        var roomVariant = new RoomVariant(Id, name, description, priceForAdult, priceForChild, maxPersonsCount, width, length, freeCancelationPeriod, paymentOption, amount, freeAmount);
         _roomVariants.Add(roomVariant);
 
         return roomVariant;
@@ -112,7 +112,7 @@ public class RentalObject : IEntity<Guid>
             throw new ApplicationException("Выбран неизвестный вариант номера.");
 
         var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == roomVariantId).Distinct();
-        if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Amount))
+        if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Count))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
 
 

@@ -31,9 +31,9 @@ internal class CreateRentalObjectHandler : IRequestHandler<CreateRentalObjectReq
 public class CreateRentalObjectRequest : IRequest<Guid>
 {
     ///<summary> Название объекта аренды </summary>
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     ///<summary> Описание объекта аренды </summary>
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     ///<summary> Адрес объекта аренды </summary>
     public string? Address { get; set; }
 

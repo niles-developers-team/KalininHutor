@@ -19,8 +19,8 @@ public class RoomVariant : IEntity<Guid>
     public bool IsFreeCancellationEnabled { get; protected set; }
     public int? FreeCancellationPeriod { get; protected set; }
     public PaymentOptions PaymentOption { get; protected set; }
-    public int Amount { get; protected set; }
-    public int FreeAmount { get; protected set; }
+    public int Count { get; protected set; }
+    public int FreeCount { get; protected set; }
     public IReadOnlyList<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
     public IReadOnlyList<RoomVariantBedType>? BedTypes { get => _bedTypes?.ToList(); protected set => _bedTypes = value?.ToHashSet(); }
     public IReadOnlyList<RoomVariantCharacteristic>? Characteristics { get => _characteristics?.ToList(); protected set => _characteristics = value?.ToHashSet(); }
@@ -33,45 +33,75 @@ public class RoomVariant : IEntity<Guid>
 
     public RoomVariant(Guid rentalObjectId, string name, string description,
                        decimal priceForAdult, decimal priceForChild, int maxPersonsCount,
-                       int width, int length, bool isFreeCancellationEnabled, int freeCancelationPeriod,
-                       PaymentOptions paymentOption, int amount, int freeAmount)
+                       double width, double length, int? freeCancelationPeriod,
+                       PaymentOptions paymentOption, int count, int freeCount)
     {
         Id = Guid.NewGuid();
 
         if (rentalObjectId == null || rentalObjectId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
 
+        SetInfo(name, description, paymentOption);
+        SetPricesAndLimit(priceForAdult, priceForChild, maxPersonsCount);
+        SetSize(width, length);
+        SetFreeCancelationPeriod(freeCancelationPeriod);
+        SetCounts(count, freeCount);
+
+        RentalObjectId = rentalObjectId;
+    }
+
+    public void SetInfo(string name, string description, PaymentOptions paymentOption)
+    {
         if (string.IsNullOrEmpty(name))
             throw new ArgumentNullException("Не указано название варианта номера.");
 
         if (string.IsNullOrEmpty(description))
             throw new ArgumentNullException("Не указано описание варианта номера.");
 
+        Name = name;
+        Description = description;
+        PaymentOption = paymentOption;
+    }
+
+    public void SetPricesAndLimit(decimal priceForAdult, decimal priceForChild, int maxPersonsCount)
+    {
         if (priceForAdult < 0 || priceForChild < 0)
             throw new ArgumentOutOfRangeException("Цены не могут быть отрицательными.");
 
         if (maxPersonsCount <= 0)
             throw new ArgumentOutOfRangeException("Количество посетителей в номере не может быть меньше 0.");
 
-        if (width <= 0 || length <= 0)
-            throw new ArgumentOutOfRangeException("Размер номера не может быть меньше 0.");
-
-        if (amount < 0 || freeAmount <= 0)
-            throw new ArgumentOutOfRangeException("Количество номеров не может быть меньше 0.");
-
-        RentalObjectId = rentalObjectId;
-        Name = name;
-        Description = description;
         PriceForAdult = priceForAdult;
         PriceForChild = priceForChild;
         MaxPersonsCount = maxPersonsCount;
+    }
+
+    public void SetSize(double width, double length)
+    {
+        if (width <= 0 || length <= 0)
+            throw new ArgumentOutOfRangeException("Размер номера не может быть меньше 0.");
+
         Width = width;
         Length = length;
-        IsFreeCancellationEnabled = isFreeCancellationEnabled;
-        FreeCancellationPeriod = freeCancelationPeriod;
-        PaymentOption = paymentOption;
-        Amount = amount;
-        FreeAmount = freeAmount;
+    }
+
+    public void SetCounts(int count, int freeCount)
+    {
+
+        if (count < 0 || freeCount <= 0)
+            throw new ArgumentOutOfRangeException("Количество номеров не может быть меньше 0.");
+
+        Count = count;
+        FreeCount = freeCount;
+    }
+
+    public void SetFreeCancelationPeriod(int? freeCancellationPeriod)
+    {
+        if (freeCancellationPeriod.HasValue && freeCancellationPeriod.Value < 0)
+            throw new ArgumentOutOfRangeException("Период бесплатной отмены не может быть отрицательным");
+
+        IsFreeCancellationEnabled = freeCancellationPeriod.HasValue;
+        FreeCancellationPeriod = freeCancellationPeriod;
     }
 
     public RoomVariantCharacteristic AddCharacteristic(RoomCharacteristic characteristic, decimal? price)
@@ -97,7 +127,7 @@ public class RoomVariant : IEntity<Guid>
         if (!maxInRoom.HasValue)
             maxInRoom = GetMaxBedInRoom(width, length);
 
-        var roomBedType = new RoomVariantBedType(Id, bedType, width, length);
+        var roomBedType = new RoomVariantBedType(Id, bedType, width, length, maxInRoom.Value);
         _bedTypes.Add(roomBedType);
 
         return roomBedType;

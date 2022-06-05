@@ -12,14 +12,22 @@ public class RoomVariantCharacteristic : IEntity<Guid>
     {
         Id = Guid.NewGuid();
 
-        if(roomVariantId == null || roomVariantId == Guid.Empty)
+        if (roomVariantId == null || roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
 
-        if(roomCharacteristicId == null || roomCharacteristicId == Guid.Empty)
-        throw new ArgumentNullException("Не указан идентификатор харакеристики.");
+        if (roomCharacteristicId == null || roomCharacteristicId == Guid.Empty)
+            throw new ArgumentNullException("Не указан идентификатор харакеристики.");
 
         RoomVariantId = roomVariantId;
         RoomCharacteristicId = roomCharacteristicId;
+        SetPrice(price);
+    }
+
+    public void SetPrice(decimal? price)
+    {
+        if (price.HasValue && price.Value <= 0)
+            throw new ArgumentOutOfRangeException("Цена за услугу должна быть больше 0.");
+
         Price = price;
     }
 }

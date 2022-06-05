@@ -13,9 +13,7 @@ public class RoomCharacteristic : IEntity<Guid>
     public RoomCharacteristic(string name, string description, CharacteristicTypes type)
     {
         Id = Guid.NewGuid();
-        Name = name;
-        Description = description;
-        Type = type;
+        SetInfo(name, description, type);
     }
 
     private void CheckInfo(string name, string description)
@@ -25,5 +23,14 @@ public class RoomCharacteristic : IEntity<Guid>
             
         if(string.IsNullOrEmpty(description))
             throw new ArgumentNullException("Не указано описание характеристики номера.");
+    }
+
+    public void SetInfo(string name, string description, CharacteristicTypes type)
+    {
+        CheckInfo(name, description);
+        
+        Name = name;
+        Description = description;
+        Type = type;
     }
 }

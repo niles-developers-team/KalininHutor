@@ -32,32 +32,32 @@ public class GetRoomVariantQuery : IRequest<IEnumerable<GetRoomVariantResponse>>
 ///<summary> Модель чтения брони </summary>
 public class GetRoomVariantResponse
 {
-    ///<symmary> Идентификатор варинта номера объекта аренды </summary>
+    ///<summary> Идентификатор варинта номера объекта аренды </summary>
     public Guid Id { get; protected set; }
-    ///<symmary> Идентификатор объекта аренды </summary>
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid RentalObjectId { get; protected set; }
-    ///<symmary> Название </summary>
+    ///<summary> Название </summary>
     public string Name { get; protected set; } = string.Empty;
-    ///<symmary> Описание </summary>
+    ///<summary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
-    ///<symmary> Цена за взрослого </summary>
+    ///<summary> Цена за взрослого </summary>
     public decimal PriceForAdult { get; protected set; }
-    ///<symmary> Цена за ребёнка </summary>
+    ///<summary> Цена за ребёнка </summary>
     public decimal PriceForChild { get; protected set; }
-    ///<symmary> Длина варианта номера </summary>
+    ///<summary> Длина варианта номера </summary>
     public double Width { get; protected set; }
-    ///<symmary> Ширина варианта номера </summary>
+    ///<summary> Ширина варианта номера </summary>
     public double Length { get; protected set; }
-    ///<symmary> Максимально человек в номере </summary>
+    ///<summary> Максимально человек в номере </summary>
     public int MaxPersonsCount { get; protected set; }
-    ///<symmary> Возможна ли бесплатная отмена? </summary>
+    ///<summary> Возможна ли бесплатная отмена? </summary>
     public bool IsFreeCancellationEnabled { get; protected set; }
-    ///<symmary> Период бесплатной отмены </summary>
+    ///<summary> Период бесплатной отмены </summary>
     public int? FreeCancellationPeriod { get; protected set; }
-    ///<symmary> Вариант оплаты </summary>
+    ///<summary> Вариант оплаты </summary>
     public int PaymentOption { get; protected set; }
-    ///<symmary> Всего номеров </summary>
-    public int Amount { get; protected set; }
-    ///<symmary> Всего номеров свободно </summary>
-    public int FreeAmount { get; protected set; }
+    ///<summary> Всего номеров </summary>
+    public int Count { get; protected set; }
+    ///<summary> Всего номеров свободно </summary>
+    public int FreeCount { get; protected set; }
 }

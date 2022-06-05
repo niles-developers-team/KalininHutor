@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;
 
-public class BookingRoomVariantRepository : IRepository<BookingRoomVariantBedTypeEntity, BookingRoomVariantSearchOptions>
+public class BookingRoomVariantRepository : IRepository<BookingRoomVariantEntity, BookingRoomVariantSearchOptions>
 {
     private readonly ILogger<BookingRoomVariantRepository> _logger;
     private readonly string _connectionString;
@@ -13,7 +13,7 @@ public class BookingRoomVariantRepository : IRepository<BookingRoomVariantBedTyp
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public Task Create(BookingRoomVariantBedTypeEntity entity)
+    public Task Create(BookingRoomVariantEntity entity)
     {
         throw new NotImplementedException();
     }
@@ -23,12 +23,12 @@ public class BookingRoomVariantRepository : IRepository<BookingRoomVariantBedTyp
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<BookingRoomVariantBedTypeEntity>> Get(BookingRoomVariantSearchOptions options)
+    public Task<IEnumerable<BookingRoomVariantEntity>> Get(BookingRoomVariantSearchOptions options)
     {
         throw new NotImplementedException();
     }
 
-    public Task Update(BookingRoomVariantBedTypeEntity entity)
+    public Task Update(BookingRoomVariantEntity entity)
     {
         throw new NotImplementedException();
     }
