@@ -23,14 +23,14 @@ internal class GetBookingBedTypesHandler : IRequestHandler<GetBookingBedTypesQue
     }
 }
 
-///<summary> Очередь получения забронированных вариантов кроватей в номера </summary>
+///<summary> Очередь получения забронированных вариантов кроватей в номерах </summary>
 public class GetBookingBedTypesQuery : IRequest<IEnumerable<GetBookingBedTypesResponse>>
 {
     public Guid? Id { get; protected set; }
     public Guid? BookingRoomVariant { get; protected set; }
 }
 
-///<summary> Модель чтения брони </summary>
+///<summary> Модель чтения забронированных вариантов кроватей в номерах </summary>
 public class GetBookingBedTypesResponse
 {
     public Guid Id { get; protected set; }

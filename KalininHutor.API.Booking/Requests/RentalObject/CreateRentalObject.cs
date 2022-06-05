@@ -20,8 +20,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<CreateRentalObjectReq
     public async Task<Guid> Handle(CreateRentalObjectRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new RentalObject(request.Name, request.Description,
-                        request.Address, request.CheckinTime.HasValue ? TimeOnly.FromDateTime(request.CheckinTime.Value) : null,
-                        request.CheckoutTime.HasValue ? TimeOnly.FromDateTime(request.CheckoutTime.Value) : null, request.OwnerId);
+                        request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
         await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
         return rentalObject.Id;
@@ -39,10 +38,10 @@ public class CreateRentalObjectRequest : IRequest<Guid>
     public string? Address { get; set; }
 
     ///<summary> Идентификатор владельца </summary>
-    public Guid OwnerId { get; set; }
+    public Guid LandlordId { get; set; }
 
     ///<summary> Время заезда </summary>
-    public DateTime? CheckinTime { get; set; }
+    public TimeOnly? CheckinTime { get; set; }
     ///<summary> Время отъезда </summary>
-    public DateTime? CheckoutTime { get; set; }
+    public TimeOnly? CheckoutTime { get; set; }
 }
