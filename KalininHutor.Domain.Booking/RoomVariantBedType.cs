@@ -14,6 +14,15 @@ public class RoomVariantBedType : IEntity<Guid>
 
     public RoomVariantBedType(Guid roomVariantId, BedTypes bedType, double? width, double? length)
     {
+        Id = Guid.NewGuid();
+
+        if (roomVariantId == null || roomVariantId == Guid.Empty)
+            throw new ArgumentNullException("Не указан идентификатор варианта номера.");
+
+        if ((width.HasValue && !length.HasValue) || (!width.HasValue && length.HasValue) || 
+            (width.HasValue && width < 0) || (length.HasValue && length < 0))
+            throw new ArgumentOutOfRangeException("Размер кровати должен быть больше 0.");
+
         RoomVariantId = roomVariantId;
         BedType = bedType;
         Width = width;

@@ -36,6 +36,29 @@ public class RoomVariant : IEntity<Guid>
                        int width, int length, bool isFreeCancellationEnabled, int freeCancelationPeriod,
                        PaymentOptions paymentOption, int amount, int freeAmount)
     {
+        Id = Guid.NewGuid();
+
+        if (rentalObjectId == null || rentalObjectId == Guid.Empty)
+            throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
+
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentNullException("Не указано название варианта номера.");
+
+        if (string.IsNullOrEmpty(description))
+            throw new ArgumentNullException("Не указано описание варианта номера.");
+
+        if (priceForAdult < 0 || priceForChild < 0)
+            throw new ArgumentOutOfRangeException("Цены не могут быть отрицательными.");
+
+        if (maxPersonsCount <= 0)
+            throw new ArgumentOutOfRangeException("Количество посетителей в номере не может быть меньше 0.");
+
+        if (width <= 0 || length <= 0)
+            throw new ArgumentOutOfRangeException("Размер номера не может быть меньше 0.");
+
+        if (amount < 0 || freeAmount <= 0)
+            throw new ArgumentOutOfRangeException("Количество номеров не может быть меньше 0.");
+
         RentalObjectId = rentalObjectId;
         Name = name;
         Description = description;

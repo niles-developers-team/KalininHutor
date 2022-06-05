@@ -1,5 +1,3 @@
-using System;
-
 namespace KalininHutor.Domain.Booking;
 
 public class Booking : IEntity<Guid>
@@ -19,12 +17,57 @@ public class Booking : IEntity<Guid>
 
     protected Booking() { }
 
-    public Booking(Guid rentalObjectId, int adultCount, int childCount, DateOnly checkinDate, DateOnly checkoutDate)
+    public Booking(Guid rentalObjectId, Guid tenantId, int adultCount, int childCount, DateOnly checkinDate, DateOnly checkoutDate)
     {
+        if(rentalObjectId == null || rentalObjectId == Guid.Empty)
+            throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
+
+        if(tenantId == null || tenantId == Guid.Empty)
+            throw new ArgumentNullException("Не указан идентификатор арендатора.");
+
+        CheckVisitorsCount(adultCount, childCount);
+        CheckBookingPeriod(checkinDate, checkoutDate);
+
+        Id = Guid.NewGuid();
         RentalObjectId = rentalObjectId;
+        TenantId = tenantId;
         AdultCount = adultCount;
         ChildCount = childCount;
         CheckinDate = checkinDate;
         CheckoutDate = checkoutDate;
+    }
+
+    public void SetVisitorsCount(int adultCount, int childCount)
+    {
+        CheckVisitorsCount(adultCount, childCount);
+
+        AdultCount = adultCount;
+        ChildCount = childCount;
+    }
+
+    public void SetBookingDates(DateOnly checkinDate, DateOnly checkoutDate)
+    {
+        CheckBookingPeriod(checkinDate, checkoutDate);
+        
+        CheckinDate = checkinDate;
+        CheckoutDate = checkoutDate;
+    }
+
+    private void CheckVisitorsCount(int adultCount, int childCount)
+    {
+        if(adultCount <= 0)
+            throw new ArgumentOutOfRangeException("Количество взрослых посетителей должно быть больше 0.");
+
+        if(childCount < 0)
+            throw new ArgumentOutOfRangeException("Количество взрослых посетителей должно быть больше или равно 0.");
+    }
+
+    private void CheckBookingPeriod(DateOnly checkinDate, DateOnly checkoutDate)
+    {
+        if(checkoutDate < checkinDate)
+            throw new ArgumentOutOfRangeException("Неправильный промежуток дат заезда и отъезда.");
+
+        if(checkinDate < DateOnly.FromDateTime(DateTime.Now) || checkoutDate < DateOnly.FromDateTime(DateTime.Now))
+            throw new ArgumentOutOfRangeException("Дата бронирования не может быть в прошлом.");
     }
 }

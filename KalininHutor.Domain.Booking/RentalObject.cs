@@ -29,14 +29,10 @@ public class RentalObject : IEntity<Guid>
 
     protected RentalObject() { }
 
-    public RentalObject(string? name, string? description, string? address,
+    public RentalObject(string name, string description, string? address,
                         TimeOnly? checkinTime, TimeOnly? checkoutTime, Guid ownerId)
     {
-        if(string.IsNullOrEmpty(name))
-            throw new ApplicationException("Не указано название.");
-
-        if (string.IsNullOrEmpty(description))
-            throw new ApplicationException("Не указано описание.");
+        CheckInfo(name, description);
 
         if (string.IsNullOrEmpty(address))
             throw new ApplicationException("Не указан адрес.");
@@ -55,8 +51,18 @@ public class RentalObject : IEntity<Guid>
         LandlordId = ownerId;
     }
 
+    private void CheckInfo(string name, string description)
+    {
+        if(string.IsNullOrEmpty(name))
+            throw new ApplicationException("Не указано название.");
+
+        if (string.IsNullOrEmpty(description))
+            throw new ApplicationException("Не указано описание.");
+    }
+
     public void SetInfo(string name, string description)
     {
+        CheckInfo(name, description);
         Name = name;
         Description = description;
     }
