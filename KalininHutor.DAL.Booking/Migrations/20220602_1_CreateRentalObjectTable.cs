@@ -12,7 +12,7 @@ public class CreateRentalObjectTable : ForwardOnlyMigration
         Create.Table(tableName)
             .WithDescription("Таблица объектов аренды")
             .WithColumn("Id").AsGuid().PrimaryKey().NotNullable().Unique().WithColumnDescription("Идентификатор объекта аренды")
-            .WithColumn("OwnerId").AsGuid().NotNullable().WithColumnDescription("Идентификатор владельца")
+            .WithColumn("LandlordId").AsGuid().NotNullable().WithColumnDescription("Идентификатор владельца")
             .WithColumn("Name").AsString().NotNullable().WithColumnDescription("Название объекта аренды")
             .WithColumn("Description").AsString().NotNullable().WithColumnDescription("Описание объекта аренды")
             .WithColumn("Address").AsString().NotNullable().WithColumnDescription("Адрес объекта аренды")

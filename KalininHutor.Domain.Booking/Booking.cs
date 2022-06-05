@@ -7,6 +7,7 @@ public class Booking : IEntity<Guid>
     private HashSet<BookingRoomVariant>? roomVariants;
 
     public Guid Id { get; protected set; }
+    public Guid TenantId { get; protected set; }
     public Guid RentalObjectId { get; protected set; }
     public int AdultCount { get; protected set; }
     public int ChildCount { get; protected set; }

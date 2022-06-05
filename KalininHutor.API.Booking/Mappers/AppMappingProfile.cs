@@ -8,11 +8,11 @@ namespace KalininHutor.API.Booking.Mappers;
 ///<summary> Профайлер мапперов </summary>
 public class AppMappingProfile : Profile
 {
-		///<summary> Конструктор профайлера </summary>
-		public AppMappingProfile()
-		{			
-			CreateMap<RentalObject, RentalObjectEntity>().ReverseMap();
-			CreateMap<GetRentalObjectsQuery, RentalObjectSearchOptions>().ReverseMap();
-			CreateMap<RentalObjectEntity, GetRentalObjectResponse>();
-		}
+    ///<summary> Конструктор профайлера </summary>
+    public AppMappingProfile()
+    {
+        CreateMap<RentalObject, RentalObjectEntity>().ReverseMap();
+        CreateMap<GetRentalObjectsQuery, RentalObjectSearchOptions>().ReverseMap();
+        CreateMap<RentalObjectEntity, GetRentalObjectResponse>();
+    }
 }

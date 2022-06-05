@@ -6,7 +6,7 @@ public class RentalObjectEntity
     private TimeSpan _checkoutTimeSpan;
 
     public Guid Id { get; protected set; }
-    public Guid OwnerId { get; protected set; }
+    public Guid LandlordId { get; protected set; }
     public string Name { get; protected set; }
     public string Description { get; protected set; }
     public string Address { get; protected set; }
@@ -22,6 +22,7 @@ public class RentalObjectSearchOptions
     private TimeSpan? _checkoutTimeSpan;
 
     public Guid? Id { get; set; }
+    public Guid? LandlordId { get; set; }
     public string? SearchText { get; set; }
     internal TimeSpan? CheckinTimeSpan { get => _checkinTimeSpan; private set => _checkinTimeSpan = value; }
     internal TimeSpan? CheckoutTimeSpan { get => _checkoutTimeSpan; private set => _checkoutTimeSpan = value; }

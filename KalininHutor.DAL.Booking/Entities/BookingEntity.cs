@@ -6,6 +6,7 @@ public class BookingEntity
     private DateTime _checkoutDateTime;
 
     public Guid Id { get; protected set; }
+    public Guid TenantId { get; protected set; }
     public Guid RentalObjectId { get; protected set; }
     public int AdultCount { get; protected set; }
     public int ChildCount { get; protected set; }

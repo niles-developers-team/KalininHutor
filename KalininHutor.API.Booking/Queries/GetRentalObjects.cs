@@ -27,6 +27,8 @@ public class GetRentalObjectsQuery : IRequest<IEnumerable<GetRentalObjectRespons
 {
     ///<summary> Идентификатор объекта аренды </summary>
     public Guid? Id { get; set; }
+    ///<summary> Индентификатор владельца объекта аренды </summary>
+    public Guid? LandlordId { get; set; }
     ///<summary> Строка поиска </summary>
     public string? SearchText { get; set; }
     ///<summary> Время заезда </summary>

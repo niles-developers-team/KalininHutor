@@ -9,7 +9,7 @@ public class RentalObject : IEntity<Guid>
 
     public Guid Id { get; protected set; }
 
-    public Guid OwnerId { get; protected set; }
+    public Guid LandlordId { get; protected set; }
 
     public string Address { get; protected set; } = string.Empty;
 
@@ -52,7 +52,7 @@ public class RentalObject : IEntity<Guid>
         Address = address;
         CheckinTime = checkinTime;
         CheckoutTime = checkoutTime;
-        OwnerId = ownerId;
+        LandlordId = ownerId;
     }
 
     public void SetInfo(string name, string description)

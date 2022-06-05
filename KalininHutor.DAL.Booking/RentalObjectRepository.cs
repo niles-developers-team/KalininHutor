@@ -23,7 +23,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             insert into RentalObjects(Id, OwnerId, Name, Description, CheckinTime, CheckoutTime)
             values (
                 {entity.Id}, 
-                {entity.OwnerId}, 
+                {entity.LandlordId}, 
                 {entity.Name}, 
                 {entity.Description}, 
                 {entity.CheckinTimeSpan}, 
