@@ -7,9 +7,9 @@ public class RentalObjectEntity
 
     public Guid Id { get; protected set; }
     public Guid LandlordId { get; protected set; }
-    public string Name { get; protected set; }
-    public string Description { get; protected set; }
-    public string Address { get; protected set; }
+    public string Name { get; protected set; } = string.Empty;
+    public string Description { get; protected set; } = string.Empty;
+    public string Address { get; protected set; } = string.Empty;
     internal TimeSpan CheckinTimeSpan { get => _checkinTimeSpan; private set => _checkinTimeSpan = value; }
     internal TimeSpan CheckoutTimeSpan { get => _checkoutTimeSpan; private set => _checkoutTimeSpan = value; }
     public TimeOnly CheckinTime { get => TimeOnly.FromTimeSpan(_checkinTimeSpan); protected set => _checkinTimeSpan = value.ToTimeSpan(); }

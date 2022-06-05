@@ -15,6 +15,6 @@ public class RoomCharacteristicEntity
 
 public class RoomCharacteristicSearchOptions
 {
-    public Guid Id { get; set; }
-    public string SearchText { get; set; }
+    public Guid? Id { get; set; }
+    public string? SearchText { get; set; }
 }

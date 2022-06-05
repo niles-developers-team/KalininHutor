@@ -10,6 +10,6 @@ public class BookingRoomVariantBedTypeEntity
 
 public class BookingRoomVariantBedTypeSearchOptions
 {
-    public Guid Id { get; protected set; }
-    public Guid BookingRoomVariant { get; protected set; }
+    public Guid? Id { get; protected set; }
+    public Guid? BookingRoomVariant { get; protected set; }
 }
