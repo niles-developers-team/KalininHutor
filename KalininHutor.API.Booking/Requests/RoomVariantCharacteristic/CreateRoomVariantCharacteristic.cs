@@ -30,7 +30,10 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<CreateRo
 ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
 public class CreateRoomVariantCharacteristicRequest : IRequest<Guid>
 {
+    ///<summary> Идентификатор номера </summary>
     public Guid RoomVariantId { get; protected set; }
+    ///<summary> Идентификатор характеристики </summary>
     public Guid RoomCharacteristicId { get; protected set; }
+    ///<summary> Цена за услугу или удобство </summary>
     public decimal? Price { get; protected set; }
 }

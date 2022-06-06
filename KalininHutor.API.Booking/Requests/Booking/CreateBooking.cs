@@ -30,10 +30,17 @@ internal class CreateBookingHandler : IRequestHandler<CreateBookingRequest, Guid
 ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
 public class CreateBookingRequest : IRequest<Guid>
 {
+    ///<summary> Идентификатор арендатора </summary>
+    ///<remarks> Не изменяется, нужен только для поиска </remarks>
     public Guid TenantId { get; protected set; }
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid RentalObjectId { get; protected set; }
+    ///<summary> Количество взрослых </summary>
     public int AdultCount { get; protected set; }
+    ///<summary> Количество детей </summary>
     public int ChildCount { get; protected set; }
+    ///<summary> Дата заезда </summary>
     public DateOnly CheckinDate { get; protected set; }
+    ///<summary> Дата отъезда </summary>
     public DateOnly CheckoutDate { get; protected set; }
 }

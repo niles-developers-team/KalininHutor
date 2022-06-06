@@ -26,9 +26,11 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
     }
 }
 
-///<summary> Запрос обновления объекта аренды </summary>
+///<summary> Запрос обновления характеристики варианта номера </summary>
 public class UpdateRoomVariantCharacteristicRequest : IRequest<Unit>
 {
+    ///<summary> Идентификатор характеристики номера </summary>
     public Guid Id { get; protected set; }
+    ///<summary> Цена за услугу или удобство </summary>
     public decimal? Price { get; protected set; }
 }

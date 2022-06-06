@@ -20,9 +20,9 @@ internal class DeleteBookingHandler : IRequestHandler<DeleteBookingRequest, Unit
     }
 }
 
-///<summary> Запрос удаления объекта аренды </summary>
+///<summary> Запрос удаления брони </summary>
 public class DeleteBookingRequest : IRequest<Unit>
 {
-    ///<summary> Идентификатор объекта аренды </summary>
+    ///<summary> Идентификатор брони </summary>
     public Guid Id { get; set; }
 }

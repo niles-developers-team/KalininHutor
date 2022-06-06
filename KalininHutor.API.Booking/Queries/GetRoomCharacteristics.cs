@@ -23,11 +23,13 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<GetRoomCharacteri
     }
 }
 
-///<summary> Очередь получения забронированных вариантов кроватей в номера </summary>
+///<summary> Очередь получения удобств и услуг</summary>
 public class GetRoomCharacteristicsQuery : IRequest<IEnumerable<GetRoomCharacteristicsResponse>>
 {
+    ///<summary> Идентификатор характеристики </summary>
     public Guid Id { get; set; }
-    public string SearchText { get; set; }
+    ///<summary> Поисковая строка </summary>
+    public string SearchText { get; set; } = string.Empty;
 }
 
 ///<summary> Модель чтения брони </summary>

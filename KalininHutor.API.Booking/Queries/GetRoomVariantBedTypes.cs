@@ -22,19 +22,21 @@ internal class GetRoomVariantBedTypesHandler : IRequestHandler<GetRoomVariantBed
     }
 }
 
-///<summary> Очередь получения забронированных вариантов кроватей в номера </summary>
+///<summary> Очередь получения вариантов кроватей в номере </summary>
 public class GetRoomVariantBedTypesQuery : IRequest<IEnumerable<GetRoomVariantBedTypesResponse>>
 {
+    ///<summary> Идентификатор варианта кровати </summary>
     public Guid? Id { get; set; }
+    ///<summary> Идентификатор номера </summary>
     public Guid? RoomVariantId { get; set; }
 }
 
-///<summary> Модель чтения брони </summary>
+///<summary> Модель чтения вариантов кроватей в номере </summary>
 public class GetRoomVariantBedTypesResponse
 {
-    ///<summary> Идентификатор </summary>
+    ///<summary> Идентификатор варианта кровати </summary>
     public Guid Id { get; protected set; }
-    ///<summary> Идентификатор варианта номера </summary>
+    ///<summary> Идентификатор номера </summary>
     public Guid RoomVariantId { get; protected set; }
     ///<summary> Тип кровати </summary>
     public int BedType { get; protected set; }

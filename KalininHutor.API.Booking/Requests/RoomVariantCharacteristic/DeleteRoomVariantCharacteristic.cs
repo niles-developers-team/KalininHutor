@@ -20,9 +20,9 @@ internal class DeleteRoomVariantCharacteristicHandler : IRequestHandler<DeleteRo
     }
 }
 
-///<summary> Запрос удаления объекта аренды </summary>
+///<summary> Запрос удаления характеристики варианта номера </summary>
 public class DeleteRoomVariantCharacteristicRequest : IRequest<Unit>
 {
-    ///<summary> Идентификатор объекта аренды </summary>
+    ///<summary> Идентификатор характеристики варианта номера </summary>
     public Guid Id { get; set; }
 }

@@ -27,13 +27,14 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomChara
     }
 }
 
-///<summary> Запрос обновления объекта аренды </summary>
+///<summary> Запрос обновления характеристики номера </summary>
 public class UpdateRoomCharacteristicRequest : IRequest<Unit>
 {
+    ///<summary> Идентификатор характеристики номера </summary>
     public Guid Id { get; protected set; }
-    ///<summary> Название объекта аренды </summary>
+    ///<summary> Название характеристики номера </summary>
     public string Name { get; set; } = string.Empty;
-    ///<summary> Описание объекта аренды </summary>
+    ///<summary> Описание характеристики номера </summary>
     public string Description { get; set; } = string.Empty;
     ///<summary> Тип характеристики </summary>
     public CharacteristicTypes Type { get; set; }

@@ -26,15 +26,21 @@ internal class GetBookingBedTypesHandler : IRequestHandler<GetBookingBedTypesQue
 ///<summary> Очередь получения забронированных вариантов кроватей в номерах </summary>
 public class GetBookingBedTypesQuery : IRequest<IEnumerable<GetBookingBedTypesResponse>>
 {
+    ///<summary> Идентификатор выбранной кровати в номер  </summary>
     public Guid? Id { get; protected set; }
-    public Guid? BookingRoomVariant { get; protected set; }
+    ///<summary> Идентификатор выбранного номера </summary>
+    public Guid? BookingRoomVariantId { get; protected set; }
 }
 
 ///<summary> Модель чтения забронированных вариантов кроватей в номерах </summary>
 public class GetBookingBedTypesResponse
 {
+    ///<summary> Идентификатор выбранной кровати в номер </summary>
     public Guid Id { get; protected set; }
-    public Guid BookingRoomVariant { get; protected set; }
+    ///<summary> Идентификатор выбранного номера </summary>
+    public Guid BookingRoomVariantId { get; protected set; }
+    ///<summary> Выбранный тип кровати </summary>
     public BedTypes BedType { get; protected set; }
+    ///<summary> Количество кроватей выбранного типа </summary>
     public int Count { get; protected set; }
 }

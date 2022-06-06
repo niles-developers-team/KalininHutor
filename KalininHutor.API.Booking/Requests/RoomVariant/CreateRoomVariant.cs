@@ -29,19 +29,31 @@ internal class CreateRoomVariantHandler : IRequestHandler<CreateRoomVariantReque
     }
 }
 
-///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
+///<summary> Запрос на создание варианта номера </summary>
 public class CreateRoomVariantRequest : IRequest<Guid>
 {
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid RentalObjectId { get; protected set; }
+    ///<summary> Название </summary>
     public string Name { get; protected set; } = string.Empty;
+    ///<summary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
+    ///<summary> Цена за взрослого </summary>
     public decimal PriceForAdult { get; protected set; }
+    ///<summary> Цена за ребёнка </summary>
     public decimal PriceForChild { get; protected set; }
+    ///<summary> Ширина варианта номера </summary>
     public double Width { get; protected set; }
+    ///<summary> Длина варианта номера </summary>
     public double Length { get; protected set; }
+    ///<summary> Максимально человек в номере </summary>
     public int MaxPersonsCount { get; protected set; }
+    ///<summary> Период бесплатной отмены </summary>
     public int? FreeCancellationPeriod { get; protected set; }
+    ///<summary> Вариант оплаты </summary>
     public PaymentOptions PaymentOption { get; protected set; }
+    ///<summary> Всего номеров </summary>
     public int Amount { get; protected set; }
+    ///<summary> Всего номеров свободно </summary>
     public int FreeAmount { get; protected set; }
 }

@@ -19,7 +19,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRo
 
     public async Task<Guid> Handle(CreateBookingRoomVariantRequest request, CancellationToken cancellationToken)
     {
-        var bookingRoomVariant = new BookingRoomVariant(request.RoomVariantId, request.Amount);
+        var bookingRoomVariant = new BookingRoomVariant(request.RoomVariantId, request.BookingId, request.Amount);
         await _repository.Create(_mapper.Map<BookingRoomVariantEntity>(bookingRoomVariant));
 
         return bookingRoomVariant.Id;
@@ -29,6 +29,10 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRo
 ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
 public class CreateBookingRoomVariantRequest : IRequest<Guid>
 {
+    ///<summary> Идентификатор брони </summary>
+    public Guid BookingId { get; protected set; }
+    ///<summary> Идентификатор варианта номера </summary>
     public Guid RoomVariantId { get; protected set; }
+    ///<summary> </summary>
     public decimal Amount { get; protected set; }
 }

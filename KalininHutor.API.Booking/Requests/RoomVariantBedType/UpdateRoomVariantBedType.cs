@@ -26,11 +26,15 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<UpdateRoomVaria
     }
 }
 
-///<summary> Запрос обновления объекта аренды </summary>
+///<summary> Запрос обновления варианта кровати </summary>
 public class UpdateRoomVariantBedTypeRequest : IRequest<Unit>
 {
+    ///<summary> Идентификатор варианта кровати </summary>
     public Guid Id { get; protected set; }
+    ///<summary> Ширина кровати </summary>
     public double? Width { get; protected set; }
+    ///<summary> Длина кровати </summary>
     public double? Length { get; protected set; }
+    ///<summary> Максимально в комнате </summary>
     public int MaxInRoom { get; protected set; }
 }

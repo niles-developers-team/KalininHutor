@@ -27,12 +27,17 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<CreateRoomVaria
     }
 }
 
-///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
+///<summary> Запрос создания варианта кровати номера </summary>
 public class CreateRoomVariantBedTypeRequest : IRequest<Guid>
 {
+    ///<summary> Идентификатор номера </summary>
     public Guid RoomVariantId { get; protected set; }
+    ///<summary> Тип кровати </summary>
     public BedTypes BedType { get; protected set; }
+    ///<summary> Ширина кровати </summary>
     public double? Width { get; protected set; }
+    ///<summary> Длина кровати </summary>
     public double? Length { get; protected set; }
+    ///<summary> Максимально в комнате </summary>
     public int MaxInRoom { get; protected set; }
 }

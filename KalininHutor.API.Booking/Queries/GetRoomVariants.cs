@@ -22,14 +22,16 @@ internal class GetRoomVariantHandler : IRequestHandler<GetRoomVariantQuery, IEnu
     }
 }
 
-///<summary> Очередь получения брони </summary>
+///<summary> Очередь получения варинтов номеров </summary>
 public class GetRoomVariantQuery : IRequest<IEnumerable<GetRoomVariantResponse>>
 {
+    ///<summary> Идентификатор варинта номера объекта аренды </summary>
     public Guid? Id { get; set; }
+    ///<summary> Идентификатор объекта аренды </summary>
     public Guid? RentalObjectId { get; set; }
 }
 
-///<summary> Модель чтения брони </summary>
+///<summary> Модель чтения варинта номера </summary>
 public class GetRoomVariantResponse
 {
     ///<summary> Идентификатор варинта номера объекта аренды </summary>
@@ -44,14 +46,12 @@ public class GetRoomVariantResponse
     public decimal PriceForAdult { get; protected set; }
     ///<summary> Цена за ребёнка </summary>
     public decimal PriceForChild { get; protected set; }
-    ///<summary> Длина варианта номера </summary>
-    public double Width { get; protected set; }
     ///<summary> Ширина варианта номера </summary>
+    public double Width { get; protected set; }
+    ///<summary> Длина варианта номера </summary>
     public double Length { get; protected set; }
     ///<summary> Максимально человек в номере </summary>
     public int MaxPersonsCount { get; protected set; }
-    ///<summary> Возможна ли бесплатная отмена? </summary>
-    public bool IsFreeCancellationEnabled { get; protected set; }
     ///<summary> Период бесплатной отмены </summary>
     public int? FreeCancellationPeriod { get; protected set; }
     ///<summary> Вариант оплаты </summary>

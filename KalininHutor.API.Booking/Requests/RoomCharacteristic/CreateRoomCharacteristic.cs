@@ -27,7 +27,7 @@ internal class CreateRoomCharacteristicHandler : IRequestHandler<CreateRoomChara
     }
 }
 
-///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
+///<summary> Запрос на создание характеристики номера </summary>
 public class CreateRoomCharacteristicRequest : IRequest<Guid>
 {
     ///<summary> Название объекта аренды </summary>

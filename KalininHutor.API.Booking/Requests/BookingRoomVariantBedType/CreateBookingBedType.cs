@@ -30,7 +30,10 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<CreateBo
 ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
 public class CreateBookingRoomVariantBedTypeRequest : IRequest<Guid>
 {
+    ///<summary> </summary>
     public Guid RoomVariantId { get; protected set; }
+    ///<summary> </summary>
     public BedTypes BedType { get; set; }
+    ///<summary> </summary>
     public int Count { get; protected set; }
 }
