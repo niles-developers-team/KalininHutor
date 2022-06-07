@@ -5,17 +5,17 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Booking", "KalininHutor.Domain.Booking\KalininHutor.Domain.Booking.csproj", "{E1DCE747-CC6F-470B-B15A-1966F8E06406}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Common", "KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj", "{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Common", "KalininHutor.Domain.Common\KalininHutor.Domain.Common.csproj", "{B0473B78-EB7C-4BAD-AEA1-4CED8C642E23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.API", "KalininHutor.API\KalininHutor.API.csproj", "{B05B29F7-5BAD-4285-9A62-BBBDB503A432}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Booking", "KalininHutor.DAL.Booking\KalininHutor.DAL.Booking.csproj", "{C7F5D0AE-8A32-4E9F-982B-2AC25C59C11F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KailininHutor.Domain.Identity", "KailininHutor.Domain.Identity\KailininHutor.Domain.Identity.csproj", "{87005C70-8E4B-4B1D-BC2D-835599292130}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Identity", "KalininHutor.Domain.Identity\KalininHutor.Domain.Identity.csproj", "{87005C70-8E4B-4B1D-BC2D-835599292130}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Identity", "KalininHutor.DAL.Identity\KalininHutor.DAL.Identity.csproj", "{4016DB0D-61ED-41C2-A3E7-8FB171E45A7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KailininHutor.Domain.Marketplace", "KailininHutor.Domain.Marketplace\KailininHutor.Domain.Marketplace.csproj", "{B5F2C303-744B-429C-A5EA-01F8D76B4392}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Marketplace", "KalininHutor.Domain.Marketplace\KalininHutor.Domain.Marketplace.csproj", "{B5F2C303-744B-429C-A5EA-01F8D76B4392}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Marketplace", "KalininHutor.DAL.Marketplace\KalininHutor.DAL.Marketplace.csproj", "{88A584E6-B8E1-4D8D-A2C1-AFECA2A1D234}"
 EndProject
