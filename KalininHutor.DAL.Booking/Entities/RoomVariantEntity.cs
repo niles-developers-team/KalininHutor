@@ -37,4 +37,5 @@ public class RoomVariantSearchOptions
 {
     public Guid? Id { get; set; }
     public Guid? RentalObjectId { get; set; }
+    public bool IncludeBedTypes { get; set; }
 }

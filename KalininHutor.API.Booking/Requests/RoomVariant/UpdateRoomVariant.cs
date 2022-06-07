@@ -22,7 +22,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantReque
         var RoomVariants = await _repository.Get(new RoomVariantSearchOptions { Id = request.Id });
         var entity = _mapper.Map<RoomVariant>(RoomVariants.SingleOrDefault());
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
-        entity.SetPricesAndLimit(request.PriceForAdult, request.PriceForChild, request.MaxPersonsCount);
+        entity.SetPriceAndLimit(request.Price, request.MaxPersonsCount);
         entity.SetSize(request.Width, request.Length);
         entity.SetFreeCancelationPeriod(request.FreeCancellationPeriod);
         entity.SetCounts(request.Count, request.FreeCount);
@@ -41,7 +41,7 @@ public class UpdateRoomVariantRequest : IRequest<Unit>
     ///<summary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
     ///<summary> Цена за взрослого </summary>
-    public decimal PriceForAdult { get; protected set; }
+    public decimal Price { get; protected set; }
     ///<summary> Цена за ребёнка </summary>
     public decimal PriceForChild { get; protected set; }
     ///<summary> Ширина варианта номера </summary>

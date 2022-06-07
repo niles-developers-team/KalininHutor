@@ -17,8 +17,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReq
 
     public async Task<Unit> Handle(UpdateRentalObjectRequest request, CancellationToken cancellationToken)
     {
-        var rentalObjects = await _repository.Get(new RentalObjectSearchOptions { Id = request.Id });
-        var entity = _mapper.Map<Domain.Booking.RentalObject>(rentalObjects.SingleOrDefault());
+        var entity = _mapper.Map<Domain.Booking.RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));

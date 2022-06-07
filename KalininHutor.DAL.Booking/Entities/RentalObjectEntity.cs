@@ -21,7 +21,6 @@ public class RentalObjectSearchOptions
     private TimeSpan? _checkinTimeSpan;
     private TimeSpan? _checkoutTimeSpan;
 
-    public Guid? Id { get; set; }
     public Guid? LandlordId { get; set; }
     public string? SearchText { get; set; }
     internal TimeSpan? CheckinTimeSpan { get => _checkinTimeSpan; private set => _checkinTimeSpan = value; }

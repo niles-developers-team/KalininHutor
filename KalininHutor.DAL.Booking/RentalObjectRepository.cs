@@ -72,9 +72,6 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             /**where**/
         ");
 
-        if (options.Id.HasValue)
-            query.Where($"(Id = {options.Id})");
-
         if (!string.IsNullOrEmpty(options.SearchText))
             query.Where($"(Name like %{options.SearchText}% or Address like %{options.SearchText}%)");
 
@@ -85,5 +82,24 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             query.Where($"(CheckoutTime < {options.CheckoutTimeSpan})");
 
         return await query.QueryAsync<RentalObjectEntity>();
+    }
+
+    public async Task<RentalObjectEntity> Get(Guid id)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+
+        var query = connection.QueryBuilder($@"
+            select
+                Id,
+                OwnerId,
+                Name,
+                Description,
+                CheckinTime as CheckinTimeSpan,
+                CheckoutTime as CheckoutTimeSpan
+            from RentalObjects            
+            where Id = {id}
+        ");
+
+        return await query.QuerySingleOrDefaultAsync<RentalObjectEntity>();
     }
 }

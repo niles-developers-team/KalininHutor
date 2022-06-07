@@ -6,12 +6,12 @@ public class BookingBedType : IEntity<Guid>
 {
     public Guid Id { get; protected set; }
     public Guid BookingRoomVariantId { get; protected set; }
-    public BedTypes BedType { get; protected set; }
+    public Guid BedTypeId { get; protected set; }
     public int Count { get; protected set; }
 
     protected BookingBedType() { }
 
-    public BookingBedType(Guid bookingRoomVariantId, BedTypes bedType, int count)
+    public BookingBedType(Guid bookingRoomVariantId, Guid bedTypeId, int count)
     {
         if(bookingRoomVariantId == null || bookingRoomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор бронируемого номера.");
@@ -21,7 +21,7 @@ public class BookingBedType : IEntity<Guid>
 
         Id = Guid.NewGuid();
         BookingRoomVariantId = bookingRoomVariantId;
-        BedType = bedType;
+        BedTypeId = bedTypeId;
         Count = count;
     }
 }

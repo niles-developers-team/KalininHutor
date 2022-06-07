@@ -28,6 +28,11 @@ public class BookingRepository : IRepository<BookingEntity, BookingSearchOptions
         throw new NotImplementedException();
     }
 
+    public Task<BookingEntity> Get(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task Update(BookingEntity entity)
     {
         throw new NotImplementedException();

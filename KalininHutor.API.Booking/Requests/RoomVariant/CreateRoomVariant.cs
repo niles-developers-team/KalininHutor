@@ -10,22 +10,28 @@ namespace KalininHutor.API.Booking.Requests;
 internal class CreateRoomVariantHandler : IRequestHandler<CreateRoomVariantRequest, Guid>
 {
     private readonly RoomVariantRepository _repository;
+    private readonly RentalObjectRepository _rentalObjectRepository;
     private readonly IMapper _mapper;
 
-    public CreateRoomVariantHandler(RoomVariantRepository repository, IMapper mapper)
+    public CreateRoomVariantHandler(RoomVariantRepository repository, RentalObjectRepository rentalObjectRepository, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _rentalObjectRepository = rentalObjectRepository ?? throw new ArgumentNullException(nameof(rentalObjectRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<Guid> Handle(CreateRoomVariantRequest request, CancellationToken cancellationToken)
     {
-        var RoomVariant = new RoomVariant(request.RentalObjectId, request.Name, request.Description,
-        request.PriceForAdult, request.PriceForChild, request.MaxPersonsCount, request.Width, request.Length,
-        request.FreeCancellationPeriod, request.PaymentOption, request.Amount, request.FreeAmount);
-        await _repository.Create(_mapper.Map<RoomVariantEntity>(RoomVariant));
+        var rentalObject = _mapper.Map<RentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
+        var roomVariants = await _repository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId });
+        rentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<RoomVariant>).ToList());
 
-        return RoomVariant.Id;
+        var result = rentalObject.CreateRoomVariant(request.Name, request.Description,
+        request.Price, request.MaxPersonsCount, request.Width, request.Length,
+        request.FreeCancellationPeriod, request.PaymentOption, request.Amount, request.FreeAmount);
+        await _repository.Create(_mapper.Map<RoomVariantEntity>(result));
+
+        return result.Id;
     }
 }
 
@@ -39,7 +45,7 @@ public class CreateRoomVariantRequest : IRequest<Guid>
     ///<summary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
     ///<summary> Цена за взрослого </summary>
-    public decimal PriceForAdult { get; protected set; }
+    public decimal Price { get; protected set; }
     ///<summary> Цена за ребёнка </summary>
     public decimal PriceForChild { get; protected set; }
     ///<summary> Ширина варианта номера </summary>

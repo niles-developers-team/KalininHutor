@@ -28,6 +28,11 @@ public class RoomVariantBedTypeRepository : IRepository<RoomVariantBedTypeEntity
         throw new NotImplementedException();
     }
 
+    public Task<RoomVariantBedTypeEntity> Get(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task Update(RoomVariantBedTypeEntity entity)
     {
         throw new NotImplementedException();

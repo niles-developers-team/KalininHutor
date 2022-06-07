@@ -37,7 +37,7 @@ public class RentalObject : IEntity<Guid>
         if (string.IsNullOrEmpty(address))
             throw new ApplicationException("Не указан адрес.");
 
-        if((checkinTime.HasValue && !checkoutTime.HasValue) ||
+        if ((checkinTime.HasValue && !checkoutTime.HasValue) ||
             !checkinTime.HasValue && checkoutTime.HasValue)
             throw new ArgumentException("Время заезда и отъезда должны быть указаны.");
 
@@ -51,9 +51,25 @@ public class RentalObject : IEntity<Guid>
         LandlordId = ownerId;
     }
 
+    public void SetRoomVariants(IReadOnlyList<RoomVariant> variants)
+    {
+        if (variants.Any(o => o.RentalObjectId != Id))
+            throw new Exception("Некоторые варианты номера не принадлежат данному объекту аренды");
+
+        _roomVariants = variants.ToHashSet();
+    }
+
+    public void SetBookings(IReadOnlyList<Booking> bookings)
+    {
+        if (bookings.Any(o => o.RentalObjectId != Id))
+            throw new Exception("Некоторые варианты номера не принадлежат данному объекту аренды");
+
+        _bookings = bookings.ToHashSet();
+    }
+
     private void CheckInfo(string name, string description)
     {
-        if(string.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
             throw new ApplicationException("Не указано название.");
 
         if (string.IsNullOrEmpty(description))
@@ -81,40 +97,71 @@ public class RentalObject : IEntity<Guid>
         _photos.Add(photo);
     }
 
-    public RoomVariant CreateRoomVariant(string name, string description, decimal priceForAdult,
-                                        decimal priceForChild, int maxPersonsCount, int width, int length,
+    public RoomVariant CreateRoomVariant(string name, string description, decimal price, 
+                                        int maxPersonsCount, double width, double length,
                                         int? freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
     {
         if (_roomVariants == null)
             throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
 
-        var roomVariant = new RoomVariant(Id, name, description, priceForAdult, priceForChild, maxPersonsCount, width, length, freeCancelationPeriod, paymentOption, amount, freeAmount);
+        var roomVariant = new RoomVariant(Id, name, description, price, maxPersonsCount, width, length, freeCancelationPeriod, paymentOption, amount, freeAmount);
         _roomVariants.Add(roomVariant);
 
         return roomVariant;
     }
 
-    public BookingRoomVariant CreateBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, IEnumerable<Guid> roomVariantsIds, IEnumerable<BedTypes> bedTypes)
+    public Booking CreateBooking(Guid TenantId,
+                                 DateOnly checkInDate, DateOnly checkOutDate,
+                                 int adultCount, int childsCount,
+                                 IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
+    {
+        ValidateBookingRoomVariants(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariants);
+
+        var booking = new Booking(Id, TenantId, adultCount, childsCount, checkInDate, checkOutDate);
+        foreach (var bookingRoomVariant in bookingRoomVariants)
+        {
+            var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
+            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, roomVariant.Price, bookingRoomVariant.BookingBedTypes);
+        }
+
+        return booking;
+    }
+
+    private void ValidateBookingRoomVariants(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount,
+                                 IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
     {
         if (_roomVariants == null)
             throw new MissingFieldException("Варианты номеров объекта аренды не были загружены");
 
-        //foreach ()
-        //IsRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, roo)
+        if (_bookings == null)
+            throw new MissingFieldException("Брони объекта аренды не были загружены");
 
-        return null;
+        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Select(brv => brv.RoomVariantId).Contains(o.Id));
+
+        var visitorsSum = adultCount + childsCount;
+        if (visitorsSum > selectedRoomVariants.Sum(o => o.MaxPersonsCount))
+            throw new ApplicationException($"В выбранных номерах не поместится {visitorsSum} гостя.");
+
+        foreach (var bookingRoomVariant in bookingRoomVariants)
+        {
+            CheckRoomVariantAvailableForBooking(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariant);
+        }
     }
 
-    private void IsRoomVariantAvailableForBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, Guid roomVariantId)
+    private void CheckRoomVariantAvailableForBooking(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount, BookingRoomVariant bookingRoomVariant)
     {
-        var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == roomVariantId);
+        var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
         if (roomVariant == null)
             throw new ApplicationException("Выбран неизвестный вариант номера.");
 
-        var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == roomVariantId).Distinct();
+        var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == bookingRoomVariant.RoomVariantId).Distinct();
         if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Count))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
+    }
 
-
+    private void CheckBookingRoomVariantBeds(int adultCount, int childsCount, BookingRoomVariant bookingRoomVariant, RoomVariant roomVariant)
+    {
+        if (bookingRoomVariant.BookingBedTypes.Any(o => roomVariant.BedTypes.Select(bt => bt.Id).Contains(o.BedTypeId)))
+            throw new ApplicationException("Выбран неизвестный вариант кровати.");
     }
 }

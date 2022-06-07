@@ -28,6 +28,11 @@ public class RoomVariantCharacteristicRepository : IRepository<RoomVariantCharac
         throw new NotImplementedException();
     }
 
+    public Task<RoomVariantCharacteristicEntity> Get(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task Update(RoomVariantCharacteristicEntity entity)
     {
         throw new NotImplementedException();

@@ -11,8 +11,7 @@ public class RoomVariant : IEntity<Guid>
     public Guid RentalObjectId { get; protected set; }
     public string Name { get; protected set; } = string.Empty;
     public string Description { get; protected set; } = string.Empty;
-    public decimal PriceForAdult { get; protected set; }
-    public decimal PriceForChild { get; protected set; }
+    public decimal Price { get; protected set; }
     public double Width { get; protected set; }
     public double Length { get; protected set; }
     public int MaxPersonsCount { get; protected set; }
@@ -32,7 +31,7 @@ public class RoomVariant : IEntity<Guid>
     protected RoomVariant() { }
 
     public RoomVariant(Guid rentalObjectId, string name, string description,
-                       decimal priceForAdult, decimal priceForChild, int maxPersonsCount,
+                       decimal price, int maxPersonsCount,
                        double width, double length, int? freeCancelationPeriod,
                        PaymentOptions paymentOption, int count, int freeCount)
     {
@@ -42,7 +41,7 @@ public class RoomVariant : IEntity<Guid>
             throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
 
         SetInfo(name, description, paymentOption);
-        SetPricesAndLimit(priceForAdult, priceForChild, maxPersonsCount);
+        SetPriceAndLimit(price, maxPersonsCount);
         SetSize(width, length);
         SetFreeCancelationPeriod(freeCancelationPeriod);
         SetCounts(count, freeCount);
@@ -63,16 +62,15 @@ public class RoomVariant : IEntity<Guid>
         PaymentOption = paymentOption;
     }
 
-    public void SetPricesAndLimit(decimal priceForAdult, decimal priceForChild, int maxPersonsCount)
+    public void SetPriceAndLimit(decimal price, int maxPersonsCount)
     {
-        if (priceForAdult < 0 || priceForChild < 0)
+        if (price < 0)
             throw new ArgumentOutOfRangeException("Цены не могут быть отрицательными.");
 
         if (maxPersonsCount <= 0)
             throw new ArgumentOutOfRangeException("Количество посетителей в номере не может быть меньше 0.");
 
-        PriceForAdult = priceForAdult;
-        PriceForChild = priceForChild;
+        Price = price;
         MaxPersonsCount = maxPersonsCount;
     }
 

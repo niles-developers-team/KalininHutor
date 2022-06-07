@@ -20,7 +20,7 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<CreateBo
 
     public async Task<Guid> Handle(CreateBookingRoomVariantBedTypeRequest request, CancellationToken cancellationToken)
     {
-        var BookingRoomVariantBedType = new BookingBedType(request.RoomVariantId, request.BedType, request.Count);
+        var BookingRoomVariantBedType = new BookingBedType(request.RoomVariantId, request.BedTypeId, request.Count);
         await _repository.Create(_mapper.Map<BookingRoomVariantBedTypeEntity>(BookingRoomVariantBedType));
 
         return BookingRoomVariantBedType.Id;
@@ -33,7 +33,7 @@ public class CreateBookingRoomVariantBedTypeRequest : IRequest<Guid>
     ///<summary> </summary>
     public Guid RoomVariantId { get; protected set; }
     ///<summary> </summary>
-    public BedTypes BedType { get; set; }
+    public Guid BedTypeId { get; set; }
     ///<summary> </summary>
     public int Count { get; protected set; }
 }

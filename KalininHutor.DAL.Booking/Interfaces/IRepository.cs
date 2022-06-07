@@ -8,5 +8,7 @@ public interface IRepository<TResult, TSearchOptions>
 
     Task<IEnumerable<TResult>> Get(TSearchOptions options);
 
+    Task<TResult> Get(Guid id);
+
     Task Delete(Guid id);
 }
