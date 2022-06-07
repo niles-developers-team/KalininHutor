@@ -107,3 +107,6 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 *.dll
+
+
+node_modules/
