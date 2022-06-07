@@ -11,10 +11,8 @@ public class RoomVariantEntity
     public string Name { get; protected set; } = string.Empty;
     ///<symmary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
-    ///<symmary> Цена за взрослого </summary>
-    public decimal PriceForAdult { get; protected set; }
-    ///<symmary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; protected set; }
+    ///<symmary> Цена за номер </summary>
+    public decimal Price { get; protected set; }
     ///<symmary> Длина варианта номера </summary>
     public double Width { get; protected set; }
     ///<symmary> Ширина варианта номера </summary>
