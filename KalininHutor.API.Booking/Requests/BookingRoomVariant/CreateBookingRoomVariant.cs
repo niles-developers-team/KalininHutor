@@ -35,4 +35,6 @@ public class CreateBookingRoomVariantRequest : IRequest<Guid>
     public Guid RoomVariantId { get; protected set; }
     ///<summary> </summary>
     public decimal Amount { get; protected set; }
+
+    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; protected set; }
 }
