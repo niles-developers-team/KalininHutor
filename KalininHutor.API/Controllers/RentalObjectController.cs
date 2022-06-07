@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using KalininHutor.API.Booking.Requests;
-using KalininHutor.API.Booking.Queries;
+using KalininHutor.API.Requests;
+using KalininHutor.API.Queries;
 
-namespace KalininHutor.API.Booking.Controllers;
+namespace KalininHutor.API.Controllers;
 
 ///<summary> Контроллер  объектов аренды </summary>
 [Route("api/[controller]")]

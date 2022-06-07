@@ -2,7 +2,7 @@ using AutoMapper;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Booking.Requests;
+namespace KalininHutor.API.Requests;
 
 internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectRequest, Unit>
 {

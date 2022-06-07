@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.Domain.Marketp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Marketplace", "KalininHutor.DAL.Marketplace\KalininHutor.DAL.Marketplace.csproj", "{88A584E6-B8E1-4D8D-A2C1-AFECA2A1D234}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalininHutor.DAL.Common", "KalininHutor.DAL.Common\KalininHutor.DAL.Common.csproj", "{F6C955E8-2BC0-4A5A-A303-23D7E54C503D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{88A584E6-B8E1-4D8D-A2C1-AFECA2A1D234}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88A584E6-B8E1-4D8D-A2C1-AFECA2A1D234}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88A584E6-B8E1-4D8D-A2C1-AFECA2A1D234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6C955E8-2BC0-4A5A-A303-23D7E54C503D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C955E8-2BC0-4A5A-A303-23D7E54C503D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6C955E8-2BC0-4A5A-A303-23D7E54C503D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C955E8-2BC0-4A5A-A303-23D7E54C503D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

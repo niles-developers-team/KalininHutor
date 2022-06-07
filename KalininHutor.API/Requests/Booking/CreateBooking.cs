@@ -4,7 +4,7 @@ using AutoMapper;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 
-namespace KalininHutor.API.Booking.Requests;
+namespace KalininHutor.API.Requests;
 
 internal class CreateBookingHandler : IRequestHandler<CreateBookingRequest, Guid>
 {

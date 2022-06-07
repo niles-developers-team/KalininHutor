@@ -4,7 +4,7 @@ using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
-namespace KalininHutor.API.Booking.Requests;
+namespace KalininHutor.API.Requests;
 
 internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomCharacteristicRequest, Unit>
 {

@@ -3,7 +3,7 @@ using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
-namespace KalininHutor.API.Booking.Queries;
+namespace KalininHutor.API.Queries;
 
 internal class GetBookingBedTypesHandler : IRequestHandler<GetBookingBedTypesQuery, IEnumerable<GetBookingBedTypesResponse>>
 {

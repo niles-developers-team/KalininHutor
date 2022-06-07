@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace KalininHutor.DAL.Booking.Migrations;
+namespace KalininHutor.DAL.Migrations;
 
 [Migration(202206046)]
 public class CreateBooking : ForwardOnlyMigration

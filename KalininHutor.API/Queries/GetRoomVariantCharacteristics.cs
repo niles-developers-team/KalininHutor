@@ -2,7 +2,7 @@ using AutoMapper;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Booking.Queries;
+namespace KalininHutor.API.Queries;
 
 internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<GetRoomVariantCharacteristicsQuery, IEnumerable<GetRoomVariantCharacteristicsResponse>>
 {

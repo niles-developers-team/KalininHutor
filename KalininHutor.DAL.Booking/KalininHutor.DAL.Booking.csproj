@@ -9,10 +9,11 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Dapper-QueryBuilder" Version="1.2.5" />
-    <PackageReference Include="FluentMigrator" Version="3.3.2" />
-    <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
-    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
     <PackageReference Include="Npgsql" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KalininHutor.DAL.Common\KalininHutor.DAL.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Booking.Requests;
+namespace KalininHutor.API.Requests;
 
 internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<UpdateRoomVariantBedTypeRequest, Unit>
 {

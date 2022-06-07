@@ -4,6 +4,7 @@
     <ProjectReference Include="..\KalininHutor.Domain.Booking\KalininHutor.Domain.Booking.csproj" />
     <ProjectReference Include="..\KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj" />
     <ProjectReference Include="..\KalininHutor.DAL.Booking\KalininHutor.DAL.Booking.csproj" />
+    <ProjectReference Include="..\KalininHutor.DAL.Common\KalininHutor.DAL.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

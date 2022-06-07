@@ -1,9 +1,9 @@
 using AutoMapper;
-using KalininHutor.API.Booking.Queries;
+using KalininHutor.API.Queries;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 
-namespace KalininHutor.API.Booking.Mappers;
+namespace KalininHutor.API.Mappers;
 
 ///<summary> Профайлер мапперов </summary>
 public class AppMappingProfile : Profile

@@ -5,7 +5,7 @@ using KalininHutor.Domain.Booking;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
 
-namespace KalininHutor.API.Booking.Requests;
+namespace KalininHutor.API.Requests;
 
 internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<CreateRoomVariantCharacteristicRequest, Guid>
 {

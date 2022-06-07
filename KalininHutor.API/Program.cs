@@ -4,9 +4,9 @@ using FluentMigrator.Runner;
 using MediatR;
 using TinyHelpers.Json.Serialization;
 
-using KalininHutor.API.Booking.Mappers;
+using KalininHutor.API.Mappers;
 using KalininHutor.DAL.Booking;
-using KalininHutor.DAL.Booking.Migrations;
+using KalininHutor.DAL.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
