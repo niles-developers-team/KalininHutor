@@ -10,6 +10,5 @@ public class RoomVariantCharacteristicEntity
 
 public class RoomVariantCharacteristicSearchOptions
 {
-    public Guid? Id { get; set; }
-    public Guid? RoomVariantId { get; set; }
+    public Guid? RoomVariantId { get; protected set; }
 }

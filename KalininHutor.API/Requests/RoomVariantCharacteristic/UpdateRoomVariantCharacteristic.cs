@@ -18,8 +18,7 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
 
     public async Task<Unit> Handle(UpdateRoomVariantCharacteristicRequest request, CancellationToken cancellationToken)
     {
-        var RoomVariantCharacteristics = await _repository.Get(new RoomVariantCharacteristicSearchOptions { Id = request.Id });
-        var entity = _mapper.Map<RoomVariantCharacteristic>(RoomVariantCharacteristics.SingleOrDefault());
+        var entity = _mapper.Map<RoomVariantCharacteristic>(await _repository.Get(request.Id));
         entity.SetPrice(request.Price);
         await _repository.Update(_mapper.Map<RoomVariantCharacteristicEntity>(entity));
         return Unit.Value;
@@ -30,7 +29,7 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
 public class UpdateRoomVariantCharacteristicRequest : IRequest<Unit>
 {
     ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; protected set; }
+    public Guid Id { get; set; }
     ///<summary> Цена за услугу или удобство </summary>
-    public decimal? Price { get; protected set; }
+    public decimal? Price { get; set; }
 }

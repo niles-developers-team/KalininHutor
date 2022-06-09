@@ -1,41 +1,70 @@
+using DapperQueryBuilder;
 using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;
 
-public class RoomVariantCharacteristicRepository : IRepository<RoomVariantCharacteristicEntity, RoomVariantCharacteristicSearchOptions>
+public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCharacteristicEntity, RoomVariantCharacteristicSearchOptions>
 {
-    private readonly string _connectionString;
-    private readonly ILogger<RoomVariantCharacteristicRepository> _logger;
+    public RoomVariantCharacteristicRepository(string connectionString, ILogger<RoomVariantCharacteristicRepository> logger) : base(connectionString, logger) { }
 
-    public RoomVariantCharacteristicRepository(string connectionString, ILogger<RoomVariantCharacteristicRepository> logger)
+    public override async Task Create(RoomVariantCharacteristicEntity entity)
     {
-        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"
+            insert into RoomVariantCharacteristics (Id, RoomVariantId, RoomCharacteristicId, Price)
+            values (
+                {entity.Id},
+                {entity.RoomVariantId},
+                {entity.RoomCharacteristicId},
+                {entity.Price}
+            )
+        ").ExecuteAsync();
     }
 
-    public Task Create(RoomVariantCharacteristicEntity entity)
+    public override async Task Delete(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"delete from RoomVariantCharacteristics where Id = {id}").ExecuteAsync();
     }
 
-    public Task Delete(Guid id)
+    public override async Task<IEnumerable<RoomVariantCharacteristicEntity>> Get(RoomVariantCharacteristicSearchOptions options)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        var query = connection.QueryBuilder($@"
+            select Id, RoomVariantId, RoomCharacteristicId, Price
+            from RoomVariantCharacteristics
+            /*where*/
+        ");
+
+        if (options.RoomVariantId.HasValue)
+            query.Where($"RoomVariantId = {options.RoomVariantId}");
+
+        return await query.QueryAsync<RoomVariantCharacteristicEntity>();
     }
 
-    public Task<IEnumerable<RoomVariantCharacteristicEntity>> Get(RoomVariantCharacteristicSearchOptions options)
+    public override async Task<RoomVariantCharacteristicEntity> Get(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        return await connection.QueryBuilder($@"
+            select Id, RoomVariantId, RoomCharacteristicId, Price
+            from RoomVariantCharacteristics
+            where Id = {id}
+        ").QuerySingleOrDefaultAsync<RoomVariantCharacteristicEntity>();
     }
 
-    public Task<RoomVariantCharacteristicEntity> Get(Guid id)
+    public override async Task Update(RoomVariantCharacteristicEntity entity)
     {
-        throw new NotImplementedException();
-    }
+        using var connection = GetConnection();
 
-    public Task Update(RoomVariantCharacteristicEntity entity)
-    {
-        throw new NotImplementedException();
+        await connection.QueryBuilder($@"
+            update RoomVariantCharacteristics
+            set Price = {entity.Price}
+            where Id = {entity.Id}
+        ").ExecuteAsync();
     }
 }
