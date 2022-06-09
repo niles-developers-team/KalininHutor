@@ -29,6 +29,5 @@ public class RoomVariantBedTypeEntity
 
 public class RoomVariantBedTypeSearchOptions
 {
-    public Guid? Id { get; set; }
     public Guid? RoomVariantId { get; set; }
 }
