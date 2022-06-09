@@ -19,8 +19,7 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomChara
 
     public async Task<Unit> Handle(UpdateRoomCharacteristicRequest request, CancellationToken cancellationToken)
     {
-        var RoomCharacteristics = await _repository.Get(new RoomCharacteristicSearchOptions { Id = request.Id });
-        var entity = _mapper.Map<RoomCharacteristic>(RoomCharacteristics.SingleOrDefault());
+        var entity = _mapper.Map<RoomCharacteristic>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.Type);
         await _repository.Update(_mapper.Map<RoomCharacteristicEntity>(entity));
         return Unit.Value;

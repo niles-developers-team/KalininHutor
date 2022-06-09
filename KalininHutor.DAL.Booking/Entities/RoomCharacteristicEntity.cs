@@ -15,6 +15,7 @@ public class RoomCharacteristicEntity
 
 public class RoomCharacteristicSearchOptions
 {
-    public Guid? Id { get; set; }
     public string? SearchText { get; set; }
+    ///<summary> Тип (Зона) харакетистики </summary>
+    public int? Type { get; protected set; }
 }

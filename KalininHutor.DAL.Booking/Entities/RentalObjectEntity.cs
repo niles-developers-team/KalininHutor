@@ -18,21 +18,10 @@ public class RentalObjectEntity
 
 public class RentalObjectSearchOptions
 {
-    private TimeSpan? _checkinTimeSpan;
-    private TimeSpan? _checkoutTimeSpan;
-
     public Guid? LandlordId { get; set; }
     public string? SearchText { get; set; }
-    internal TimeSpan? CheckinTimeSpan { get => _checkinTimeSpan; private set => _checkinTimeSpan = value; }
-    internal TimeSpan? CheckoutTimeSpan { get => _checkoutTimeSpan; private set => _checkoutTimeSpan = value; }
-    public TimeOnly? CheckinTime
-    {
-        get => _checkinTimeSpan.HasValue ? TimeOnly.FromTimeSpan(_checkinTimeSpan.Value) : null;
-        protected set => _checkinTimeSpan = value?.ToTimeSpan();
-    }
-    public TimeOnly? CheckoutTime
-    {
-        get => _checkoutTimeSpan.HasValue ? TimeOnly.FromTimeSpan(_checkoutTimeSpan.Value) : null;
-        protected set => _checkoutTimeSpan = value?.ToTimeSpan();
-    }
+    internal TimeSpan? CheckinTimeSpan { get => CheckinTime.HasValue ? CheckinTime.Value.ToTimeSpan() : null; }
+    internal TimeSpan? CheckoutTimeSpan { get => CheckoutTime.HasValue ? CheckoutTime.Value.ToTimeSpan() : null; }
+    public TimeOnly? CheckinTime { get; protected set; }
+    public TimeOnly? CheckoutTime { get; protected set; }
 }
