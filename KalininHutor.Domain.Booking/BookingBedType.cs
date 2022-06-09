@@ -1,5 +1,3 @@
-using KalininHutor.Domain.Booking.Enums;
-
 namespace KalininHutor.Domain.Booking;
 
 public class BookingBedType : IEntity<Guid>

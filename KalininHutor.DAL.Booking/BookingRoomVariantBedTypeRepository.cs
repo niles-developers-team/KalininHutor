@@ -1,41 +1,70 @@
+using DapperQueryBuilder;
 using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;
 
-public class BookingRoomVariantBedTypeRepository : IRepository<BookingRoomVariantBedTypeEntity, BookingRoomVariantBedTypeSearchOptions>
+public class BookingRoomVariantBedTypeRepository : BaseRepository<BookingRoomVariantBedTypeEntity, BookingRoomVariantBedTypeSearchOptions>
 {
-    private readonly ILogger<BookingRoomVariantBedTypeRepository> _logger;
-    private readonly string _connectionString;
+    public BookingRoomVariantBedTypeRepository(string connectionString, ILogger<BookingRoomVariantBedTypeRepository> logger) : base(connectionString, logger) { }
 
-    public BookingRoomVariantBedTypeRepository(string connectionString, ILogger<BookingRoomVariantBedTypeRepository> logger)
+    public override async Task Create(BookingRoomVariantBedTypeEntity entity)
     {
-        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"
+            insert into BookingRoomVariantBedTypes (Id, BookingRoomVariantId, BedTypeId, Count)
+            values (
+                {entity.Id},
+                {entity.BookingRoomVariantId},
+                {entity.BedTypeId},
+                {entity.Count}
+            )
+        ").ExecuteAsync();
     }
 
-    public Task Create(BookingRoomVariantBedTypeEntity entity)
+    public override async Task Delete(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"delete from BookingRoomVariantBedTypes where Id = {id}").ExecuteAsync();
     }
 
-    public Task Delete(Guid id)
+    public override async Task<IEnumerable<BookingRoomVariantBedTypeEntity>> Get(BookingRoomVariantBedTypeSearchOptions options)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        var query = connection.QueryBuilder($@"
+            select Id, BookingRoomVariantId, BedTypeId, Count
+            from BookingRoomVariantBedTypes b
+            /*where*/
+        ");
+
+        if (options.BookingRoomVariantId.HasValue)
+            query.Where($"BookingRoomVariantId = {options.BookingRoomVariantId}");
+
+        return await query.QueryAsync<BookingRoomVariantBedTypeEntity>();
     }
 
-    public Task<IEnumerable<BookingRoomVariantBedTypeEntity>> Get(BookingRoomVariantBedTypeSearchOptions options)
+    public override async Task<BookingRoomVariantBedTypeEntity> Get(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        return await connection.QueryBuilder($@"
+            select Id, BookingRoomVariantId, BedTypeId, Count
+            from BookingRoomVariantBedTypes b
+            where Id = {id}
+        ").QuerySingleOrDefaultAsync<BookingRoomVariantBedTypeEntity>();
     }
 
-    public Task<BookingRoomVariantBedTypeEntity> Get(Guid id)
+    public override async Task Update(BookingRoomVariantBedTypeEntity entity)
     {
-        throw new NotImplementedException();
-    }
+        using var connection = GetConnection();
 
-    public Task Update(BookingRoomVariantBedTypeEntity entity)
-    {
-        throw new NotImplementedException();
+        await connection.QueryBuilder($@"
+            update BookingRoomVariantBedTypes
+            set Count = {entity.Count}
+            where Id = {entity.Id}
+        ").ExecuteAsync();
     }
 }
