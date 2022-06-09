@@ -1,41 +1,64 @@
+using DapperQueryBuilder;
 using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;
 
-public class BookingRoomVariantRepository : IRepository<BookingRoomVariantEntity, BookingRoomVariantSearchOptions>
+public class BookingRoomVariantRepository : BaseRepository<BookingRoomVariantEntity, BookingRoomVariantSearchOptions>
 {
-    private readonly ILogger<BookingRoomVariantRepository> _logger;
-    private readonly string _connectionString;
+    public BookingRoomVariantRepository(string connectionString, ILogger<BookingRoomVariantRepository> logger) : base(connectionString, logger) { }
 
-    public BookingRoomVariantRepository(string connectionString, ILogger<BookingRoomVariantRepository> logger)
+    public override async Task Create(BookingRoomVariantEntity entity)
     {
-        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"
+            insert into BookingRoomVariants (Id, RoomVariantId, BookingId, Amount)
+            values (
+                {entity.Id},
+                {entity.RoomVariantId},
+                {entity.BookingId},
+                {entity.Amount}
+            )
+        ").ExecuteAsync();
     }
 
-    public Task Create(BookingRoomVariantEntity entity)
+    public override async Task Delete(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        await connection.QueryBuilder($@"delete from BookingRoomVariants where Id = {id}").ExecuteAsync();
     }
 
-    public Task Delete(Guid id)
+    public override async Task<IEnumerable<BookingRoomVariantEntity>> Get(BookingRoomVariantSearchOptions options)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        var query = connection.QueryBuilder($@"
+            select Id, RoomVariantId, BookingId, Amount
+            from BookingRoomVariants
+            /*where*/
+        ");
+
+        if (options.BookingId.HasValue)
+            query.Where($"BookingId = {options.BookingId}");
+
+        return await query.QueryAsync<BookingRoomVariantEntity>();
     }
 
-    public Task<IEnumerable<BookingRoomVariantEntity>> Get(BookingRoomVariantSearchOptions options)
+    public override async Task<BookingRoomVariantEntity> Get(Guid id)
     {
-        throw new NotImplementedException();
+        using var connection = GetConnection();
+
+        return await connection.QueryBuilder($@"
+            select Id, RoomVariantId, BookingId, Amount
+            from BookingRoomVariants
+            where Id = {id}
+        ").QuerySingleOrDefaultAsync<BookingRoomVariantEntity>();
     }
 
-    public Task<BookingRoomVariantEntity> Get(Guid id)
+    public override Task Update(BookingRoomVariantEntity entity)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task Update(BookingRoomVariantEntity entity)
-    {
-        throw new NotImplementedException();
+        throw new NotSupportedException("Изменение выбранного варианта номера не поддерживается.");
     }
 }
