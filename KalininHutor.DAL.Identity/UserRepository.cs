@@ -1,25 +1,14 @@
-using System.Data;
 using DapperQueryBuilder;
 using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 
 namespace KalininHutor.DAL.Identity;
 
-public class UserRepository : IRepository<UserEntity, UserSearchOptions>
+public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
 {
-    private readonly ILogger<UserRepository> _logger;
-    private readonly string _connectionString;
+    public UserRepository(string connectionString, ILogger<UserRepository> logger) : base(connectionString, logger) { }
 
-    private IDbConnection GetConnection() => new NpgsqlConnection(_connectionString);
-
-    public UserRepository(string connectionString, ILogger<UserRepository> logger)
-    {
-        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
-    public async Task Create(UserEntity entity)
+    public override async Task Create(UserEntity entity)
     {
         using var connection = GetConnection();
 
@@ -37,14 +26,14 @@ public class UserRepository : IRepository<UserEntity, UserSearchOptions>
         ").ExecuteAsync();
     }
 
-    public async Task Delete(Guid id)
+    public override async Task Delete(Guid id)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from Users where Id = {id}").ExecuteAsync();        
+        await connection.QueryBuilder($@"delete from Users where Id = {id}").ExecuteAsync();
     }
 
-    public async Task<IEnumerable<UserEntity>> Get(UserSearchOptions options)
+    public override async Task<IEnumerable<UserEntity>> Get(UserSearchOptions options)
     {
         using var connection = GetConnection();
 
@@ -60,8 +49,8 @@ public class UserRepository : IRepository<UserEntity, UserSearchOptions>
             /*where*/
         ");
 
-        if(!string.IsNullOrEmpty(options.SearchText))
-        query.Where($@"PhoneNumber like '%{options.SearchText}%' or 
+        if (!string.IsNullOrEmpty(options.SearchText))
+            query.Where($@"PhoneNumber like '%{options.SearchText}%' or 
                     Name like '%{options.SearchText}%' or
                     Lastname like '%{options.SearchText}%' or
                     Email like '%{options.SearchText}%'");
@@ -69,7 +58,7 @@ public class UserRepository : IRepository<UserEntity, UserSearchOptions>
         return await query.QueryAsync<UserEntity>();
     }
 
-    public async Task<UserEntity> Get(Guid id)
+    public override async Task<UserEntity> Get(Guid id)
     {
         using var connection = GetConnection();
 
@@ -103,7 +92,7 @@ public class UserRepository : IRepository<UserEntity, UserSearchOptions>
         ").QuerySingleAsync<UserEntity>();
     }
 
-    public async Task Update(UserEntity entity)
+    public override async Task Update(UserEntity entity)
     {
         using var connection = GetConnection();
         await connection.QueryBuilder($@"
