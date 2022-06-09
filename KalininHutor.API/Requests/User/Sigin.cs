@@ -7,20 +7,20 @@ using KalininHutor.API.Helpers;
 
 namespace KalininHutor.API.Requests;
 
-internal class SigninHandler : IRequestHandler<SigninRequest, string>
+internal class UserSigninHandler : IRequestHandler<UserSigninRequest, string>
 {
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly JWTHelper _jwtHelper;
 
-    public SigninHandler(UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
+    public UserSigninHandler(UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _jwtHelper = jwtHelper ?? throw new ArgumentNullException(nameof(jwtHelper));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(SigninRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(UserSigninRequest request, CancellationToken cancellationToken)
     {
         var user = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
 
@@ -35,13 +35,13 @@ internal class SigninHandler : IRequestHandler<SigninRequest, string>
 }
 
 ///<summary> Запрос на авторизацию пользователя </summary>
-public class SigninRequest : IRequest<string>
+public class UserSigninRequest : IRequest<string>
 {
     ///<summary> Номер телефона пользователя </summary>
     [Required]
-    public string PhoneNumber { get; protected set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
 
     ///<summary> Пароль пользователя </summary>
     [Required]
-    public string Password { get; protected set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

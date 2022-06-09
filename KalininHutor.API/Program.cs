@@ -7,8 +7,9 @@ using TinyHelpers.Json.Serialization;
 using KalininHutor.API.Mappers;
 using KalininHutor.DAL.Booking;
 using KalininHutor.DAL.Migrations;
-using Microsoft.IdentityModel.Tokens;
 using KalininHutor.API.Helpers;
+using KalininHutor.DAL.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
 
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => { options.RequireHttpsMetadata = false; });
 builder.Services.AddAuthorization();
 builder.Services.AddCors();
@@ -45,10 +46,50 @@ builder.Logging.ClearProviders().AddFluentMigratorConsole().AddConsole().AddDebu
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddScoped<JWTHelper>();
+builder.Services.AddScoped<BookingRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<BookingRepository>>();
+    return new BookingRepository(connectionString, logger);
+});
+builder.Services.AddScoped<BookingRoomVariantRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<BookingRoomVariantRepository>>();
+    return new BookingRoomVariantRepository(connectionString, logger);
+});
+builder.Services.AddScoped<BookingRoomVariantBedTypeRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<BookingRoomVariantBedTypeRepository>>();
+    return new BookingRoomVariantBedTypeRepository(connectionString, logger);
+});
 builder.Services.AddScoped<RentalObjectRepository>(provider =>
 {
     var logger = provider.GetRequiredService<ILogger<RentalObjectRepository>>();
     return new RentalObjectRepository(connectionString, logger);
+});
+builder.Services.AddScoped<RoomCharacteristicRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<RoomCharacteristicRepository>>();
+    return new RoomCharacteristicRepository(connectionString, logger);
+});
+builder.Services.AddScoped<RoomVariantBedTypeRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<RoomVariantBedTypeRepository>>();
+    return new RoomVariantBedTypeRepository(connectionString, logger);
+});
+builder.Services.AddScoped<RoomVariantCharacteristicRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<RoomVariantCharacteristicRepository>>();
+    return new RoomVariantCharacteristicRepository(connectionString, logger);
+});
+builder.Services.AddScoped<RoomVariantRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<RoomVariantRepository>>();
+    return new RoomVariantRepository(connectionString, logger);
+});
+builder.Services.AddScoped<UserRepository>(provider =>
+{
+    var logger = provider.GetRequiredService<ILogger<UserRepository>>();
+    return new UserRepository(connectionString, logger);
 });
 
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
@@ -73,13 +114,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(configure => configure.SetIsOriginAllowed(origin => true)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
-app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

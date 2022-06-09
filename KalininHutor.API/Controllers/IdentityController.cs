@@ -19,12 +19,12 @@ public class UserController : ControllerBase
     }
 
     ///<summary> Метод авторизации </summary>
-    [HttpPost()]
+    [HttpPost("sign-in")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signin(SigninRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signin([FromBody]UserSigninRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод регистрации </summary>
-    [HttpPost()]
+    [HttpPost("sign-up")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signup(SignupRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signup([FromBody]UserSignupRequest request) => Ok(await _sender.Send(request));
 }
