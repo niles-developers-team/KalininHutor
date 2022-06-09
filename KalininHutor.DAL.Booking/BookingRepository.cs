@@ -98,8 +98,6 @@ public class BookingRepository : BaseRepository<BookingEntity, BookingSearchOpti
         await connection.QueryBuilder($@"
             update Bookings
             set 
-                TenantId = {entity.TenantId},
-                RentalObjectId = {entity.RentalObjectId},
                 AdultCount = {entity.AdultCount},
                 ChildCount = {entity.ChildCount},
                 CheckinDate = {entity.CheckinDateTime},
