@@ -3,6 +3,7 @@ using AutoMapper;
 
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
+using System.ComponentModel.DataAnnotations;
 
 namespace KalininHutor.API.Requests;
 
@@ -46,8 +47,10 @@ public class CreateBookingRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор арендатора </summary>
     ///<remarks> Не изменяется, нужен только для поиска </remarks>
+    [Required]
     public Guid TenantId { get; protected set; }
     ///<summary> Идентификатор объекта аренды </summary>
+    [Required]
     public Guid RentalObjectId { get; protected set; }
     ///<summary> Количество взрослых </summary>
     public int AdultCount { get; protected set; }

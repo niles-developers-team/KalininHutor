@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using KalininHutor.DAL.Booking;
 using MediatR;
@@ -28,13 +29,14 @@ public class GetBookingsQuery : IRequest<IEnumerable<GetBookingsResponse>>
     ///<summary> Идентификатор брони </summary>
     public Guid? Id { get; set; }
     ///<summary> Идентификатор арендатора </summary>
+    [Required]
     public Guid? TenantId { get; set; }
     ///<summary> Поисковая строка </summary>
     public string? SearchText { get; set; }
     ///<summary> Дата заезда </summary>
-    public DateOnly CheckinDate { get; set; }
+    public DateOnly? CheckinDate { get; set; }
     ///<summary> Дата отъезда </summary>
-    public DateOnly CheckoutDate { get; set; }
+    public DateOnly? CheckoutDate { get; set; }
 }
 
 ///<summary> Модель чтения брони </summary>
