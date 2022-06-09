@@ -1,4 +1,4 @@
-namespace KalininHutor.DAL.Booking;
+namespace KalininHutor.DAL.Common;
 
 public interface IRepository<TResult, TSearchOptions>
 {

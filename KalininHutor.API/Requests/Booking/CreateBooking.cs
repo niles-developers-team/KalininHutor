@@ -59,5 +59,5 @@ public class CreateBookingRequest : IRequest<Guid>
     public DateOnly CheckoutDate { get; protected set; }
 
     ///<summary> Коллекция бронируемых вариантов номеров </summary>
-    public IReadOnlyList<CreateBookingRoomVariantRequest> BookingRooms { get; protected set; }
+    public IReadOnlyList<CreateBookingRoomVariantRequest> BookingRooms { get; protected set; } = new List<CreateBookingRoomVariantRequest>();
 }

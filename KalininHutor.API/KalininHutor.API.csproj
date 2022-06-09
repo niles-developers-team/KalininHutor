@@ -2,9 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KalininHutor.Domain.Booking\KalininHutor.Domain.Booking.csproj" />
-    <ProjectReference Include="..\KailininHutor.Domain.Common\KalininHutor.Domain.Common.csproj" />
+    <ProjectReference Include="..\KalininHutor.Domain.Common\KalininHutor.Domain.Common.csproj" />
     <ProjectReference Include="..\KalininHutor.DAL.Booking\KalininHutor.DAL.Booking.csproj" />
     <ProjectReference Include="..\KalininHutor.DAL.Common\KalininHutor.DAL.Common.csproj" />
+    <ProjectReference Include="..\KalininHutor.DAL.Identity\KalininHutor.DAL.Identity.csproj" />
+    <ProjectReference Include="..\KalininHutor.Domain.Identity\KalininHutor.Domain.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,6 +16,7 @@
     <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
     <PackageReference Include="TinyHelpers" Version="1.5.24" />

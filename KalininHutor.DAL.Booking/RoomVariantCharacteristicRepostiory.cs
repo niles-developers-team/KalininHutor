@@ -1,3 +1,4 @@
+using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;

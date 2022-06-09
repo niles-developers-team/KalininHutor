@@ -1,4 +1,4 @@
-﻿namespace KailininHutor.Domain.Marketplace;
+﻿namespace KalininHutor.Domain.Marketplace;
 public class Class1
 {
 

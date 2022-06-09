@@ -1,4 +1,5 @@
 using DapperQueryBuilder;
+using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 

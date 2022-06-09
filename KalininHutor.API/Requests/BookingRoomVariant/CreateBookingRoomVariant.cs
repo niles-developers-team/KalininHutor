@@ -36,5 +36,6 @@ public class CreateBookingRoomVariantRequest : IRequest<Guid>
     ///<summary> </summary>
     public decimal Amount { get; protected set; }
 
-    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; protected set; }
+    ///<summary> Выбранные типы кроватей </summary>
+    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; protected set; } = new List<CreateBookingRoomVariantBedTypeRequest>();
 }
