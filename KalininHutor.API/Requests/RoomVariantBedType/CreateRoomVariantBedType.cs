@@ -31,13 +31,13 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<CreateRoomVaria
 public class CreateRoomVariantBedTypeRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор номера </summary>
-    public Guid RoomVariantId { get; protected set; }
+    public Guid RoomVariantId { get; set; }
     ///<summary> Тип кровати </summary>
-    public BedTypes BedType { get; protected set; }
+    public BedTypes BedType { get; set; }
     ///<summary> Ширина кровати </summary>
-    public double? Width { get; protected set; }
+    public double? Width { get; set; }
     ///<summary> Длина кровати </summary>
-    public double? Length { get; protected set; }
+    public double? Length { get; set; }
     ///<summary> Максимально в комнате </summary>
-    public int MaxInRoom { get; protected set; }
+    public int MaxInRoom { get; set; }
 }

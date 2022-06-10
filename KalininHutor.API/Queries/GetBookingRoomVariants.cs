@@ -26,10 +26,10 @@ internal class GetBookingRoomVariantsHandler : IRequestHandler<GetBookingRoomVar
 public class GetBookingRoomVariantsQuery : IRequest<IEnumerable<GetBookingRoomVariantsResponse>>
 {
     ///<summary> Идентификатор выбранного номера </summary>
-    public Guid? Id { get; protected set; }
+    public Guid? Id { get; set; }
 
     ///<summary> Идентификатор брони </summary>
-    public Guid? BookingId { get; protected set; }
+    public Guid? BookingId { get; set; }
 }
 
 ///<summary> Модель чтения брони </summary>

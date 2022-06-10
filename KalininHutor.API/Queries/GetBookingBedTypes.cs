@@ -27,9 +27,9 @@ internal class GetBookingBedTypesHandler : IRequestHandler<GetBookingBedTypesQue
 public class GetBookingBedTypesQuery : IRequest<IEnumerable<GetBookingBedTypesResponse>>
 {
     ///<summary> Идентификатор выбранной кровати в номер  </summary>
-    public Guid? Id { get; protected set; }
+    public Guid? Id { get; set; }
     ///<summary> Идентификатор выбранного номера </summary>
-    public Guid? BookingRoomVariantId { get; protected set; }
+    public Guid? BookingRoomVariantId { get; set; }
 }
 
 ///<summary> Модель чтения забронированных вариантов кроватей в номерах </summary>

@@ -31,9 +31,9 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<CreateRo
 public class CreateRoomVariantCharacteristicRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор номера </summary>
-    public Guid RoomVariantId { get; protected set; }
+    public Guid RoomVariantId { get; set; }
     ///<summary> Идентификатор характеристики </summary>
-    public Guid RoomCharacteristicId { get; protected set; }
+    public Guid RoomCharacteristicId { get; set; }
     ///<summary> Цена за услугу или удобство </summary>
-    public decimal? Price { get; protected set; }
+    public decimal? Price { get; set; }
 }

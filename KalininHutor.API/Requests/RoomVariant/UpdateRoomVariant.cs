@@ -34,27 +34,27 @@ internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantReque
 public class UpdateRoomVariantRequest : IRequest<Unit>
 {
     ///<summary> Идентификатор варинта номера объекта аренды </summary>
-    public Guid Id { get; protected set; }
+    public Guid Id { get; set; }
     ///<summary> Название </summary>
-    public string Name { get; protected set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     ///<summary> Описание </summary>
-    public string Description { get; protected set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     ///<summary> Цена за взрослого </summary>
-    public decimal Price { get; protected set; }
+    public decimal Price { get; set; }
     ///<summary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; protected set; }
+    public decimal PriceForChild { get; set; }
     ///<summary> Ширина варианта номера </summary>
-    public double Width { get; protected set; }
+    public double Width { get; set; }
     ///<summary> Длина варианта номера </summary>
-    public double Length { get; protected set; }
+    public double Length { get; set; }
     ///<summary> Максимально человек в номере </summary>
-    public int MaxPersonsCount { get; protected set; }
+    public int MaxPersonsCount { get; set; }
     ///<summary> Период бесплатной отмены </summary>
-    public int? FreeCancellationPeriod { get; protected set; }
+    public int? FreeCancellationPeriod { get; set; }
     ///<summary> Вариант оплаты </summary>
-    public PaymentOptions PaymentOption { get; protected set; }
+    public PaymentOptions PaymentOption { get; set; }
     ///<summary> Всего номеров </summary>
-    public int Count { get; protected set; }
+    public int Count { get; set; }
     ///<summary> Всего номеров свободно </summary>
-    public int FreeCount { get; protected set; }
+    public int FreeCount { get; set; }
 }

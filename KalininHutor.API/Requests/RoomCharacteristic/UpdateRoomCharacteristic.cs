@@ -30,7 +30,7 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomChara
 public class UpdateRoomCharacteristicRequest : IRequest<Unit>
 {
     ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; protected set; }
+    public Guid Id { get; set; }
     ///<summary> Название характеристики номера </summary>
     public string Name { get; set; } = string.Empty;
     ///<summary> Описание характеристики номера </summary>

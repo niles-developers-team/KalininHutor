@@ -30,7 +30,7 @@ public class UpdateRentalObjectRequest : IRequest<Unit>
 {
     ///<summary> Идентификатор объекта аренды </summary>
     ///<remarks> Не изменяется, нужен только для поиска </remarks>
-    public Guid Id { get; protected set; }
+    public Guid Id { get; set; }
     
     ///<summary> Название объекта аренды </summary>
     public string Name { get; set; } = string.Empty;

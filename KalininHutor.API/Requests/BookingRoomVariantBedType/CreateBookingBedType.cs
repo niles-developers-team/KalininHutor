@@ -31,9 +31,9 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<CreateBo
 public class CreateBookingRoomVariantBedTypeRequest : IRequest<Guid>
 {
     ///<summary> </summary>
-    public Guid RoomVariantId { get; protected set; }
+    public Guid RoomVariantId { get; set; }
     ///<summary> </summary>
     public Guid BedTypeId { get; set; }
     ///<summary> </summary>
-    public int Count { get; protected set; }
+    public int Count { get; set; }
 }

@@ -30,12 +30,12 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRo
 public class CreateBookingRoomVariantRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор брони </summary>
-    public Guid BookingId { get; protected set; }
+    public Guid BookingId { get; set; }
     ///<summary> Идентификатор варианта номера </summary>
-    public Guid RoomVariantId { get; protected set; }
+    public Guid RoomVariantId { get; set; }
     ///<summary> </summary>
-    public decimal Amount { get; protected set; }
+    public decimal Amount { get; set; }
 
     ///<summary> Выбранные типы кроватей </summary>
-    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; protected set; } = new List<CreateBookingRoomVariantBedTypeRequest>();
+    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; set; } = new List<CreateBookingRoomVariantBedTypeRequest>();
 }
