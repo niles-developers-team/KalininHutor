@@ -19,21 +19,20 @@ public class RoomVariantEntity
     public double Length { get; protected set; }
     ///<symmary> Максимально человек в номере </summary>
     public int MaxPersonsCount { get; protected set; }
-    ///<symmary> Возможна ли бесплатная отмена? </summary>
-    public bool IsFreeCancellationEnabled { get; protected set; }
     ///<symmary> Период бесплатной отмены </summary>
     public int? FreeCancellationPeriod { get; protected set; }
     ///<symmary> Вариант оплаты </summary>
     public int PaymentOption { get; protected set; }
     ///<symmary> Всего номеров </summary>
-    public int Amount { get; protected set; }
+    public int Count { get; protected set; }
     ///<symmary> Всего номеров свободно </summary>
-    public int FreeAmount { get; protected set; }
+    public int FreeCount { get; protected set; }
+
+    public IReadOnlyList<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
 }
 
 public class RoomVariantSearchOptions
 {
-    public Guid? Id { get; set; }
     public Guid? RentalObjectId { get; set; }
     public bool IncludeBedTypes { get; set; }
 }

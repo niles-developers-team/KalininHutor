@@ -19,8 +19,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantReque
 
     public async Task<Unit> Handle(UpdateRoomVariantRequest request, CancellationToken cancellationToken)
     {
-        var RoomVariants = await _repository.Get(new RoomVariantSearchOptions { Id = request.Id });
-        var entity = _mapper.Map<RoomVariant>(RoomVariants.SingleOrDefault());
+        var entity = _mapper.Map<RoomVariant>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
         entity.SetPriceAndLimit(request.Price, request.MaxPersonsCount);
         entity.SetSize(request.Width, request.Length);

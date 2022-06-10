@@ -19,10 +19,9 @@ public class CreateRoomVariant : ForwardOnlyMigration
             .WithColumn("Width").AsDouble().NotNullable().WithColumnDescription("Длина варианта номера")
             .WithColumn("Length").AsDouble().NotNullable().WithColumnDescription("Ширина варианта номера")
             .WithColumn("MaxPersonsCount").AsInt32().NotNullable().WithColumnDescription("Максимально человек в номере")
-            .WithColumn("IsFreeCancellationEnabled").AsBoolean().NotNullable().WithColumnDescription("Возможна ли бесплатная отмена?")
             .WithColumn("FreeCancellationPeriod").AsInt32().Nullable().WithColumnDescription("Период бесплатной отмены")
             .WithColumn("PaymentOption").AsInt32().NotNullable().WithColumnDescription("Вариант оплаты")
-            .WithColumn("Amount").AsInt32().NotNullable().WithColumnDescription("Всего номеров")            
-            .WithColumn("FreeAmount").AsInt32().NotNullable().WithColumnDescription("Всего номеров свободно");
+            .WithColumn("Count").AsInt32().NotNullable().WithColumnDescription("Всего номеров")            
+            .WithColumn("FreeCount").AsInt32().NotNullable().WithColumnDescription("Всего номеров свободно");
     }
 }

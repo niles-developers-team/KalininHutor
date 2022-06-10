@@ -15,7 +15,6 @@ public class RoomVariant : IEntity<Guid>
     public double Width { get; protected set; }
     public double Length { get; protected set; }
     public int MaxPersonsCount { get; protected set; }
-    public bool IsFreeCancellationEnabled { get; protected set; }
     public int? FreeCancellationPeriod { get; protected set; }
     public PaymentOptions PaymentOption { get; protected set; }
     public int Count { get; protected set; }
@@ -98,7 +97,6 @@ public class RoomVariant : IEntity<Guid>
         if (freeCancellationPeriod.HasValue && freeCancellationPeriod.Value < 0)
             throw new ArgumentOutOfRangeException("Период бесплатной отмены не может быть отрицательным");
 
-        IsFreeCancellationEnabled = freeCancellationPeriod.HasValue;
         FreeCancellationPeriod = freeCancellationPeriod;
     }
 
