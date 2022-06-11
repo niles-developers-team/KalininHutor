@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteRoomVariantHandler : IRequestHandler<DeleteRoomVariantRequest, Unit>
+internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariant.DeleteRequest, Unit>
 {
     private readonly RoomVariantRepository _repository;
 
@@ -12,7 +12,7 @@ internal class DeleteRoomVariantHandler : IRequestHandler<DeleteRoomVariantReque
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<Unit> Handle(DeleteRoomVariantRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariant.DeleteRequest request, CancellationToken cancellationToken)
     {
         await _repository.Delete(request.Id);
 
@@ -20,9 +20,12 @@ internal class DeleteRoomVariantHandler : IRequestHandler<DeleteRoomVariantReque
     }
 }
 
-///<summary> Запрос удаления варинта номера </summary>
-public class DeleteRoomVariantRequest : IRequest<Unit>
+public partial class RoomVariant
 {
-    ///<summary> Идентификатор варинта номера</summary>
-    public Guid Id { get; set; }
+    ///<summary> Запрос удаления варинта номера </summary>
+    public class DeleteRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор варинта номера</summary>
+        public Guid Id { get; set; }
+    }
 }

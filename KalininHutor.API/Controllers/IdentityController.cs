@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KalininHutor.API.Controllers;
 
+using UserRequests = API.Requests.User;
+
 ///<summary> Контроллер пользователей </summary>
 [Route("api/[controller]")]
 [ApiController]
@@ -21,10 +23,10 @@ public class UserController : ControllerBase
     ///<summary> Метод авторизации </summary>
     [HttpPost("sign-in")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signin([FromBody]UserSigninRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signin([FromBody]UserRequests.SigninRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод регистрации </summary>
     [HttpPost("sign-up")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signup([FromBody]UserSignupRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signup([FromBody]UserRequests.SignupRequest request) => Ok(await _sender.Send(request));
 }

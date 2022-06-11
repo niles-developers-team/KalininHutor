@@ -1,12 +1,13 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantRequest, Unit>
+using DomainRoomVariant = Domain.Booking.RoomVariant;
+
+internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequest, Unit>
 {
     private readonly RoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -17,9 +18,9 @@ internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantReque
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRoomVariantRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariant.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<RoomVariant>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<DomainRoomVariant>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
         entity.SetPriceAndLimit(request.Price, request.MaxPersonsCount);
         entity.SetSize(request.Width, request.Length);
@@ -30,31 +31,34 @@ internal class UpdateRoomVariantHandler : IRequestHandler<UpdateRoomVariantReque
     }
 }
 
-///<summary> Запрос обновления варинта номера </summary>
-public class UpdateRoomVariantRequest : IRequest<Unit>
+public partial class RoomVariant
 {
-    ///<summary> Идентификатор варинта номера объекта аренды </summary>
-    public Guid Id { get; set; }
-    ///<summary> Название </summary>
-    public string Name { get; set; } = string.Empty;
-    ///<summary> Описание </summary>
-    public string Description { get; set; } = string.Empty;
-    ///<summary> Цена за взрослого </summary>
-    public decimal Price { get; set; }
-    ///<summary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; set; }
-    ///<summary> Ширина варианта номера </summary>
-    public double Width { get; set; }
-    ///<summary> Длина варианта номера </summary>
-    public double Length { get; set; }
-    ///<summary> Максимально человек в номере </summary>
-    public int MaxPersonsCount { get; set; }
-    ///<summary> Период бесплатной отмены </summary>
-    public int? FreeCancellationPeriod { get; set; }
-    ///<summary> Вариант оплаты </summary>
-    public PaymentOptions PaymentOption { get; set; }
-    ///<summary> Всего номеров </summary>
-    public int Count { get; set; }
-    ///<summary> Всего номеров свободно </summary>
-    public int FreeCount { get; set; }
+    ///<summary> Запрос обновления варинта номера </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор варинта номера объекта аренды </summary>
+        public Guid Id { get; set; }
+        ///<summary> Название </summary>
+        public string Name { get; set; } = string.Empty;
+        ///<summary> Описание </summary>
+        public string Description { get; set; } = string.Empty;
+        ///<summary> Цена за взрослого </summary>
+        public decimal Price { get; set; }
+        ///<summary> Цена за ребёнка </summary>
+        public decimal PriceForChild { get; set; }
+        ///<summary> Ширина варианта номера </summary>
+        public double Width { get; set; }
+        ///<summary> Длина варианта номера </summary>
+        public double Length { get; set; }
+        ///<summary> Максимально человек в номере </summary>
+        public int MaxPersonsCount { get; set; }
+        ///<summary> Период бесплатной отмены </summary>
+        public int? FreeCancellationPeriod { get; set; }
+        ///<summary> Вариант оплаты </summary>
+        public PaymentOptions PaymentOption { get; set; }
+        ///<summary> Всего номеров </summary>
+        public int Count { get; set; }
+        ///<summary> Всего номеров свободно </summary>
+        public int FreeCount { get; set; }
+    }
 }

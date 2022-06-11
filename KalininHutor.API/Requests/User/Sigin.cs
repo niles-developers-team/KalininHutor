@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using KalininHutor.Domain.Identity;
 using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
 
 namespace KalininHutor.API.Requests;
 
-internal class UserSigninHandler : IRequestHandler<UserSigninRequest, string>
+using DomainUser = Domain.Identity.User;
+
+internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
 {
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -20,9 +21,9 @@ internal class UserSigninHandler : IRequestHandler<UserSigninRequest, string>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(UserSigninRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(User.SigninRequest request, CancellationToken cancellationToken)
     {
-        var user = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
+        var user = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
 
         if (user == null)
             throw new ApplicationException("Не найден пользователь с таким номером телефона.");
@@ -34,14 +35,17 @@ internal class UserSigninHandler : IRequestHandler<UserSigninRequest, string>
     }
 }
 
-///<summary> Запрос на авторизацию пользователя </summary>
-public class UserSigninRequest : IRequest<string>
+public partial class User
 {
-    ///<summary> Номер телефона пользователя </summary>
-    [Required]
-    public string PhoneNumber { get; set; } = string.Empty;
+    ///<summary> Запрос на авторизацию пользователя </summary>
+    public class SigninRequest : IRequest<string>
+    {
+        ///<summary> Номер телефона пользователя </summary>
+        [Required]
+        public string PhoneNumber { get; set; } = string.Empty;
 
-    ///<summary> Пароль пользователя </summary>
-    [Required]
-    public string Password { get; set; } = string.Empty;
+        ///<summary> Пароль пользователя </summary>
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
 }

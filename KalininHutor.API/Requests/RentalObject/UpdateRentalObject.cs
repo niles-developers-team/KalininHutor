@@ -4,7 +4,9 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectRequest, Unit>
+using DomainRentalObject = Domain.Booking.RentalObject;
+
+internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRequest, Unit>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -15,9 +17,9 @@ internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReq
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRentalObjectRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RentalObject.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<Domain.Booking.RentalObject>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<DomainRentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
@@ -25,22 +27,25 @@ internal class UpdateRentalObjectHandler : IRequestHandler<UpdateRentalObjectReq
     }
 }
 
-///<summary> Запрос обновления объекта аренды </summary>
-public class UpdateRentalObjectRequest : IRequest<Unit>
+public partial class RentalObject
 {
-    ///<summary> Идентификатор объекта аренды </summary>
-    ///<remarks> Не изменяется, нужен только для поиска </remarks>
-    public Guid Id { get; set; }
-    
-    ///<summary> Название объекта аренды </summary>
-    public string Name { get; set; } = string.Empty;
-    
-    ///<summary> Идентификатор объекта аренды </summary>
-    public string Description { get; set; } = string.Empty;
-    
-    ///<summary> Идентификатор объекта аренды </summary>
-    public TimeOnly CheckinTime { get; set; }
-    
-    ///<summary> Идентификатор объекта аренды </summary>
-    public TimeOnly CheckoutTime { get; set; }
+    ///<summary> Запрос обновления объекта аренды </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор объекта аренды </summary>
+        ///<remarks> Не изменяется, нужен только для поиска </remarks>
+        public Guid Id { get; set; }
+
+        ///<summary> Название объекта аренды </summary>
+        public string Name { get; set; } = string.Empty;
+
+        ///<summary> Идентификатор объекта аренды </summary>
+        public string Description { get; set; } = string.Empty;
+
+        ///<summary> Идентификатор объекта аренды </summary>
+        public TimeOnly CheckinTime { get; set; }
+
+        ///<summary> Идентификатор объекта аренды </summary>
+        public TimeOnly CheckoutTime { get; set; }
+    }
 }
