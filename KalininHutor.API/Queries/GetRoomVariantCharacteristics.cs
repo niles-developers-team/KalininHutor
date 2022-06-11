@@ -4,7 +4,7 @@ using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<GetRoomVariantCharacteristicsQuery, IEnumerable<GetRoomVariantCharacteristicsResponse>>
+internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<RoomVariantCharacteristic.GetQuery, IEnumerable<RoomVariantCharacteristic.GetResponse>>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -15,31 +15,34 @@ internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<GetRoomVar
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<GetRoomVariantCharacteristicsResponse>> Handle(GetRoomVariantCharacteristicsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RoomVariantCharacteristic.GetResponse>> Handle(RoomVariantCharacteristic.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RoomVariantCharacteristicSearchOptions>(request));
-        return result.Select(_mapper.Map<GetRoomVariantCharacteristicsResponse>).ToList();
+        return result.Select(_mapper.Map<RoomVariantCharacteristic.GetResponse>).ToList();
     }
 }
 
-///<summary> Очередь получения характеристики варианта номера </summary>
-public class GetRoomVariantCharacteristicsQuery : IRequest<IEnumerable<GetRoomVariantCharacteristicsResponse>>
+public partial class RoomVariantCharacteristic
 {
-    ///<summary> Идентификатор характеристики номера </summary>
-    public Guid? Id { get; set; }
-    ///<summary> Идентификатор номера </summary>
-    public Guid? RoomVariantId { get; set; }
-}
+    ///<summary> Очередь получения характеристики варианта номера </summary>
+    public class GetQuery : IRequest<IEnumerable<GetResponse>>
+    {
+        ///<summary> Идентификатор характеристики номера </summary>
+        public Guid? Id { get; set; }
+        ///<summary> Идентификатор номера </summary>
+        public Guid? RoomVariantId { get; set; }
+    }
 
-///<summary> Модель чтения характеристики варианта номера </summary>
-public class GetRoomVariantCharacteristicsResponse
-{
-    ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Идентификатор номера </summary>
-    public Guid RoomVariantId { get; protected set; }
-    ///<summary> Идентификатор характеристики </summary>
-    public Guid RoomCharacteristicId { get; protected set; }
-    ///<summary> Цена за услугу или удобство </summary>
-    public decimal Price { get; protected set; }
+    ///<summary> Модель чтения характеристики варианта номера </summary>
+    public class GetResponse
+    {
+        ///<summary> Идентификатор характеристики номера </summary>
+        public Guid Id { get; protected set; }
+        ///<summary> Идентификатор номера </summary>
+        public Guid RoomVariantId { get; protected set; }
+        ///<summary> Идентификатор характеристики </summary>
+        public Guid RoomCharacteristicId { get; protected set; }
+        ///<summary> Цена за услугу или удобство </summary>
+        public decimal Price { get; protected set; }
+    }
 }

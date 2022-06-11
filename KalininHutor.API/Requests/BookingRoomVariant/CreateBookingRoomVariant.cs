@@ -2,11 +2,12 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRoomVariantRequest, Guid>
+using DomainBookingVariant = Domain.Booking.BookingRoomVariant;
+
+internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVariant.CreateRequest, Guid>
 {
     private readonly BookingRoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -17,25 +18,28 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRo
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(CreateBookingRoomVariantRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(BookingRoomVariant.CreateRequest request, CancellationToken cancellationToken)
     {
-        var bookingRoomVariant = new BookingRoomVariant(request.RoomVariantId, request.BookingId, request.Amount);
+        var bookingRoomVariant = new DomainBookingVariant(request.RoomVariantId, request.BookingId, request.Amount);
         await _repository.Create(_mapper.Map<BookingRoomVariantEntity>(bookingRoomVariant));
 
         return bookingRoomVariant.Id;
     }
 }
 
-///<summary> Запрос на создание выбранного варианта номера </summary>
-public class CreateBookingRoomVariantRequest : IRequest<Guid>
+public partial class BookingRoomVariant
 {
-    ///<summary> Идентификатор брони </summary>
-    public Guid BookingId { get; set; }
-    ///<summary> Идентификатор варианта номера </summary>
-    public Guid RoomVariantId { get; set; }
-    ///<summary> </summary>
-    public decimal Amount { get; set; }
+    ///<summary> Запрос на создание выбранного варианта номера </summary>
+    public class CreateRequest : IRequest<Guid>
+    {
+        ///<summary> Идентификатор брони </summary>
+        public Guid BookingId { get; set; }
+        ///<summary> Идентификатор варианта номера </summary>
+        public Guid RoomVariantId { get; set; }
+        ///<summary> </summary>
+        public decimal Amount { get; set; }
 
-    ///<summary> Выбранные типы кроватей </summary>
-    public IReadOnlyList<CreateBookingRoomVariantBedTypeRequest> BedTypes { get; set; } = new List<CreateBookingRoomVariantBedTypeRequest>();
+        ///<summary> Выбранные типы кроватей </summary>
+        public IReadOnlyList<BookingBedType.CreateRequest> BedTypes { get; set; } = new List<BookingBedType.CreateRequest>();
+    }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetRoomCharacteristicsHandler : IRequestHandler<GetRoomCharacteristicsQuery, IEnumerable<GetRoomCharacteristicsResponse>>
+internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristic.GetQuery, IEnumerable<RoomCharacteristic.GetResponse>>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -16,31 +16,34 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<GetRoomCharacteri
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<GetRoomCharacteristicsResponse>> Handle(GetRoomCharacteristicsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RoomCharacteristic.GetResponse>> Handle(RoomCharacteristic.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RoomCharacteristicSearchOptions>(request));
-        return result.Select(_mapper.Map<GetRoomCharacteristicsResponse>).ToList();
+        return result.Select(_mapper.Map<RoomCharacteristic.GetResponse>).ToList();
     }
 }
 
-///<summary> Очередь получения удобств и услуг</summary>
-public class GetRoomCharacteristicsQuery : IRequest<IEnumerable<GetRoomCharacteristicsResponse>>
+public partial class RoomCharacteristic
 {
-    ///<summary> Идентификатор характеристики </summary>
-    public Guid Id { get; set; }
-    ///<summary> Поисковая строка </summary>
-    public string SearchText { get; set; } = string.Empty;
-}
+    ///<summary> Очередь получения удобств и услуг</summary>
+    public class GetQuery : IRequest<IEnumerable<GetResponse>>
+    {
+        ///<summary> Идентификатор характеристики </summary>
+        public Guid Id { get; set; }
+        ///<summary> Поисковая строка </summary>
+        public string SearchText { get; set; } = string.Empty;
+    }
 
-///<summary> Модель чтения брони </summary>
-public class GetRoomCharacteristicsResponse
-{
-    ///<summary> Идентификатор характеристики </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Название характеристики </summary>
-    public string Name { get; protected set; } = string.Empty;
-    ///<summary> Описание харакетирстики </summary>
-    public string Description { get; protected set; } = string.Empty;
-    ///<summary> Тип (Зона) харакетистики </summary>
-    public CharacteristicTypes Type { get; protected set; }
+    ///<summary> Модель чтения брони </summary>
+    public class GetResponse
+    {
+        ///<summary> Идентификатор характеристики </summary>
+        public Guid Id { get; protected set; }
+        ///<summary> Название характеристики </summary>
+        public string Name { get; protected set; } = string.Empty;
+        ///<summary> Описание харакетирстики </summary>
+        public string Description { get; protected set; } = string.Empty;
+        ///<summary> Тип (Зона) харакетистики </summary>
+        public CharacteristicTypes Type { get; protected set; }
+    }
 }
