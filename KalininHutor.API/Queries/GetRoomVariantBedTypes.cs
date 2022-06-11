@@ -1,5 +1,6 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
 namespace KalininHutor.API.Queries;
@@ -39,7 +40,7 @@ public class GetRoomVariantBedTypesResponse
     ///<summary> Идентификатор номера </summary>
     public Guid RoomVariantId { get; protected set; }
     ///<summary> Тип кровати </summary>
-    public int BedType { get; protected set; }
+    public BedTypes BedType { get; protected set; }
     ///<summary> Ширина кровати </summary>
     public double? Width { get; protected set; }
     ///<summary> Длина кровати </summary>

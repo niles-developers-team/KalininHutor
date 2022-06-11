@@ -42,6 +42,9 @@ public class GetRentalObjectResponse
 {
     ///<summary> Идентификатор объекта аренды </summary>
     public Guid Id { get; protected set; }
+
+    ///<summary> Идентификатор владельца </summary>
+    public Guid LandlordId { get; set; }
     ///<summary> Название объекта аренды  </summary>
     public string Name { get; protected set; } = string.Empty;
     ///<summary> Описание объекта аренды </summary>

@@ -46,21 +46,20 @@ internal class CreateBookingHandler : IRequestHandler<CreateBookingRequest, Guid
 public class CreateBookingRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор арендатора </summary>
-    ///<remarks> Не изменяется, нужен только для поиска </remarks>
     [Required]
-    public Guid TenantId { get; protected set; }
+    public Guid TenantId { get; set; }
     ///<summary> Идентификатор объекта аренды </summary>
     [Required]
-    public Guid RentalObjectId { get; protected set; }
+    public Guid RentalObjectId { get; set; }
     ///<summary> Количество взрослых </summary>
-    public int AdultCount { get; protected set; }
+    public int AdultCount { get; set; }
     ///<summary> Количество детей </summary>
-    public int ChildCount { get; protected set; }
+    public int ChildCount { get; set; }
     ///<summary> Дата заезда </summary>
-    public DateOnly CheckinDate { get; protected set; }
+    public DateOnly CheckinDate { get; set; }
     ///<summary> Дата отъезда </summary>
-    public DateOnly CheckoutDate { get; protected set; }
+    public DateOnly CheckoutDate { get; set; }
 
     ///<summary> Коллекция бронируемых вариантов номеров </summary>
-    public IReadOnlyList<CreateBookingRoomVariantRequest> BookingRooms { get; protected set; } = new List<CreateBookingRoomVariantRequest>();
+    public IReadOnlyList<CreateBookingRoomVariantRequest> BookingRooms { get; set; } = new List<CreateBookingRoomVariantRequest>();
 }

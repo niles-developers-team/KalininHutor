@@ -26,7 +26,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<CreateBookingRo
     }
 }
 
-///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
+///<summary> Запрос на создание выбранного варианта номера </summary>
 public class CreateBookingRoomVariantRequest : IRequest<Guid>
 {
     ///<summary> Идентификатор брони </summary>

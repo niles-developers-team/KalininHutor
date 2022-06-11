@@ -32,7 +32,7 @@ public class GetBookingRoomVariantsQuery : IRequest<IEnumerable<GetBookingRoomVa
     public Guid? BookingId { get; set; }
 }
 
-///<summary> Модель чтения брони </summary>
+///<summary> Модель чтения выбранного варианта номера </summary>
 public class GetBookingRoomVariantsResponse
 {
     ///<summary> Идентификатор выбранного номера </summary>

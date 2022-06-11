@@ -1,7 +1,7 @@
-import { combineReducers, applyMiddleware, Store } from "redux";
+import { combineReducers, Store } from "redux";
 import thunkMiddleware from 'redux-thunk';
 
-import { AppState } from "../models/reduxModels";
+import { AppState } from "./appState";
 
 import { configureStore } from "@reduxjs/toolkit";
 

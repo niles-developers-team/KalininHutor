@@ -42,10 +42,8 @@ public class GetRoomVariantResponse
     public string Name { get; protected set; } = string.Empty;
     ///<summary> Описание </summary>
     public string Description { get; protected set; } = string.Empty;
-    ///<summary> Цена за взрослого </summary>
-    public decimal PriceForAdult { get; protected set; }
-    ///<summary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; protected set; }
+    ///<summary> Цена </summary>
+    public decimal Price { get; protected set; }
     ///<summary> Ширина варианта номера </summary>
     public double Width { get; protected set; }
     ///<summary> Длина варианта номера </summary>

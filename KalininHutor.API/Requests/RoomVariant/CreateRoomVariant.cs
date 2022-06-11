@@ -28,7 +28,7 @@ internal class CreateRoomVariantHandler : IRequestHandler<CreateRoomVariantReque
 
         var result = rentalObject.CreateRoomVariant(request.Name, request.Description,
         request.Price, request.MaxPersonsCount, request.Width, request.Length,
-        request.FreeCancellationPeriod, request.PaymentOption, request.Amount, request.FreeAmount);
+        request.FreeCancellationPeriod, request.PaymentOption, request.Count, request.FreeCount);
         await _repository.Create(_mapper.Map<RoomVariantEntity>(result));
 
         return result.Id;
@@ -44,10 +44,8 @@ public class CreateRoomVariantRequest : IRequest<Guid>
     public string Name { get; set; } = string.Empty;
     ///<summary> Описание </summary>
     public string Description { get; set; } = string.Empty;
-    ///<summary> Цена за взрослого </summary>
+    ///<summary> Цена </summary>
     public decimal Price { get; set; }
-    ///<summary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; set; }
     ///<summary> Ширина варианта номера </summary>
     public double Width { get; set; }
     ///<summary> Длина варианта номера </summary>
@@ -59,7 +57,7 @@ public class CreateRoomVariantRequest : IRequest<Guid>
     ///<summary> Вариант оплаты </summary>
     public PaymentOptions PaymentOption { get; set; }
     ///<summary> Всего номеров </summary>
-    public int Amount { get; set; }
+    public int Count { get; set; }
     ///<summary> Всего номеров свободно </summary>
-    public int FreeAmount { get; set; }
+    public int FreeCount { get; set; }
 }

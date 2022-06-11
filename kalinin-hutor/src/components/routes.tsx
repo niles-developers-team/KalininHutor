@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
-import { AppState } from "../models";
+import { AppState } from "../store";
 
 export function RoutesSwitch() {
     const [authenticated, setAuthenticated] = useState<boolean>(false);

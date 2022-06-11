@@ -20,20 +20,20 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<CreateBo
 
     public async Task<Guid> Handle(CreateBookingRoomVariantBedTypeRequest request, CancellationToken cancellationToken)
     {
-        var BookingRoomVariantBedType = new BookingBedType(request.RoomVariantId, request.BedTypeId, request.Count);
+        var BookingRoomVariantBedType = new BookingBedType(request.BookingRoomVariantId, request.BedTypeId, request.Count);
         await _repository.Create(_mapper.Map<BookingRoomVariantBedTypeEntity>(BookingRoomVariantBedType));
 
         return BookingRoomVariantBedType.Id;
     }
 }
 
-///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
+///<summary> Запрос на создание выбранной кровати в номере </summary>
 public class CreateBookingRoomVariantBedTypeRequest : IRequest<Guid>
 {
-    ///<summary> </summary>
-    public Guid RoomVariantId { get; set; }
-    ///<summary> </summary>
+    ///<summary> Идентификатор выбранного номера </summary>
+    public Guid BookingRoomVariantId { get; set; }
+    ///<summary> Выбранный тип кровати </summary>
     public Guid BedTypeId { get; set; }
-    ///<summary> </summary>
+    ///<summary> Количество кроватей выбранного типа </summary>
     public int Count { get; set; }
 }

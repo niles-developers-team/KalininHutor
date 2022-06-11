@@ -40,7 +40,7 @@ public class GetBookingBedTypesResponse
     ///<summary> Идентификатор выбранного номера </summary>
     public Guid BookingRoomVariantId { get; protected set; }
     ///<summary> Выбранный тип кровати </summary>
-    public BedTypes BedType { get; protected set; }
+    public Guid BedTypeId { get; protected set; }
     ///<summary> Количество кроватей выбранного типа </summary>
     public int Count { get; protected set; }
 }
