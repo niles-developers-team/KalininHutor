@@ -19,6 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddRouting();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwaggerGen(options => {
+    options.CustomSchemaIds(x => x.FullName.Replace("+", "."));
+});
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new DateOnlyConverter());

@@ -23,10 +23,20 @@ public class UserController : ControllerBase
     ///<summary> Метод авторизации </summary>
     [HttpPost("sign-in")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signin([FromBody]UserRequests.SigninRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signin([FromBody] UserRequests.SigninRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод регистрации </summary>
     [HttpPost("sign-up")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signup([FromBody]UserRequests.SignupRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signup([FromBody] UserRequests.SignupRequest request) => Ok(await _sender.Send(request));
+
+    ///<summary> Метод изменения пользователя </summary>
+    [HttpPatch()]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UserRequests.UpdateRequest request) => Ok(await _sender.Send(request));
+
+    ///<summary> Метод удаления пользователя </summary>
+    [HttpDelete()]
+    [Authorize]
+    public async Task<IActionResult> Delete([FromBody] UserRequests.DeleteRequest request) => Ok(await _sender.Send(request));
 }

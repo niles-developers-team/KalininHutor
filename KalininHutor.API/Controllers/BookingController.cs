@@ -33,7 +33,7 @@ public class BookingController : ControllerBase
     public async Task<IActionResult> Create(BookingRequests.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения брони </summary>
-    [HttpPut]
+    [HttpPatch]
     [Authorize]
     public async Task<IActionResult> Update(BookingRequests.UpdateRequest request) => Ok(await _sender.Send(request));
 
