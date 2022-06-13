@@ -3,20 +3,20 @@ import { AuthenticatedUser, User } from "../models";
 import { sessionService } from "./sessionService";
 
 class UserService {
-    public async signin(options: User.SigninRequest): Promise<AuthenticatedUser> {
+    public async signin(request: User.SigninRequest): Promise<AuthenticatedUser> {
         return fetch('api/user/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(options)
+            body: JSON.stringify(request)
         })
             .then(handleJsonResponse as ResponseHandler<AuthenticatedUser>);
     }
 
-    public async signup(options: User.SignupRequest): Promise<AuthenticatedUser> {
+    public async signup(request: User.SignupRequest): Promise<AuthenticatedUser> {
         return fetch('api/user/signin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(options)
+            body: JSON.stringify(request)
         })
             .then(handleJsonResponse as ResponseHandler<AuthenticatedUser>);
     }
@@ -25,22 +25,22 @@ class UserService {
         sessionService.signOut();
     }
 
-    public async update(user: User): Promise<User> {
+    public async update(request: User.UpdateRequest): Promise<User> {
         return fetch('api/user', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user)
+            body: JSON.stringify(request)
         })
             .then(handleJsonResponse as ResponseHandler<User>);
     }
 
-    public async get(options?: User.GetQuery): Promise<User[]> {
+    public async get(query?: User.GetQuery): Promise<User[]> {
         let url = 'api/user';
         let conditionIndex: number = 0;
-        if (options) {
-            if (options.searchText !== undefined)
-                url += `${conditionIndex++ === 0 ? '?' : '&'}searchText=${options.searchText}`;
+        if (query) {
+            if (query.searchText !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}searchText=${query.searchText}`;
         }
 
         return fetch(url, {
@@ -60,12 +60,12 @@ class UserService {
             .then(handleJsonResponse as ResponseHandler<User>);
     }
 
-    public async delete(id: string): Promise<void> {
+    public async delete(request: User.DeleteRequest): Promise<void> {
         return fetch('api/user', {
             credentials: 'include',
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(id)
+            body: JSON.stringify(request)
         })
             .then(handleResponse);
     }
