@@ -36,7 +36,7 @@ public class RentalObjectController : ControllerBase
     public async Task<IActionResult> Create([FromBody]RentalObjectRequests.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод обновления объекта аренды </summary>
-    [HttpPut()]
+    [HttpPatch()]
     [Authorize]
     public async Task<IActionResult> Update([FromBody]RentalObjectRequests.UpdateRequest request) => Ok(await _sender.Send(request));
 
