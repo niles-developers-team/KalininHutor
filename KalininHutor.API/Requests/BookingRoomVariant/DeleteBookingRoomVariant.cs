@@ -19,6 +19,7 @@ internal class DeleteBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
     }
 }
 
+///<summary> Запросы и очереди выбранных номеров </summary>
 public partial class BookingRoomVariant
 {
     ///<summary> Запрос удаления выбранного варианта номера </summary>

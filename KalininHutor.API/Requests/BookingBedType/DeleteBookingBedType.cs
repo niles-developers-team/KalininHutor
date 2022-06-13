@@ -19,6 +19,7 @@ internal class DeleteBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
     }
 }
 
+///<summary> Запросы и очереди выбранных вариантов кроватей </summary>
 public partial class BookingBedType
 {
     ///<summary> Запрос удаления выбранного варианта кровати </summary>

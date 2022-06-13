@@ -23,6 +23,7 @@ internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerabl
     }
 }
 
+///<summary> Запросы и очереди бронирования </summary>
 public partial class Booking
 {
     ///<summary> Очередь получения брони </summary>

@@ -28,6 +28,7 @@ internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
     }
 }
 
+///<summary> Запросы и очереди характеристик номеров </summary>
 public partial class RoomCharacteristic
 {
     ///<summary> Запрос на создание характеристики номера </summary>

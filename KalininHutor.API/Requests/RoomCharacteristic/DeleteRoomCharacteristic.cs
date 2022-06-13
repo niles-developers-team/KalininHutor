@@ -20,6 +20,7 @@ internal class DeleteRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
     }
 }
 
+///<summary> Запросы и очереди характеристик номеров </summary>
 public partial class RoomCharacteristic
 {
     ///<summary> Запрос удаления характеристики номера </summary>

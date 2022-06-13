@@ -22,6 +22,7 @@ internal class GetRoomVariantHandler : IRequestHandler<RoomVariant.GetQuery, IEn
     }
 }
 
+///<summary> Запросы и очереди вариантов номеров </summary>
 public partial class RoomVariant
 {
     ///<summary> Очередь получения варинтов номеров </summary>

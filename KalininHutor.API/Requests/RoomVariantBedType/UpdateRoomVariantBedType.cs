@@ -26,6 +26,7 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
     }
 }
 
+///<summary> Запросы и очереди вариантов кроватей </summary>
 public partial class RoomVariantBedType
 {
     ///<summary> Запрос обновления варианта кровати </summary>

@@ -22,6 +22,7 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObject.GetQuery, 
     }
 }
 
+///<summary> Запросы и очереди объектов аренды </summary>
 public partial class RentalObject
 {
     ///<summary> Очередь получения объектов аренды </summary>

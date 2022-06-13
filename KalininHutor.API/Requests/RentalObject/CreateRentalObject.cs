@@ -28,6 +28,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
     }
 }
 
+///<summary> Запросы и очереди объектов аренды </summary>
 public partial class RentalObject
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>

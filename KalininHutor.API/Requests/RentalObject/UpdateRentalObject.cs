@@ -27,6 +27,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
     }
 }
 
+///<summary> Запросы и очереди объектов аренды </summary>
 public partial class RentalObject
 {
     ///<summary> Запрос обновления объекта аренды </summary>

@@ -47,13 +47,14 @@ internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Gui
     }
 }
 
+///<summary> Запросы и очереди бронирования </summary>
 public partial class Booking
 {
     ///<summary> Создает бронь, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>
     {
         ///<summary> Идентификатор арендатора </summary>
-    ///<remarks> Не изменяется, нужен только для поиска </remarks>
+        ///<remarks> Не изменяется, нужен только для поиска </remarks>
         [Required]
         public Guid TenantId { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>

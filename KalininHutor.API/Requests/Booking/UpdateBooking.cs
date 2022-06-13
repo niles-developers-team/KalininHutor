@@ -19,8 +19,7 @@ internal class UpdateBookingHandler : IRequestHandler<Booking.UpdateRequest, Uni
 
     public async Task<Unit> Handle(Booking.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var Bookings = await _repository.Get(new BookingSearchOptions { Id = request.Id });
-        var entity = _mapper.Map<DomainBooking>(Bookings.SingleOrDefault());
+        var entity = _mapper.Map<DomainBooking>(await _repository.Get(request.Id));
         entity.SetVisitorsCount(request.AdultCount, request.ChildsCount);
         entity.SetBookingDates(request.CheckinDate, request.CheckoutDate);
         await _repository.Update(_mapper.Map<BookingEntity>(entity));
@@ -28,6 +27,7 @@ internal class UpdateBookingHandler : IRequestHandler<Booking.UpdateRequest, Uni
     }
 }
 
+///<summary> Запросы и очереди бронирования </summary>
 public partial class Booking
 {
     ///<summary> Запрос обновления объекта аренды </summary>

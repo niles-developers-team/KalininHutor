@@ -27,6 +27,7 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
     }
 }
 
+///<summary> Запросы и очереди выбранных вариантов кроватей </summary>
 public partial class BookingBedType
 {
     ///<summary> Запрос на создание выбранной кровати в номере </summary>

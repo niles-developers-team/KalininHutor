@@ -23,6 +23,7 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristi
     }
 }
 
+///<summary> Запросы и очереди характеристик номеров </summary>
 public partial class RoomCharacteristic
 {
     ///<summary> Очередь получения удобств и услуг</summary>

@@ -1,11 +1,12 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRoomVariantCharacteristicRequest, Unit>
+using DomainRoomVariantCharacteristic = Domain.Booking.RoomVariantCharacteristic;
+
+internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristic.UpdateRequest, Unit>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -16,20 +17,25 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRoomVariantCharacteristicRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantCharacteristic.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<RoomVariantCharacteristic>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<DomainRoomVariantCharacteristic>(await _repository.Get(request.Id));
         entity.SetPrice(request.Price);
         await _repository.Update(_mapper.Map<RoomVariantCharacteristicEntity>(entity));
         return Unit.Value;
     }
 }
 
-///<summary> Запрос обновления характеристики варианта номера </summary>
-public class UpdateRoomVariantCharacteristicRequest : IRequest<Unit>
+
+///<summary> Запросы и очереди характеристик вариантов номеров </summary>
+public partial class RoomVariantCharacteristic
 {
-    ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; set; }
-    ///<summary> Цена за услугу или удобство </summary>
-    public decimal? Price { get; set; }
+    ///<summary> Запрос обновления характеристики варианта номера </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор характеристики номера </summary>
+        public Guid Id { get; set; }
+        ///<summary> Цена за услугу или удобство </summary>
+        public decimal? Price { get; set; }
+    }
 }
