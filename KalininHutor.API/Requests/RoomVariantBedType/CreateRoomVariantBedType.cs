@@ -28,6 +28,7 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
     }
 }
 
+///<summary> Запросы и очереди вариантов кроватей </summary>
 public partial class RoomVariantBedType
 {
     ///<summary> Запрос создания варианта кровати номера </summary>

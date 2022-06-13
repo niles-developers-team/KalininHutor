@@ -35,6 +35,7 @@ internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
     }
 }
 
+///<summary> Запросы и очереди пользователей </summary>
 public partial class User
 {
     ///<summary> Запрос на авторизацию пользователя </summary>

@@ -22,6 +22,7 @@ internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<RoomVarian
     }
 }
 
+///<summary> Запросы и очереди характеристик вариантов номеров </summary>
 public partial class RoomVariantCharacteristic
 {
     ///<summary> Очередь получения характеристики варианта номера </summary>

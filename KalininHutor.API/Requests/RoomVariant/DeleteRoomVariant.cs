@@ -20,6 +20,7 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariant.DeleteRequ
     }
 }
 
+///<summary> Запросы и очереди вариантов номеров </summary>
 public partial class RoomVariant
 {
     ///<summary> Запрос удаления варинта номера </summary>

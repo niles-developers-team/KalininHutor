@@ -31,6 +31,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
     }
 }
 
+///<summary> Запросы и очереди вариантов номеров </summary>
 public partial class RoomVariant
 {
     ///<summary> Запрос обновления варинта номера </summary>

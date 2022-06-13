@@ -20,6 +20,7 @@ internal class DeleteBookingHandler : IRequestHandler<Booking.DeleteRequest, Uni
     }
 }
 
+///<summary> Запросы и очереди бронирования </summary>
 public partial class Booking
 {
     ///<summary> Запрос удаления брони </summary>

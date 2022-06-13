@@ -20,6 +20,7 @@ internal class DeleteRentalObjectHandler : IRequestHandler<RentalObject.DeleteRe
     }
 }
 
+///<summary> Запросы и очереди объектов аренды </summary>
 public partial class RentalObject
 {
     ///<summary> Запрос удаления объекта аренды </summary>

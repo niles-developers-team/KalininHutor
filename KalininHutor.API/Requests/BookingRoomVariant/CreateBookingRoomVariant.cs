@@ -27,6 +27,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
     }
 }
 
+///<summary> Запросы и очереди выбранных номеров </summary>
 public partial class BookingRoomVariant
 {
     ///<summary> Запрос на создание выбранного варианта номера </summary>

@@ -37,6 +37,7 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
     }
 }
 
+///<summary> Запросы и очереди вариантов номеров </summary>
 public partial class RoomVariant
 {
     ///<summary> Запрос на создание варианта номера </summary>

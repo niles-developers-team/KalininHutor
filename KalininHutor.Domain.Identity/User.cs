@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using KalininHutor.Domain;
 
 namespace KalininHutor.Domain.Identity;
+
 public class User : IEntity<Guid>
 {
     public Guid Id { get; protected set; }
@@ -24,13 +24,15 @@ public class User : IEntity<Guid>
         PasswordHash = EncryptPassword(password);
     }
 
-    public void SetInfo(string name, string lastname, string email, DateOnly birthday)
+    public void SetInfo(string? name, string? lastname, string? email, DateOnly? birthday)
     {
-        ValidateEmail(email);
+        if (!string.IsNullOrEmpty(email))
+            ValidateEmail(email);
 
         Name = name;
         Lastname = lastname;
         Email = email;
+        BirthDay = birthday;
     }
 
     public string GenPassword()
