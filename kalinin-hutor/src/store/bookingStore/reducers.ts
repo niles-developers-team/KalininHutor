@@ -1,57 +1,55 @@
-import { ActionTypes, UserActions } from "./actions";
-import { AuthenticationState, DeleteState, ModelsState, ModelState, UserState } from "./state";
+import { ActionTypes, BookingActions } from "./actions";
+import { BookingState, DeleteState, ModelsState, ModelState } from "./state";
 
-const initialState: UserState = {
-    authenticating: false,
+const initialState: BookingState = {
     modelsLoading: true,
     modelLoading: false,
     deleting: false
 }
 
-export function userReducer(prevState: UserState = initialState, action: UserActions.UserActions): UserState {
+export function bookingReducer(prevState: BookingState = initialState, action: BookingActions.BookingActions): BookingState {
     switch (action.type) {
-        case ActionTypes.signinRequest: {
-            const state: AuthenticationState = { authenticating: true, request: action.request };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.signinSuccess: {
-            const state: AuthenticationState = { authenticating: false, authenticated: true, currentUser: action.user }
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.signinFailure: {
-            const state: AuthenticationState = { authenticating: false, authenticated: false }
-            return { ...prevState, ...state };
-        }
-
-        case ActionTypes.signOut: {
-            const state: AuthenticationState = { authenticating: false, authenticated: false, currentUser: undefined }
-            return { ...prevState, ...state };
-        }
-
-        case ActionTypes.getUserRequest: {
+        case ActionTypes.getBookingRequest: {
             const state: ModelState = { modelLoading: true };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getUserSuccess: {
-            const state: ModelState = { modelLoading: false, model: action.user };
+        case ActionTypes.getBookingSuccess: {
+            const state: ModelState = { modelLoading: false, model: action.booking };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getUserFailure: {
+        case ActionTypes.getBookingFailure: {
             const state: ModelState = { modelLoading: false, model: undefined };
             return { ...prevState, ...state };
         }
 
-        case ActionTypes.getUsersRequest: {
+        case ActionTypes.getBookingsRequest: {
             const state: ModelsState = { modelsLoading: true };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getUsersSuccess: {
-            const state: ModelsState = { modelsLoading: false, models: action.users };
+        case ActionTypes.getBookingsSuccess: {
+            const state: ModelsState = { modelsLoading: false, models: action.bookings };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getUsersFailure: {
+        case ActionTypes.getBookingsFailure: {
             const state: ModelsState = { modelsLoading: false, models: [] };
             return { ...prevState, ...state };
+        }
+
+        case ActionTypes.createRequest: {
+            return { ...prevState, modelLoading: true };
+        }
+        case ActionTypes.createSuccess: {
+            if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
+
+            const model = { ...prevState.model, ...action.model };
+            const models = prevState.models.concat(action.model);
+
+            const modelsState: ModelsState = { modelsLoading: false, models: models };
+            const modelState: ModelState = { modelLoading: false, model: model };
+            return { ...prevState, ...modelsState, ...modelState };
+        }
+        case ActionTypes.createFailure: {
+            return { ...prevState, modelLoading: false };
         }
 
         case ActionTypes.updateRequest: {
@@ -70,7 +68,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         case ActionTypes.updateFailure: {
             return { ...prevState, modelLoading: false };
         }
-        
+
         case ActionTypes.deleteRequest: {
             const deleteState: DeleteState = { deleting: true, request: action.request };
             return { ...prevState, ...deleteState };
@@ -87,7 +85,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         case ActionTypes.deleteFailure: {
             const deleteState: DeleteState = { deleting: false, deleted: false };
             return { ...prevState, ...deleteState };
-        }        
+        }
         default: return prevState;
     }
 }

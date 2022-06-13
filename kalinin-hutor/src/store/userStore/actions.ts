@@ -1,7 +1,7 @@
 import { Action } from "redux";
 import { AuthenticatedUser, ApplicationError, User, SnackbarVariant } from "../../models";
 import { sessionService } from "../../services";
-import { userService } from "../../services/userService";
+import { userService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { SnackbarActions } from "../snackbarStore/actions";
 
@@ -121,7 +121,7 @@ export namespace UserActions {
 
     interface DeleteRequestAction extends Action<ActionTypes> {
         type: ActionTypes.deleteRequest;
-        id: string;
+        request: User.DeleteRequest;
     }
 
     interface DeleteSuccessAction extends Action<ActionTypes> {

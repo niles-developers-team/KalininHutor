@@ -1,13 +1,15 @@
 import { Action } from "redux";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
+import { BookingState } from "./bookingStore";
 import { SnackbarState } from "./snackbarStore";
-import { UserState } from "./userStore/state";
+import { UserState } from "./userStore";
 
 export type AppThunkAction<ReturnType = void> = ThunkAction<ReturnType, AppState, void, Action>;
 export type AppThunkDispatch = ThunkDispatch<AppState, void, Action>;
 
 export type AppState = {
     userState: UserState,
+    bookingState: BookingState,
     snackbarState: SnackbarState
 }
 
@@ -29,13 +31,13 @@ export type ModelLoaded<TModel> = {
     model?: TModel;
 }
 
-export type ModelsDeleting = {
+export type ModelsDeleting<TRequest> = {
     deleting: true;
-    ids: number[];
+    request: TRequest;
 }
 
-export type ModelsDeleted = {
+export type ModelsDeleted<TRequest> = {
     deleting: false;
     deleted?: boolean;
-    ids?: number[];
+    request?: TRequest;
 }
