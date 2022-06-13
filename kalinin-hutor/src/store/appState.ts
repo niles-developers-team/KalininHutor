@@ -33,11 +33,10 @@ export type ModelLoaded<TModel> = {
 
 export type ModelsDeleting<TRequest> = {
     deleting: true;
-    request: TRequest;
+    deleteRequest: TRequest;
 }
 
-export type ModelsDeleted<TRequest> = {
+export type ModelsDeleted = {
     deleting: false;
     deleted?: boolean;
-    request?: TRequest;
 }

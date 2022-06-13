@@ -23,10 +23,23 @@ export namespace User {
         phoneNumber: string;
         password: string;
     }
-    
+
     export interface SignupRequest {
         phoneNumber: string;
         password: string;
+    }
+
+    export interface UpdateRequest {
+        id: string;
+        phoneNumber: string;
+        email?: string;
+        name?: string;
+        lastname?: string;
+        birthday?: string;
+    }
+
+    export interface DeleteRequest {
+        id: string;
     }
 
     export const initial: User = {

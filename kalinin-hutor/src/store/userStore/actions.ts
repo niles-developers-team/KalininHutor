@@ -102,7 +102,7 @@ export namespace UserActions {
 
     interface UpdateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.updateRequest;
-        model: User;
+        request: User.UpdateRequest;
     }
 
     interface UpdateSuccessAction extends Action<ActionTypes> {
@@ -202,12 +202,12 @@ export namespace UserActions {
         return { type: ActionTypes.signOut };
     }
 
-    export function updateUser(user: User): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+    export function updateUser(updateRequest: User.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(user));
+            dispatch(request(updateRequest));
 
             try {
-                const result = await userService.update(user);
+                const result = await userService.update(updateRequest);
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
                 return dispatch(success(result));
             }
@@ -217,7 +217,7 @@ export namespace UserActions {
                 return dispatch(failure(error));
             }
 
-            function request(user: User): UpdateRequestAction { return { type: ActionTypes.updateRequest, model: user }; }
+            function request(request: User.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest, request: request }; }
             function success(user: User): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: user }; }
             function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
         }
@@ -281,12 +281,12 @@ export namespace UserActions {
         }
     }
 
-    export function deleteUsers(id: string): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
+    export function deleteUsers(deleteRequest: User.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(id));
+            dispatch(request(deleteRequest));
 
             try {
-                await userService.delete(id);
+                await userService.delete(deleteRequest);
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
                 return dispatch(success());
             }
@@ -296,7 +296,7 @@ export namespace UserActions {
                 return dispatch(failure(error));
             }
 
-            function request(id: string): DeleteRequestAction { return { type: ActionTypes.deleteRequest, id: id }; }
+            function request(request: User.DeleteRequest): DeleteRequestAction { return { type: ActionTypes.deleteRequest, request: request }; }
             function success(): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
         }

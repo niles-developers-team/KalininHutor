@@ -11,7 +11,7 @@ const initialState: UserState = {
 export function userReducer(prevState: UserState = initialState, action: UserActions.UserActions): UserState {
     switch (action.type) {
         case ActionTypes.signinRequest: {
-            const state: AuthenticationState = { authenticating: true, request: action.request };
+            const state: AuthenticationState = { authenticating: true, signinRequest: action.request };
             return { ...prevState, ...state };
         }
         case ActionTypes.signinSuccess: {
@@ -72,12 +72,12 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         }
         
         case ActionTypes.deleteRequest: {
-            const deleteState: DeleteState = { deleting: true, request: action.request };
+            const deleteState: DeleteState = { deleting: true, deleteRequest: action.request };
             return { ...prevState, ...deleteState };
         }
         case ActionTypes.deleteSuccess: {
-            if (prevState.modelsLoading === false) {
-                const state: ModelsState = { modelsLoading: false, models: prevState.models.filter((model) => prevState.request && model.id !== prevState.request.id) };
+            if (prevState.modelsLoading === false && prevState.deleting === true) {
+                const state: ModelsState = { modelsLoading: false, models: prevState.models.filter((model) => prevState.deleteRequest && model.id !== prevState.deleteRequest.id) };
                 const deleteState: DeleteState = { deleting: false, deleted: true };
                 return { ...prevState, ...deleteState, ...state };
             }
