@@ -4,7 +4,7 @@ import { sessionService } from "./sessionService";
 
 class UserService {
     public async signin(request: User.SigninRequest): Promise<AuthenticatedUser> {
-        return fetch('api/user/signin', {
+        return fetch('api/user/sign-in', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
@@ -13,7 +13,7 @@ class UserService {
     }
 
     public async signup(request: User.SignupRequest): Promise<AuthenticatedUser> {
-        return fetch('api/user/signin', {
+        return fetch('api/user/sign-up', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)

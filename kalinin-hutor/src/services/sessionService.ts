@@ -80,8 +80,7 @@ class SessionService {
 
                 if (matches && matches.length > 0) {
                     delete init["credentials"]; // we cant put this header because of CROS limitations
-                    const offset = matches[0].length;
-                    input = `https://localhost:7294/${input.substring(offset)}`;
+                    input = `https://localhost:7294/${input}`;
                 }
             }
 

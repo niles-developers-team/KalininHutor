@@ -36,109 +36,109 @@ export enum ActionTypes {
 }
 
 export namespace UserActions {
-    interface SigninRequestAction extends Action<ActionTypes> {
+    export interface SigninRequestAction extends Action<ActionTypes> {
         type: ActionTypes.signinRequest;
         request: User.SigninRequest;
     }
 
-    interface SigninSuccessAction extends Action<ActionTypes> {
+    export interface SigninSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.signinSuccess;
         user: AuthenticatedUser;
     }
 
-    interface SigninFailureAction extends Action<ActionTypes> {
+    export interface SigninFailureAction extends Action<ActionTypes> {
         type: ActionTypes.signinFailure;
         error: ApplicationError;
     }
 
-    interface SignoutAction extends Action<ActionTypes> {
+    export interface SignoutAction extends Action<ActionTypes> {
         type: ActionTypes.signOut;
     }
 
-    interface SignupRequestAction extends Action<ActionTypes> {
+    export interface SignupRequestAction extends Action<ActionTypes> {
         type: ActionTypes.signupRequest;
         request: User.SignupRequest;
     }
 
-    interface SignupSuccessAction extends Action<ActionTypes> {
+    export interface SignupSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.signupSuccess;
         user: AuthenticatedUser;
     }
 
-    interface SignupFailureAction extends Action<ActionTypes> {
+    export interface SignupFailureAction extends Action<ActionTypes> {
         type: ActionTypes.signupFailure;
         error: ApplicationError;
     }
 
-    interface GetUsersRequestAction extends Action<ActionTypes> {
+    export interface GetUsersRequestAction extends Action<ActionTypes> {
         type: ActionTypes.getUsersRequest;
         query?: User.GetQuery;
     }
 
-    interface GetUsersSuccessAction extends Action<ActionTypes> {
+    export interface GetUsersSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.getUsersSuccess;
         users: User[];
     }
 
-    interface GetUsersFailureAction extends Action<ActionTypes> {
+    export interface GetUsersFailureAction extends Action<ActionTypes> {
         type: ActionTypes.getUsersFailure;
         error: ApplicationError;
     }
 
-    interface GetRequestAction extends Action<ActionTypes> {
+    export interface GetRequestAction extends Action<ActionTypes> {
         type: ActionTypes.getUserRequest;
         id: string;
     }
 
-    interface GetSuccessAction extends Action<ActionTypes> {
+    export interface GetSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.getUserSuccess;
         user: User;
     }
 
-    interface GetFailureAction extends Action<ActionTypes> {
+    export interface GetFailureAction extends Action<ActionTypes> {
         type: ActionTypes.getUserFailure;
         error: ApplicationError;
     }
 
-    interface UpdateRequestAction extends Action<ActionTypes> {
+    export interface UpdateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.updateRequest;
         request: User.UpdateRequest;
     }
 
-    interface UpdateSuccessAction extends Action<ActionTypes> {
+    export interface UpdateSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.updateSuccess;
         model: User;
     }
 
-    interface UpdateFailureAction extends Action<ActionTypes> {
+    export interface UpdateFailureAction extends Action<ActionTypes> {
         type: ActionTypes.updateFailure;
         error: ApplicationError;
     }
 
-    interface ClearEditionStateAction extends Action<ActionTypes> {
+    export interface ClearEditionStateAction extends Action<ActionTypes> {
         type: ActionTypes.clearEditionState;
     }
 
-    interface DeleteRequestAction extends Action<ActionTypes> {
+    export interface DeleteRequestAction extends Action<ActionTypes> {
         type: ActionTypes.deleteRequest;
         request: User.DeleteRequest;
     }
 
-    interface DeleteSuccessAction extends Action<ActionTypes> {
+    export interface DeleteSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.deleteSuccess;
     }
 
-    interface DeleteFailureAction extends Action<ActionTypes> {
+    export interface DeleteFailureAction extends Action<ActionTypes> {
         type: ActionTypes.deleteFailure;
         error: ApplicationError;
     }
 
-    type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
-    type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
-    type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
-    type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
-    type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
-    type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
+    export type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
+    export type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
+    export type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
+    export type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
+    export type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
+    export type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
 
     export type UserActions = Signin
         | Signup
@@ -150,7 +150,7 @@ export namespace UserActions {
         | DeleteUser;
 
     export function signin(options: User.SigninRequest): AppThunkAction<Promise<SigninSuccessAction | SigninFailureAction>> {
-        return async (dispatch) => {
+        return async (dispatch: AppThunkDispatch) => {
             dispatch(request(options));
 
             try {
@@ -174,7 +174,7 @@ export namespace UserActions {
     }
 
     export function signup(options: User.SignupRequest): AppThunkAction<Promise<SignupSuccessAction | SignupFailureAction>> {
-        return async (dispatch) => {
+        return async (dispatch: AppThunkDispatch) => {
             dispatch(request(options));
 
             try {

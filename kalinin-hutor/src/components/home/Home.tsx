@@ -1,7 +1,6 @@
 import { Container, Grid, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { RouteProps } from "react-router-dom";
-import './Home.scss';
 
 interface Props extends RouteProps {}
 

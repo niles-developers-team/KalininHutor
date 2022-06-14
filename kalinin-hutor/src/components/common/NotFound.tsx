@@ -1,5 +1,4 @@
 import { Grid, Typography } from "@mui/material";
-import './commonStyles.scss';
 
 export const NotFound = function () {
     return (

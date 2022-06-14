@@ -1,58 +1,79 @@
-import { Grid, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
-import { AccountCircle, Home as HomeIcon, Forum, Search } from "@mui/icons-material";
-import { RouteProps, useLocation, Link } from "react-router-dom";
-
+import { AppBar, Button, Grid, TextField, Toolbar } from "@mui/material";
+import { RouteProps } from "react-router-dom";
+import SearchIcon from '@mui/icons-material/Search';
+import FaceIcon from '@mui/icons-material/Face';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import GiteIcon from '@mui/icons-material/Gite';
+import { SigninDialog } from "./signin/Signin";
+import { useState } from "react";
+import { UserActions } from "../store/userStore";
+import { useAppDispatch } from "../hooks";
 
 interface Props extends RouteProps { }
 
 export const LayoutComponent = function (props: Props): JSX.Element {
+    const dispatch = useAppDispatch();
+    const [open, setOpen] = useState(false);
 
-    const location = useLocation();
-
-    function isMenuItemSelected(menuItemPath: string): boolean {
-
-        if (menuItemPath.lastIndexOf('/') > 0)
-            return location.pathname.includes(menuItemPath);
-
-        return location.pathname === menuItemPath;
+    async function handleSignin(phoneNumber: string, password: string)
+    {
+        dispatch(UserActions.signin({
+            password: password,
+            phoneNumber: `+7${phoneNumber}`
+        }));
     }
 
     return (
         <Grid container direction="row">
-            <Grid item xs={2} container direction="column" textAlign="center" justifyContent="center">
-                <Typography color="primary" variant="h4">HELP IT EASY</Typography>
-                <Grid item xs />
-                <List>
-                    <ListItemButton selected={isMenuItemSelected('/')} key="home" component={Link} to={'/'}>
-                        <ListItemIcon>
-                            <HomeIcon color="primary" />
-                        </ListItemIcon>
-                        <ListItemText>Лента</ListItemText>
-                    </ListItemButton>
-                    <ListItemButton selected={isMenuItemSelected('/search')} key="search" component={Link} to={'/search'}>
-                        <ListItemIcon>
-                            <Search color="primary" />
-                        </ListItemIcon>
-                        <ListItemText>Поиск</ListItemText>
-                    </ListItemButton>
-                    <ListItemButton selected={isMenuItemSelected('/messenger')} key="messanger" component={Link} to={'/messenger'}>
-                        <ListItemIcon>
-                            <Forum color="primary" />
-                        </ListItemIcon>
-                        <ListItemText>Мессенджер</ListItemText>
-                    </ListItemButton>
-                    <ListItemButton selected={isMenuItemSelected('/me')} key="me" component={Link} to={'/me'}>
-                        <ListItemIcon>
-                            <AccountCircle color="primary" />
-                        </ListItemIcon>
-                        <ListItemText>Профиль</ListItemText>
-                    </ListItemButton>
-                </List>
-                <Grid item xs />
-            </Grid>
-            <Grid xs={10} >
-                {props.children}
-            </Grid>
+            <AppBar position="sticky" className="app-bar">
+                <Toolbar>
+                    <Grid container className="container">
+                        <Button>Каталог</Button>
+                        <SearchIcon />
+                        <Grid item xs>
+                            <TextField fullWidth variant="outlined" placeholder="Поиск" />
+                        </Grid>
+                        <Button>Поиск</Button>
+                        <Button onClick={() => setOpen(true)}>
+                            <Grid container direction="column">
+                                <FaceIcon />
+                                <span>Войти</span>
+                            </Grid>
+                        </Button>
+                        <Button>
+                            <Grid container direction="column">
+                                <FavoriteIcon />
+                                <span>Избранное</span>
+                            </Grid>
+                        </Button>
+                        <Button>
+                            <Grid container direction="column">
+                                <ShoppingBagIcon />
+                                <span>Заказы</span>
+                            </Grid>
+                        </Button>
+                        <Button>
+                            <Grid container direction="column">
+                                <GiteIcon />
+                                <span>Брони</span>
+                            </Grid>
+                        </Button>
+                        <Button>
+                            <Grid container direction="column">
+                                <ShoppingCartIcon />
+                                <span>Корзина</span>
+                            </Grid>
+                        </Button>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
+            {props.children}
+            <SigninDialog
+                isOpen={open}
+                onSignin={handleSignin}
+            />
         </Grid>
     )
 };

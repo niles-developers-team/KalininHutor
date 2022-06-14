@@ -13,21 +13,13 @@ import { sessionService } from './services';
 import { RoutesSwitch } from './components';
 
 import './index.css';
+import './themes/bootstrap.scss';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { amber, deepPurple } from '@mui/material/colors';
 
 sessionService.init();
-
-const theme = createTheme({
-  palette: {
-    primary: deepPurple,
-    secondary: amber,
-  },
-});
 
 const store = configureStore();
 
@@ -38,13 +30,11 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <DocumentMeta {...meta}>
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <BrowserRouter>
-            <RoutesSwitch />
-          </BrowserRouter>
-        </Provider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <BrowserRouter>
+          <RoutesSwitch />
+        </BrowserRouter>
+      </Provider>
     </DocumentMeta>
   </React.StrictMode>
 );
