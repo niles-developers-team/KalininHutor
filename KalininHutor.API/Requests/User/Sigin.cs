@@ -10,12 +10,14 @@ using DomainUser = Domain.Identity.User;
 
 internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
 {
+    private readonly ISender _sender;
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly JWTHelper _jwtHelper;
 
-    public UserSigninHandler(UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
+    public UserSigninHandler(ISender sender, UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _jwtHelper = jwtHelper ?? throw new ArgumentNullException(nameof(jwtHelper));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -26,7 +28,18 @@ internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
         var user = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
 
         if (user == null)
-            throw new ApplicationException("Не найден пользователь с таким номером телефона.");
+        {
+            if (request.WithSignup)
+            {
+                return await _sender.Send(new User.SignupRequest
+                {
+                    Password = request.Password,
+                    PhoneNumber = request.PhoneNumber
+                });
+            }
+            else
+                throw new ApplicationException("Не найден пользователь с таким номером телефона.");
+        }
 
         if (!user.VerifyPassword(request.Password))
             throw new ApplicationException("Неправильный пароль");
@@ -48,5 +61,9 @@ public partial class User
         ///<summary> Пароль пользователя </summary>
         [Required]
         public string Password { get; set; } = string.Empty;
+
+        ///<summary> Необходима ли регистрация? </summary>
+        [Required]
+        public bool WithSignup { get; set; } = false;
     }
 }

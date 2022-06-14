@@ -89,7 +89,7 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
                 BirthDay as BirthDayDateTime 
             from Users
             where PhoneNumber = {phoneNumber}
-        ").QuerySingleAsync<UserEntity>();
+        ").QuerySingleOrDefaultAsync<UserEntity>();
     }
 
     public override async Task Update(UserEntity entity)
