@@ -1,36 +1,36 @@
-import { ActionTypes, BookingActions } from "./actions";
-import { BookingState, DeleteState, ModelsState, ModelState } from "./state";
+import { ActionTypes, RentalObjectActions } from "./actions";
+import { RentalObjectState, DeleteState, ModelsState, ModelState } from "./state";
 
-const initialState: BookingState = {
+const initialState: RentalObjectState = {
     modelsLoading: true,
     modelLoading: false,
     deleting: false
 }
 
-export function bookingReducer(prevState: BookingState = initialState, action: BookingActions.BookingActions): BookingState {
+export function rentalObjectReducer(prevState: RentalObjectState = initialState, action: RentalObjectActions.RentalObjectActions): RentalObjectState {
     switch (action.type) {
-        case ActionTypes.getBookingRequest: {
+        case ActionTypes.getRentalObjectRequest: {
             const state: ModelState = { modelLoading: true };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getBookingSuccess: {
-            const state: ModelState = { modelLoading: false, model: action.booking };
+        case ActionTypes.getRentalObjectSuccess: {
+            const state: ModelState = { modelLoading: false, model: action.rentalobject };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getBookingFailure: {
+        case ActionTypes.getRentalObjectFailure: {
             const state: ModelState = { modelLoading: false, model: undefined };
             return { ...prevState, ...state };
         }
 
-        case ActionTypes.getBookingsRequest: {
+        case ActionTypes.getRentalObjectsRequest: {
             const state: ModelsState = { modelsLoading: true };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getBookingsSuccess: {
-            const state: ModelsState = { modelsLoading: false, models: action.bookings };
+        case ActionTypes.getRentalObjectsSuccess: {
+            const state: ModelsState = { modelsLoading: false, models: action.rentalobjects };
             return { ...prevState, ...state };
         }
-        case ActionTypes.getBookingsFailure: {
+        case ActionTypes.getRentalObjectsFailure: {
             const state: ModelsState = { modelsLoading: false, models: [] };
             return { ...prevState, ...state };
         }

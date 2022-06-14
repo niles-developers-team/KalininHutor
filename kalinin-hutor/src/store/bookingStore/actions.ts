@@ -194,19 +194,21 @@ export namespace BookingActions {
                 return dispatch(success(Booking.initial));
 
             const state = getState();
+            let models: Booking[] = [];
 
             try {
-                let booking: Booking | undefined = undefined;
                 if (state.bookingState.modelsLoading === true)
-                    booking = await bookingService.getDetails(id);
+                    models = await bookingService.get({ id });
                 else
-                    booking = state.bookingState.models.find(o => o.id === id);
+                    models = state.bookingState.models;
 
-                if (!booking) {
+                let model = models.find(o => o.id === id);
+
+                if (!model) {
                     throw new ApplicationError('Не удалось найти пользователя');
                 }
 
-                return dispatch(success(booking));
+                return dispatch(success(model));
             }
             catch (error: any) {
                 dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));

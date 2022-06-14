@@ -4,19 +4,23 @@ import thunkMiddleware from 'redux-thunk';
 import { AppState } from "./appState";
 
 import { configureStore } from "@reduxjs/toolkit";
+import { userReducer } from "./userStore";
+import { bookingReducer } from "./bookingStore";
+import { rentalObjectReducer } from "./rentalObjectStore";
+import { snackbarReducer } from "./snackbarStore";
 
-const rootReducer = combineReducers({});
 
 export default function configureAppStore(): Store<AppState> {
     const middlewares = [thunkMiddleware];
 
-    const store = configureStore(
-        {
-            reducer: rootReducer,
-            middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(...middlewares),
-            devTools: process.env.NODE_ENV !== 'production',
-        }
-    );
-
-    return store;
+    return configureStore({
+        reducer: {
+            bookingState: bookingReducer,
+            rentalObjectState: rentalObjectReducer,
+            snackbarState: snackbarReducer,
+            userState: userReducer
+        },
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(...middlewares),
+        devTools: process.env.NODE_ENV !== 'production',
+    });
 }

@@ -1,29 +1,29 @@
 import { handleJsonResponse, ResponseHandler, handleResponse } from "../helpers";
-import { Booking } from "../models";
+import { RentalObject } from "../models";
 
-class BookingService {
-    public async create(request: Booking.CreateRequest): Promise<Booking> {
-        return fetch('api/booking', {
+class RentalObjectService {
+    public async create(request: RentalObject.CreateRequest): Promise<RentalObject> {
+        return fetch('api/rentalobject', {
             credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
         })
-            .then(handleJsonResponse as ResponseHandler<Booking>);
+            .then(handleJsonResponse as ResponseHandler<RentalObject>);
     }
 
-    public async update(request: Booking.UpdateRequest): Promise<Booking> {
-        return fetch('api/booking', {
+    public async update(request: RentalObject.UpdateRequest): Promise<RentalObject> {
+        return fetch('api/rentalobject', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
         })
-            .then(handleJsonResponse as ResponseHandler<Booking>);
+            .then(handleJsonResponse as ResponseHandler<RentalObject>);
     }
 
-    public async get(query?: Booking.GetQuery): Promise<Booking[]> {
-        let url = 'api/booking';
+    public async get(query?: RentalObject.GetQuery): Promise<RentalObject[]> {
+        let url = 'api/rentalobject';
         let conditionIndex: number = 0;
         if (query) {
             if (query.searchText !== undefined)
@@ -34,11 +34,11 @@ class BookingService {
             credentials: 'include',
             method: 'GET',
         })
-            .then(handleJsonResponse as ResponseHandler<Booking[]>);
+            .then(handleJsonResponse as ResponseHandler<RentalObject[]>);
     }
 
-    public async delete(request: Booking.DeleteRequest): Promise<void> {
-        return fetch('api/booking', {
+    public async delete(request: RentalObject.DeleteRequest): Promise<void> {
+        return fetch('api/rentalobject', {
             credentials: 'include',
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
@@ -48,4 +48,4 @@ class BookingService {
     }
 }
 
-export const bookingService = new BookingService();
+export const rentalObjectService = new RentalObjectService();

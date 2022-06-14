@@ -1,6 +1,7 @@
 import { Action } from "redux";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { BookingState } from "./bookingStore";
+import { RentalObjectState } from "./rentalObjectStore";
 import { SnackbarState } from "./snackbarStore";
 import { UserState } from "./userStore";
 
@@ -10,6 +11,7 @@ export type AppThunkDispatch = ThunkDispatch<AppState, void, Action>;
 export type AppState = {
     userState: UserState,
     bookingState: BookingState,
+    rentalObjectState: RentalObjectState,
     snackbarState: SnackbarState
 }
 
