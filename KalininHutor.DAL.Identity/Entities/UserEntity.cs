@@ -5,7 +5,7 @@ public class UserEntity
 
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
-    public byte[] Password { get; protected set; } = new byte[0];
+    public string Password { get; protected set; } = string.Empty;
     public string? Name { get; protected set; }
     public string? Lastname { get; protected set; }
     public string? Email { get; protected set; }

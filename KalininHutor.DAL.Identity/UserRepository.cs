@@ -79,10 +79,11 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
     {
         using var connection = GetConnection();
 
-        return await connection.QueryBuilder($@"
+        var result = await connection.QueryBuilder($@"
             select 
                 Id, 
                 PhoneNumber, 
+                Password,
                 Name, 
                 Lastname, 
                 Email, 
@@ -90,6 +91,8 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
             from Users
             where PhoneNumber = {phoneNumber}
         ").QuerySingleOrDefaultAsync<UserEntity>();
+
+        return result;
     }
 
     public override async Task Update(UserEntity entity)
