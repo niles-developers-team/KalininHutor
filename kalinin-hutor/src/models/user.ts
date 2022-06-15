@@ -22,6 +22,7 @@ export namespace User {
     export interface SigninRequest {
         phoneNumber: string;
         password: string;
+        withSignup: true;
     }
 
     export interface SignupRequest {

@@ -21,7 +21,8 @@ export const LayoutComponent = function (props: Props): JSX.Element {
     {
         dispatch(UserActions.signin({
             password: password,
-            phoneNumber: `+7${phoneNumber}`
+            phoneNumber: `+7${phoneNumber}`,
+            withSignup: true
         }));
     }
 

@@ -178,7 +178,7 @@ export namespace UserActions {
             dispatch(request(options));
 
             try {
-                const result = await userService.signin(options);
+                const result = await userService.signup(options);
                 if (result && result.token && sessionService.signIn(result.token)) {
                     return dispatch(success(result));
                 } else {

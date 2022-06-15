@@ -20,7 +20,7 @@ const PhoneMaskCustom = forwardRef<HTMLElement | null, MaskedInputProps>(
             <IMaskInput
                 {...other}
                 mask="(###) ###-##-##"
-                definitions={{ '#': /[1-9]/, }}
+                definitions={{ '#': /[0-9]/, }}
                 inputRef={ref as any}
                 onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
                 overwrite
@@ -36,7 +36,7 @@ const PasswordMaskCustom = forwardRef<HTMLElement, MaskedInputProps>(
             <IMaskInput
                 {...other}
                 mask="#####"
-                definitions={{ '#': /[1-9]/, }}
+                definitions={{ '#': /[0-9]/, }}
                 inputRef={ref as any}
                 onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
                 overwrite
