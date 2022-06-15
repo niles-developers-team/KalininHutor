@@ -4,14 +4,14 @@ namespace KalininHutor.API.Helpers;
 public class AppSettings
 {
     ///<summary> Секрет </summary>
-    public string Secret { get; protected set; } = string.Empty;
+    public string Secret { get; set; } = string.Empty;
     ///<summary> Строки подключения </summary>
-    public ConnectionStrings ConnectionStrings { get; protected set; } = new ConnectionStrings();
+    public ConnectionStrings ConnectionStrings { get; set; } = new ConnectionStrings();
 }
 
 ///<summary> Строки подключения </summary>
 public class ConnectionStrings
 {
     ///<summary> Строка подключения к базе Postgres </summary>
-    public string Postgres { get; protected set; } = string.Empty;
+    public string Postgres { get; set; } = string.Empty;
 }

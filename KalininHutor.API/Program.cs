@@ -15,20 +15,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 
+builder.Services.Configure<AppSettings>(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddRouting();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.ConfigureSwaggerGen(options => {
-    options.CustomSchemaIds(x => x.FullName.Replace("+", "."));
+builder.Services.ConfigureSwaggerGen(options =>
+{
+    options.CustomSchemaIds(x => x.FullName?.Replace("+", "."));
 });
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new DateOnlyConverter());
     options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
 });
-
-builder.Services.Configure<AppSettings>(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => { options.RequireHttpsMetadata = false; });
@@ -46,55 +47,62 @@ builder.Services.AddFluentMigratorCore()
               .ScanIn(typeof(CreateRentalObjectTable).Assembly).For.Migrations()
        );
 builder.Logging.ClearProviders().AddFluentMigratorConsole().AddConsole().AddDebug();
-builder.Services.AddAutoMapper(typeof(AppMappingProfile));
+builder.Services.AddAutoMapper(config =>
+{
+    config.ShouldMapProperty = pi => pi.GetMethod != null && (pi.GetMethod.IsPublic || pi.GetMethod.IsPrivate);
+    config.ShouldUseConstructor = ci => ci.IsPrivate;
+},
+typeof(AppMappingProfile));
 
 builder.Services.AddScoped<JWTHelper>();
-builder.Services.AddScoped<BookingRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<BookingRepository>>();
-    return new BookingRepository(connectionString, logger);
-});
-builder.Services.AddScoped<BookingRoomVariantRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<BookingRoomVariantRepository>>();
-    return new BookingRoomVariantRepository(connectionString, logger);
-});
-builder.Services.AddScoped<BookingRoomVariantBedTypeRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<BookingRoomVariantBedTypeRepository>>();
-    return new BookingRoomVariantBedTypeRepository(connectionString, logger);
-});
-builder.Services.AddScoped<RentalObjectRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<RentalObjectRepository>>();
-    return new RentalObjectRepository(connectionString, logger);
-});
-builder.Services.AddScoped<RoomCharacteristicRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<RoomCharacteristicRepository>>();
-    return new RoomCharacteristicRepository(connectionString, logger);
-});
-builder.Services.AddScoped<RoomVariantBedTypeRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<RoomVariantBedTypeRepository>>();
-    return new RoomVariantBedTypeRepository(connectionString, logger);
-});
-builder.Services.AddScoped<RoomVariantCharacteristicRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<RoomVariantCharacteristicRepository>>();
-    return new RoomVariantCharacteristicRepository(connectionString, logger);
-});
-builder.Services.AddScoped<RoomVariantRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<RoomVariantRepository>>();
-    return new RoomVariantRepository(connectionString, logger);
-});
-builder.Services.AddScoped<UserRepository>(provider =>
-{
-    var logger = provider.GetRequiredService<ILogger<UserRepository>>();
-    return new UserRepository(connectionString, logger);
-});
 
+{
+    builder.Services.AddScoped<BookingRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<BookingRepository>>();
+        return new BookingRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<BookingRoomVariantRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<BookingRoomVariantRepository>>();
+        return new BookingRoomVariantRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<BookingRoomVariantBedTypeRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<BookingRoomVariantBedTypeRepository>>();
+        return new BookingRoomVariantBedTypeRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<RentalObjectRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<RentalObjectRepository>>();
+        return new RentalObjectRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<RoomCharacteristicRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<RoomCharacteristicRepository>>();
+        return new RoomCharacteristicRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<RoomVariantBedTypeRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<RoomVariantBedTypeRepository>>();
+        return new RoomVariantBedTypeRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<RoomVariantCharacteristicRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<RoomVariantCharacteristicRepository>>();
+        return new RoomVariantCharacteristicRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<RoomVariantRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<RoomVariantRepository>>();
+        return new RoomVariantRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<UserRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<UserRepository>>();
+        return new UserRepository(connectionString, logger);
+    });
+}
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
