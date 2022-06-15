@@ -70,7 +70,7 @@ public class User : IEntity<Guid>
         if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException("Не указан пароль.");
 
-        if (password.Length != 4 || !Regex.IsMatch(password, "/^([0-9]{5})$/g"))
+        if (password.Length != 5 || !Regex.IsMatch(password, "^([0-9]{5})$"))
             throw new ArgumentException("Неправильный формат пароля");
     }
 
