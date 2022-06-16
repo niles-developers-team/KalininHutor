@@ -6,7 +6,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainBooking = Domain.Booking.Booking;
 
-internal class UpdateBookingHandler : IRequestHandler<Booking.UpdateRequest, Unit>
+internal class UpdateBookingHandler : IRequestHandler<BookingRequests.UpdateRequest, Unit>
 {
     private readonly BookingRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ internal class UpdateBookingHandler : IRequestHandler<Booking.UpdateRequest, Uni
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(Booking.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(BookingRequests.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainBooking>(await _repository.Get(request.Id));
         entity.SetVisitorsCount(request.AdultCount, request.ChildsCount);
@@ -28,7 +28,7 @@ internal class UpdateBookingHandler : IRequestHandler<Booking.UpdateRequest, Uni
 }
 
 ///<summary> Запросы и очереди бронирования </summary>
-public partial class Booking
+public partial class BookingRequests
 {
     ///<summary> Запрос обновления объекта аренды </summary>
     public class UpdateRequest : IRequest<Unit>

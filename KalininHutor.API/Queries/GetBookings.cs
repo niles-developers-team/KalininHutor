@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerable<Booking.GetResponse>>
+internal class GetBookingsHandler : IRequestHandler<BookingQueries.GetQuery, IEnumerable<BookingDTO>>
 {
     private readonly BookingRepository _repository;
     private readonly IMapper _mapper;
@@ -16,18 +17,18 @@ internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerabl
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<Booking.GetResponse>> Handle(Booking.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookingDTO>> Handle(BookingQueries.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<BookingSearchOptions>(request));
-        return result.Select(_mapper.Map<Booking.GetResponse>).ToList();
+        return result.Select(_mapper.Map<BookingDTO>).ToList();
     }
 }
 
 ///<summary> Запросы и очереди бронирования </summary>
-public partial class Booking
+public partial class BookingQueries
 {
     ///<summary> Очередь получения брони </summary>
-    public class GetQuery : IRequest<IEnumerable<GetResponse>>
+    public class GetQuery : IRequest<IEnumerable<BookingDTO>>
     {
         ///<summary> Идентификатор брони </summary>
         public Guid? Id { get; set; }
@@ -40,26 +41,5 @@ public partial class Booking
         public DateOnly? CheckinDate { get; set; }
         ///<summary> Дата отъезда </summary>
         public DateOnly? CheckoutDate { get; set; }
-    }
-
-    ///<summary> Модель чтения брони </summary>
-    public class GetResponse
-    {
-        ///<summary> Идентификатор брони </summary>
-        public Guid Id { get; protected set; }
-        ///<summary> Идентификатор арендатора </summary>
-        public Guid TenantId { get; protected set; }
-        ///<summary> Идентификатор объекта аренды </summary>
-        public Guid RentalObjectId { get; protected set; }
-        ///<summary> Количество взрослых </summary>
-        public int AdultCount { get; protected set; }
-        ///<summary> Количество детей </summary>
-        public int ChildCount { get; protected set; }
-        ///<summary> Всего за бронь (руб.) </summary>
-        public decimal Total { get; protected set; }
-        ///<summary> Дата заезда </summary>
-        public DateOnly CheckinDate { get; set; }
-        ///<summary> Дата отъезда </summary>
-        public DateOnly CheckoutDate { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRoomVariantCharacteristic = Domain.Booking.RoomVariantCharacteristic;
 
-internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristic.CreateRequest, Guid>
+internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristicRequests.CreateRequest, Guid>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariantCharacteristic.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantCharacteristicRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var RoomVariantCharacteristic = new DomainRoomVariantCharacteristic(request.RoomVariantId, request.RoomCharacteristicId, request.Price);
         await _repository.Create(_mapper.Map<RoomVariantCharacteristicEntity>(RoomVariantCharacteristic));
@@ -28,7 +28,7 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
 
 
 ///<summary> Запросы и очереди характеристик вариантов номеров </summary>
-public partial class RoomVariantCharacteristic
+public partial class RoomVariantCharacteristicRequests
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>

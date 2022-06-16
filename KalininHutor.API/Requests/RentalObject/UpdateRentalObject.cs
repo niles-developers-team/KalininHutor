@@ -6,7 +6,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRentalObject = Domain.Booking.RentalObject;
 
-internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRequest, Unit>
+internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectRequests.UpdateRequest, Unit>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RentalObject.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RentalObjectRequests.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainRentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
@@ -28,7 +28,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectRequests
 {
     ///<summary> Запрос обновления объекта аренды </summary>
     public class UpdateRequest : IRequest<Unit>

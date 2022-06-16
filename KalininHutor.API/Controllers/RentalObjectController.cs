@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using KalininHutor.API.Queries;
+using KalininHutor.API.Requests;
 
 namespace KalininHutor.API.Controllers;
-
-using RentalObjectQueries = API.Queries.RentalObject;
-using RentalObjectRequests = API.Requests.RentalObject;
 
 ///<summary> Контроллер  объектов аренды </summary>
 [Route("api/[controller]")]
@@ -23,7 +22,7 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
     [Authorize]
-    public async Task<IActionResult> Get([FromQuery]RentalObjectQueries.GetQuery query)
+    public async Task<IActionResult> Get([FromQuery] RentalObjectQueries.GetQuery query)
     {
         var result = await _sender.Send(query);
 
@@ -33,15 +32,15 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody]RentalObjectRequests.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody] RentalObjectRequests.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод обновления объекта аренды </summary>
     [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody]RentalObjectRequests.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] RentalObjectRequests.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromQuery]RentalObjectRequests.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromQuery] RentalObjectRequests.DeleteRequest request) => Ok(await _sender.Send(request));
 }

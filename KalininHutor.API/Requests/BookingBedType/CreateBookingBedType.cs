@@ -7,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainBookingBedType = Domain.Booking.BookingBedType;
 
-internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<BookingBedType.CreateRequest, Guid>
+internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<BookingBedTypeRequests.CreateRequest, Guid>
 {
     private readonly BookingRoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(BookingBedType.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(BookingBedTypeRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var BookingRoomVariantBedType = new DomainBookingBedType(request.BookingRoomVariantId, request.BedTypeId, request.Count);
         await _repository.Create(_mapper.Map<BookingRoomVariantBedTypeEntity>(BookingRoomVariantBedType));
@@ -28,7 +28,7 @@ internal class CreateBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
 }
 
 ///<summary> Запросы и очереди выбранных вариантов кроватей </summary>
-public partial class BookingBedType
+public partial class BookingBedTypeRequests
 {
     ///<summary> Запрос на создание выбранной кровати в номере </summary>
     public class CreateRequest : IRequest<Guid>

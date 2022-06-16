@@ -7,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRoomVariant = Domain.Booking.RoomVariant;
 
-internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequest, Unit>
+internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantRequests.UpdateRequest, Unit>
 {
     private readonly RoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RoomVariant.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantRequests.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainRoomVariant>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
@@ -32,7 +32,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantRequests
 {
     ///<summary> Запрос обновления варинта номера </summary>
     public class UpdateRequest : IRequest<Unit>

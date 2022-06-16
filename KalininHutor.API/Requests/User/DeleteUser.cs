@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteUserHandler : IRequestHandler<User.DeleteRequest, Unit>
+internal class DeleteUserHandler : IRequestHandler<UserRequests.DeleteRequest, Unit>
 {
     private readonly UserRepository _repository;
 
@@ -12,7 +12,7 @@ internal class DeleteUserHandler : IRequestHandler<User.DeleteRequest, Unit>
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<Unit> Handle(User.DeleteRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UserRequests.DeleteRequest request, CancellationToken cancellationToken)
     {
         await _repository.Delete(request.Id);
 
@@ -21,7 +21,7 @@ internal class DeleteUserHandler : IRequestHandler<User.DeleteRequest, Unit>
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class User
+public partial class UserRequests
 {
     ///<summary> Запрос на удаление пользователя </summary>
     public class DeleteRequest : IRequest<Unit>

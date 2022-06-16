@@ -6,7 +6,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainUser = Domain.Identity.User;
 
-internal class UpdateUserHandler : IRequestHandler<User.UpdateRequest, Unit>
+internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, Unit>
 {
     private readonly UserRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ internal class UpdateUserHandler : IRequestHandler<User.UpdateRequest, Unit>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(User.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UserRequests.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainUser>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Lastname, request.Email, request.Birthday);
@@ -27,7 +27,7 @@ internal class UpdateUserHandler : IRequestHandler<User.UpdateRequest, Unit>
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class User
+public partial class UserRequests
 {
     ///<summary> Запрос на изменение пользователя </summary>
     public class UpdateRequest : IRequest<Unit>

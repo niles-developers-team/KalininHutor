@@ -3,12 +3,12 @@ using AutoMapper;
 using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
-
+using KalininHutor.API.DTO;
 namespace KalininHutor.API.Requests;
 
 using DomainUser = Domain.Identity.User;
 
-internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
+internal class UserSigninHandler : IRequestHandler<UserRequests.SigninRequest, AuthenticatedUserDetailsDTO>
 {
     private readonly ISender _sender;
     private readonly UserRepository _userRepository;
@@ -23,7 +23,7 @@ internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(User.SigninRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserRequests.SigninRequest request, CancellationToken cancellationToken)
     {
         var user = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
 
@@ -31,7 +31,7 @@ internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
         {
             if (request.WithSignup)
             {
-                return await _sender.Send(new User.SignupRequest
+                return await _sender.Send(new UserRequests.SignupRequest
                 {
                     Password = request.Password,
                     PhoneNumber = request.PhoneNumber
@@ -44,15 +44,18 @@ internal class UserSigninHandler : IRequestHandler<User.SigninRequest, string>
         if (!user.VerifyPassword(request.Password))
             throw new ApplicationException("Неправильный пароль");
 
-        return _jwtHelper.GenerateToken(user.Id);
+        var userDTO = _mapper.Map<AuthenticatedUserDetailsDTO>(user);
+        userDTO.Token = _jwtHelper.GenerateToken(user.Id);
+
+        return userDTO;
     }
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class User
+public partial class UserRequests
 {
     ///<summary> Запрос на авторизацию пользователя </summary>
-    public class SigninRequest : IRequest<string>
+    public class SigninRequest : IRequest<AuthenticatedUserDetailsDTO>
     {
         ///<summary> Номер телефона пользователя </summary>
         [Required]
