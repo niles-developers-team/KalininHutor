@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KalininHutor.API.Controllers;
 
-using BookingQueryies = API.Queries.Booking;
-using BookingRequests = API.Requests.Booking;
-
 ///<summary> Контроллер броней </summary>
 [Route("api/[controller]")]
 [ApiController]
@@ -25,7 +22,7 @@ public class BookingController : ControllerBase
     ///<summary> Метод получения коллекции броней </summary>
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get(BookingQueryies.GetQuery query) => Ok(await _sender.Send(query));
+    public async Task<IActionResult> Get(BookingQueries.GetQuery query) => Ok(await _sender.Send(query));
 
     ///<summary> Метод создания брони </summary>
     [HttpPost]

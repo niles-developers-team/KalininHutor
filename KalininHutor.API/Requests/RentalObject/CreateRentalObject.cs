@@ -7,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRentalObject = Domain.Booking.RentalObject;
 
-internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRequest, Guid>
+internal class CreateRentalObjectHandler : IRequestHandler<RentalObjectRequests.CreateRequest, Guid>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RentalObject.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RentalObjectRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new DomainRentalObject(request.Name, request.Description,
                         request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
@@ -29,7 +29,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectRequests
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>

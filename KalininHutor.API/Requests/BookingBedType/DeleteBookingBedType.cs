@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteBookingRoomVariantBedTypeHandler : IRequestHandler<BookingBedType.DeleteRequest, Unit>
+internal class DeleteBookingRoomVariantBedTypeHandler : IRequestHandler<BookingBedTypeRequests.DeleteRequest, Unit>
 {
     private readonly BookingRoomVariantBedTypeRepository _repository;
 
@@ -12,7 +12,7 @@ internal class DeleteBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<Unit> Handle(BookingBedType.DeleteRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(BookingBedTypeRequests.DeleteRequest request, CancellationToken cancellationToken)
     {
         await _repository.Delete(request.Id);
         return Unit.Value;
@@ -20,7 +20,7 @@ internal class DeleteBookingRoomVariantBedTypeHandler : IRequestHandler<BookingB
 }
 
 ///<summary> Запросы и очереди выбранных вариантов кроватей </summary>
-public partial class BookingBedType
+public partial class BookingBedTypeRequests
 {
     ///<summary> Запрос удаления выбранного варианта кровати </summary>
     public class DeleteRequest : IRequest<Unit>

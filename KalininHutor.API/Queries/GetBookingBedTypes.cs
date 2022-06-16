@@ -1,10 +1,11 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetBookingBedTypesHandler : IRequestHandler<BookingBedType.GetQuery, IEnumerable<BookingBedType.GetResponse>>
+internal class GetBookingBedTypesHandler : IRequestHandler<BookingBedTypeQueries.GetQuery, IEnumerable<BookingBedTypeDTO>>
 {
     private readonly BookingRoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -15,35 +16,22 @@ internal class GetBookingBedTypesHandler : IRequestHandler<BookingBedType.GetQue
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<BookingBedType.GetResponse>> Handle(BookingBedType.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookingBedTypeDTO>> Handle(BookingBedTypeQueries.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<BookingRoomVariantBedTypeSearchOptions>(request));
-        return result.Select(_mapper.Map<BookingBedType.GetResponse>).ToList();
+        return result.Select(_mapper.Map<BookingBedTypeDTO>).ToList();
     }
 }
 
 ///<summary> Запросы и очереди выбранных вариантов кроватей </summary>
-public partial class BookingBedType
+public partial class BookingBedTypeQueries
 {
     ///<summary> Очередь получения забронированных вариантов кроватей в номерах </summary>
-    public class GetQuery : IRequest<IEnumerable<GetResponse>>
+    public class GetQuery : IRequest<IEnumerable<BookingBedTypeDTO>>
     {
         ///<summary> Идентификатор выбранной кровати в номер  </summary>
         public Guid? Id { get; set; }
         ///<summary> Идентификатор выбранного номера </summary>
         public Guid? BookingRoomVariantId { get; set; }
-    }
-
-    ///<summary> Модель чтения забронированных вариантов кроватей в номерах </summary>
-    public class GetResponse
-    {
-        ///<summary> Идентификатор выбранной кровати в номер </summary>
-        public Guid Id { get; protected set; }
-        ///<summary> Идентификатор выбранного номера </summary>
-        public Guid BookingRoomVariantId { get; protected set; }
-        ///<summary> Выбранный тип кровати </summary>
-        public Guid BedTypeId { get; protected set; }
-        ///<summary> Количество кроватей выбранного типа </summary>
-        public int Count { get; protected set; }
     }
 }

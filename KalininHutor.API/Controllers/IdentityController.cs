@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KalininHutor.API.Controllers;
 
-using UserRequests = API.Requests.User;
-
 ///<summary> Контроллер пользователей </summary>
 [Route("api/[controller]")]
 [ApiController]

@@ -7,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainBookingVariant = Domain.Booking.BookingRoomVariant;
 
-internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVariant.CreateRequest, Guid>
+internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVariantRequests.CreateRequest, Guid>
 {
     private readonly BookingRoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(BookingRoomVariant.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(BookingRoomVariantRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var bookingRoomVariant = new DomainBookingVariant(request.RoomVariantId, request.BookingId, request.Amount);
         await _repository.Create(_mapper.Map<BookingRoomVariantEntity>(bookingRoomVariant));
@@ -28,7 +28,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
 }
 
 ///<summary> Запросы и очереди выбранных номеров </summary>
-public partial class BookingRoomVariant
+public partial class BookingRoomVariantRequests
 {
     ///<summary> Запрос на создание выбранного варианта номера </summary>
     public class CreateRequest : IRequest<Guid>
@@ -41,6 +41,6 @@ public partial class BookingRoomVariant
         public decimal Amount { get; set; }
 
         ///<summary> Выбранные типы кроватей </summary>
-        public IReadOnlyList<BookingBedType.CreateRequest> BedTypes { get; set; } = new List<BookingBedType.CreateRequest>();
+        public IReadOnlyList<BookingBedTypeRequests.CreateRequest> BedTypes { get; set; } = new List<BookingBedTypeRequests.CreateRequest>();
     }
 }

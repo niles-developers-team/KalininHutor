@@ -3,12 +3,13 @@ using AutoMapper;
 using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
+using KalininHutor.API.DTO;
 
 namespace KalininHutor.API.Requests;
 
 using DomainUser = Domain.Identity.User;
 
-internal class UserSignupHandler : IRequestHandler<User.SignupRequest, string>
+internal class UserSignupHandler : IRequestHandler<UserRequests.SignupRequest, AuthenticatedUserDetailsDTO>
 {
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -21,7 +22,7 @@ internal class UserSignupHandler : IRequestHandler<User.SignupRequest, string>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(User.SignupRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserRequests.SignupRequest request, CancellationToken cancellationToken)
     {
         var existedUser = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
 
@@ -32,15 +33,18 @@ internal class UserSignupHandler : IRequestHandler<User.SignupRequest, string>
 
         await _userRepository.Create(_mapper.Map<UserEntity>(user));
 
-        return _jwtHelper.GenerateToken(user.Id);
+        var userDTO = _mapper.Map<AuthenticatedUserDetailsDTO>(user);
+        userDTO.Token = _jwtHelper.GenerateToken(user.Id);
+
+        return userDTO;
     }
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class User
+public partial class UserRequests
 {
     ///<summary> Запрос на авторизацию пользователя </summary>
-    public class SignupRequest : IRequest<string>
+    public class SignupRequest : IRequest<AuthenticatedUserDetailsDTO>
     {
         ///<summary> Номер телефона пользователя </summary>
         [Required]

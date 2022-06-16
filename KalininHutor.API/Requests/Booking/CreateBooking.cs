@@ -12,7 +12,7 @@ using DomainBooking = Domain.Booking.Booking;
 using DomainBookingVariant = Domain.Booking.BookingRoomVariant;
 using DomainRoomVariant = Domain.Booking.RoomVariant;
 
-internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Guid>
+internal class CreateBookingHandler : IRequestHandler<BookingRequests.CreateRequest, Guid>
 {
     private readonly BookingRepository _repository;
     private readonly RentalObjectRepository _rentalObjectRepository;
@@ -27,7 +27,7 @@ internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Gui
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(Booking.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(BookingRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = _mapper.Map<DomainRentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
         var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId, IncludeBedTypes = true });
@@ -48,7 +48,7 @@ internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Gui
 }
 
 ///<summary> Запросы и очереди бронирования </summary>
-public partial class Booking
+public partial class BookingRequests
 {
     ///<summary> Создает бронь, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>
@@ -70,6 +70,6 @@ public partial class Booking
         public DateOnly CheckoutDate { get; set; }
 
         ///<summary> Коллекция бронируемых вариантов номеров </summary>
-        public IReadOnlyList<BookingRoomVariant.CreateRequest> BookingRooms { get; set; } = new List<BookingRoomVariant.CreateRequest>();
+        public IReadOnlyList<BookingRoomVariantRequests.CreateRequest> BookingRooms { get; set; } = new List<BookingRoomVariantRequests.CreateRequest>();
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.API.Queries;
 using KalininHutor.DAL.Booking;
 using KalininHutor.DAL.Identity;
@@ -16,9 +17,11 @@ public class AppMappingProfile : Profile
     public AppMappingProfile()
     {
         CreateMap<DomainRentalObject, RentalObjectEntity>().ReverseMap();
-        CreateMap<RentalObject.GetQuery, RentalObjectSearchOptions>().ReverseMap();
-        CreateMap<RentalObjectEntity, RentalObject.GetResponse>();
+        CreateMap<RentalObjectQueries.GetQuery, RentalObjectSearchOptions>().ReverseMap();
+        CreateMap<RentalObjectEntity, RentalObjectDTO>();
 
         CreateMap<DomainUser, UserEntity>().ReverseMap();
+        CreateMap<DomainUser, UserDetailsDTO>().ReverseMap();
+        CreateMap<DomainUser, AuthenticatedUserDetailsDTO>().ReverseMap();
     }
 }

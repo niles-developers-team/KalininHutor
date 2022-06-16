@@ -9,7 +9,7 @@ namespace KalininHutor.API.Requests;
 using DomainRentalObject = Domain.Booking.RentalObject;
 using DomainRoomVariant = Domain.Booking.RoomVariant;
 
-internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequest, Guid>
+internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantRequests.CreateRequest, Guid>
 {
     private readonly RoomVariantRepository _repository;
     private readonly RentalObjectRepository _rentalObjectRepository;
@@ -22,7 +22,7 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariant.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = _mapper.Map<DomainRentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
         var roomVariants = await _repository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId });
@@ -38,7 +38,7 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantRequests
 {
     ///<summary> Запрос на создание варианта номера </summary>
     public class CreateRequest : IRequest<Guid>
