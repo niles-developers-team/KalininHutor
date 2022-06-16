@@ -1,10 +1,12 @@
-import { Button, Dialog, DialogContent, DialogTitle, FormControl, Grid, Input, InputAdornment, InputLabel, InputProps, TextField, Typography } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { forwardRef, useState } from "react";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import { IMaskInput } from 'react-imask';
 
 export interface DialogProps {
     isOpen: boolean;
+    authenticating: boolean;
     onSignin: (phoneNumber: string, password: string) => void;
 }
 
@@ -90,7 +92,11 @@ export const SigninDialog = function (props: DialogProps) {
                             inputComponent: PasswordMaskCustom as any
                         }}
                     />
-                    <Button onClick={handleSignin} variant="contained" color="primary">Войти</Button>
+                    <LoadingButton
+                        loadingPosition="start"
+                        onClick={handleSignin}
+                        variant="contained"
+                        color="primary">Войти</LoadingButton >
                 </Grid>
             </DialogContent>
         </Dialog>

@@ -1,5 +1,5 @@
 import { AppBar, Button, Grid, TextField, Toolbar } from "@mui/material";
-import { RouteProps } from "react-router-dom";
+import { RouteProps, useNavigate } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
 import FaceIcon from '@mui/icons-material/Face';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -7,18 +7,35 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import GiteIcon from '@mui/icons-material/Gite';
 import { SigninDialog } from "./signin/Signin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserActions } from "../store/userStore";
-import { useAppDispatch } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { AppState } from "../store";
 
 interface Props extends RouteProps { }
 
 export const LayoutComponent = function (props: Props): JSX.Element {
+    const { userState } = useAppSelector((state: AppState) => ({
+        userState: state.userState
+    }));
     const dispatch = useAppDispatch();
-    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+    const [open, setOpen] = useState<boolean>(false);
 
-    async function handleSignin(phoneNumber: string, password: string)
-    {
+    useEffect(() => {
+        setOpen(userState.authenticating);
+    }, [userState.authenticating]);
+
+    function handleAccountClick() {
+        if(!userState.authenticating && !userState.authenticated) {
+            setOpen(true);
+            return;
+        }
+
+        navigate('me');
+    }
+
+    async function handleSignin(phoneNumber: string, password: string) {
         dispatch(UserActions.signin({
             password: password,
             phoneNumber: `+7${phoneNumber}`,
@@ -37,7 +54,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                             <TextField fullWidth variant="outlined" placeholder="Поиск" />
                         </Grid>
                         <Button>Поиск</Button>
-                        <Button onClick={() => setOpen(true)}>
+                        <Button onClick={handleAccountClick}>
                             <Grid container direction="column">
                                 <FaceIcon />
                                 <span>Войти</span>
@@ -73,6 +90,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
             {props.children}
             <SigninDialog
                 isOpen={open}
+                authenticating={userState.authenticating}
                 onSignin={handleSignin}
             />
         </Grid>
