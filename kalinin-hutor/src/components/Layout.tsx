@@ -6,41 +6,27 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import GiteIcon from '@mui/icons-material/Gite';
-import { SigninDialog } from "./signin/Signin";
-import { useEffect, useState } from "react";
-import { UserActions } from "../store/userStore";
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { useAppSelector } from "../hooks";
 import { AppState } from "../store";
+import { sessionService } from "../services";
 
-interface Props extends RouteProps { }
+interface Props extends RouteProps {
+    onSigninDialogOpen: () => void;
+}
 
 export const LayoutComponent = function (props: Props): JSX.Element {
     const { userState } = useAppSelector((state: AppState) => ({
         userState: state.userState
     }));
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [open, setOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        setOpen(userState.authenticating);
-    }, [userState.authenticating]);
 
     function handleAccountClick() {
-        if(!userState.authenticating && !userState.authenticated) {
-            setOpen(true);
+        if (!sessionService.isUserAuthenticated()) {
+            props.onSigninDialogOpen();
             return;
         }
 
-        navigate('me');
-    }
-
-    async function handleSignin(phoneNumber: string, password: string) {
-        dispatch(UserActions.signin({
-            password: password,
-            phoneNumber: `+7${phoneNumber}`,
-            withSignup: true
-        }));
+        navigate('/me');
     }
 
     return (
@@ -88,11 +74,10 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                 </Toolbar>
             </AppBar>
             {props.children}
-            <SigninDialog
-                isOpen={open}
-                authenticating={userState.authenticating}
-                onSignin={handleSignin}
-            />
+            <AppBar id="footer" position="fixed" sx={{ top: 'auto', bottom: 0 }}>
+                <Toolbar>
+                </Toolbar>
+            </AppBar>
         </Grid>
     )
 };

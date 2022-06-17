@@ -8,6 +8,7 @@ export interface DialogProps {
     isOpen: boolean;
     authenticating: boolean;
     onSignin: (phoneNumber: string, password: string) => void;
+    onClose: () => void;
 }
 
 interface MaskedInputProps {
@@ -65,7 +66,7 @@ export const SigninDialog = function (props: DialogProps) {
     }
 
     return (
-        <Dialog open={props.isOpen} maxWidth="xs">
+        <Dialog open={props.isOpen} maxWidth="xs" onClose={props.onClose}>
             <DialogTitle>KALININ HUTOR</DialogTitle>
             <DialogContent>
                 <Grid container direction="column">
