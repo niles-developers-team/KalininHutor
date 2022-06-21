@@ -11,6 +11,8 @@ import configureStore from './store/createStore';
 
 import { sessionService } from './services';
 import { RoutesSwitch } from './components';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 import './index.css';
 import './themes/bootstrap.scss';
@@ -18,6 +20,8 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import "moment/locale/ru";
+
 
 sessionService.init();
 
@@ -30,11 +34,13 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <DocumentMeta {...meta}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <RoutesSwitch />
-        </BrowserRouter>
-      </Provider>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <Provider store={store}>
+          <BrowserRouter>
+            <RoutesSwitch />
+          </BrowserRouter>
+        </Provider>
+      </LocalizationProvider>
     </DocumentMeta>
   </React.StrictMode>
 );

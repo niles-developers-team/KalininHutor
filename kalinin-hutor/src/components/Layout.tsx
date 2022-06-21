@@ -1,11 +1,6 @@
 import { AppBar, Button, Grid, TextField, Toolbar } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
-import SearchIcon from '@mui/icons-material/Search';
-import FaceIcon from '@mui/icons-material/Face';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import GiteIcon from '@mui/icons-material/Gite';
+import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppSelector } from "../hooks";
 import { AppState } from "../store";
 import { sessionService } from "../services";
@@ -33,40 +28,40 @@ export const LayoutComponent = function (props: Props): JSX.Element {
         <Grid container direction="row">
             <AppBar position="sticky" className="app-bar">
                 <Toolbar>
-                    <Grid container className="container">
+                    <Grid container className="container" alignItems="center">
                         <Button>Каталог</Button>
-                        <SearchIcon />
+                        <Search color="primary" fontSize="large" />
                         <Grid item xs>
                             <TextField fullWidth variant="outlined" placeholder="Поиск" />
                         </Grid>
                         <Button>Поиск</Button>
                         <Button onClick={handleAccountClick}>
                             <Grid container direction="column">
-                                <FaceIcon />
+                                <Face />
                                 <span>Войти</span>
                             </Grid>
                         </Button>
                         <Button>
                             <Grid container direction="column">
-                                <FavoriteIcon />
+                                <Favorite />
                                 <span>Избранное</span>
                             </Grid>
                         </Button>
                         <Button>
                             <Grid container direction="column">
-                                <ShoppingBagIcon />
+                                <ShoppingBag />
                                 <span>Заказы</span>
                             </Grid>
                         </Button>
                         <Button>
                             <Grid container direction="column">
-                                <GiteIcon />
+                                <Gite />
                                 <span>Брони</span>
                             </Grid>
                         </Button>
                         <Button>
                             <Grid container direction="column">
-                                <ShoppingCartIcon />
+                                <ShoppingCart />
                                 <span>Корзина</span>
                             </Grid>
                         </Button>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../hooks";
+import { sessionService, userService } from "../services";
 import { AppState } from "../store";
 import { UserActions } from "../store/userStore";
 import { NotFound, PrivateRoute } from "./common";
@@ -31,6 +32,11 @@ export function RoutesSwitch() {
             withSignup: true
         }));
     }
+
+    useEffect(() => {
+        if (sessionService.isUserAuthenticated())
+            dispatch(UserActions.getCurrentUser());
+    }, [location.pathname]);
 
     useEffect(() => {
         if (!userState.authenticating && userState.authenticated) {

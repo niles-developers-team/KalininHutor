@@ -47,8 +47,8 @@ class SessionService {
     }
 
     private mixSessionFetch() {
-        window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-            const storageItem = await this.getStorageItem();
+        window.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+            const storageItem = this.getStorageItem();
             
             if (!init) {
                 init = this.noInit;

@@ -16,6 +16,10 @@ export enum ActionTypes {
 
     signOut = 'SIGN_OUT',
 
+    getCurrentUserRequest = 'GET_CURRENT_USER_REQUEST',
+    getCurrentUserSuccess = 'GET_CURRENT_USER_SUCCESS',
+    getCurrentUserFailure = 'GET_CURRENT_USER_FAILURE',
+
     getUsersRequest = 'GET_USERS_REQUEST',
     getUsersSuccess = 'GET_USERS_SUCCESS',
     getUsersFailure = 'GET_USERS_FAILURE',
@@ -67,6 +71,22 @@ export namespace UserActions {
 
     export interface SignupFailureAction extends Action<ActionTypes> {
         type: ActionTypes.signupFailure;
+        error: ApplicationError;
+    }
+
+    export interface GetCurrentUserRequestAction extends Action<ActionTypes> {
+        type: ActionTypes.getCurrentUserRequest;
+        currentUserLoading: true;
+    }
+
+    export interface GetCurrentUserSuccessAction extends Action<ActionTypes> {
+        type: ActionTypes.getCurrentUserSuccess;
+        currentUserLoading?: boolean;
+        user: User;
+    }
+
+    export interface GetCurrentUserFailureAction extends Action<ActionTypes> {
+        type: ActionTypes.getCurrentUserFailure;
         error: ApplicationError;
     }
 
@@ -135,6 +155,7 @@ export namespace UserActions {
 
     export type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
     export type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
+    export type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
     export type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
     export type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
     export type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
@@ -143,6 +164,7 @@ export namespace UserActions {
     export type UserActions = Signin
         | Signup
         | SignoutAction
+        | GetCurrentUser
         | GetUsers
         | GetUser
         | ClearEditionStateAction
@@ -200,6 +222,31 @@ export namespace UserActions {
     export function signout(): SignoutAction {
         userService.signout();
         return { type: ActionTypes.signOut };
+    }
+
+    export function getCurrentUser(): AppThunkAction<Promise<GetCurrentUserSuccessAction | GetCurrentUserFailureAction>> {
+        return async (dispatch: AppThunkDispatch) => {
+            dispatch(request());
+
+            try {
+                let user: User | undefined = undefined;
+                    user = await userService.getCurrentUser();
+                if (!user) {
+                    throw new ApplicationError('Не удалось найти пользователя');
+                }
+
+                return dispatch(success(user));
+            }
+            catch (error: any) {
+                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+
+                return dispatch(failure(error));
+            }
+
+            function request(): GetCurrentUserRequestAction { return { type: ActionTypes.getCurrentUserRequest, currentUserLoading: true }; }
+            function success(user: User): GetCurrentUserSuccessAction { return { type: ActionTypes.getCurrentUserSuccess, currentUserLoading: false, user: user }; }
+            function failure(error: ApplicationError): GetCurrentUserFailureAction { return { type: ActionTypes.getCurrentUserFailure, error: error }; }
+        }
     }
 
     export function updateUser(updateRequest: User.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {

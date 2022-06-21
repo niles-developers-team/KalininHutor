@@ -25,8 +25,8 @@ class UserService {
         sessionService.signOut();
     }
 
-    public async update(request: User.UpdateRequest): Promise<User> {
-        return fetch('api/user', {
+    public update(request: User.UpdateRequest): Promise<User> {
+        return fetch('api/user/update', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -48,6 +48,16 @@ class UserService {
             method: 'GET',
         })
             .then(handleJsonResponse as ResponseHandler<User[]>);
+    }
+
+    public async getCurrentUser(): Promise<User> {
+        let url = `api/user/me`;
+
+        return fetch(url, {
+            credentials: 'include',
+            method: 'GET',
+        })
+            .then(handleJsonResponse as ResponseHandler<User>);
     }
 
     public async getDetails(id: string): Promise<User> {
