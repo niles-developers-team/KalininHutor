@@ -36,31 +36,31 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                         </Grid>
                         <Button>Поиск</Button>
                         <Button onClick={handleAccountClick}>
-                            <Grid container direction="column">
+                            <Grid container direction="column" alignItems="center">
                                 <Face />
                                 <span>Войти</span>
                             </Grid>
                         </Button>
-                        <Button>
-                            <Grid container direction="column">
+                        <Button onClick={() => navigate('/favorite')}>
+                            <Grid container direction="column" alignItems="center">
                                 <Favorite />
                                 <span>Избранное</span>
                             </Grid>
                         </Button>
-                        <Button>
-                            <Grid container direction="column">
+                        <Button onClick={() => navigate('/my-orders')}>
+                            <Grid container direction="column" alignItems="center">
                                 <ShoppingBag />
                                 <span>Заказы</span>
                             </Grid>
                         </Button>
-                        <Button>
-                            <Grid container direction="column">
+                        <Button onClick={() => navigate('/my-bookings')}>
+                            <Grid container direction="column" alignItems="center">
                                 <Gite />
                                 <span>Брони</span>
                             </Grid>
                         </Button>
-                        <Button>
-                            <Grid container direction="column">
+                        <Button onClick={() => navigate('/cart')}>
+                            <Grid container direction="column" alignItems="center">
                                 <ShoppingCart />
                                 <span>Корзина</span>
                             </Grid>
