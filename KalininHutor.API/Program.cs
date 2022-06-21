@@ -10,10 +10,13 @@ using KalininHutor.DAL.Migrations;
 using KalininHutor.API.Helpers;
 using KalininHutor.DAL.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
+var secret = builder.Configuration.GetValue<string>("Secret");
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
 
@@ -32,7 +35,18 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options => { options.RequireHttpsMetadata = false; });
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            };
+        });
 builder.Services.AddAuthorization();
 builder.Services.AddCors();
 
@@ -53,6 +67,8 @@ builder.Services.AddAutoMapper(config =>
     config.ShouldUseConstructor = ci => ci.IsPrivate;
 },
 typeof(AppMappingProfile));
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<JWTHelper>();
 
@@ -124,10 +140,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseCors(configure => configure.SetIsOriginAllowed(origin => true)
         .AllowAnyMethod()
         .AllowAnyHeader()
@@ -138,5 +150,9 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
 });
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

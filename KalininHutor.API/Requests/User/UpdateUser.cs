@@ -1,4 +1,5 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Identity;
 using MediatR;
 
@@ -6,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainUser = Domain.Identity.User;
 
-internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, Unit>
+internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, UserDetailsDTO>
 {
     private readonly UserRepository _repository;
     private readonly IMapper _mapper;
@@ -17,12 +18,12 @@ internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, U
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UserRequests.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<UserDetailsDTO> Handle(UserRequests.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainUser>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Lastname, request.Email, request.Birthday);
         await _repository.Update(_mapper.Map<UserEntity>(entity));
-        return Unit.Value;
+        return _mapper.Map<UserDetailsDTO>(entity);
     }
 }
 
@@ -30,7 +31,7 @@ internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, U
 public partial class UserRequests
 {
     ///<summary> Запрос на изменение пользователя </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<UserDetailsDTO>
     {
         ///<summary> Идентификатор пользователя </summary>
         public Guid Id { get; set; }
@@ -43,6 +44,6 @@ public partial class UserRequests
         ///<summary> E-mail </summary>
         public string? Email { get; set; }
         ///<summary> Дата рождения </summary>
-        public DateOnly Birthday { get; set; }
+        public DateOnly? Birthday { get; set; }
     }
 }
