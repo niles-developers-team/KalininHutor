@@ -1,3 +1,4 @@
+using KalininHutor.API.Queries;
 using KalininHutor.API.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,20 @@ public class UserController : ControllerBase
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> Me()
+    {
+        try
+        {
+            return Ok(await _sender.Send(new UserQueries.GetCurrentUserDetailsQuery()));
+        }
+        catch (ApplicationException)
+        {
+            return Unauthorized();
+        }
+    }
+
     ///<summary> Метод авторизации </summary>
     [HttpPost("sign-in")]
     [AllowAnonymous]
@@ -29,7 +44,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Signup([FromBody] UserRequests.SignupRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения пользователя </summary>
-    [HttpPatch()]
+    [HttpPatch("update")]
     [Authorize]
     public async Task<IActionResult> Update([FromBody] UserRequests.UpdateRequest request) => Ok(await _sender.Send(request));
 

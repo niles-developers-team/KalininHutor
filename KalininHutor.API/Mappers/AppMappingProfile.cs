@@ -22,6 +22,7 @@ public class AppMappingProfile : Profile
 
         CreateMap<DomainUser, UserEntity>().ReverseMap();
         CreateMap<DomainUser, UserDetailsDTO>().ReverseMap();
+        CreateMap<UserEntity, UserDetailsDTO>().ReverseMap();
         CreateMap<DomainUser, AuthenticatedUserDetailsDTO>().ReverseMap();
     }
 }
