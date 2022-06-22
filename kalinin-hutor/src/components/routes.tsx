@@ -5,13 +5,14 @@ import { sessionService, userService } from "../services";
 import { AppState } from "../store";
 import { UserActions } from "../store/userStore";
 import { CartComponent } from "./cart/Cart";
+import { CatalogComponent } from "./catalog/Catalog";
 import { NotFound, PrivateRoute } from "./common";
 import { NotAuthorizedComponent } from "./common/NotAuthorized";
 import { FavoriteComponent } from "./favorite/Favorite";
 import { HomeComponent } from "./home";
 import { LayoutComponent } from "./Layout";
 import { MeComponent } from "./me/Me";
-import { MyBookingsComponent } from "./mybookings/MyBookings";
+import { MyBookingsComponent } from "./myBookings/MyBookings";
 import { MyOrdersComponent } from "./myOrders/MyOrders";
 import { SigninDialog } from "./signin/Signin";
 
@@ -59,7 +60,8 @@ export function RoutesSwitch() {
                 <Route path="/my-orders" element={<MyOrdersComponent />} />
                 <Route path="/my-bookings" element={<MyBookingsComponent />} />
                 <Route path="/cart" element={<CartComponent />} />
-                
+                <Route path="/catalog" element={<CatalogComponent />} />
+
                 <Route path='401' element={<NotAuthorizedComponent onSigninClick={handleSigninOpen} />} />
                 <Route path='*' element={<NotFound />} />
             </Routes>

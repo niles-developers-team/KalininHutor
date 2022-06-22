@@ -7,6 +7,7 @@ export interface RentalObject {
     name: string;
     // Описание объекта аренды
     description: string;
+    address: string;
     // Время заезда объекта аренды
     checkinTime: string;
     // Время отъезда объекта аренды
@@ -53,6 +54,7 @@ export namespace RentalObject {
         checkinTime: '12:00:00',
         checkoutTime: '12:00:00',
         description: '',
+        address: '',
         landlordId: null,
         name: ''
     }

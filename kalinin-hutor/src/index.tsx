@@ -13,6 +13,7 @@ import { sessionService } from './services';
 import { RoutesSwitch } from './components';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { ruRU } from "@mui/x-data-grid";
 
 import './index.css';
 import './themes/bootstrap.scss';
@@ -21,6 +22,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "moment/locale/ru";
+import { createTheme, ThemeProvider } from '@mui/material';
 
 
 sessionService.init();
@@ -28,19 +30,29 @@ sessionService.init();
 const store = configureStore();
 
 const meta = { title: 'Хутор Калинин' }
+const theme = createTheme(
+  {
+    palette: {
+      primary: { main: '#1976d2' },
+    },
+  },
+  ruRU,
+);
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <DocumentMeta {...meta}>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <Provider store={store}>
-          <BrowserRouter>
-            <RoutesSwitch />
-          </BrowserRouter>
-        </Provider>
-      </LocalizationProvider>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <Provider store={store}>
+            <BrowserRouter>
+              <RoutesSwitch />
+            </BrowserRouter>
+          </Provider>
+        </LocalizationProvider>
+      </ThemeProvider>
     </DocumentMeta>
   </React.StrictMode>
 );
