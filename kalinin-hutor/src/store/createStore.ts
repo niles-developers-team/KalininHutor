@@ -8,6 +8,7 @@ import { userReducer } from "./userStore";
 import { bookingReducer } from "./bookingStore";
 import { rentalObjectReducer } from "./rentalObjectStore";
 import { snackbarReducer } from "./snackbarStore";
+import { roomCharacteristicReducer } from "./roomCharacteristicStore";
 
 
 export default function configureAppStore(): Store<AppState> {
@@ -18,7 +19,8 @@ export default function configureAppStore(): Store<AppState> {
             bookingState: bookingReducer,
             rentalObjectState: rentalObjectReducer,
             snackbarState: snackbarReducer,
-            userState: userReducer
+            userState: userReducer,
+            roomCharacteristicState: roomCharacteristicReducer
         },
         middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(...middlewares),
         devTools: process.env.NODE_ENV !== 'production',

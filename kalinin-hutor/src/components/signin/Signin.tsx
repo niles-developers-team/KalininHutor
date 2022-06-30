@@ -94,7 +94,6 @@ export const SigninDialog = function (props: DialogProps) {
                         }}
                     />
                     <LoadingButton
-                        loadingPosition="start"
                         onClick={handleSignin}
                         variant="contained"
                         color="primary">Войти</LoadingButton >

@@ -2,7 +2,7 @@ import { CharacteristicTypes } from "./common";
 
 export interface RoomCharacteristic {
     // Идентификатор характеристики
-    id: string;
+    id: string | null;
     // Название характеристики
     name: string;
     // Описание харакетирстики
@@ -11,25 +11,34 @@ export interface RoomCharacteristic {
     type: CharacteristicTypes;
 }
 
-// Очередь получения удобств и услуг</summary>
-export interface GetRoomCharacteristicsQuery
-{
-    // Идентификатор характеристики
-    id: string;
-    // Поисковая строка
-    searchText: string;
-}
+export namespace RoomCharacteristic {
+    // Очередь получения удобств и услуг</summary>
+    export interface GetQuery {
+        // Идентификатор характеристики
+        id?: string;
+        // Поисковая строка
+        searchText?: string;
+        take?: number;
+    }
 
-export interface CreateRoomCharacteristicRequest {
-    name: string;
-    description: string;
-    type: CharacteristicTypes;
-}
+    export interface CreateRequest {
+        name: string;
+        description: string;
+        type: CharacteristicTypes;
+    }
 
-export interface DeleteRoomCharacteristicRequest {
-    id: string;
-}
+    export interface DeleteRequest {
+        id: string;
+    }
 
-export interface UpdateRoomCharacteristicRequest 
-    extends DeleteRoomCharacteristicRequest, CreateRoomCharacteristicRequest {
+    export interface UpdateRequest
+        extends DeleteRequest, CreateRequest {
+    }
+
+    export const initial: RoomCharacteristic = {
+        description: '',
+        id: null,
+        name: '',
+        type: CharacteristicTypes.Common
+    }
 }

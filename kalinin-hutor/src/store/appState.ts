@@ -2,6 +2,7 @@ import { Action } from "redux";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { BookingState } from "./bookingStore";
 import { RentalObjectState } from "./rentalObjectStore";
+import { RoomCharacteristicState } from "./roomCharacteristicStore";
 import { SnackbarState } from "./snackbarStore";
 import { UserState } from "./userStore";
 
@@ -12,33 +13,47 @@ export type AppState = {
     userState: UserState,
     bookingState: BookingState,
     rentalObjectState: RentalObjectState,
-    snackbarState: SnackbarState
+    snackbarState: SnackbarState,
+    roomCharacteristicState: RoomCharacteristicState
 }
 
-export type ModelsLoading = {
+export type CreateModelState<TModel> = {
+    creating: boolean;
+    model?: TModel;
+}
+
+export type ModelsLoadingState = {
     modelsLoading: true;
 }
 
-export type ModelsLoaded<TModel> = {
+export type ModelsLoadedState<TModel> = {
     modelsLoading: false;
     models: TModel[];
 }
 
-export type ModelLoading = {
+export type ModelLoadingState = {
     modelLoading: true;
 }
 
-export type ModelLoaded<TModel> = {
+export type ModelLoadedState<TModel> = {
     modelLoading: boolean;
     model?: TModel;
 }
 
-export type ModelsDeleting<TRequest> = {
+export type ModelSpecsLoadingState = {
+    modelSpecsLoading: true;
+}
+
+export type ModelSpecsLoadedState = {
+    modelSpecsLoading: false;
+}
+
+export type ModelsDeletingState<TRequest> = {
     deleting: true;
     deleteRequest: TRequest;
 }
 
-export type ModelsDeleted = {
+export type ModelsDeletedState = {
     deleting: false;
     deleted?: boolean;
 }

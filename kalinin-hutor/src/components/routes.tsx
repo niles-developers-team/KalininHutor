@@ -12,8 +12,10 @@ import { FavoriteComponent } from "./favorite/Favorite";
 import { HomeComponent } from "./home";
 import { LayoutComponent } from "./Layout";
 import { MeComponent } from "./me/Me";
-import { MyBookingsComponent } from "./myBookings/MyBookings";
+import { MyBookingsComponent } from "./mybookings/MyBookings";
 import { MyOrdersComponent } from "./myOrders/MyOrders";
+import { RentalObjectComponent } from "./rentalObjects/rentalObject/RentalObject";
+import { RoomVariantComponent } from "./rentalObjects/rentalObject/RoomVariant";
 import { SigninDialog } from "./signin/Signin";
 
 
@@ -61,6 +63,9 @@ export function RoutesSwitch() {
                 <Route path="/my-bookings" element={<MyBookingsComponent />} />
                 <Route path="/cart" element={<CartComponent />} />
                 <Route path="/catalog" element={<CatalogComponent />} />
+                <Route path="/me/rental-objects/:id" element={<RentalObjectComponent />} />
+                <Route path="/rental-objects/:id" element={<RentalObjectComponent />} />
+                <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
 
                 <Route path='401' element={<NotAuthorizedComponent onSigninClick={handleSigninOpen} />} />
                 <Route path='*' element={<NotFound />} />

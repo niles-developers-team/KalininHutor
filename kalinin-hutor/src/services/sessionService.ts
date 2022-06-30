@@ -1,11 +1,13 @@
 import { StorageItem } from "../models";
 import jwt_decode from "jwt-decode";
+import Cookies from "universal-cookie";
 
 class SessionService {
     private originalFetch: typeof fetch = fetch.bind(window);
 
-    private readonly storageKey: string = 'hie-app';
+    private readonly storageKey: string = 'kalinin_hutor_auth';
     private readonly noInit = {};
+    private readonly cookies = new Cookies();
 
     public init(): void {
         this.mixSessionFetch();
@@ -18,30 +20,26 @@ class SessionService {
 
     public signIn(token: string): boolean {
         const storageItem = this.getStorageItem();
-        if(!this.filterToken(token))
-        {
+        if (!this.filterToken(token))
             return false;
-        }
 
         storageItem.token = token;
-        sessionStorage.setItem(this.storageKey, JSON.stringify(storageItem));
+        this.cookies.set(this.storageKey, JSON.stringify(storageItem));
 
         return true;
     }
 
     public signOut() {
-        const storageItem = this.getStorageItem();
-        storageItem.token = '';
-        sessionStorage.setItem(this.storageKey, JSON.stringify(storageItem));
+        this.cookies.remove(this.storageKey);
     }
 
     private getStorageItem(): StorageItem {
-        let tempStorageValue = sessionStorage.getItem(this.storageKey);
-        let storageValue: StorageItem = tempStorageValue ? JSON.parse(tempStorageValue) : {};
-        
-        if (!storageValue || !this.filterToken(storageValue.token)) {
-            storageValue.token = '';
-            sessionStorage.setItem(this.storageKey, JSON.stringify(storageValue));
+        const storageValue: StorageItem = this.cookies.get(this.storageKey);
+        if (!storageValue)
+            return { token: '' };
+
+        if (storageValue && !this.filterToken(storageValue.token)) {
+            this.cookies.remove(this.storageKey);
         }
         return storageValue;
     }
@@ -49,7 +47,7 @@ class SessionService {
     private mixSessionFetch() {
         window.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
             const storageItem = this.getStorageItem();
-            
+
             if (!init) {
                 init = this.noInit;
             }

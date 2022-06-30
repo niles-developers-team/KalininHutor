@@ -1,5 +1,5 @@
 import { AuthenticatedUser, User } from "../../models";
-import { ModelLoading, ModelLoaded, ModelsLoading, ModelsLoaded, ModelsDeleting, ModelsDeleted } from "../appState";
+import { ModelLoadingState, ModelLoadedState, ModelsLoadingState, ModelsLoadedState, ModelsDeletingState, ModelsDeletedState } from "../appState";
 
 export type Authenticating = {
     authenticating: true;
@@ -12,8 +12,8 @@ export type Authenticated = {
     currentUser?: AuthenticatedUser;
 }
 
-export type ModelState = ModelLoading | ModelLoaded<User>;
-export type ModelsState = ModelsLoading | ModelsLoaded<User>;
-export type DeleteState = ModelsDeleting<User.DeleteRequest> | ModelsDeleted;
+export type UserModelState = ModelLoadingState | ModelLoadedState<User>;
+export type UserModelsState = ModelsLoadingState | ModelsLoadedState<User>;
+export type UserDeleteState = ModelsDeletingState<User.DeleteRequest> | ModelsDeletedState;
 export type AuthenticationState = Authenticating | Authenticated;
-export type UserState = AuthenticationState & ModelState & ModelsState & DeleteState;
+export type UserState = AuthenticationState & UserModelState & UserModelsState & UserDeleteState;

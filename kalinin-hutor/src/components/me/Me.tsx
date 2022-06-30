@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button, Grid, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { RentalObject, User } from "../../models";
@@ -9,10 +9,12 @@ import moment from "moment";
 import { UserDetailsComponent } from "./UserDetails";
 import { MyRentalObjectsComponent } from "./MyRentalObjects";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
+import { useNavigate } from "react-router-dom";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const [user, setUser] = useState<User>(User.initial);
+    const navigate = useNavigate();
     const [rentalObjects, setRentalObjects] = useState<RentalObject[]>([]);
     const { userState, rentalObjectState } = useAppSelector((state: AppState) => ({
         userState: state.userState,
@@ -76,7 +78,22 @@ export const MeComponent = function (): JSX.Element {
     }
 
     function handleCreateRentalObject() {
+        navigate(`/me/rental-objects/create`);
+    }
 
+    function handleEditRentalObject(model: RentalObject) {
+        navigate(`/me/rental-objects/${model.id}`);
+    }
+
+    function handleDeleteRentalObject(model: RentalObject) {
+        dispatch(RentalObjectActions.deleteRentalObjects({
+            id: model.id || ''
+        }));
+    }
+
+    function handleSignout() {
+        dispatch(UserActions.signout());
+        navigate('/');
     }
 
     return (
@@ -102,7 +119,13 @@ export const MeComponent = function (): JSX.Element {
             <MyRentalObjectsComponent
                 loading={rentalObjectState.modelsLoading}
                 models={rentalObjects}
-                onCreate={handleCreateRentalObject} />
+                onCreate={handleCreateRentalObject}
+                onEdit={handleEditRentalObject}
+                onDelete={handleDeleteRentalObject} />
+            <Stack direction="row">
+                <Grid item xs />
+                <Button color="error" onClick={handleSignout}>Выйти из аккаунта</Button>
+            </Stack>
         </Stack>
     );
 }

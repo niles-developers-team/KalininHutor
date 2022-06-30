@@ -1,7 +1,7 @@
 import { Booking } from "../../models";
-import { ModelLoading, ModelLoaded, ModelsLoading, ModelsLoaded, ModelsDeleting, ModelsDeleted } from "../appState";
+import { ModelLoadingState, ModelLoadedState, ModelsLoadingState, ModelsLoadedState, ModelsDeletingState, ModelsDeletedState } from "../appState";
 
-export type ModelState = ModelLoading | ModelLoaded<Booking>;
-export type ModelsState = ModelsLoading | ModelsLoaded<Booking>;
-export type DeleteState = ModelsDeleting<Booking.DeleteRequest> | ModelsDeleted;
+export type ModelState = ModelLoadingState | ModelLoadedState<Booking>;
+export type ModelsState = ModelsLoadingState | ModelsLoadedState<Booking>;
+export type DeleteState = ModelsDeletingState<Booking.DeleteRequest> | ModelsDeletedState;
 export type BookingState = ModelState & ModelsState & DeleteState;

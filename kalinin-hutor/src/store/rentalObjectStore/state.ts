@@ -1,7 +1,9 @@
 import { RentalObject } from "../../models";
-import { ModelLoading, ModelLoaded, ModelsLoading, ModelsLoaded, ModelsDeleting, ModelsDeleted } from "../appState";
+import { ModelLoadingState, ModelLoadedState, ModelsLoadingState, ModelsLoadedState, ModelsDeletingState, ModelsDeletedState, CreateModelState, ModelSpecsLoadingState, ModelSpecsLoadedState } from "../appState";
 
-export type ModelState = ModelLoading | ModelLoaded<RentalObject>;
-export type ModelsState = ModelsLoading | ModelsLoaded<RentalObject>;
-export type DeleteState = ModelsDeleting<RentalObject.DeleteRequest> | ModelsDeleted;
-export type RentalObjectState = ModelState & ModelsState & DeleteState;
+export type RentalObjectCreationState = CreateModelState<RentalObject>;
+export type RentalObjectModelState = ModelLoadingState | ModelLoadedState<RentalObject>;
+export type RentalObjectModelSpecsState = ModelSpecsLoadingState | ModelSpecsLoadedState;
+export type RentalObjectModelsState = ModelsLoadingState | ModelsLoadedState<RentalObject>;
+export type RentalObjectDeleteState = ModelsDeletingState<RentalObject.DeleteRequest> | ModelsDeletedState;
+export type RentalObjectState = RentalObjectModelState & RentalObjectModelSpecsState & RentalObjectModelsState & RentalObjectDeleteState & RentalObjectCreationState;

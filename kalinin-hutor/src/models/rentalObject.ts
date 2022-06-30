@@ -1,3 +1,5 @@
+import { RoomVariant } from "./roomVariant";
+
 export interface RentalObject {
     // Идентификатор объекта аренды
     id: string | null;
@@ -12,6 +14,8 @@ export interface RentalObject {
     checkinTime: string;
     // Время отъезда объекта аренды
     checkoutTime: string;
+
+    roomVariants?: RoomVariant[];
 }
 
 export namespace RentalObject {
@@ -35,6 +39,7 @@ export namespace RentalObject {
         landlordId: string;
         checkinTime: string;
         checkoutTime: string;
+        createRoomVariantsRequests?: RoomVariant.CreateRequest[];
     }
 
     export interface UpdateRequest {
@@ -56,6 +61,7 @@ export namespace RentalObject {
         description: '',
         address: '',
         landlordId: null,
-        name: ''
+        name: '',
+        roomVariants: []
     }
 }
