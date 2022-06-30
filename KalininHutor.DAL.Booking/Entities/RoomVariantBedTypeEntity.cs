@@ -30,4 +30,5 @@ public class RoomVariantBedTypeEntity
 public class RoomVariantBedTypeSearchOptions
 {
     public Guid? RoomVariantId { get; set; }
+    public IReadOnlyList<Guid>? RoomsVariantsIds { get; set; }
 }

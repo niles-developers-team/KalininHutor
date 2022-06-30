@@ -7,7 +7,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRoomCharacteristic = Domain.Booking.RoomCharacteristic;
 
-internal class UpdateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristicRequests.UpdateRequest, Unit>
+internal class UpdateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristic.UpdateRequest, Unit>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RoomCharacteristicRequests.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomCharacteristic.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainRoomCharacteristic>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.Type);
@@ -28,7 +28,7 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
 }
 
 ///<summary> Запросы и очереди характеристик номеров </summary>
-public partial class RoomCharacteristicRequests
+public partial class RoomCharacteristic
 {
     ///<summary> Запрос обновления характеристики номера </summary>
     public class UpdateRequest : IRequest<Unit>

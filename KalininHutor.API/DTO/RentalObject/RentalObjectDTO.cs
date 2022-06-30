@@ -9,6 +9,7 @@ public class RentalObjectDTO
     public Guid LandlordId { get; set; }
     ///<summary> Название объекта аренды  </summary>
     public string Name { get; protected set; } = string.Empty;
+    public string Address { get; protected set; } = string.Empty;
     ///<summary> Описание объекта аренды </summary>
     public string Description { get; protected set; } = string.Empty;
     ///<summary> Время заезда объекта аренды </summary>

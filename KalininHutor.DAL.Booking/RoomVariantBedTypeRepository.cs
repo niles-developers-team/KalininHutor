@@ -37,13 +37,16 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-            select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
-            from RoomVariantBedTypes
-            /*where*/
-        ");
+                select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
+                from RoomVariantBedTypes
+                /**where**/
+            ");
 
         if (options.RoomVariantId.HasValue)
             query.Where($"RoomVariantId = {options.RoomVariantId}");
+
+        if (options.RoomsVariantsIds != null)
+            query.Where($"RoomVariantId = any({options.RoomsVariantsIds})");
 
         return await query.QueryAsync<RoomVariantBedTypeEntity>();
     }
@@ -70,6 +73,6 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
                 MaxInRoom = {entity.MaxInRoom}
             where Id = {entity.Id}
         ").ExecuteAsync();
-    
+
     }
 }

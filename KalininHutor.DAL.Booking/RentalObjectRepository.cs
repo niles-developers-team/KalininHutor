@@ -21,10 +21,11 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.QueryBuilder($@"
-            insert into RentalObjects(Id, OwnerId, Name, Description, CheckinTime, CheckoutTime)
+            insert into RentalObjects(Id, LandlordId, Address, Name, Description, CheckinTime, CheckoutTime)
             values (
                 {entity.Id}, 
                 {entity.LandlordId}, 
+                {entity.Address},
                 {entity.Name}, 
                 {entity.Description}, 
                 {entity.CheckinTimeSpan}, 
@@ -64,8 +65,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         var query = connection.QueryBuilder($@"
             select
                 Id,
-                OwnerId,
+                LandlordId,
                 Name,
+                Address,
                 Description,
                 CheckinTime as CheckinTimeSpan,
                 CheckoutTime as CheckoutTimeSpan
@@ -82,6 +84,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         if(options.CheckoutTime.HasValue)
             query.Where($"(CheckoutTime < {options.CheckoutTimeSpan})");
 
+        if(options.LandlordId.HasValue)
+            query.Where($"LandlordId = {options.LandlordId}");
+
         return await query.QueryAsync<RentalObjectEntity>();
     }
 
@@ -94,6 +99,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 Id,
                 OwnerId,
                 Name,
+                Address,
                 Description,
                 CheckinTime as CheckinTimeSpan,
                 CheckoutTime as CheckoutTimeSpan
