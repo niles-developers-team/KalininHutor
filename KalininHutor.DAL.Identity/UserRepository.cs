@@ -102,7 +102,6 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
             update Users
             set
                 PhoneNumber = {entity.PhoneNumber},
-                Password = {entity.Password},
                 Name = {entity.Name},
                 Lastname ={entity.Lastname},
                 Email = {entity.Email},

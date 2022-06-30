@@ -35,13 +35,17 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-            select Id, RoomVariantId, RoomCharacteristicId, Price
-            from RoomVariantCharacteristics
-            /*where*/
+            select rvch.Id, rvch.RoomVariantId, rvch.RoomCharacteristicId, rvch.Price
+            from RoomVariantCharacteristics rvch
+            inner join Characteristics ch on rvch.RoomCharacteristicId = ch.Id
+            /**where**/
         ");
 
         if (options.RoomVariantId.HasValue)
             query.Where($"RoomVariantId = {options.RoomVariantId}");
+
+        if (options.RoomsVariantsIds != null)
+            query.Where($"RoomVariantId = any({options.RoomsVariantsIds})");
 
         return await query.QueryAsync<RoomVariantCharacteristicEntity>();
     }

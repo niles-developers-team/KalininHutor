@@ -31,11 +31,11 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
                 {entity.Id},
                 {entity.RentalObjectId},
                 {entity.Name},
-                {entity.Description}
+                {entity.Description},
                 {entity.Price},
                 {entity.Width},
                 {entity.Length},
-                {entity.MaxPersonsCount}
+                {entity.MaxPersonsCount},
                 {entity.FreeCancellationPeriod},
                 {entity.PaymentOption},
                 {entity.Count},
@@ -68,10 +68,10 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
                 rv.FreeCancellationPeriod,
                 rv.PaymentOption,
                 rv.Count,
-                rv.FreeCount,
-                rvbt.*
+                rv.FreeCount
             from RoomVariants rv
-            {(options.IncludeBedTypes ? "inner join RoomVariantBedTypes rvbt on rvbt.RoomVariantId = rv.Id" : null):raw}
+            inner join RoomVariantBedTypes rvbt on rvbt.RoomVariantId = rv.Id
+            inner join RoomVariantCharacteristics rvch on rvch.RoomVariantId = rv.Id
             /*where*/
         ");
 

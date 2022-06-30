@@ -27,4 +27,7 @@ public class RoomVariantDTO
     public int Count { get; protected set; }
     ///<summary> Всего номеров свободно </summary>
     public int FreeCount { get; protected set; }
+
+    public IReadOnlyList<RoomVariantBedTypeDTO> BedTypes { get; set; }
+    public IReadOnlyList<RoomVariantCharacteristicDTO> Characteristics { get; set; }
 }

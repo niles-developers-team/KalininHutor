@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using KalininHutor.API.Queries;
 using KalininHutor.API.Requests;
 
 namespace KalininHutor.API.Controllers;
@@ -9,12 +8,12 @@ namespace KalininHutor.API.Controllers;
 ///<summary> Контроллер  объектов аренды </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class RentalObjectController : ControllerBase
+public class RoomVariantController : ControllerBase
 {
     private readonly ISender _sender;
 
     ///<summary> Конструктор контроллера </summary>
-    public RentalObjectController(ISender sender)
+    public RoomVariantController(ISender sender)
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
@@ -22,7 +21,7 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
     [Authorize]
-    public async Task<IActionResult> Get([FromQuery] RentalObject.GetQuery query)
+    public async Task<IActionResult> Get([FromQuery] RoomVariant.GetQuery query)
     {
         var result = await _sender.Send(query);
 
@@ -32,15 +31,15 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RentalObject.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody] RoomVariant.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод обновления объекта аренды </summary>
     [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] RentalObject.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] RoomVariant.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] RentalObject.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] RoomVariant.DeleteRequest request) => Ok(await _sender.Send(request));
 }

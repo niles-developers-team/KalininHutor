@@ -37,11 +37,13 @@ public class RoomCharacteristicRepository : BaseRepository<RoomCharacteristicEnt
         var query = connection.QueryBuilder($@"
             select Id, Name, Description, Type
             from RoomCharacteristics
-            /*where*/
+            /**where**/
+            order by Type, Name
+            {(options.Take.HasValue ? $"limit {options.Take}" : string.Empty):raw}
         ");
 
         if (!string.IsNullOrEmpty(options.SearchText))
-            query.Where($"Name like '%{options.SearchText}%' or Description like '%{options.SearchText}%'");
+            query.Where($"Name like concat('%',{options.SearchText},'%') or Description like concat('%',{options.SearchText},'%')");
 
         if(options.Type.HasValue)
             query.Where($"Type = {options.Type}");

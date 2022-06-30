@@ -28,7 +28,8 @@ public class RoomVariantEntity
     ///<symmary> Всего номеров свободно </summary>
     public int FreeCount { get; protected set; }
 
-    public IReadOnlyList<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
+    public List<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
+    public List<RoomVariantCharacteristicEntity> Characteristics {get; protected set;} = new List<RoomVariantCharacteristicEntity>();
 }
 
 public class RoomVariantSearchOptions

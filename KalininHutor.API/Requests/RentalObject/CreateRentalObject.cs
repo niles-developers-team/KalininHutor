@@ -7,29 +7,40 @@ namespace KalininHutor.API.Requests;
 
 using DomainRentalObject = Domain.Booking.RentalObject;
 
-internal class CreateRentalObjectHandler : IRequestHandler<RentalObjectRequests.CreateRequest, Guid>
+internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRequest, Guid>
 {
+    private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
 
-    public CreateRentalObjectHandler(RentalObjectRepository repository, IMapper mapper)
+    public CreateRentalObjectHandler(ISender sender, RentalObjectRepository repository, IMapper mapper)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RentalObjectRequests.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RentalObject.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new DomainRentalObject(request.Name, request.Description,
                         request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
         await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
+
+        if (request.CreateRoomVariantsRequests.Any())
+        {
+            foreach (var createRoomVariantsRequest in request.CreateRoomVariantsRequests)
+            {
+                createRoomVariantsRequest.RentalObject = rentalObject;
+                await _sender.Send(createRoomVariantsRequest);
+            }
+        }
 
         return rentalObject.Id;
     }
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObjectRequests
+public partial class RentalObject
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>
@@ -48,5 +59,8 @@ public partial class RentalObjectRequests
         public TimeOnly? CheckinTime { get; set; }
         ///<summary> Время отъезда </summary>
         public TimeOnly? CheckoutTime { get; set; }
+
+        public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
+        public IReadOnlyList<RoomVariant.UpdateRequest> UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
     }
 }

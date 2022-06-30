@@ -8,7 +8,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRoomVariantBedType = Domain.Booking.RoomVariantBedType;
 
-internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeRequests.CreateRequest, Guid>
+internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedType.CreateRequest, Guid>
 {
     private readonly RoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -19,9 +19,13 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariantBedTypeRequests.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantBedType.CreateRequest request, CancellationToken cancellationToken)
     {
-        var RoomVariantBedType = new DomainRoomVariantBedType(request.RoomVariantId, request.BedType, request.Width, request.Length, request.MaxInRoom);
+        if (!request.RoomVariantId.HasValue)
+        {
+            throw new ApplicationException("Не указан вариант номера");
+        }
+        var RoomVariantBedType = new DomainRoomVariantBedType(request.RoomVariantId.Value, request.BedType, request.Width, request.Length, request.MaxInRoom);
         await _repository.Create(_mapper.Map<RoomVariantBedTypeEntity>(RoomVariantBedType));
 
         return RoomVariantBedType.Id;
@@ -29,13 +33,13 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
 }
 
 ///<summary> Запросы и очереди вариантов кроватей </summary>
-public partial class RoomVariantBedTypeRequests
+public partial class RoomVariantBedType
 {
     ///<summary> Запрос создания варианта кровати номера </summary>
     public class CreateRequest : IRequest<Guid>
     {
         ///<summary> Идентификатор номера </summary>
-        public Guid RoomVariantId { get; set; }
+        public Guid? RoomVariantId { get; set; }
         ///<summary> Тип кровати </summary>
         public BedTypes BedType { get; set; }
         ///<summary> Ширина кровати </summary>

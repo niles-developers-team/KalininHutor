@@ -3,9 +3,9 @@ using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Requests;
 
-internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectQueries.GetQuery, IEnumerable<RentalObjectDTO>>
+internal class GetRentalObjectsHandler : IRequestHandler<RentalObject.GetQuery, IEnumerable<RentalObjectDTO>>
 {
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
@@ -16,7 +16,7 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectQueries.Get
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<RentalObjectDTO>> Handle(RentalObjectQueries.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RentalObjectDTO>> Handle(RentalObject.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RentalObjectSearchOptions>(request));
         return result.Select(_mapper.Map<RentalObjectDTO>).ToList();
@@ -24,7 +24,7 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectQueries.Get
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObjectQueries
+public partial class RentalObject
 {
     ///<summary> Очередь получения объектов аренды </summary>
     public class GetQuery : IRequest<IEnumerable<RentalObjectDTO>>

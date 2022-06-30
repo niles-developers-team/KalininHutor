@@ -6,7 +6,7 @@ namespace KalininHutor.API.Requests;
 
 using DomainRoomVariantCharacteristic = Domain.Booking.RoomVariantCharacteristic;
 
-internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristicRequests.CreateRequest, Guid>
+internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristic.CreateRequest, Guid>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -17,9 +17,12 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariantCharacteristicRequests.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantCharacteristic.CreateRequest request, CancellationToken cancellationToken)
     {
-        var RoomVariantCharacteristic = new DomainRoomVariantCharacteristic(request.RoomVariantId, request.RoomCharacteristicId, request.Price);
+        if(!request.RoomVariantId.HasValue) {
+            throw new ApplicationException("Не указан вариант номера");
+        }
+        var RoomVariantCharacteristic = new DomainRoomVariantCharacteristic(request.RoomVariantId.Value, request.RoomCharacteristicId, request.Price);
         await _repository.Create(_mapper.Map<RoomVariantCharacteristicEntity>(RoomVariantCharacteristic));
 
         return RoomVariantCharacteristic.Id;
@@ -28,13 +31,13 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
 
 
 ///<summary> Запросы и очереди характеристик вариантов номеров </summary>
-public partial class RoomVariantCharacteristicRequests
+public partial class RoomVariantCharacteristic
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>
     {
         ///<summary> Идентификатор номера </summary>
-        public Guid RoomVariantId { get; set; }
+        public Guid? RoomVariantId { get; set; }
         ///<summary> Идентификатор характеристики </summary>
         public Guid RoomCharacteristicId { get; set; }
         ///<summary> Цена за услугу или удобство </summary>
