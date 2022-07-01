@@ -10,12 +10,12 @@ interface Props extends RouteProps {
 }
 
 interface HideOnScrollProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-  children: React.ReactElement;
+    /**
+     * Injected by the documentation to work in an iframe.
+     * You won't need it on your project.
+     */
+    window?: () => Window;
+    children: React.ReactElement;
 }
 
 function HideOnScroll(props: HideOnScrollProps) {
@@ -49,6 +49,15 @@ export const LayoutComponent = function (props: Props): JSX.Element {
         navigate('/me');
     }
 
+    let profilePageText = 'Войти';
+    if (userState.authenticating === false) {
+        const user = userState.currentUser;
+        if (user && user.name && user.lastname)
+            profilePageText = `${user.lastname} ${user.name[0].toUpperCase()}.`;
+            else 
+            profilePageText = 'Личный кабинет';
+    }
+
     return (
         <Grid container direction="row">
             <HideOnScroll {...props}>
@@ -64,7 +73,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                             <Button onClick={handleAccountClick}>
                                 <Grid container direction="column" alignItems="center">
                                     <Face />
-                                    <span>Войти</span>
+                                    <span>{profilePageText}</span>
                                 </Grid>
                             </Button>
                             <Button onClick={() => navigate('/favorite')}>
@@ -98,8 +107,8 @@ export const LayoutComponent = function (props: Props): JSX.Element {
             <Grid container direction="column" alignItems="center" component="main">
                 {props.children}
             </Grid>
-                <Toolbar color="primary">
-                </Toolbar>
+            <Toolbar color="primary">
+            </Toolbar>
         </Grid>
     )
 };
