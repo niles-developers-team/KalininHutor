@@ -3,7 +3,7 @@ import { RoomCharacteristicState, RoomCharacteristicDeleteState, RoomCharacteris
 
 const initialState: RoomCharacteristicState = {
     modelsLoading: true,
-    modelLoading: false,
+    modelLoading: true,
     deleting: false
 }
 
@@ -18,7 +18,7 @@ export function roomCharacteristicReducer(prevState: RoomCharacteristicState = i
             return { ...prevState, ...state };
         }
         case RoomCharacteristicActionTypes.getRoomCharacteristicFailure: {
-            const state: RoomCharacteristicModelState = { modelLoading: false, model: undefined };
+            const state: RoomCharacteristicModelState = { modelLoading: true };
             return { ...prevState, ...state };
         }
 
@@ -48,7 +48,7 @@ export function roomCharacteristicReducer(prevState: RoomCharacteristicState = i
             return { ...prevState, ...modelsState, ...modelState };
         }
         case RoomCharacteristicActionTypes.createFailure: {
-            return { ...prevState, modelLoading: false };
+            return { ...prevState, modelLoading: true };
         }
 
         case RoomCharacteristicActionTypes.updateRequest: {
@@ -65,7 +65,7 @@ export function roomCharacteristicReducer(prevState: RoomCharacteristicState = i
             return { ...prevState, ...modelsState, ...modelState };
         }
         case RoomCharacteristicActionTypes.updateFailure: {
-            return { ...prevState, modelLoading: false };
+            return { ...prevState, modelLoading: true };
         }
 
         case RoomCharacteristicActionTypes.deleteRequest: {

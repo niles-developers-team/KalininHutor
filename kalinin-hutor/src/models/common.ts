@@ -149,3 +149,15 @@ export namespace CharacteristicTypes {
         CharacteristicTypes.Outdoors
     ];
 }
+
+
+export enum EntityStatus {
+    NotChanged,
+    Created,
+    Updated,
+    Deleted
+}
+
+export interface IEntity {
+    status: EntityStatus;
+}

@@ -2,7 +2,7 @@ import { RoomVariant } from "./roomVariant";
 
 export interface RentalObject {
     // Идентификатор объекта аренды
-    id: string | null;
+    id?: string;
     // Идентификатор владельца
     landlordId: string | null;
     // Название объекта аренды 
@@ -36,7 +36,7 @@ export namespace RentalObject {
         name: string;
         description: string;
         address: string;
-        landlordId: string;
+        landlordId?: string;
         checkinTime: string;
         checkoutTime: string;
         createRoomVariantsRequests?: RoomVariant.CreateRequest[];
@@ -48,6 +48,9 @@ export namespace RentalObject {
         description: string;
         checkinTime: string;
         checkoutTime: string;
+        createRoomVariantsRequests?: RoomVariant.CreateRequest[];
+        updateRoomVariantsRequests?: RoomVariant.UpdateRequest[];
+        deleteRoomVariantsRequests?: RoomVariant.DeleteRequest[];
     }
 
     export interface DeleteRequest {
@@ -55,7 +58,6 @@ export namespace RentalObject {
     }
 
     export const initial: RentalObject = {
-        id: null,
         checkinTime: '12:00:00',
         checkoutTime: '12:00:00',
         description: '',

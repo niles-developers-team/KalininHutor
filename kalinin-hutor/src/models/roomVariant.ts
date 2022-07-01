@@ -1,12 +1,11 @@
-import { PaymentOptions } from "./common";
+import { EntityStatus, IEntity, PaymentOptions } from "./common";
 import { RoomVariantBedType } from "./roomVariantBedType";
 import { RoomVariantCharacteristic } from "./roomVariantCharacteristic";
-
-export interface RoomVariant {
+export interface RoomVariant extends IEntity {
     // Идентификатор варинта номера объекта аренды
-    id: string | null;
+    id?: string;
     // Идентификатор объекта аренды
-    rentalObjectId: string | null;
+    rentalObjectId?: string;
     // Название
     name: string;
     // Описание
@@ -44,7 +43,7 @@ export namespace RoomVariant {
     // Запрос на создание варианта номера
     export interface CreateRequest {
         // Идентификатор объекта аренды
-        rentalObjectId: string | null;
+        rentalObjectId?: string;
         // Название
         name: string;
         // Описание
@@ -100,21 +99,30 @@ export namespace RoomVariant {
         count: number;
         // Всего номеров свободно
         freeCount: number;
+
+        createBedTypesRequests: RoomVariantBedType.CreateRequest[];
+        createCharacteristicsRequests: RoomVariantCharacteristic.CreateRequest[];
+
+        updateBedTypesRequests: RoomVariantBedType.UpdateRequest[];
+        updateCharacteristicsRequests: RoomVariantCharacteristic.UpdateRequest[];
+
+        deleteBedTypesRequests: RoomVariantBedType.DeleteRequest[];
+        deleteCharacteristicsRequests: RoomVariantCharacteristic.DeleteRequest[];
     }
 
     export const initial: RoomVariant = {
         count: 0,
         description: '',
         freeCount: 0,
-        id: null,
         length: 0,
         maxPersonsCount: 0,
         name: '',
         paymentOption: PaymentOptions.CashOnTheSpot,
         price: 0,
-        rentalObjectId: null,
         width: 0,
         bedTypes: [],
-        characteristics: []
+        characteristics: [],
+
+        status: EntityStatus.NotChanged
     }
 }

@@ -3,7 +3,7 @@ import { BookingState, DeleteState, ModelsState, ModelState } from "./state";
 
 const initialState: BookingState = {
     modelsLoading: true,
-    modelLoading: false,
+    modelLoading: true,
     deleting: false
 }
 
@@ -18,7 +18,7 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
             return { ...prevState, ...state };
         }
         case ActionTypes.getBookingFailure: {
-            const state: ModelState = { modelLoading: false, model: undefined };
+            const state: ModelState = { modelLoading: true };
             return { ...prevState, ...state };
         }
 
@@ -49,7 +49,7 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
             return { ...prevState, ...modelsState, ...modelState };
         }
         case ActionTypes.createFailure: {
-            return { ...prevState, modelLoading: false };
+            return { ...prevState, modelLoading: true };
         }
 
         case ActionTypes.updateRequest: {
@@ -66,7 +66,7 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
             return { ...prevState, ...modelsState, ...modelState };
         }
         case ActionTypes.updateFailure: {
-            return { ...prevState, modelLoading: false };
+            return { ...prevState, modelLoading: true };
         }
 
         case ActionTypes.deleteRequest: {

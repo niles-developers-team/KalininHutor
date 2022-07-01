@@ -1,10 +1,10 @@
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, ArrowBack } from "@mui/icons-material";
 import { Button, CircularProgress, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
+import { EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
 import { AppState } from "../../../store";
 import { RentalObjectActions } from "../../../store/rentalObjectStore";
 
@@ -38,24 +38,22 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const [model, setModel] = useState<RentalObject>(RentalObject.initial);
-    const [loading, setLoading] = useState<boolean>(true);
 
     const { id } = useParams();
 
-    useEffect(() => { initData(); }, [id]);
-
-    async function initData() {
-        await dispatch(RentalObjectActions.getRentalObject(id || 'create'));
-        if (id !== 'create')
-            dispatch(RentalObjectActions.getRentalObjectRoomVariants(id || ''));
-    }
+    useEffect(() => {
+        dispatch(RentalObjectActions.getRentalObject(id));
+    }, [id]);
 
     function handleRoomVariantCreate() {
-        navigate(`/me/rental-objects/create/room-variants/create`);
+        dispatch(RentalObjectActions.applyEditionState(model));
+        navigate(`/me/rental-objects/${id}/room-variants/create`);
     }
 
     function handleRoomVariantEdit(roomVariant: RoomVariant) {
+        dispatch(RentalObjectActions.applyEditionState(model));
         navigate(`/me/rental-objects/${id}/room-variants/${roomVariant.id}`);
     }
 
@@ -65,32 +63,62 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     useEffect(() => {
         if (rentalObjectState.modelLoading === false) {
-            setModel(rentalObjectState.model === undefined ? RentalObject.initial : { ...rentalObjectState.model });
-            setLoading(false);
+            setModel(rentalObjectState.model);
         }
     }, [rentalObjectState.modelLoading, rentalObjectState.modelSpecsLoading]);
 
-    function handleDiscard() {
-        // if (rentalObjectState.modelLoading === false) {
-        //     const roomVariant = rentalObjectState.model?.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
-        //     setRoomVariant({ ...roomVariant });
-        // }
-        // setBedType({ ...RoomVariantBedType.initial });
-        // setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
+    async function handleDiscard() {
+        dispatch(RentalObjectActions.clearEditionState());
+        dispatch(RentalObjectActions.getRentalObject(id));
     }
 
     function handleConfirm() {
-        if (!model.id) {
-            if (userState.authenticating === false)
+        if (userState.authenticating === false)
+            if (!model.id) {
                 dispatch(RentalObjectActions.createRentalObject({
                     address: model.address,
                     checkinTime: model.checkinTime,
                     checkoutTime: model.checkoutTime,
                     description: model.description,
-                    landlordId: userState.currentUser?.id || '',
+                    landlordId: userState.currentUser?.id,
                     name: model.name,
-                    createRoomVariantsRequests: model.roomVariants?.map(rv => {
-                        const result: RoomVariant.CreateRequest = {
+                    createRoomVariantsRequests: model.roomVariants?.map<RoomVariant.CreateRequest>(rv => ({
+                        count: rv.count,
+                        description: rv.description,
+                        freeCount: rv.freeCount,
+                        length: rv.length,
+                        maxPersonsCount: rv.maxPersonsCount,
+                        name: rv.name,
+                        paymentOption: rv.paymentOption,
+                        price: rv.price,
+                        width: rv.width,
+                        freeCancellationPeriod: rv.freeCancellationPeriod,
+                        createBedTypesRequests: rv.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
+                            bedType: bt.bedType,
+                            maxInRoom: bt.maxInRoom,
+                            roomVariantId: bt.roomVariantId,
+                            length: bt.length,
+                            width: bt.width
+                        })),
+                        createCharacteristicsRequests: rv.characteristics
+                            .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
+                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                roomVariantId: ch.roomVariantId,
+                                price: ch.price
+                            })),
+                    }))
+                }));
+            }
+            else {
+                dispatch(RentalObjectActions.updateRentalObject({
+                    id: model.id,
+                    checkinTime: model.checkinTime,
+                    checkoutTime: model.checkoutTime,
+                    description: model.description,
+                    name: model.name,
+                    createRoomVariantsRequests: model.roomVariants
+                        ?.filter(o => o.status === EntityStatus.Created)
+                        .map<RoomVariant.CreateRequest>(rv => ({
                             count: rv.count,
                             description: rv.description,
                             freeCount: rv.freeCount,
@@ -102,35 +130,87 @@ export const RentalObjectComponent = function (): JSX.Element {
                             width: rv.width,
                             freeCancellationPeriod: rv.freeCancellationPeriod,
                             rentalObjectId: model.id,
-                            createBedTypesRequests: rv.bedTypes.map(bt => {
-                                const btRequest: RoomVariantBedType.CreateRequest = {
+                            createBedTypesRequests: rv.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
+                                bedType: bt.bedType,
+                                maxInRoom: bt.maxInRoom,
+                                roomVariantId: bt.roomVariantId,
+                                length: bt.length,
+                                width: bt.width
+                            })),
+                            createCharacteristicsRequests: rv.characteristics
+                                .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
+                                    roomCharacteristicId: ch.roomCharacteristicId || '',
+                                    roomVariantId: ch.roomVariantId,
+                                    price: ch.price
+                                })),
+                        })),
+                    updateRoomVariantsRequests: model.roomVariants
+                        ?.filter(o => o.status === EntityStatus.Updated)
+                        .map<RoomVariant.UpdateRequest>(rv => ({
+                            id: rv.id || '',
+                            count: rv.count,
+                            description: rv.description,
+                            freeCount: rv.freeCount,
+                            length: rv.length,
+                            maxPersonsCount: rv.maxPersonsCount,
+                            name: rv.name,
+                            paymentOption: rv.paymentOption,
+                            price: rv.price,
+                            width: rv.width,
+                            freeCancellationPeriod: rv.freeCancellationPeriod,
+                            rentalObjectId: model.id,
+                            createBedTypesRequests: rv.bedTypes
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantBedType.CreateRequest>(bt => ({
                                     bedType: bt.bedType,
                                     maxInRoom: bt.maxInRoom,
                                     roomVariantId: bt.roomVariantId,
                                     length: bt.length,
                                     width: bt.width
-                                }
-
-                                return btRequest;
-                            }),
-                            createCharacteristicsRequests: rv.characteristics.filter(ch => ch.roomCharacteristicId !== null).map(ch => {
-                                const chRequest: RoomVariantCharacteristic.CreateRequest = {
+                                })),
+                            createCharacteristicsRequests: rv.characteristics
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
                                     roomCharacteristicId: ch.roomCharacteristicId || '',
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
-                                };
-                                return chRequest;
-                            })
-                        }
-                        return result;
-                    })
-                }))
-        }
+                                })),
+                            updateBedTypesRequests: rv.bedTypes
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantBedType.UpdateRequest>(bt => ({
+                                    id: bt.id,
+                                    bedType: bt.bedType,
+                                    maxInRoom: bt.maxInRoom,
+                                    roomVariantId: bt.roomVariantId,
+                                    length: bt.length,
+                                    width: bt.width
+                                })),
+                            updateCharacteristicsRequests: rv.characteristics
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantCharacteristic.UpdateRequest>(ch => ({
+                                    id: ch.id || '',
+                                    roomCharacteristicId: ch.roomCharacteristicId || '',
+                                    roomVariantId: ch.roomVariantId,
+                                    price: ch.price
+                                })),
+                            deleteBedTypesRequests: rv.bedTypes
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantBedType.DeleteRequest>(bt => ({ id: bt.id || '' })),
+                            deleteCharacteristicsRequests: rv.characteristics
+                                .filter(o => o.status === EntityStatus.Created)
+                                .map<RoomVariantCharacteristic.DeleteRequest>(ch => ({ id: ch.id || '' })),
+                        })),
+                    deleteRoomVariantsRequests: model.roomVariants
+                        ?.filter(o => o.status === EntityStatus.Deleted)
+                        .map<RoomVariant.DeleteRequest>(rv => ({ id: rv.id || '' }))
+                }));
+            }
     }
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row">
+            <Stack direction="row" alignItems="center" spacing={2}>
+                <IconButton onClick={() => navigate(`/me`)}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Информация об объекте аренды</Typography>
             </Stack>
             <Stack direction="row" spacing={2}>

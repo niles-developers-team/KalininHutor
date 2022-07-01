@@ -1,38 +1,24 @@
 import { RentalObject } from "../../models";
 import { ActionTypes, RentalObjectActions } from "./actions";
-import { RentalObjectState, RentalObjectDeleteState, RentalObjectModelsState, RentalObjectModelState, RentalObjectCreationState, RentalObjectModelSpecsState } from "./state";
+import { RentalObjectState, RentalObjectDeleteState, RentalObjectModelsState, RentalObjectModelState, RentalObjectModelSpecsState } from "./state";
 
 const initialState: RentalObjectState = {
-    modelSpecsLoading: true,
-    creating: false,
     modelsLoading: true,
-    modelLoading: false,
+    modelLoading: true,
+    modelSpecsLoading: true,
     deleting: false
 }
 
 export function rentalObjectReducer(prevState: RentalObjectState = initialState, action: RentalObjectActions.RentalObjectActions): RentalObjectState {
     switch (action.type) {
-        case ActionTypes.getRentalObjectRequest: {
-            const state: RentalObjectModelState = { modelLoading: true };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getRentalObjectRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.getRentalObjectSuccess: {
-            let creationState: RentalObjectCreationState = { creating: false };
-            if (!action.rentalobject.id) {
-                creationState = { creating: true, model: action.rentalobject };
-            }
             const state: RentalObjectModelState = { modelLoading: false, model: action.rentalobject };
-            return { ...prevState, ...state, ...creationState };
-        }
-        case ActionTypes.getRentalObjectFailure: {
-            const state: RentalObjectModelState = { modelLoading: false, model: undefined };
             return { ...prevState, ...state };
         }
+        case ActionTypes.getRentalObjectFailure: return { ...prevState, modelLoading: true };
 
-        case ActionTypes.getRentalObjectsRequest: {
-            const state: RentalObjectModelsState = { modelsLoading: true };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getRentalObjectsRequest: return { ...prevState, modelsLoading: true, modelLoading: true };
         case ActionTypes.getRentalObjectsSuccess: {
             const state: RentalObjectModelsState = { modelsLoading: false, models: action.rentalobjects };
             return { ...prevState, ...state };
@@ -42,9 +28,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             return { ...prevState, ...state };
         }
 
-        case ActionTypes.createRequest: {
-            return { ...prevState, modelLoading: true };
-        }
+        case ActionTypes.createRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.createSuccess: {
             if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
 
@@ -55,13 +39,9 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             const modelState: RentalObjectModelState = { modelLoading: false, model: model };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case ActionTypes.createFailure: {
-            return { ...prevState, modelLoading: false };
-        }
+        case ActionTypes.createFailure: return { ...prevState, modelLoading: true };
 
-        case ActionTypes.updateRequest: {
-            return { ...prevState, modelLoading: true };
-        }
+        case ActionTypes.updateRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.updateSuccess: {
             if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
 
@@ -72,9 +52,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case ActionTypes.updateFailure: {
-            return { ...prevState, modelLoading: false };
-        }
+        case ActionTypes.updateFailure: return { ...prevState, modelLoading: true };
 
         case ActionTypes.deleteRequest: {
             const deleteState: RentalObjectDeleteState = { deleting: true, deleteRequest: action.request };
@@ -94,10 +72,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             return { ...prevState, ...deleteState };
         }
 
-        case ActionTypes.getRoomVariantsRequest: {
-            const state: RentalObjectModelSpecsState = { modelSpecsLoading: true };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getRoomVariantsRequest: return { ...prevState, modelSpecsLoading: true };
         case ActionTypes.getRoomVariantsSuccess: {
             if (prevState.modelLoading === true) return prevState;
             if (prevState.model === undefined) return prevState;
@@ -107,17 +82,23 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             return { ...prevState, ...state, ...updatedState };
         }
-        case ActionTypes.getRoomVariantsFailure: {
-            const state: RentalObjectModelState = { modelLoading: false, model: prevState.model };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getRoomVariantsFailure: return { ...prevState, modelLoading: true };
 
         case ActionTypes.appendRoomVariant: {
             if (prevState.modelLoading === true) return prevState;
 
             const roomVariants = prevState.model?.roomVariants || [];
-
             const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.concat(action.roomVariant) };
+
+            const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
+            return { ...prevState, ...modelState };
+        }
+        case ActionTypes.applyRoomVariant: {
+            if (prevState.modelLoading === true) return prevState;
+
+            const roomVariants = prevState.model?.roomVariants || [];
+
+            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.map(o => o.id === action.roomVariant.id ? action.roomVariant : o) };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState };
         }
@@ -130,6 +111,13 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState };
         }
+
+        case ActionTypes.applyEditionState: {
+            if (prevState.modelLoading === true) return prevState;
+
+            return { ...prevState, model: { ...prevState.model, ...action.model } };
+        }
+        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelSpecsLoading: true };
         default: return prevState;
     }
 }

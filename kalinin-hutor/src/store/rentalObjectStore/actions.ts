@@ -21,6 +21,7 @@ export enum ActionTypes {
     updateSuccess = 'UPDATE_RENTALOBJECT_SUCCESS',
     updateFailure = 'UPDATE_RENTALOBJECT_FAILURE',
 
+    applyEditionState = 'APPLY_EDITION_STATE',
     clearEditionState = 'CLEAR_EDITION_STATE',
 
     deleteRequest = 'DELETE_RENTALOBJECT_REQUEST',
@@ -32,6 +33,7 @@ export enum ActionTypes {
     getRoomVariantsFailure = 'GET_ROOMVARIANTS_FAILURE',
 
     appendRoomVariant = 'APPEND_ROOMVARIANT',
+    applyRoomVariant = 'APPLY_ROOMVARIANT',
     deleteRoomVariant = 'DELETE_ROOMVARIANT',
 }
 
@@ -96,6 +98,11 @@ export namespace RentalObjectActions {
         error: ApplicationError;
     }
 
+    interface ApplyEditionStateAction extends Action<ActionTypes> {
+        type: ActionTypes.applyEditionState;
+        model: RentalObject;
+    }
+
     interface ClearEditionStateAction extends Action<ActionTypes> {
         type: ActionTypes.clearEditionState;
     }
@@ -115,7 +122,7 @@ export namespace RentalObjectActions {
     }
     interface GetRoomVariantsRequestAction extends Action<ActionTypes> {
         type: ActionTypes.getRoomVariantsRequest;
-        rentalObjectId: string;
+        rentalObjectId: string | undefined;
     }
 
     interface GetRoomVariantsSuccessAction extends Action<ActionTypes> {
@@ -133,6 +140,11 @@ export namespace RentalObjectActions {
         roomVariant: RoomVariant;
     }
 
+    interface ApplyRoomVariantAction extends Action<ActionTypes> {
+        type: ActionTypes.applyRoomVariant;
+        roomVariant: RoomVariant;
+    }
+
     interface DeleteRoomVariantAction extends Action<ActionTypes> {
         type: ActionTypes.deleteRoomVariant;
         id: string;
@@ -147,12 +159,14 @@ export namespace RentalObjectActions {
 
     export type RentalObjectActions = GetRentalObjects
         | GetRentalObject
+        | ApplyEditionStateAction
         | ClearEditionStateAction
         | CreateRentalObject
         | UpdateRentalObject
         | DeleteRentalObject
         | GetRoomVariants
         | AppendRoomVariantAction
+        | ApplyRoomVariantAction
         | DeleteRoomVariantAction;
 
     export function createRentalObject(createRequest: RentalObject.CreateRequest): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
@@ -197,6 +211,10 @@ export namespace RentalObjectActions {
         }
     }
 
+    export function applyEditionState(model: RentalObject): ApplyEditionStateAction {
+        return { type: ActionTypes.applyEditionState, model: model };
+    }
+
     export function clearEditionState(): ClearEditionStateAction {
         return { type: ActionTypes.clearEditionState };
     }
@@ -221,26 +239,29 @@ export namespace RentalObjectActions {
         }
     }
 
-    export function getRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
+    export function getRentalObject(id: string | undefined): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            dispatch(request(id));
-
             const state = getState();
+            const modelLoaded = state.rentalObjectState.modelLoading;
+
+            dispatch(request(id));
+            if (modelLoaded === false) {
+                return dispatch(success(state.rentalObjectState.model));
+            }
 
             if (!id || id === 'create') {
-                if (state.rentalObjectState.creating === true) {
-                    return dispatch(success(state.rentalObjectState.model || RentalObject.initial));
-                }
                 return dispatch(success(RentalObject.initial));
             }
 
             let models: RentalObject[] = [];
 
             try {
-                if (state.rentalObjectState.modelsLoading === true)
+                if (state.rentalObjectState.modelsLoading === true) {
                     models = await rentalObjectService.get({ id });
-                else
+                }
+                else {
                     models = state.rentalObjectState.models;
+                }
 
                 let model = models.find(o => o.id === id);
 
@@ -248,9 +269,7 @@ export namespace RentalObjectActions {
                     throw new ApplicationError('Не удалось найти объект аренды');
                 }
 
-                if (state.rentalObjectState.modelSpecsLoading === true) {
-                    model.roomVariants = await roomVariantService.get({ rentalObjectId: id });
-                }
+                dispatch(getRentalObjectRoomVariants(id));
 
                 return dispatch(success(model));
             }
@@ -287,12 +306,16 @@ export namespace RentalObjectActions {
         }
     }
 
-    export function getRentalObjectRoomVariants(id: string): AppThunkAction<Promise<GetRoomVariantsSuccessAction | GetRoomVariantsFailureAction>> {
-        return async dispatch => {
+    export function getRentalObjectRoomVariants(id: string | undefined): AppThunkAction<Promise<GetRoomVariantsSuccessAction | GetRoomVariantsFailureAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
             dispatch(request(id));
 
+            if (!id || id === 'create')
+                return dispatch(success([]));
+
             try {
-                const result = await roomVariantService.get({rentalObjectId: id});
+                const result = await roomVariantService.get({ rentalObjectId: id });
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -301,7 +324,7 @@ export namespace RentalObjectActions {
                 return dispatch(failure(error));
             }
 
-            function request(id: string): GetRoomVariantsRequestAction { return { type: ActionTypes.getRoomVariantsRequest, rentalObjectId: id }; }
+            function request(id: string | undefined): GetRoomVariantsRequestAction { return { type: ActionTypes.getRoomVariantsRequest, rentalObjectId: id }; }
             function success(roomvariants: RoomVariant[]): GetRoomVariantsSuccessAction { return { type: ActionTypes.getRoomVariantsSuccess, roomvariants: roomvariants }; }
             function failure(error: ApplicationError): GetRoomVariantsFailureAction { return { type: ActionTypes.getRoomVariantsFailure, error: error }; }
         }
@@ -309,6 +332,10 @@ export namespace RentalObjectActions {
 
     export function appendRoomVariant(roomVariant: RoomVariant): AppendRoomVariantAction {
         return { type: ActionTypes.appendRoomVariant, roomVariant: roomVariant };
+    }
+
+    export function applyRoomVariant(roomVariant: RoomVariant): ApplyRoomVariantAction {
+        return { type: ActionTypes.applyRoomVariant, roomVariant: roomVariant };
     }
 
     export function deleteRoomVariant(id: string): DeleteRoomVariantAction {

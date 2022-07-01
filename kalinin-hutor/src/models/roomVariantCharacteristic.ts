@@ -1,6 +1,7 @@
+import { EntityStatus, IEntity } from "./common";
 import { RoomCharacteristic } from "./roomCharacteristic";
 
-export interface RoomVariantCharacteristic {
+export interface RoomVariantCharacteristic extends IEntity {
     // Идентификатор характеристики номера
     id: string | null;
     // Идентификатор номера
@@ -49,5 +50,7 @@ export namespace RoomVariantCharacteristic {
         roomCharacteristicId: null,
         roomVariantId: null,
         roomCharacteristic: null,
+
+        status: EntityStatus.NotChanged
     }
 }

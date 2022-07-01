@@ -1,6 +1,6 @@
-import { BedTypes } from "./common";
+import { BedTypes, EntityStatus, IEntity } from "./common";
 
-export interface RoomVariantBedType {
+export interface RoomVariantBedType extends IEntity {
     // Идентификатор варианта кровати
     id: string | null;
     // Идентификатор номера
@@ -62,6 +62,8 @@ export namespace RoomVariantBedType {
         id: null,
         bedType: BedTypes.Single,
         maxInRoom: 0,
-        roomVariantId: null
+        roomVariantId: null,
+
+        status: EntityStatus.NotChanged
     }
 }

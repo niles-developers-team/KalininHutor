@@ -4,7 +4,7 @@ import { AuthenticationState, UserDeleteState, UserModelsState, UserModelState, 
 const initialState: UserState = {
     authenticating: false,
     modelsLoading: true,
-    modelLoading: false,
+    modelLoading: true,
     deleting: false
 }
 
@@ -33,12 +33,12 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
             return { ...prevState, ...state };
         }
         case ActionTypes.getCurrentUserSuccess: {
-            const modelState: UserModelState = { modelLoading: false };
+            const modelState: UserModelState = { modelLoading: false, model: action.user };
             const authState: AuthenticationState = { authenticating: false, authenticated: true, currentUser: action.user }
             return { ...prevState, ...modelState, ...authState };
         }
         case ActionTypes.getCurrentUserFailure: {
-            const state: UserModelState = { modelLoading: false, model: undefined };
+            const state: UserModelState = { modelLoading: true };
             const authState: AuthenticationState = { authenticating: false, authenticated: false, currentUser: undefined }
             return { ...prevState, ...state, ...authState };
         }
@@ -52,7 +52,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
             return { ...prevState, ...state };
         }
         case ActionTypes.getUserFailure: {
-            const state: UserModelState = { modelLoading: false, model: undefined };
+            const state: UserModelState = { modelLoading: true };
             return { ...prevState, ...state };
         }
 

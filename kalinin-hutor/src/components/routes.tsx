@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../hooks";
-import { sessionService, userService } from "../services";
+import { sessionService } from "../services";
 import { AppState } from "../store";
 import { UserActions } from "../store/userStore";
 import { CartComponent } from "./cart/Cart";

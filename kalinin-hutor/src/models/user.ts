@@ -1,5 +1,5 @@
 export interface User {
-    id: string | null;
+    id?: string;
     phoneNumber: string;
     email?: string;
     name?: string;
@@ -44,7 +44,6 @@ export namespace User {
     }
 
     export const initial: User = {
-        id: null,
         phoneNumber: '+7',
         birthday: null
     }

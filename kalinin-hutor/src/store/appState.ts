@@ -17,11 +17,6 @@ export type AppState = {
     roomCharacteristicState: RoomCharacteristicState
 }
 
-export type CreateModelState<TModel> = {
-    creating: boolean;
-    model?: TModel;
-}
-
 export type ModelsLoadingState = {
     modelsLoading: true;
 }
@@ -36,8 +31,8 @@ export type ModelLoadingState = {
 }
 
 export type ModelLoadedState<TModel> = {
-    modelLoading: boolean;
-    model?: TModel;
+    modelLoading: false;
+    model: TModel;
 }
 
 export type ModelSpecsLoadingState = {

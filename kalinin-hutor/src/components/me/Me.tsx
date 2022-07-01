@@ -24,7 +24,7 @@ export const MeComponent = function (): JSX.Element {
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
             setUser(userState.currentUser === undefined ? User.initial : { ...userState.currentUser });
-            dispatch(RentalObjectActions.getRentalObjects({ landlordId: user.id || undefined }));
+            dispatch(RentalObjectActions.getRentalObjects({ landlordId: user.id }));
         }
     }, [userState.modelLoading]);
 

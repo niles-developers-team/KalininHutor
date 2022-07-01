@@ -17,27 +17,29 @@ import { ArrowBack } from "@mui/icons-material";
 export const RoomVariantComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { id, rentalObjectId } = useParams();
-    const [characteristicSearch, setCharacteristicSearch] = useState<string>();
-    const [isCharacteristicSearchInProgress, setIsCharacteristicSearchInProgress] = useState<boolean>(true);
-    const debouncedSearch = useDebounce(characteristicSearch, 500);
     const location = useLocation();
+    const { id, rentalObjectId } = useParams();
     const { roomCharacteristicState, rentalObjectState } = useAppSelector((state: AppState) => ({
         rentalObjectState: state.rentalObjectState,
         roomCharacteristicState: state.roomCharacteristicState
     }));
+    const [characteristicSearch, setCharacteristicSearch] = useState<string>();
+    const [isCharacteristicSearchInProgress, setIsCharacteristicSearchInProgress] = useState<boolean>(true);
+    const debouncedSearch = useDebounce(characteristicSearch, 500);
 
-    useEffect(() => {
-        dispatch(RentalObjectActions.getRentalObject(rentalObjectId || ''));
-    }, [rentalObjectId]);
+    useEffect(() => { init(); }, [rentalObjectId]);
+
+    async function init() {
+        await dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
+        dispatch(RentalObjectActions.getRentalObjectRoomVariants(rentalObjectId));
+    }
 
     useEffect(() => {
         if (rentalObjectState.modelLoading === false) {
-            const roomVariant = rentalObjectState.model?.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
+            const roomVariant = rentalObjectState.model.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
             setRoomVariant({ ...roomVariant });
         }
-    }, [id, rentalObjectState.modelLoading]);
-
+    }, [id, rentalObjectState.modelLoading, rentalObjectState.modelSpecsLoading]);
 
     const [roomVariant, setRoomVariant] = useState<RoomVariant>(RoomVariant.initial);
     const [roomsCharacteristics, setRoomsCharateristics] = useState<RoomCharacteristic[]>([]);
@@ -139,6 +141,8 @@ export const RoomVariantComponent = function (): JSX.Element {
         if (!roomVariant.id) {
             roomVariant.id = uuidv4();
             dispatch(RentalObjectActions.appendRoomVariant(roomVariant));
+        } else {
+            dispatch(RentalObjectActions.applyRoomVariant(roomVariant));
         }
 
         navigate(`/me/rental-objects/${rentalObjectId}`);
@@ -147,7 +151,7 @@ export const RoomVariantComponent = function (): JSX.Element {
     useEffect(() => {
         if (roomCharacteristicState.modelsLoading === false) {
             setRoomsCharateristics([...roomCharacteristicState.models]);
-            roomVariant.characteristics.forEach(rvch => rvch.roomCharacteristic = roomCharacteristicState.models.find(o => o.id == rvch.roomCharacteristicId));
+            roomVariant.characteristics.forEach(rvch => rvch.roomCharacteristic = roomCharacteristicState.models.find(o => o.id === rvch.roomCharacteristicId));
 
             setRoomVariant(roomVariant);
         }
