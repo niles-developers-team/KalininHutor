@@ -1,12 +1,14 @@
 import { Edit, Delete, ArrowBack } from "@mui/icons-material";
 import { Button, CircularProgress, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
+import { TimePicker } from "@mui/x-date-pickers";
+import moment from "moment";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
-import { AppState } from "../../../store";
-import { RentalObjectActions } from "../../../store/rentalObjectStore";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../models";
+import { AppState } from "../../store";
+import { RentalObjectActions } from "../../store/rentalObjectStore";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -77,8 +79,8 @@ export const RentalObjectComponent = function (): JSX.Element {
             if (!model.id) {
                 dispatch(RentalObjectActions.createRentalObject({
                     address: model.address,
-                    checkinTime: model.checkinTime,
-                    checkoutTime: model.checkoutTime,
+                    checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
+                    checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
                     description: model.description,
                     landlordId: userState.currentUser?.id,
                     name: model.name,
@@ -112,8 +114,8 @@ export const RentalObjectComponent = function (): JSX.Element {
             else {
                 dispatch(RentalObjectActions.updateRentalObject({
                     id: model.id,
-                    checkinTime: model.checkinTime,
-                    checkoutTime: model.checkoutTime,
+                    checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
+                    checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
                     description: model.description,
                     name: model.name,
                     createRoomVariantsRequests: model.roomVariants
@@ -207,10 +209,15 @@ export const RentalObjectComponent = function (): JSX.Element {
             }
     }
 
+    function handleGoBack() {
+        navigate(`/me`)
+        dispatch(RentalObjectActions.clearEditionState());
+    }
+
     return (
         <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
-                <IconButton onClick={() => navigate(`/me`)}><ArrowBack /></IconButton>
+                <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Информация об объекте аренды</Typography>
             </Stack>
             <Stack direction="row" spacing={2}>
@@ -221,6 +228,23 @@ export const RentalObjectComponent = function (): JSX.Element {
                 <TextField disabled={rentalObjectState.modelLoading} label="Описание" value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => setModel({ ...model, description: event.target.value })}
                     multiline
                     rows={5} />
+            </Stack>
+            <Stack>
+                <Typography color="GrayText" variant="h6">Порядок проживания</Typography>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                    <TimePicker
+                        label="Время заезда"
+                        value={moment(model.checkinTime, 'hh:mm:ss')}
+                        onChange={(value: string | null) => { setModel({ ...model, checkinTime: value || '12:00' }) }}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                    <TimePicker
+                        label="Время отъезда"
+                        value={moment(model.checkoutTime, 'hh:mm:ss')}
+                        onChange={(value: string | null) => { setModel({ ...model, checkoutTime: value || '12:00' }) }}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </Stack>
             </Stack>
             <Stack style={{ height: 400 }}>
                 <Stack direction="row">
