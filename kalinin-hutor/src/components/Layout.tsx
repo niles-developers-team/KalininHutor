@@ -53,7 +53,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
     if (userState.authenticating === false) {
         const user = userState.currentUser;
         if (user && user.name && user.lastname)
-            profilePageText = `${user.lastname} ${user.name[0].toUpperCase()}.`;
+            profilePageText = `${user.name} ${user.lastname[0].toUpperCase()}.`;
             else 
             profilePageText = 'Личный кабинет';
     }
