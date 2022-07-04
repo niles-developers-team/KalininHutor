@@ -83,6 +83,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                 <AppBar position="sticky" color="default">
                     <Toolbar>
                         <Grid container className="container" alignItems="center">
+                            <Button onClick={() => navigate('/')}>КХ</Button>
                             <Button onClick={() => navigate('/catalog')}>Каталог</Button>
                             <Search color="primary" fontSize="large" />
                             <Grid item xs>
@@ -123,7 +124,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <Grid container direction="column" alignItems="center" component="main">
+            <Grid container direction="column" alignItems="center" component="main" paddingX={'20%'} marginTop={5}>
                 {props.children}
             </Grid>
             <Toolbar color="primary">

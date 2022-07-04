@@ -2,12 +2,13 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
+using KalininHutor.API.DTO;
 
 namespace KalininHutor.API.Requests;
 
 using DomainRentalObject = Domain.Booking.RentalObject;
 
-internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRequest, Guid>
+internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRequest, RentalObjectDTO>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -20,7 +21,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RentalObject.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<RentalObjectDTO> Handle(RentalObject.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = new DomainRentalObject(request.Name, request.Description,
                         request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
@@ -32,7 +33,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
             await _sender.Send(createRoomVariantsRequest);
         }
 
-        return rentalObject.Id;
+        return _mapper.Map<RentalObjectDTO>(rentalObject);
     }
 }
 
@@ -40,7 +41,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
 public partial class RentalObject
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
-    public class CreateRequest : IRequest<Guid>
+    public class CreateRequest : IRequest<RentalObjectDTO>
     {
         ///<summary> Название объекта аренды </summary>
         public string Name { get; set; } = string.Empty;
