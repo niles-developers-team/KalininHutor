@@ -15,7 +15,7 @@ import { MeComponent } from "./me/Me";
 import { MyBookingsComponent } from "./mybookings/MyBookings";
 import { MyOrdersComponent } from "./myOrders/MyOrders";
 import { RentalObjectComponent } from "./rentalObjects/RentalObject";
-import { RoomVariantComponent } from "./rentalObjects/rentalObject/RoomVariant";
+import { RoomVariantComponent } from "./rentalObjects/roomVariant/RoomVariant";
 import { SigninDialog } from "./signin/Signin";
 
 

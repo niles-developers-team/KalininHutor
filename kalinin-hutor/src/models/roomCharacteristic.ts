@@ -2,7 +2,7 @@ import { CharacteristicTypes } from "./common";
 
 export interface RoomCharacteristic {
     // Идентификатор характеристики
-    id: string | null;
+    id?: string;
     // Название характеристики
     name: string;
     // Описание харакетирстики
@@ -37,7 +37,6 @@ export namespace RoomCharacteristic {
 
     export const initial: RoomCharacteristic = {
         description: '',
-        id: null,
         name: '',
         type: CharacteristicTypes.Common
     }

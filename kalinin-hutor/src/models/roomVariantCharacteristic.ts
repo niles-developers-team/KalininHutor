@@ -11,7 +11,7 @@ export interface RoomVariantCharacteristic extends IEntity {
     // Цена за услугу или удобство
     price?: number;
 
-    roomCharacteristic?: RoomCharacteristic | null;
+    roomCharacteristic?: RoomCharacteristic;
 }
 
 export namespace RoomVariantCharacteristic {
@@ -49,7 +49,6 @@ export namespace RoomVariantCharacteristic {
         id: null,
         roomCharacteristicId: null,
         roomVariantId: null,
-        roomCharacteristic: null,
 
         status: EntityStatus.NotChanged
     }

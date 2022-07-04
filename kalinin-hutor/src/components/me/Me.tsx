@@ -32,7 +32,7 @@ export const MeComponent = function (): JSX.Element {
         if (rentalObjectState.modelsLoading === false) {
             setRentalObjects(rentalObjectState.models);
         }
-    }, [rentalObjectState.modelsLoading]);
+    }, [rentalObjectState.modelsLoading, rentalObjectState.modelsLoading === false && rentalObjectState.models]);
 
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setUser({ ...user, phoneNumber: event.currentTarget && event.currentTarget.value });
@@ -87,7 +87,7 @@ export const MeComponent = function (): JSX.Element {
 
     function handleDeleteRentalObject(model: RentalObject) {
         dispatch(RentalObjectActions.deleteRentalObjects({
-            id: model.id || ''
+            ids: [(model.id || '')]
         }));
     }
 

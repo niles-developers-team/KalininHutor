@@ -50,11 +50,11 @@ export namespace RentalObject {
         checkoutTime: string;
         createRoomVariantsRequests?: RoomVariant.CreateRequest[];
         updateRoomVariantsRequests?: RoomVariant.UpdateRequest[];
-        deleteRoomVariantsRequests?: RoomVariant.DeleteRequest[];
+        deleteRoomVariantsRequest?: RoomVariant.DeleteRequest;
     }
 
     export interface DeleteRequest {
-        id: string;
+        ids: string[];
     }
 
     export const initial: RentalObject = {

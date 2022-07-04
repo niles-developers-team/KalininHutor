@@ -35,6 +35,14 @@ export type ModelLoadedState<TModel> = {
     model: TModel;
 }
 
+export type ModelUpdatingState = {
+    updating: true;
+}
+
+export type ModelUpdatedState = {
+    updating: false;
+}
+
 export type ModelSpecsLoadingState = {
     modelSpecsLoading: true;
 }

@@ -72,7 +72,7 @@ export namespace RoomVariant {
     // Запрос удаления варинта номера
     export interface DeleteRequest {
         // Идентификатор варинта номера</summary>
-        id: string;
+        ids: string[];
     }
 
     // Запрос обновления варинта номера

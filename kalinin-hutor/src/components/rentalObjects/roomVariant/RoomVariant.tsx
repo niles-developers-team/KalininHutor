@@ -2,7 +2,7 @@ import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useDebounce } from "../../../hooks";
-import { RoomCharacteristic, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
+import { EntityStatus, RoomCharacteristic, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
 import { AppState, RentalObjectActions } from "../../../store";
 import { RoomCharacteristicActions } from "../../../store/roomCharacteristicStore";
 import { RoomCharacteristicActionTypes } from "../../../store/roomCharacteristicStore/actions";
@@ -27,19 +27,32 @@ export const RoomVariantComponent = function (): JSX.Element {
     const [isCharacteristicSearchInProgress, setIsCharacteristicSearchInProgress] = useState<boolean>(true);
     const debouncedSearch = useDebounce(characteristicSearch, 500);
 
-    useEffect(() => { init(); }, [rentalObjectId]);
-
-    async function init() {
-        await dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
-        dispatch(RentalObjectActions.getRentalObjectRoomVariants(rentalObjectId));
-    }
+    useEffect(() => { dispatch(RentalObjectActions.getRentalObject(rentalObjectId)); }, [rentalObjectId]);
 
     useEffect(() => {
         if (rentalObjectState.modelLoading === false) {
             const roomVariant = rentalObjectState.model.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
+
+            if (roomCharacteristicState.modelsLoading === false) {
+                roomVariant.characteristics.forEach(rvch => {
+                    const characteristic = roomCharacteristicState.models.find(o => o.id === rvch.roomCharacteristicId);
+                    rvch.roomCharacteristic = characteristic ? { ...characteristic } : RoomCharacteristic.initial;
+                });
+            }
             setRoomVariant({ ...roomVariant });
         }
     }, [id, rentalObjectState.modelLoading, rentalObjectState.modelSpecsLoading]);
+
+    useEffect(() => {
+        if (roomCharacteristicState.modelsLoading === false) {
+            setRoomsCharateristics([...roomCharacteristicState.models]);
+        }
+    }, [roomCharacteristicState.modelsLoading]);
+
+    useEffect(() => {
+        dispatch(RoomCharacteristicActions.getRoomCharacteristics({ searchText: debouncedSearch, take: 10 }));
+        setIsCharacteristicSearchInProgress(false);
+    }, [debouncedSearch]);
 
     const [roomVariant, setRoomVariant] = useState<RoomVariant>(RoomVariant.initial);
     const [roomsCharacteristics, setRoomsCharateristics] = useState<RoomCharacteristic[]>([]);
@@ -54,25 +67,11 @@ export const RoomVariantComponent = function (): JSX.Element {
         setCharacteristicDialogOpen(false);
     }
 
-    function handleBedVariantDialogDiscard() {
-        setBedVariantDialogOpen(false);
-    }
-
-    function handleBedVariantDialogConfirm(model: RoomVariantBedType) {
-        if (!roomVariant.id && !model.id) {
-            model.id = (roomVariant.bedTypes.length + 1).toString();
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] })
-        } else if (!roomVariant.id) {
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] })
-        }
-        setBedVariantDialogOpen(false);
-        setBedType(RoomVariantBedType.initial);
-    }
-
     function handleRoomCharacteristicDelete(model: RoomVariantCharacteristic) {
-        if (!roomVariant.id && !isNaN(parseInt(model.id || ''))) {
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o !== model)] })
-        }
+        if (model.status === EntityStatus.Created)
+            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o.id !== model.id)] });
+        else
+            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? { ...model, status: EntityStatus.Deleted } : o)] })
     }
 
     function handleRoomCharacteristicEdit(model: RoomVariantCharacteristic) {
@@ -97,20 +96,22 @@ export const RoomVariantComponent = function (): JSX.Element {
         }
 
         if (!model.id) {
-            const ids = roomVariant.characteristics.filter(o => o.id !== null && !isNaN(parseInt(o.id))).map(o => parseInt(o.id || '0'));
-            model.id = (ids.length ? (Math.max.apply(null, ids) + 1) : 1).toString();
-
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] })
-        } else
+            model.id = uuidv4();
+            model.status = EntityStatus.Created;
+            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] });
+        } else {
+            model.status = model.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
             setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? model : o)] })
+        }
         setCharacteristicDialogOpen(false);
         setRoomCharacteristic(RoomVariantCharacteristic.initial);
     }
 
     function handleBedTypeDelete(model: RoomVariantBedType) {
-        if (!roomVariant.id && !isNaN(parseInt(model.id || ''))) {
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o !== model)] })
-        }
+        if (model.status === EntityStatus.Created)
+            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o.id !== model.id)] })
+        else
+            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? { ...model, status: EntityStatus.Deleted } : o)] })
     }
 
     function handleBedTypeEdit(model: RoomVariantBedType) {
@@ -121,6 +122,23 @@ export const RoomVariantComponent = function (): JSX.Element {
     function handleBedTypeCreate() {
         setBedType(RoomVariantBedType.initial);
         setBedVariantDialogOpen(true);
+    }
+
+    function handleBedVariantDialogDiscard() {
+        setBedVariantDialogOpen(false);
+    }
+
+    function handleBedVariantDialogConfirm(model: RoomVariantBedType) {
+        if (!model.id) {
+            model.id = uuidv4();
+            model.status = EntityStatus.Created;
+            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] })
+        } else {
+            model.status = model.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
+            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] })
+        }
+        setBedVariantDialogOpen(false);
+        setBedType(RoomVariantBedType.initial);
     }
 
     function handleCharacteristicSearch(searchText: string) {
@@ -148,20 +166,6 @@ export const RoomVariantComponent = function (): JSX.Element {
         navigate(`/me/rental-objects/${rentalObjectId}`);
     }
 
-    useEffect(() => {
-        if (roomCharacteristicState.modelsLoading === false) {
-            setRoomsCharateristics([...roomCharacteristicState.models]);
-            roomVariant.characteristics.forEach(rvch => rvch.roomCharacteristic = roomCharacteristicState.models.find(o => o.id === rvch.roomCharacteristicId));
-
-            setRoomVariant(roomVariant);
-        }
-    }, [roomCharacteristicState.modelsLoading]);
-
-    useEffect(() => {
-        dispatch(RoomCharacteristicActions.getRoomCharacteristics({ searchText: debouncedSearch, take: 10 }));
-        setIsCharacteristicSearchInProgress(false);
-    }, [debouncedSearch]);
-
     return (
         <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -175,7 +179,7 @@ export const RoomVariantComponent = function (): JSX.Element {
             />
             <RoomVariantCharacteristicsComponent
                 loading={loading}
-                models={roomVariant.characteristics}
+                models={roomVariant.characteristics.filter(o => o.status !== EntityStatus.Deleted)}
                 characteristics={roomsCharacteristics}
                 onCreate={handleRoomCharacteristicCreate}
                 onEdit={handleRoomCharacteristicEdit}
@@ -183,7 +187,7 @@ export const RoomVariantComponent = function (): JSX.Element {
             />
             <RoomVariantBedTypesComponent
                 loading={loading}
-                models={roomVariant.bedTypes}
+                models={roomVariant.bedTypes.filter(o => o.status !== EntityStatus.Deleted)}
                 onCreate={handleBedTypeCreate}
                 onEdit={handleBedTypeEdit}
                 onDelete={handleBedTypeDelete}

@@ -1,10 +1,11 @@
-import { RentalObject } from "../../models";
+import { EntityStatus, RentalObject } from "../../models";
 import { ActionTypes, RentalObjectActions } from "./actions";
 import { RentalObjectState, RentalObjectDeleteState, RentalObjectModelsState, RentalObjectModelState, RentalObjectModelSpecsState } from "./state";
 
 const initialState: RentalObjectState = {
     modelsLoading: true,
     modelLoading: true,
+    updating: false,
     modelSpecsLoading: true,
     deleting: false
 }
@@ -28,7 +29,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             return { ...prevState, ...state };
         }
 
-        case ActionTypes.createRequest: return { ...prevState, modelLoading: true };
+        case ActionTypes.createRequest: return { ...prevState, updating: true };
         case ActionTypes.createSuccess: {
             if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
 
@@ -37,11 +38,11 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             const modelsState: RentalObjectModelsState = { modelsLoading: false, models: models };
             const modelState: RentalObjectModelState = { modelLoading: false, model: model };
-            return { ...prevState, ...modelsState, ...modelState };
+            return { ...prevState, ...modelsState, ...modelState, updating: false };
         }
-        case ActionTypes.createFailure: return { ...prevState, modelLoading: true };
+        case ActionTypes.createFailure: return { ...prevState, updating: false };
 
-        case ActionTypes.updateRequest: return { ...prevState, modelLoading: true };
+        case ActionTypes.updateRequest: return { ...prevState, updating: true };
         case ActionTypes.updateSuccess: {
             if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
 
@@ -50,9 +51,9 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             const modelsState: RentalObjectModelsState = { modelsLoading: false, models: updatedModels };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
-            return { ...prevState, ...modelsState, ...modelState };
+            return { ...prevState, ...modelsState, ...modelState, updating: false };
         }
-        case ActionTypes.updateFailure: return { ...prevState, modelLoading: true };
+        case ActionTypes.updateFailure: return { ...prevState, updating: false };
 
         case ActionTypes.deleteRequest: {
             const deleteState: RentalObjectDeleteState = { deleting: true, deleteRequest: action.request };
@@ -60,7 +61,8 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
         }
         case ActionTypes.deleteSuccess: {
             if (prevState.modelsLoading === false && prevState.deleting === true) {
-                const state: RentalObjectModelsState = { modelsLoading: false, models: prevState.models.filter((model) => prevState.deleteRequest && model.id !== prevState.deleteRequest.id) };
+                const models = prevState.models.filter((model) => prevState.deleteRequest && prevState.deleteRequest.ids.indexOf(model.id || '') === -1);
+                const state: RentalObjectModelsState = { modelsLoading: false, models: models };
                 const deleteState: RentalObjectDeleteState = { deleting: false, deleted: true };
                 return { ...prevState, ...deleteState, ...state };
             }
@@ -88,7 +90,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             if (prevState.modelLoading === true) return prevState;
 
             const roomVariants = prevState.model?.roomVariants || [];
-            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.concat(action.roomVariant) };
+            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.concat({ ...action.roomVariant, status: EntityStatus.Created }) };
 
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState };
@@ -97,6 +99,8 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             if (prevState.modelLoading === true) return prevState;
 
             const roomVariants = prevState.model?.roomVariants || [];
+
+            action.roomVariant.status = action.roomVariant.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
 
             const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.map(o => o.id === action.roomVariant.id ? action.roomVariant : o) };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
@@ -107,9 +111,9 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             const roomVariants = prevState.model?.roomVariants || [];
 
-            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.filter(o => o.id !== action.id) };
+            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.map(o => o.id === action.id ? { ...o, status: EntityStatus.Deleted } : o) };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
-            return { ...prevState, ...modelState };
+            return { ...prevState, ...modelState, updating: false };
         }
 
         case ActionTypes.applyEditionState: {
@@ -117,7 +121,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             return { ...prevState, model: { ...prevState.model, ...action.model } };
         }
-        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelSpecsLoading: true };
+        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelSpecsLoading: true, updating: false };
         default: return prevState;
     }
 }

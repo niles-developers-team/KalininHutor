@@ -175,7 +175,7 @@ export namespace RentalObjectActions {
 
             try {
                 const result = await rentalObjectService.create(createRequest);
-                dispatch(SnackbarActions.showSnackbar('Бронь успешно сохранена', SnackbarVariant.success));
+                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -196,7 +196,7 @@ export namespace RentalObjectActions {
 
             try {
                 const result = await rentalObjectService.update(updateRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
+                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -291,7 +291,7 @@ export namespace RentalObjectActions {
 
             try {
                 await rentalObjectService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
+                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно удален.', SnackbarVariant.info));
                 return dispatch(success());
             }
             catch (error: any) {

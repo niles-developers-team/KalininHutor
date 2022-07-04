@@ -1,9 +1,12 @@
-import { AppBar, Button, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Button, Grid, Slide, Snackbar, TextField, Toolbar, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
-import { useAppSelector } from "../hooks";
-import { AppState } from "../store";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { AppState, SnackbarActions, SnackbarActionTypes } from "../store";
 import { sessionService } from "../services";
+import { useEffect, useState } from "react";
+import { SnackbarVariant } from "../models";
+import { MessageSnackbar } from "./common";
 
 interface Props extends RouteProps {
     onSigninDialogOpen: () => void;
@@ -35,10 +38,26 @@ function HideOnScroll(props: HideOnScrollProps) {
 }
 
 export const LayoutComponent = function (props: Props): JSX.Element {
-    const { userState } = useAppSelector((state: AppState) => ({
-        userState: state.userState
-    }));
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { userState, snackbarState } = useAppSelector((state: AppState) => ({
+        userState: state.userState,
+        snackbarState: state.snackbarState
+    }));
+    const [variant, setVariant] = useState<SnackbarVariant>(SnackbarVariant.info);
+    const [open, setOpen] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
+
+    useEffect(() => {
+        if (snackbarState.show !== true) {
+            setOpen(false);
+            return;
+        }
+
+        setVariant(snackbarState.variant);
+        setOpen(true);
+        setMessage(snackbarState.message);
+    }, [snackbarState]);
 
     function handleAccountClick() {
         if (!sessionService.isUserAuthenticated()) {
@@ -54,7 +73,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
         const user = userState.currentUser;
         if (user && user.name && user.lastname)
             profilePageText = `${user.name} ${user.lastname[0].toUpperCase()}.`;
-            else 
+        else
             profilePageText = 'Личный кабинет';
     }
 
@@ -109,6 +128,12 @@ export const LayoutComponent = function (props: Props): JSX.Element {
             </Grid>
             <Toolbar color="primary">
             </Toolbar>
+            <MessageSnackbar
+                variant={variant}
+                open={snackbarState.show}
+                message={message}
+                onClose={() => { dispatch(SnackbarActions.hideSnackbar()); }}
+            />
         </Grid>
     )
 };
