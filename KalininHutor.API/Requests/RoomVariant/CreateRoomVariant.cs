@@ -80,8 +80,6 @@ public partial class RoomVariant
         public string Description { get; set; } = string.Empty;
         ///<summary> Цена </summary>
         public decimal Price { get; set; }
-    ///<summary> Цена за ребёнка </summary>
-    public decimal PriceForChild { get; set; }
         ///<summary> Ширина варианта номера </summary>
         public double Width { get; set; }
         ///<summary> Длина варианта номера </summary>

@@ -88,6 +88,9 @@ public class RoomVariant : IEntity<Guid>
         if (count < 0 || freeCount <= 0)
             throw new ArgumentOutOfRangeException("Количество номеров не может быть меньше 0.");
 
+        if (freeCount > count)
+            throw new ArgumentOutOfRangeException("Количество свободных номеров не может быть больше всего количества номеров.");
+
         Count = count;
         FreeCount = freeCount;
     }
