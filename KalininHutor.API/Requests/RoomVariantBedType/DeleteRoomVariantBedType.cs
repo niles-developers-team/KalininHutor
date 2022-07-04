@@ -14,7 +14,7 @@ internal class DeleteRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
 
     public async Task<Unit> Handle(RoomVariantBedType.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        await _repository.Delete(request.Ids);
 
         return Unit.Value;
     }
@@ -27,6 +27,6 @@ public partial class RoomVariantBedType
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор варианта кровати </summary>
-        public Guid Id { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; }
     }
 }

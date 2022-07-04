@@ -8,11 +8,13 @@ using DomainRentalObject = Domain.Booking.RentalObject;
 
 internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRequest, Unit>
 {
+    private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
     private readonly IMapper _mapper;
 
-    public UpdateRentalObjectHandler(RentalObjectRepository repository, IMapper mapper)
+    public UpdateRentalObjectHandler(ISender sender, RentalObjectRepository repository, IMapper mapper)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -23,6 +25,18 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
+
+        foreach (var req in request.CreateRoomVariantsRequests)
+        {
+            req.RentalObject = entity;
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.UpdateRoomVariantsRequests)
+            await _sender.Send(req);
+
+        await _sender.Send(request.DeleteRoomVariantsRequest);
+
         return Unit.Value;
     }
 }
@@ -48,5 +62,11 @@ public partial class RentalObject
 
         ///<summary> Идентификатор объекта аренды </summary>
         public TimeOnly CheckoutTime { get; set; }
+
+        public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
+
+        public IReadOnlyList<RoomVariant.UpdateRequest> UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
+
+        public RoomVariant.DeleteRequest DeleteRoomVariantsRequest { get; set; }
     }
 }

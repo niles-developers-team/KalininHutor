@@ -23,11 +23,11 @@ public class RoomCharacteristicRepository : BaseRepository<RoomCharacteristicEnt
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomCharacteristics where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RoomCharacteristics where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomCharacteristicEntity>> Get(RoomCharacteristicSearchOptions options)

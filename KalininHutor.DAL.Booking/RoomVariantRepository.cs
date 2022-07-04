@@ -44,11 +44,13 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomVariants where Id = {id}").ExecuteAsync();
+        var query = connection.QueryBuilder($@"delete from RoomVariants where Id = any({ids})");
+
+        await query.ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomVariantEntity>> Get(RoomVariantSearchOptions options)
@@ -70,13 +72,14 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
                 rv.Count,
                 rv.FreeCount
             from RoomVariants rv
-            inner join RoomVariantBedTypes rvbt on rvbt.RoomVariantId = rv.Id
-            inner join RoomVariantCharacteristics rvch on rvch.RoomVariantId = rv.Id
             /*where*/
         ");
 
         if (options.RentalObjectId.HasValue)
             query.Where($"RentalObjectId = {options.RentalObjectId}");
+
+        if (options.RentalObjectsIds != null && options.RentalObjectsIds.Any())
+            query.Where($"RentalObjectId = any({options.RentalObjectsIds})");
 
         return await query.QueryAsync<RoomVariantEntity>();
     }
@@ -98,7 +101,7 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
                 rv.FreeCancellationPeriod,
                 rv.PaymentOption,
                 rv.Count,
-                rv.FreeCount,
+                rv.FreeCount
             from RoomVariants rv
             where Id = {id}
         ").QuerySingleOrDefaultAsync<RoomVariantEntity>();

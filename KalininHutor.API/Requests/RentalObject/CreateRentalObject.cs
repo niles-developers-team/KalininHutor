@@ -26,13 +26,10 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
                         request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
         await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
-        if (request.CreateRoomVariantsRequests.Any())
+        foreach (var createRoomVariantsRequest in request.CreateRoomVariantsRequests)
         {
-            foreach (var createRoomVariantsRequest in request.CreateRoomVariantsRequests)
-            {
-                createRoomVariantsRequest.RentalObject = rentalObject;
-                await _sender.Send(createRoomVariantsRequest);
-            }
+            createRoomVariantsRequest.RentalObject = rentalObject;
+            await _sender.Send(createRoomVariantsRequest);
         }
 
         return rentalObject.Id;
@@ -61,6 +58,5 @@ public partial class RentalObject
         public TimeOnly? CheckoutTime { get; set; }
 
         public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
-        public IReadOnlyList<RoomVariant.UpdateRequest> UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
     }
 }

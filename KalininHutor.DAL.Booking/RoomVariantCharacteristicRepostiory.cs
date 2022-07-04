@@ -23,11 +23,11 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomVariantCharacteristics where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RoomVariantCharacteristics where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomVariantCharacteristicEntity>> Get(RoomVariantCharacteristicSearchOptions options)
@@ -37,7 +37,7 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         var query = connection.QueryBuilder($@"
             select rvch.Id, rvch.RoomVariantId, rvch.RoomCharacteristicId, rvch.Price
             from RoomVariantCharacteristics rvch
-            inner join Characteristics ch on rvch.RoomCharacteristicId = ch.Id
+            inner join RoomCharacteristics ch on rvch.RoomCharacteristicId = ch.Id
             /**where**/
         ");
 

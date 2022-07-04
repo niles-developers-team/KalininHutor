@@ -14,7 +14,7 @@ internal class DeleteRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
 
     public async Task<Unit> Handle(RoomVariantCharacteristic.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        await _repository.Delete(request.Ids);
 
         return Unit.Value;
     }
@@ -24,10 +24,10 @@ internal class DeleteRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
 ///<summary> Запросы и очереди характеристик вариантов номеров </summary>
 public partial class RoomVariantCharacteristic
 {
-///<summary> Запрос удаления характеристики варианта номера </summary>
-public class DeleteRequest : IRequest<Unit>
-{
-    ///<summary> Идентификатор характеристики варианта номера </summary>
-    public Guid Id { get; set; }
-}
+    ///<summary> Запрос удаления характеристики варианта номера </summary>
+    public class DeleteRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор характеристики варианта номера </summary>
+        public IReadOnlyList<Guid> Ids { get; set; }
+    }
 }

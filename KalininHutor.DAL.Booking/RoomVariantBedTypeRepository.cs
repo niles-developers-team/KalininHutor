@@ -25,11 +25,11 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomVariantBedTypes where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RoomVariantBedTypes where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomVariantBedTypeEntity>> Get(RoomVariantBedTypeSearchOptions options)

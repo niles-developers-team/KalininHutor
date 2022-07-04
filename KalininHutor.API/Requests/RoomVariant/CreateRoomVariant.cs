@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using MediatR;
 using AutoMapper;
 
@@ -37,7 +39,7 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
 
         if (request.RentalObject.RoomVariants == null || !request.RentalObject.RoomVariants.Any())
         {
-            var roomVariants = await _repository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId });
+            var roomVariants = await _repository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObject.Id });
             request.RentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<DomainRoomVariant>).ToList());
         }
 
@@ -47,22 +49,16 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
         await _repository.Create(_mapper.Map<RoomVariantEntity>(result));
 
 
-        if (request.CreateBedTypesRequests.Any())
+        foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
         {
-            foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
-            {
-                createBedTypesRequest.RoomVariantId = result.Id;
-                await _sender.Send(createBedTypesRequest);
-            }
+            createBedTypesRequest.RoomVariantId = result.Id;
+            await _sender.Send(createBedTypesRequest);
         }
 
-        if (request.CreateCharacteristicsRequests.Any())
+        foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
         {
-            foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
-            {
-                createCharacteristicRequest.RoomVariantId = result.Id;
-                await _sender.Send(createCharacteristicRequest);
-            }
+            createCharacteristicRequest.RoomVariantId = result.Id;
+            await _sender.Send(createCharacteristicRequest);
         }
 
         return result.Id;
@@ -102,8 +98,6 @@ public partial class RoomVariant
         public int FreeCount { get; set; }
 
         public IReadOnlyList<RoomVariantBedType.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
-
-
         public IReadOnlyList<RoomVariantCharacteristic.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
     }
 }

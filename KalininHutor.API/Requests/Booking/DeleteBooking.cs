@@ -14,7 +14,7 @@ internal class DeleteBookingHandler : IRequestHandler<BookingRequests.DeleteRequ
 
     public async Task<Unit> Handle(BookingRequests.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        await _repository.Delete(request.Ids);
 
         return Unit.Value;
     }
@@ -27,6 +27,6 @@ public partial class BookingRequests
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор брони </summary>
-        public Guid Id { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; }
     }
 }

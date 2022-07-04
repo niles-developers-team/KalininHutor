@@ -14,7 +14,7 @@ internal class DeleteRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
 
     public async Task<Unit> Handle(RoomCharacteristic.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        await _repository.Delete(request.Ids);
 
         return Unit.Value;
     }
@@ -27,6 +27,6 @@ public partial class RoomCharacteristic
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор характеристики номера </summary>
-        public Guid Id { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; }
     }
 }

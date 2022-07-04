@@ -2,7 +2,6 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking;
 using System.ComponentModel.DataAnnotations;
 
 namespace KalininHutor.API.Requests;
@@ -30,7 +29,7 @@ internal class CreateBookingHandler : IRequestHandler<BookingRequests.CreateRequ
     public async Task<Guid> Handle(BookingRequests.CreateRequest request, CancellationToken cancellationToken)
     {
         var rentalObject = _mapper.Map<DomainRentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
-        var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId, IncludeBedTypes = true });
+        var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId });
         var bookings = await _repository.Get(new BookingSearchOptions { RentalObjectId = request.RentalObjectId });
 
         rentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<DomainRoomVariant>).ToList());

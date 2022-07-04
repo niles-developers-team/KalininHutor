@@ -14,7 +14,7 @@ internal class DeleteUserHandler : IRequestHandler<UserRequests.DeleteRequest, U
 
     public async Task<Unit> Handle(UserRequests.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        await _repository.Delete(request.Ids);
 
         return Unit.Value;
     }
@@ -27,6 +27,6 @@ public partial class UserRequests
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор пользователя </summary>
-        public Guid Id { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; }
     }
 }

@@ -10,5 +10,5 @@ public interface IRepository<TResult, TSearchOptions>
 
     Task<TResult> Get(Guid id);
 
-    Task Delete(Guid id);
+    Task Delete(IReadOnlyList<Guid> ids);
 }

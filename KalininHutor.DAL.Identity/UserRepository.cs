@@ -26,11 +26,11 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from Users where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from Users where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<UserEntity>> Get(UserSearchOptions options)

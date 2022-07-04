@@ -34,14 +34,11 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         ").ExecuteAsync();
     }
 
-    public async Task Delete(Guid id)
+    public async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = new NpgsqlConnection(_connectionString);
 
-        await connection.QueryBuilder($@"
-            delete from RentalObjects
-            where Id = {id}
-        ").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RentalObjects where Id = any({ids})").ExecuteAsync();
     }
 
     public async Task Update(RentalObjectEntity entity)
@@ -97,7 +94,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         var query = connection.QueryBuilder($@"
             select
                 Id,
-                OwnerId,
+                LandlordId,
                 Name,
                 Address,
                 Description,

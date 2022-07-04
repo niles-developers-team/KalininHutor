@@ -27,11 +27,11 @@ public class BookingRepository : BaseRepository<BookingEntity, BookingSearchOpti
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from Bookings where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from Bookings where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<BookingEntity>> Get(BookingSearchOptions options)

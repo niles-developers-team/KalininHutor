@@ -29,11 +29,11 @@ public class RoomVariantEntity
     public int FreeCount { get; protected set; }
 
     public List<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
-    public List<RoomVariantCharacteristicEntity> Characteristics {get; protected set;} = new List<RoomVariantCharacteristicEntity>();
+    public List<RoomVariantCharacteristicEntity> Characteristics { get; protected set; } = new List<RoomVariantCharacteristicEntity>();
 }
 
 public class RoomVariantSearchOptions
 {
     public Guid? RentalObjectId { get; set; }
-    public bool IncludeBedTypes { get; set; }
+    public IReadOnlyList<Guid>? RentalObjectsIds { get; set; }
 }

@@ -5,17 +5,23 @@ namespace KalininHutor.API.Requests;
 
 internal class DeleteRentalObjectHandler : IRequestHandler<RentalObject.DeleteRequest, Unit>
 {
+    private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
+    private readonly RoomVariantRepository _roomVariantRepository;
 
-    public DeleteRentalObjectHandler(RentalObjectRepository repository)
+    public DeleteRentalObjectHandler(ISender sender, RentalObjectRepository repository, RoomVariantRepository roomVariantRepository)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _roomVariantRepository = roomVariantRepository ?? throw new ArgumentNullException(nameof(roomVariantRepository));
     }
 
     public async Task<Unit> Handle(RentalObject.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectsIds = request.Ids });
+        await _sender.Send(new RoomVariant.DeleteRequest { Ids = roomVariants.Select(o => o.Id).ToList() });
 
+        await _repository.Delete(request.Ids);
         return Unit.Value;
     }
 }
@@ -27,6 +33,6 @@ public partial class RentalObject
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор объекта аренды </summary>
-        public Guid Id { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; }
     }
 }

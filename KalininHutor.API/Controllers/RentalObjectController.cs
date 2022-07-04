@@ -24,23 +24,59 @@ public class RentalObjectController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Get([FromQuery] RentalObject.GetQuery query)
     {
-        var result = await _sender.Send(query);
-
-        return Ok(result);
+        try
+        {
+            var result = await _sender.Send(query);
+            return Ok(result);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
     }
 
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RentalObject.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody] RentalObject.CreateRequest request)
+    {
+        try
+        {
+            return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(500, exc.Message);
+        }
+    }
 
     ///<summary> Метод обновления объекта аренды </summary>
     [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] RentalObject.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] RentalObject.UpdateRequest request)
+    {
+        try
+        {
+            return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(500, exc.Message);
+        }
+    }
 
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] RentalObject.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] RentalObject.DeleteRequest request)
+    {
+        try
+        {
+           return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
+    }
 }

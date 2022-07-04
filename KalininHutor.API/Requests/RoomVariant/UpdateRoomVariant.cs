@@ -9,11 +9,13 @@ using DomainRoomVariant = Domain.Booking.RoomVariant;
 
 internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequest, Unit>
 {
+    private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
     private readonly IMapper _mapper;
 
-    public UpdateRoomVariantHandler(RoomVariantRepository repository, IMapper mapper)
+    public UpdateRoomVariantHandler(ISender sender, RoomVariantRepository repository, IMapper mapper)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -27,6 +29,39 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
         entity.SetFreeCancelationPeriod(request.FreeCancellationPeriod);
         entity.SetCounts(request.Count, request.FreeCount);
         await _repository.Update(_mapper.Map<RoomVariantEntity>(entity));
+
+        foreach (var req in request.CreateBedTypesRequests)
+        {
+            req.RoomVariantId = entity.Id;
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.CreateCharacteristicsRequests)
+        {
+            req.RoomVariantId = entity.Id;
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.UpdateBedTypesRequests)
+        {
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.UpdateCharacteristicsRequests)
+        {
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.DeleteBedTypesRequests)
+        {
+            await _sender.Send(req);
+        }
+
+        foreach (var req in request.DeleteCharacteristicsRequests)
+        {
+            await _sender.Send(req);
+        }
+
         return Unit.Value;
     }
 }
@@ -61,5 +96,14 @@ public partial class RoomVariant
         public int Count { get; set; }
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
+
+        public IReadOnlyList<RoomVariantBedType.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristic.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
+
+        public IReadOnlyList<RoomVariantBedType.UpdateRequest> UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedType.UpdateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristic.UpdateRequest> UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.UpdateRequest>();
+
+        public IReadOnlyList<RoomVariantBedType.DeleteRequest> DeleteBedTypesRequests { get; set; } = new List<RoomVariantBedType.DeleteRequest>();
+        public IReadOnlyList<RoomVariantCharacteristic.DeleteRequest> DeleteCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.DeleteRequest>();
     }
 }
