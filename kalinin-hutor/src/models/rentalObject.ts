@@ -27,9 +27,15 @@ export namespace RentalObject {
         //Строка поиска
         searchText?: string;
         //Время заезда
-        checkinTime?: string;
+        checkinDate?: string;
         //Время отъезда
-        checkoutTime?: string;
+        checkoutDate?: string;
+        //Количество взрослых
+        adultsCount?: number;
+        //Количество детей
+        childsCount?: number;
+        //Количество комнат
+        roomsCount?: number;
     }
 
     export interface CreateRequest {

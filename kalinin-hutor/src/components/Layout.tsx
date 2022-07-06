@@ -1,4 +1,4 @@
-import { AppBar, Button, Grid, Slide, Snackbar, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Button, Container, Grid, Slide, Snackbar, TextField, Toolbar, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -124,9 +124,9 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <Grid container direction="column" alignItems="center" component="main" paddingX={'20%'} marginTop={5}>
+            <Container component="main" sx={{marginTop: "40px"}}>
                 {props.children}
-            </Grid>
+            </Container>
             <Toolbar color="primary">
             </Toolbar>
             <MessageSnackbar

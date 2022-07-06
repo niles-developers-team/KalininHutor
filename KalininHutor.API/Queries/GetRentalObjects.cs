@@ -39,5 +39,11 @@ public partial class RentalObject
         public TimeOnly? CheckinTime { get; set; }
         ///<summary> Время отъезда </summary>
         public TimeOnly? CheckoutTime { get; set; }
+        ///<summary> Количество взрослых </summary>
+        public int AdultsCount { get; set; }
+        ///<summary> Количество детей </summary>
+        public int ChildsCount { get; set; }
+        ///<summary> Количество комнат </summary>
+        public int RoomsCount { get; set; }
     }
 }

@@ -1,15 +1,28 @@
 import { Grid, Paper, Skeleton, Stack, Typography } from "@mui/material"
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useQuery } from "../../hooks/useQuery";
 import { RentalObject } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
 
 export const RentalObjectsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
+    const query = useQuery();
     const { rentalObjectState } = useAppSelector((state: AppState) => ({
         rentalObjectState: state.rentalObjectState
     }));
-    useEffect(() => { dispatch(RentalObjectActions.getRentalObjects()); }, [])
+
+
+    useEffect(() => {    
+        dispatch(RentalObjectActions.getRentalObjects({
+            searchText: query.get('searchText') || undefined,
+            adultsCount: parseInt(query.get('adultsCount') || '') || undefined,
+            childsCount: parseInt(query.get('childsCount') || '') || undefined,
+            roomsCount: parseInt(query.get('roomsCount') || '') || undefined,
+            checkinDate: query.get('checkinDate') || undefined,
+            checkoutDate: query.get('checkoutDate') || undefined
+        }));
+    }, [])
 
     let rentalObjects: RentalObject[] = [];
 

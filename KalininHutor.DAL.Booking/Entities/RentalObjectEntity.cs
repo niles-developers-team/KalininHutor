@@ -24,4 +24,10 @@ public class RentalObjectSearchOptions
     internal TimeSpan? CheckoutTimeSpan { get => CheckoutTime.HasValue ? CheckoutTime.Value.ToTimeSpan() : null; }
     public TimeOnly? CheckinTime { get; protected set; }
     public TimeOnly? CheckoutTime { get; protected set; }
+    ///<summary> Количество взрослых </summary>
+    public int AdultsCount { get; set; }
+    ///<summary> Количество детей </summary>
+    public int ChildsCount { get; set; }
+    ///<summary> Количество комнат </summary>
+    public int RoomsCount { get; set; }
 }

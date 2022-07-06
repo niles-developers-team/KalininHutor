@@ -28,6 +28,20 @@ class RentalObjectService {
         if (query) {
             if (query.searchText !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}searchText=${query.searchText}`;
+            if (query.landlordId !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}landlordId=${query.landlordId}`;
+            if (query.adultsCount !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}adultsCount=${query.adultsCount}`;
+            if (query.childsCount !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}childsCount=${query.childsCount}`;
+            if (query.roomsCount !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}roomsCount=${query.roomsCount}`;
+            if (query.checkinDate !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}checkinTime=${query.checkinDate}`;
+            if (query.checkoutDate !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}checkoutTime=${query.checkoutDate}`;
+            if (query.id !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}id=${query.id}`;
         }
 
         return fetch(url, {
