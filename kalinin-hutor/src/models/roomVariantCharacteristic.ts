@@ -35,7 +35,7 @@ export namespace RoomVariantCharacteristic {
     // Запрос удаления характеристики варианта номера
     export interface DeleteRequest {
         // Идентификатор характеристики номера
-        id: string;
+        ids: string[];
     }
     // Запрос обновления характеристики варианта номера
     export interface UpdateRequest {

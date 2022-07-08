@@ -201,12 +201,16 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
-                            deleteBedTypesRequests: rv.bedTypes
-                                .filter(o => o.status === EntityStatus.Created)
-                                .map<RoomVariantBedType.DeleteRequest>(bt => ({ id: bt.id || '' })),
-                            deleteCharacteristicsRequests: rv.characteristics
-                                .filter(o => o.status === EntityStatus.Created)
-                                .map<RoomVariantCharacteristic.DeleteRequest>(ch => ({ id: ch.id || '' })),
+                            deleteBedTypesRequests: ({
+                                ids: rv.bedTypes
+                                    .filter(o => o.status === EntityStatus.Created)
+                                    .map(bt => bt.id || '')
+                            }),
+                            deleteCharacteristicsRequests: ({
+                                ids: rv.characteristics
+                                    .filter(o => o.status === EntityStatus.Created)
+                                    .map(ch => ch.id || '')
+                            })
                         })),
                     deleteRoomVariantsRequest: ({
                         ids: model.roomVariants

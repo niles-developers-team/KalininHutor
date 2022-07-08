@@ -11,6 +11,10 @@ export interface RoomCharacteristic {
     type: CharacteristicTypes;
 }
 
+export interface RoomCharacteristicFilter extends RoomCharacteristic {
+    selected?: boolean;
+}
+
 export namespace RoomCharacteristic {
     // Очередь получения удобств и услуг</summary>
     export interface GetQuery {

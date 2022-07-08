@@ -51,8 +51,7 @@ export enum BedTypes {
 
 export namespace BedTypes {
     export function getDescription(value: BedTypes) {
-        switch(value)
-        {
+        switch (value) {
             case BedTypes.BabyBed: return 'Детская кровать';
             case BedTypes.BigDouble: return 'Большая двуспальная кровать';
             case BedTypes.BigSingle: return 'Большая односпальная кровать';
@@ -114,8 +113,7 @@ export enum CharacteristicTypes {
 
 export namespace CharacteristicTypes {
     export function getDescription(value: CharacteristicTypes | undefined) {
-        switch(value)
-        {
+        switch (value) {
             case CharacteristicTypes.BedRoom: return 'Спальня';
             case CharacteristicTypes.LivingArea: return 'Гостиная зона';
             case CharacteristicTypes.WC: return 'Ванная комната';

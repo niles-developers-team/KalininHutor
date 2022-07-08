@@ -41,7 +41,7 @@ export namespace RoomVariantBedType {
     // Запрос удаления варианта кровати в номере
     export interface DeleteRequest {
         // Идентификатор варианта кровати
-        id: string;
+        ids: string[];
     }
 
     // Запрос обновления варианта кровати

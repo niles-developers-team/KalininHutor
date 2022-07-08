@@ -30,37 +30,37 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
         entity.SetCounts(request.Count, request.FreeCount);
         await _repository.Update(_mapper.Map<RoomVariantEntity>(entity));
 
+        if (request.CreateBedTypesRequests != null)
         foreach (var req in request.CreateBedTypesRequests)
         {
             req.RoomVariantId = entity.Id;
             await _sender.Send(req);
         }
 
+        if (request.CreateCharacteristicsRequests != null)
         foreach (var req in request.CreateCharacteristicsRequests)
         {
             req.RoomVariantId = entity.Id;
             await _sender.Send(req);
         }
 
+        if (request.UpdateBedTypesRequests != null)
         foreach (var req in request.UpdateBedTypesRequests)
         {
             await _sender.Send(req);
         }
 
+        if (request.UpdateCharacteristicsRequests != null)
         foreach (var req in request.UpdateCharacteristicsRequests)
         {
             await _sender.Send(req);
         }
 
-        foreach (var req in request.DeleteBedTypesRequests)
-        {
-            await _sender.Send(req);
-        }
+        if (request.DeleteBedTypesRequests != null)
+            await _sender.Send(request.DeleteBedTypesRequests);
 
-        foreach (var req in request.DeleteCharacteristicsRequests)
-        {
-            await _sender.Send(req);
-        }
+        if (request.DeleteCharacteristicsRequests != null)
+            await _sender.Send(request.DeleteCharacteristicsRequests);
 
         return Unit.Value;
     }
@@ -97,13 +97,13 @@ public partial class RoomVariant
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
 
-        public IReadOnlyList<RoomVariantBedType.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
+        public IReadOnlyList<RoomVariantBedType.CreateRequest>? CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristic.CreateRequest>? CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
 
-        public IReadOnlyList<RoomVariantBedType.UpdateRequest> UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedType.UpdateRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.UpdateRequest> UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.UpdateRequest>();
+        public IReadOnlyList<RoomVariantBedType.UpdateRequest>? UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedType.UpdateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristic.UpdateRequest>? UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.UpdateRequest>();
 
-        public IReadOnlyList<RoomVariantBedType.DeleteRequest> DeleteBedTypesRequests { get; set; } = new List<RoomVariantBedType.DeleteRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.DeleteRequest> DeleteCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.DeleteRequest>();
+        public RoomVariantBedType.DeleteRequest? DeleteBedTypesRequests { get; set; }
+        public RoomVariantCharacteristic.DeleteRequest? DeleteCharacteristicsRequests { get; set; }
     }
 }

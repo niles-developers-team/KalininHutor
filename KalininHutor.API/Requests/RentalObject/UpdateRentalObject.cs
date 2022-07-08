@@ -26,15 +26,18 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
 
-        foreach (var req in request.CreateRoomVariantsRequests)
-        {
-            req.RentalObject = entity;
-            await _sender.Send(req);
-        }
+        if (request.CreateRoomVariantsRequests != null)
+            foreach (var req in request.CreateRoomVariantsRequests)
+            {
+                req.RentalObject = entity;
+                await _sender.Send(req);
+            }
 
+        if (request.UpdateRoomVariantsRequests != null)
         foreach (var req in request.UpdateRoomVariantsRequests)
             await _sender.Send(req);
 
+        if (request.DeleteRoomVariantsRequest != null)
         await _sender.Send(request.DeleteRoomVariantsRequest);
 
         return Unit.Value;
@@ -63,10 +66,10 @@ public partial class RentalObject
         ///<summary> Идентификатор объекта аренды </summary>
         public TimeOnly CheckoutTime { get; set; }
 
-        public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
+        public IReadOnlyList<RoomVariant.CreateRequest>? CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
 
-        public IReadOnlyList<RoomVariant.UpdateRequest> UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
+        public IReadOnlyList<RoomVariant.UpdateRequest>? UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
 
-        public RoomVariant.DeleteRequest DeleteRoomVariantsRequest { get; set; }
+        public RoomVariant.DeleteRequest? DeleteRoomVariantsRequest { get; set; }
     }
 }

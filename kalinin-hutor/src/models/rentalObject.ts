@@ -36,6 +36,8 @@ export namespace RentalObject {
         childsCount?: number;
         //Количество комнат
         roomsCount?: number;
+
+        selectedCharacteristicsIds?: string[];
     }
 
     export interface CreateRequest {

@@ -45,5 +45,7 @@ public partial class RentalObject
         public int ChildsCount { get; set; }
         ///<summary> Количество комнат </summary>
         public int RoomsCount { get; set; }
+
+        public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
     }
 }

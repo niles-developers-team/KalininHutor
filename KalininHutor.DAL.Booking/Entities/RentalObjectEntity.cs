@@ -25,9 +25,11 @@ public class RentalObjectSearchOptions
     public TimeOnly? CheckinTime { get; protected set; }
     public TimeOnly? CheckoutTime { get; protected set; }
     ///<summary> Количество взрослых </summary>
-    public int AdultsCount { get; set; }
+    public int? AdultsCount { get; set; }
     ///<summary> Количество детей </summary>
-    public int ChildsCount { get; set; }
+    public int? ChildsCount { get; set; }
     ///<summary> Количество комнат </summary>
-    public int RoomsCount { get; set; }
+    public int? RoomsCount { get; set; }
+
+    public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
 }

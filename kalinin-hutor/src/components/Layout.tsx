@@ -80,7 +80,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
     return (
         <Grid container direction="row">
             <HideOnScroll {...props}>
-                <AppBar position="sticky" color="default">
+                <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Toolbar>
                         <Grid container className="container" alignItems="center">
                             <Button onClick={() => navigate('/')}>КХ</Button>
@@ -124,7 +124,7 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <Container component="main" sx={{marginTop: "40px"}}>
+            <Container component="main" sx={{ marginTop: "40px" }}>
                 {props.children}
             </Container>
             <Toolbar color="primary">
