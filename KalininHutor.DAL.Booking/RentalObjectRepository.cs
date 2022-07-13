@@ -82,7 +82,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             query.Where($"(CheckoutTime <= {options.CheckoutTimeSpan})");
 
         if (options.AdultsCount.HasValue)
-            query.Where($"(select min(RoomVariants.MaxPersonsCount) from RoomVairants where RoomVariants.RentalObjectId = r.Id) >= {options.AdultsCount + (options.ChildsCount ?? 0)}");
+            query.Where($"(select min(RoomVariants.MaxPersonsCount) from RoomVariants where RoomVariants.RentalObjectId = r.Id) >= {options.AdultsCount + (options.ChildsCount ?? 0)}");
 
         if (options.RoomsCount.HasValue)
             query.Where($"(select min(RoomVariants.FreeCount) from RoomVariants where RoomVariants.RentalObjectId = r.Id) >= {options.RoomsCount}");
@@ -90,8 +90,13 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         if (options.LandlordId.HasValue)
             query.Where($"LandlordId = {options.LandlordId}");
 
-        if(options.SelectedCharacteristicsIds != null && options.SelectedCharacteristicsIds.Any())
-            query.Where($"");
+        if (options.SelectedCharacteristicsIds != null && options.SelectedCharacteristicsIds.Any())
+            query.Where($@"Id in (
+	                select rv.RentalObjectId from RoomVariants rv
+	                inner join RoomVariantCharacteristics rvc on rv.Id = rvc.RoomVariantId
+	                where rvc.RoomCharacteristicId = any({options.SelectedCharacteristicsIds})
+                )
+            ");
 
         return await query.QueryAsync<RentalObjectEntity>();
     }

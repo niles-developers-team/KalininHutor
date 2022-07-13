@@ -42,6 +42,10 @@ class RentalObjectService {
                 url += `${conditionIndex++ === 0 ? '?' : '&'}checkoutTime=${query.checkoutDate}`;
             if (query.id !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}id=${query.id}`;
+            if (query.selectedCharacteristicsIds !== undefined)
+                for(let id of query.selectedCharacteristicsIds)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}selectedCharacteristicsIds=${id}`;
+
         }
 
         return fetch(url, {

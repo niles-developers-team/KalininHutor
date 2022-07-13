@@ -71,15 +71,14 @@ export const RentalObjectsComponent = function (): JSX.Element {
     }
 
     function handleSearch() {
-        dispatch(RentalObjectActions.getRentalObjects(filter));
+        dispatch(RentalObjectActions.getRentalObjects({ ...filter, selectedCharacteristicsIds: characteristics.filter(o => o.selected).map(o => o.id) }));
     }
 
     function handleFilterSelected(id: string, selected: boolean) {
-        // const filter = characteristics.find(o => o.id === id);
-        // if (filter) {
-        //     filter.selected = selected;
-        //     setCharacteristics([...characteristics.map(o => o.id === id ? filter : o)]);
-        // }
+        const filter = characteristics.find(o => o.id === id);
+        if (filter) {
+            setCharacteristics([...characteristics.map(o => o.id === id ? { ...o, selected: selected } : o)]);
+        }
     }
 
     let rentalObjects: RentalObject[] = [];
