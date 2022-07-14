@@ -7,7 +7,7 @@ import { useQuery } from "../../hooks/useQuery";
 import { RentalObject, RoomCharacteristic, RoomCharacteristicFilter } from "../../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { RentalObjectsBaseFilterComponent, RentalObjectsDetailedFilterComponent } from "./RentalObjectsFilter";
-import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "./RentalObjectShortInfo";
+import { RentalObjectDetailedInfoComponent, RentalObjectDetailedInfoSkeleton, RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "./RentalObjectInfo";
 
 export const RentalObjectsComponent = function (): JSX.Element {
     const navigate = useNavigate();
@@ -23,22 +23,24 @@ export const RentalObjectsComponent = function (): JSX.Element {
         adultsCount: 1,
         childsCount: 0,
         roomsCount: 1,
-        searchText: ''
+        searchText: '',
+        getBestDemands: true
     });
     const [characteristics, setCharacteristics] = useState<RoomCharacteristicFilter[]>([]);
 
     useEffect(() => {
-        const filter = {
+        const filterFromUrl = {
             searchText: query.get('searchText') || undefined,
             adultsCount: parseInt(query.get('adultsCount') || '') || 1,
             childsCount: parseInt(query.get('childsCount') || '') || 0,
             roomsCount: parseInt(query.get('roomsCount') || '') || 1,
             checkinDate: query.get('checkinDate') || undefined,
-            checkoutDate: query.get('checkoutDate') || undefined
+            checkoutDate: query.get('checkoutDate') || undefined,
+            getBestDemands: true
         };
-        setFilter(filter);
+        setFilter(filterFromUrl);
 
-        dispatch(RentalObjectActions.getRentalObjects(filter));
+        dispatch(RentalObjectActions.getRentalObjects(filterFromUrl));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, []);
 
@@ -86,7 +88,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     if (rentalObjectState.modelsLoading === false)
         rentalObjects = rentalObjectState.models;
     else {
-        rentalObjects = Array.from(new Array(10));
+        rentalObjects = Array.from(new Array(3));
     }
     return (
         <Stack width="100%" direction="row" spacing={3}>
@@ -94,17 +96,14 @@ export const RentalObjectsComponent = function (): JSX.Element {
             <Stack>
                 <Typography variant="h5">Базы отдыха и дачи</Typography>
                 <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={handleFilterChanged} />
-                <Grid container item xs spacing={{ xs: 2 }} columns={{ xs: 10 }} alignItems="center">
+                <Stack>
                     {rentalObjects.map((ro, index) =>
                     (
-                        <Grid item key={index}>
-                            {rentalObjectState.modelsLoading
-                                ? <RentalObjectShortInfoSkeleton />
-                                : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => navigate(`/rental-objects/${ro.id}`)} />
-                            }
-                        </Grid>
+                        rentalObjectState.modelsLoading
+                            ? <RentalObjectDetailedInfoSkeleton />
+                            : <RentalObjectDetailedInfoComponent model={ro} onShowVariants={() => navigate(`/rental-objects/${ro.id}`)} />
                     ))}
-                </Grid>
+                </Stack>
             </Stack>
         </Stack>
     )

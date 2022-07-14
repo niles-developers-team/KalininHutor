@@ -37,14 +37,18 @@ class RentalObjectService {
             if (query.roomsCount !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}roomsCount=${query.roomsCount}`;
             if (query.checkinDate !== undefined)
-                url += `${conditionIndex++ === 0 ? '?' : '&'}checkinTime=${query.checkinDate}`;
+                url += `${conditionIndex++ === 0 ? '?' : '&'}checkinDate=${query.checkinDate}`;
             if (query.checkoutDate !== undefined)
-                url += `${conditionIndex++ === 0 ? '?' : '&'}checkoutTime=${query.checkoutDate}`;
+                url += `${conditionIndex++ === 0 ? '?' : '&'}checkoutDate=${query.checkoutDate}`;
             if (query.id !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}id=${query.id}`;
+
+            if (query.getBestDemands !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}getBestDemands=${query.getBestDemands}`;
+
             if (query.selectedCharacteristicsIds !== undefined)
-                for(let id of query.selectedCharacteristicsIds)
-                url += `${conditionIndex++ === 0 ? '?' : '&'}selectedCharacteristicsIds=${id}`;
+                for (let id of query.selectedCharacteristicsIds)
+                    url += `${conditionIndex++ === 0 ? '?' : '&'}selectedCharacteristicsIds=${id}`;
 
         }
 

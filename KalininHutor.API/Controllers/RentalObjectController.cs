@@ -21,7 +21,6 @@ public class RentalObjectController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    [Authorize]
     public async Task<IActionResult> Get([FromQuery] RentalObject.GetQuery query)
     {
         try

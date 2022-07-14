@@ -184,7 +184,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                     price: ch.price
                                 })),
                             updateBedTypesRequests: rv.bedTypes
-                                .filter(o => o.status === EntityStatus.Created)
+                                .filter(o => o.status === EntityStatus.Updated)
                                 .map<RoomVariantBedType.UpdateRequest>(bt => ({
                                     id: bt.id,
                                     bedType: bt.bedType,
@@ -194,7 +194,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                     width: bt.width
                                 })),
                             updateCharacteristicsRequests: rv.characteristics
-                                .filter(o => o.status === EntityStatus.Created)
+                                .filter(o => o.status === EntityStatus.Updated)
                                 .map<RoomVariantCharacteristic.UpdateRequest>(ch => ({
                                     id: ch.id || '',
                                     roomCharacteristicId: ch.roomCharacteristicId || '',
@@ -203,12 +203,12 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                 })),
                             deleteBedTypesRequests: ({
                                 ids: rv.bedTypes
-                                    .filter(o => o.status === EntityStatus.Created)
+                                    .filter(o => o.status === EntityStatus.Deleted)
                                     .map(bt => bt.id || '')
                             }),
                             deleteCharacteristicsRequests: ({
                                 ids: rv.characteristics
-                                    .filter(o => o.status === EntityStatus.Created)
+                                    .filter(o => o.status === EntityStatus.Deleted)
                                     .map(ch => ch.id || '')
                             })
                         })),

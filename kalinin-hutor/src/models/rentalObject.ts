@@ -15,7 +15,16 @@ export interface RentalObject {
     // Время отъезда объекта аренды
     checkoutTime: string;
 
+    bestDemand?: RentalObjectBestDemand;
     roomVariants?: RoomVariant[];
+}
+
+export interface RentalObjectBestDemand {
+    rentalObjectId: string;
+    adultsCount: string;
+    childsCount: string;
+    nightsCount: string;
+    price: number;
 }
 
 export namespace RentalObject {
@@ -36,6 +45,8 @@ export namespace RentalObject {
         childsCount?: number;
         //Количество комнат
         roomsCount?: number;
+
+        getBestDemands?: boolean;
 
         selectedCharacteristicsIds?: (string | undefined)[];
     }

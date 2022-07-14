@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { RentalObject } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
 import moment from "moment";
-import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "../rentalObjects/RentalObjectShortInfo";
+import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "../rentalObjects/RentalObjectInfo";
 import { RentalObjectsBaseFilterComponent } from "../rentalObjects/RentalObjectsFilter";
 import { useQuery } from "../../hooks/useQuery";
 
