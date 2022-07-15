@@ -31,7 +31,7 @@ internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObject
             if (rentalObjectBestDemand == null)
                 throw new ApplicationException("Возникла ошибка при выгрузке лучших предложений");
 
-            bestDemands.Add(new RentalObjectBestDemandDTO(rentalObjectId, request.AdultsCount, request.ChildsCount, request.NightsCount, rentalObjectBestDemand.Price));
+            bestDemands.Add(new RentalObjectBestDemandDTO(rentalObjectId, request.AdultsCount, request.ChildsCount, request.NightsCount, rentalObjectBestDemand.Price * request.NightsCount));
         }
 
         return bestDemands;

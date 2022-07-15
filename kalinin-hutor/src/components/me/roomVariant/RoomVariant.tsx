@@ -17,7 +17,6 @@ import { ArrowBack } from "@mui/icons-material";
 export const RoomVariantComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
     const { id, rentalObjectId } = useParams();
     const { roomCharacteristicState, rentalObjectState } = useAppSelector((state: AppState) => ({
         rentalObjectState: state.rentalObjectState,

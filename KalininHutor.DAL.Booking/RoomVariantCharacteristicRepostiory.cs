@@ -35,7 +35,12 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-            select rvch.Id, rvch.RoomVariantId, rvch.RoomCharacteristicId, rvch.Price
+            select 
+                rvch.Id, 
+                rvch.RoomVariantId, 
+                rvch.RoomCharacteristicId, 
+                ch.Name as RoomCharacteristicName,
+                rvch.Price
             from RoomVariantCharacteristics rvch
             inner join RoomCharacteristics ch on rvch.RoomCharacteristicId = ch.Id
             /**where**/

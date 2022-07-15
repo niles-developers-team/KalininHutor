@@ -21,7 +21,6 @@ public class RoomCharacteristicController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    [Authorize]
     public async Task<IActionResult> Get([FromQuery] RoomCharacteristic.GetQuery query)
     {
         var result = await _sender.Send(query);

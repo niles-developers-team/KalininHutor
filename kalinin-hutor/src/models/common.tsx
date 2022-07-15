@@ -1,3 +1,5 @@
+import { Accessible, Bathtub, CleaningServices, Fireplace, Hotel, Info, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SoupKitchen, Weekend } from '@mui/icons-material';
+
 export enum SnackbarVariant {
     success = 'success',
     error = 'error',
@@ -128,6 +130,25 @@ export namespace CharacteristicTypes {
             case CharacteristicTypes.Availability: return 'Доступность';
             case CharacteristicTypes.Outdoors: return 'На свежем воздухе';
             default: return 'Неизвестный тип кровати'
+        }
+    }
+
+    export function getIcon(value: CharacteristicTypes | undefined): JSX.Element | null {
+        switch (value) {
+            case CharacteristicTypes.BedRoom: return <Hotel />;
+            case CharacteristicTypes.LivingArea: return <Fireplace />;
+            case CharacteristicTypes.WC: return <Bathtub />;
+            case CharacteristicTypes.Cleaning: return <CleaningServices />;
+            case CharacteristicTypes.FoodAndDrinks: return <SoupKitchen />;
+            case CharacteristicTypes.View: return <Panorama />;
+            case CharacteristicTypes.Common: return <Info />;
+            case CharacteristicTypes.Parking: return <LocalParking />;
+            case CharacteristicTypes.TVAndMedia: return <LiveTv />;
+            case CharacteristicTypes.AmenetiesInTheRoom: return <Weekend />;
+            case CharacteristicTypes.Services: return <RoomService/>;
+            case CharacteristicTypes.Availability: return <Accessible/>;
+            case CharacteristicTypes.Outdoors: return <NaturePeople/>;
+            default: return null;
         }
     }
 

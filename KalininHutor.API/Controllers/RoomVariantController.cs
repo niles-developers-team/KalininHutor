@@ -20,7 +20,6 @@ public class RoomVariantController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    [Authorize]
     public async Task<IActionResult> Get([FromQuery] RoomVariant.GetQuery query)
     {
         var result = await _sender.Send(query);

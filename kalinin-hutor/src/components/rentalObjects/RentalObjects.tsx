@@ -83,6 +83,10 @@ export const RentalObjectsComponent = function (): JSX.Element {
         }
     }
 
+    function handleShowVariants(id: string) {
+        navigate(`/rental-objects/${id}?${searchParams}`);
+    }
+
     let rentalObjects: RentalObject[] = [];
 
     if (rentalObjectState.modelsLoading === false)
@@ -101,7 +105,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
                     (
                         rentalObjectState.modelsLoading
                             ? <RentalObjectDetailedInfoSkeleton />
-                            : <RentalObjectDetailedInfoComponent model={ro} onShowVariants={() => navigate(`/rental-objects/${ro.id}`)} />
+                            : <RentalObjectDetailedInfoComponent model={ro} onShowVariants={handleShowVariants} />
                     ))}
                 </Stack>
             </Stack>
