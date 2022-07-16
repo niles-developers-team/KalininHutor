@@ -4,11 +4,13 @@ import { CreateBookingRoomVariantBedTypeRequest } from "./bookingRoomVariantBedT
 export interface BookingRoomVariant
 {
     // Идентификатор выбранного номера
-    id: string;
+    id?: string;
     // Идентификатор варианта номера
-    roomVariantId: string;
+    roomVariantId?: string;
     // Идентификатор брони
-    bookingId: string;
+    bookingId?: string;
+    //Количество бронируемых номеров
+    roomsCount: number;
     // Всего за номер (руб.)
     amount: number;
 }

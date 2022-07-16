@@ -1,16 +1,31 @@
-import { CurrencyRuble } from "@mui/icons-material";
-import { Button, Stack, Typography } from "@mui/material";
+import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { useState } from "react";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
 
 interface Props {
     model: RoomVariant;
     nightsCount: number;
+    roomsCount: number;
 
     roomCharacteristics: RoomCharacteristic[];
+
+    onRoomsCountChanged: (roomVariantId: string, newCount: number) => void;
+    onSpecifyBedsClick: () => void;
 }
 
 export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
-    const { model, nightsCount, roomCharacteristics } = props;
+    const {
+        model,
+        nightsCount,
+        roomsCount,
+        roomCharacteristics,
+        onRoomsCountChanged,
+        onSpecifyBedsClick
+    } = props;
+
+    if (model.id === undefined)
+        return (<Typography>Не найден вариант номера</Typography>)
 
     return (
         <Stack>
@@ -18,6 +33,7 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
                 <Typography variant="h6">{model.name}</Typography>
                 <Typography variant="subtitle2">Цена за {nightsCount} ночей {model.price * nightsCount}<CurrencyRuble /></Typography>
                 <Typography variant="subtitle2">Вмещает {model.maxPersonsCount} гостей</Typography>
+                {model.bedTypes?.length > 1 ? <Button onClick={onSpecifyBedsClick} disabled={roomsCount === 0}>Уточнить кровати</Button> : null}
             </Stack>
             <Stack direction="row">
                 {
@@ -37,9 +53,13 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
                         : null
                 }
             </Stack>
-            <Stack>
-                
+            <Stack direction="row" alignItems="center">
+                <Typography>Выбран</Typography>
+                <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount - 1)} disabled={roomsCount === 0}><Remove /></IconButton>
+                <Typography>{roomsCount}</Typography>
+                <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount + 1)}><Add /></IconButton>
+                <Typography>комнат</Typography>
             </Stack>
-        </Stack>
+        </Stack >
     );
 }

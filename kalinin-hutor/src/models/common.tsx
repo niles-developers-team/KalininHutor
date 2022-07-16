@@ -1,4 +1,4 @@
-import { Accessible, Bathtub, CleaningServices, Fireplace, Hotel, Info, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SoupKitchen, Weekend } from '@mui/icons-material';
+import { Accessible, Bathtub, Bed, CleaningServices, Crib, Fireplace, Hotel, Info, KingBed, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SingleBed, SoupKitchen, Weekend } from '@mui/icons-material';
 
 export enum SnackbarVariant {
     success = 'success',
@@ -60,6 +60,17 @@ export namespace BedTypes {
             case BedTypes.Double: return 'Двуспальная кровать';
             case BedTypes.Single: return 'Односпальная кровать';
             default: return 'Неизвестный тип кровати'
+        }
+    }
+
+    export function getIcon(value: BedTypes | undefined): JSX.Element | null {
+        switch (value) {
+            case BedTypes.BabyBed: return <Crib />;
+            case BedTypes.BigDouble: return <Bed />;
+            case BedTypes.BigSingle: return <Weekend />;
+            case BedTypes.Double: return <KingBed />;
+            case BedTypes.Single: return <SingleBed />;
+            default: return null;
         }
     }
 
@@ -145,9 +156,9 @@ export namespace CharacteristicTypes {
             case CharacteristicTypes.Parking: return <LocalParking />;
             case CharacteristicTypes.TVAndMedia: return <LiveTv />;
             case CharacteristicTypes.AmenetiesInTheRoom: return <Weekend />;
-            case CharacteristicTypes.Services: return <RoomService/>;
-            case CharacteristicTypes.Availability: return <Accessible/>;
-            case CharacteristicTypes.Outdoors: return <NaturePeople/>;
+            case CharacteristicTypes.Services: return <RoomService />;
+            case CharacteristicTypes.Availability: return <Accessible />;
+            case CharacteristicTypes.Outdoors: return <NaturePeople />;
             default: return null;
         }
     }

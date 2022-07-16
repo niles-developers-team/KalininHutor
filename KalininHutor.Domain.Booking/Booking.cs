@@ -19,10 +19,10 @@ public class Booking : IEntity<Guid>
 
     public Booking(Guid rentalObjectId, Guid tenantId, int adultCount, int childCount, DateOnly checkinDate, DateOnly checkoutDate)
     {
-        if (rentalObjectId == null || rentalObjectId == Guid.Empty)
+        if (rentalObjectId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
 
-        if (tenantId == null || tenantId == Guid.Empty)
+        if (tenantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор арендатора.");
 
         CheckVisitorsCount(adultCount, childCount);

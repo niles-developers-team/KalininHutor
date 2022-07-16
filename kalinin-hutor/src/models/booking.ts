@@ -1,13 +1,14 @@
 import moment from "moment";
-import { CreateBookingRoomVariantRequest } from "./bookingRoomVariant";
+import { BookingRoomVariant, CreateBookingRoomVariantRequest } from "./bookingRoomVariant";
+import { EntityStatus, IEntity } from "./common";
 
-export interface Booking {
+export interface Booking extends IEntity {
     // Идентификатор брони
-    id: string | null;
+    id?: string;
     // Идентификатор арендатора
-    tenantId: string | null;
+    tenantId?: string;
     // Идентификатор объекта аренды
-    rentalObjectId: string | null;
+    rentalObjectId?: string;
     // Количество взрослых
     adultCount: number;
     // Количество детей
@@ -18,6 +19,8 @@ export interface Booking {
     checkinDate: string;
     // Дата отъезда
     checkoutDate: string
+
+    roomVariants?: BookingRoomVariant[];
 }
 
 export namespace Booking {
@@ -79,9 +82,9 @@ export namespace Booking {
         checkinDate: moment().toISOString(),
         checkoutDate: moment().add(7, 'days').toISOString(),
         childCount: 0,
-        id: null,
-        rentalObjectId: null,
-        tenantId: null,
-        total: 0
+        total: 0,
+        status: EntityStatus.NotChanged,
+
+        roomVariants: []
     }
 }
