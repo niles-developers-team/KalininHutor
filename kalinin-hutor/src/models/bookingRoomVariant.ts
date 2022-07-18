@@ -1,8 +1,8 @@
 import { CreateBookingRoomVariantBedTypeRequest } from "./bookingRoomVariantBedType";
+import { BedTypes } from "./common";
 
 // Модель чтения выбранного варианта номера
-export interface BookingRoomVariant
-{
+export interface BookingRoomVariant {
     // Идентификатор выбранного номера
     id?: string;
     // Идентификатор варианта номера
@@ -13,11 +13,11 @@ export interface BookingRoomVariant
     roomsCount: number;
     // Всего за номер (руб.)
     amount: number;
+    bedType?: BedTypes;
 }
 
 // Очередь получения забронированных вариантов кроватей в номера
-export interface GetBookingRoomVariantsQuery
-{
+export interface GetBookingRoomVariantsQuery {
     // Идентификатор выбранного номера
     id: string;
     // Идентификатор брони
@@ -25,8 +25,7 @@ export interface GetBookingRoomVariantsQuery
 }
 
 // Запрос на создание выбранного варианта номера
-export interface CreateBookingRoomVariantRequest
-{
+export interface CreateBookingRoomVariantRequest {
     // Идентификатор варианта номера
     roomVariantId: string;
     // Идентификатор брони
@@ -39,8 +38,7 @@ export interface CreateBookingRoomVariantRequest
 }
 
 // Запрос удаления выбранного варианта номера
-export interface DeleteBookingRoomVariantRequest
-{
+export interface DeleteBookingRoomVariantRequest {
     // Идентификатор выбранного номера
     id: string;
 }

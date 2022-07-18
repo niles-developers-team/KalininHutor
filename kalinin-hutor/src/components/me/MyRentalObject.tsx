@@ -103,8 +103,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         freeCancellationPeriod: rv.freeCancellationPeriod,
                         createBedTypesRequests: rv.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
                             bedType: bt.bedType,
-                            maxInRoom: bt.maxInRoom,
-                            roomVariantId: bt.roomVariantId,
+                            roomVariantId: bt.roomVariantId || '',
                             length: bt.length,
                             width: bt.width
                         })),
@@ -140,8 +139,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                             rentalObjectId: model.id,
                             createBedTypesRequests: rv.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
                                 bedType: bt.bedType,
-                                maxInRoom: bt.maxInRoom,
-                                roomVariantId: bt.roomVariantId,
+                                roomVariantId: bt.roomVariantId || '',
                                 length: bt.length,
                                 width: bt.width
                             })),
@@ -171,8 +169,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                 .filter(o => o.status === EntityStatus.Created)
                                 .map<RoomVariantBedType.CreateRequest>(bt => ({
                                     bedType: bt.bedType,
-                                    maxInRoom: bt.maxInRoom,
-                                    roomVariantId: bt.roomVariantId,
+                                    roomVariantId: bt.roomVariantId || '',
                                     length: bt.length,
                                     width: bt.width
                                 })),
@@ -186,9 +183,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                             updateBedTypesRequests: rv.bedTypes
                                 .filter(o => o.status === EntityStatus.Updated)
                                 .map<RoomVariantBedType.UpdateRequest>(bt => ({
-                                    id: bt.id,
+                                    id: bt.id || '',
                                     bedType: bt.bedType,
-                                    maxInRoom: bt.maxInRoom,
                                     roomVariantId: bt.roomVariantId,
                                     length: bt.length,
                                     width: bt.width

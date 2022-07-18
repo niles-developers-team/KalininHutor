@@ -19,6 +19,7 @@ import { RentalObjectsComponent } from "./rentalObjects/RentalObjects";
 import { RoomVariantComponent } from "./me/roomVariant/RoomVariant";
 import { SigninDialog } from "./signin/Signin";
 import { RentalObjectComponent } from "./rentalObjects/RentalObject";
+import { BookingComponent } from "./rentalObjects/Booking";
 
 
 export function RoutesSwitch() {
@@ -67,6 +68,7 @@ export function RoutesSwitch() {
                 <Route path="/catalog" element={<CatalogComponent />} />
                 <Route path="/rental-objects" element={<RentalObjectsComponent />} />
                 <Route path="/rental-objects/:id" element={<RentalObjectComponent />} />
+                <Route path="/rental-objects/:id/booking" element={<BookingComponent />} />
                 <Route path="/me/rental-objects/:id" element={<MyRentalObjectComponent />} />
                 <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
 

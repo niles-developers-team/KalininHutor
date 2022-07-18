@@ -1,4 +1,4 @@
-import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
+import { Add, AspectRatio, CurrencyRuble, Remove } from "@mui/icons-material";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
@@ -32,7 +32,8 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
             <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="h6">{model.name}</Typography>
                 <Typography variant="subtitle2">Цена за {nightsCount} ночей {model.price * nightsCount}<CurrencyRuble /></Typography>
-                <Typography variant="subtitle2">Вмещает {model.maxPersonsCount} гостей</Typography>
+                <Typography variant="caption">Вмещает {model.maxPersonsCount} гостей</Typography>
+                <Typography variant="caption"><AspectRatio />{model.width} X {model.length}</Typography>
                 {model.bedTypes?.length > 1 ? <Button onClick={onSpecifyBedsClick} disabled={roomsCount === 0}>Уточнить кровати</Button> : null}
             </Stack>
             <Stack direction="row">

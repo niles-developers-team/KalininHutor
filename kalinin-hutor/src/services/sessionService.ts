@@ -1,13 +1,12 @@
 import { StorageItem } from "../models";
 import jwt_decode from "jwt-decode";
-import Cookies from "universal-cookie";
+import { cookiesService } from "./cookiesService";
 
 class SessionService {
     private originalFetch: typeof fetch = fetch.bind(window);
 
     private readonly storageKey: string = 'kalinin_hutor_auth';
     private readonly noInit = {};
-    private readonly cookies = new Cookies();
 
     public init(): void {
         this.mixSessionFetch();
@@ -24,22 +23,21 @@ class SessionService {
             return false;
 
         storageItem.token = token;
-        this.cookies.set(this.storageKey, JSON.stringify(storageItem));
-
+        cookiesService.set(this.storageKey, storageItem);
         return true;
     }
 
     public signOut() {
-        this.cookies.remove(this.storageKey);
+        cookiesService.delete(this.storageKey);
     }
 
     private getStorageItem(): StorageItem {
-        const storageValue: StorageItem = this.cookies.get(this.storageKey);
+        const storageValue: StorageItem = cookiesService.get(this.storageKey);
         if (!storageValue)
             return { token: '' };
 
         if (storageValue && !this.filterToken(storageValue.token)) {
-            this.cookies.remove(this.storageKey);
+            cookiesService.delete(this.storageKey);
         }
         return storageValue;
     }

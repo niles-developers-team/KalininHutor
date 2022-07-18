@@ -1,12 +1,12 @@
-import { FavoriteBorder } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemText, Paper, Radio, RadioGroup, Skeleton, Stack, TextField, Typography } from "@mui/material"
+import { AspectRatio, FavoriteBorder } from "@mui/icons-material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
 import { BedTypes, Booking, EntityStatus, RentalObject, RoomCharacteristic, RoomVariant, RoomVariantBedType } from "../../models"
+import { cookiesService } from "../../services";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 
@@ -18,6 +18,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
 
     const query = useQuery();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { id } = useParams();
     const [model, setModel] = useState<RentalObject>();
@@ -32,11 +33,10 @@ export const RentalObjectComponent = function (): JSX.Element {
     useEffect(() => {
         const adultsCount = parseInt(query.get('adultsCount') || '') || 1;
         const childsCount = parseInt(query.get('childsCount') || '') || 0;
-        const roomsCount = parseInt(query.get('roomsCount') || '') || 1;
         const checkinDate = query.get('checkinDate') || undefined;
         const checkoutDate = query.get('checkoutDate') || undefined;
 
-        const booking: Booking = {
+        let booking: Booking = {
             rentalObjectId: id,
             adultCount: adultsCount,
             checkinDate: checkinDate || moment().format('yyyy-mm-dd'),
@@ -48,7 +48,11 @@ export const RentalObjectComponent = function (): JSX.Element {
             roomVariants: []
         };
 
-        setBooking(booking);
+        const cookieBooking: Booking = cookiesService.get('current-booking');
+        if (cookieBooking)
+            booking = { ...booking, ...cookieBooking };
+
+        setBooking({ ...booking });
     }, []);
 
     useEffect(() => {
@@ -57,6 +61,9 @@ export const RentalObjectComponent = function (): JSX.Element {
         }
     }, [rentalObjectState.modelLoading === false && rentalObjectState.model]);
 
+    useEffect(() => {
+        cookiesService.set('current-booking', booking);
+    }, [booking])
 
     useEffect(() => {
         if (roomCharacteristicState.modelsLoading === false) {
@@ -84,7 +91,8 @@ export const RentalObjectComponent = function (): JSX.Element {
             booking.roomVariants.push({
                 roomVariantId: roomVariantId,
                 roomsCount: newCount,
-                amount: newAmount
+                amount: newAmount,
+                bedType: roomVariant?.bedTypes[0]?.bedType || undefined
             });
         } else if (newCount > 0) {
             booking.roomVariants = booking.roomVariants.map(o => o.roomVariantId === roomVariantId ? { ...o, roomsCount: newCount, amount: newAmount } : o);
@@ -94,10 +102,6 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         setBooking({ ...booking });
     }
-
-    const checkinDate = moment(booking ? booking.checkinDate : moment().format('yyyy-mm-dd'));
-    const checkoutDate = moment(booking ? booking.checkoutDate : moment().add(10, 'days').format('yyyy-mm-dd'));
-    const nightsCount = checkoutDate.dayOfYear() - checkinDate.dayOfYear();
 
     function formatRoomVariantInfo(roomVariant: RoomVariant) {
         const roomsCount = booking?.roomVariants?.find(o => o.roomVariantId === roomVariant.id)?.roomsCount || 0;
@@ -116,20 +120,42 @@ export const RentalObjectComponent = function (): JSX.Element {
     function handleSpecifyBeds(roomVariant: RoomVariant) {
         setSpecifyBedsOpen(true);
         setSpecifyBedsRoomVariant(roomVariant);
+        const bookingRoomVariant = booking?.roomVariants?.find(o => o.roomVariantId === roomVariant?.id);
+        const roomVariantBedType = roomVariant.bedTypes.find(o => o.bedType === bookingRoomVariant?.bedType) || roomVariant.bedTypes[0];
+        setSpecifiedBetType({ ...roomVariantBedType });
+
     }
 
     function discardSpecifyBeds() {
-        setSpecifyBedsOpen(false);
         setSpecifyBedsRoomVariant(undefined);
+        setSpecifyBedsOpen(false);
     }
 
     function confirmSpecifyBeds() {
-        setSpecifyBedsOpen(false);
         setSpecifyBedsRoomVariant(undefined);
+
+        const roomVariant = booking?.roomVariants?.find(o => o.roomVariantId === specifyBedsRoomVariant?.id);
+        if (!roomVariant || !booking)
+            return;
+
+        roomVariant.bedType = specifiedBedType?.bedType;
+
+        setBooking({ ...booking, roomVariants: booking?.roomVariants?.map(o => o.roomVariantId === roomVariant.roomVariantId ? roomVariant : o) || [] });
+        setSpecifyBedsOpen(false);
+    }
+
+    function handleCreateBooking() {
+        cookiesService.delete('current-booking');
+        navigate(`/rental-objects/${id}/booking`);
     }
 
     if (!model)
         return (<Typography>Не найден объект аренды</Typography>)
+
+
+    const checkinDate = moment(booking ? booking.checkinDate : moment().format('yyyy-mm-dd'));
+    const checkoutDate = moment(booking ? booking.checkoutDate : moment().add(10, 'days').format('yyyy-mm-dd'));
+    const nightsCount = checkoutDate.dayOfYear() - checkinDate.dayOfYear();
 
     return (
         <Stack>
@@ -151,12 +177,12 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Typography variant="h5">Доступные варианты</Typography>
                     <Grid item xs />
                     <Typography variant="subtitle1">Всего: {booking?.roomVariants?.reduce<number>((p, c) => p + c.amount, 0)}</Typography>
-                    <Button disabled={!booking?.roomVariants?.length} variant="outlined" color="success">Забронировать</Button>
+                    <Button onClick={handleCreateBooking} disabled={!booking?.roomVariants?.length} variant="outlined" color="success">Забронировать</Button>
                 </Stack>
                 {model.roomVariants?.map(roomVariant => formatRoomVariantInfo(roomVariant))}
                 <Stack direction="row" alignItems="center">
                     <Grid item xs />
-                    <Button disabled={!booking?.roomVariants?.length} variant="outlined" color="success">Забронировать</Button>
+                    <Button onClick={handleCreateBooking} disabled={!booking?.roomVariants?.length} variant="outlined" color="success" >Забронировать</Button>
                 </Stack>
             </Stack>
 
@@ -164,12 +190,16 @@ export const RentalObjectComponent = function (): JSX.Element {
                 <DialogTitle>Уточните кровати</DialogTitle>
                 <DialogContent>
                     <FormControl>
-                        <RadioGroup value={specifiedBedType} onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string) => {
+                        <RadioGroup value={specifiedBedType?.id} onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string) => {
                             setSpecifiedBetType(specifyBedsRoomVariant?.bedTypes?.find(o => o.id === value));
                         }}>
                             {specifyBedsRoomVariant?.bedTypes?.map(bt =>
                                 <FormControlLabel value={bt.id} control={<Radio />} label={
-                                    (<Stack direction="row">{BedTypes.getIcon(bt.bedType)}<Typography>{BedTypes.getDescription(bt.bedType)}</Typography></Stack>)
+                                    (<Stack direction="row">
+                                        {BedTypes.getIcon(bt.bedType)}
+                                        <Typography>{BedTypes.getDescription(bt.bedType)}</Typography>
+                                        {bt.width && bt.length ? <><AspectRatio></AspectRatio><Typography> {bt.width} Х {bt.length}</Typography></> : null}
+                                    </Stack>)
                                 } />
                             )}
 

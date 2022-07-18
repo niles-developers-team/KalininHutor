@@ -28,10 +28,6 @@ export const BedVariantDialog = function (props: BedVariantDialogProps): JSX.Ele
         setModel({ ...model, length: parseInt(event.target.value) })
     }
 
-    function handleMaxInRoomChanged(event: ChangeEvent<HTMLInputElement>) {
-        setModel({ ...model, maxInRoom: parseInt(event.target.value) })
-    }
-
     function handleConfirm() {
         props.onConfirm({ ...model });
     }
@@ -62,15 +58,6 @@ export const BedVariantDialog = function (props: BedVariantDialogProps): JSX.Ele
                             InputProps={{ endAdornment: "м." }}
                         />
                     </Stack>
-                </Stack>
-                <Stack>
-                    <TextField
-                        label="Максимально в комнате"
-                        type="number"
-                        value={model.maxInRoom}
-                        onChange={handleMaxInRoomChanged}
-                        InputProps={{ endAdornment: "шт." }}
-                    />
                 </Stack>
             </DialogContent>
             <DialogActions>

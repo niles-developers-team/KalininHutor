@@ -20,7 +20,7 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
     public async Task<Unit> Handle(RoomVariantBedType.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<DomainRoomVariantBedType>(await _repository.Get(request.Id));
-        entity.SetSize(request.Width, request.Length, request.MaxInRoom);
+        entity.SetSize(request.Width, request.Length);
         await _repository.Update(_mapper.Map<RoomVariantBedTypeEntity>(entity));
         return Unit.Value;
     }

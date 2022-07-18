@@ -37,16 +37,12 @@ export interface StorageItem {
 export enum BedTypes {
     // Односпальная кровать 
     Single,
-
     // Большая односпальная кровать 
     BigSingle,
-
     // Двуспальная кровать 
     Double,
-
     // Большая двуспальная кровать 
     BigDouble,
-
     // Детская кровать 
     BabyBed
 }
@@ -56,9 +52,9 @@ export namespace BedTypes {
         switch (value) {
             case BedTypes.BabyBed: return 'Детская кровать';
             case BedTypes.BigDouble: return 'Большая двуспальная кровать';
-            case BedTypes.BigSingle: return 'Большая односпальная кровать';
+            case BedTypes.BigSingle: return 'Большие односпальные кровати';
             case BedTypes.Double: return 'Двуспальная кровать';
-            case BedTypes.Single: return 'Односпальная кровать';
+            case BedTypes.Single: return 'Односпальные кровати';
             default: return 'Неизвестный тип кровати'
         }
     }

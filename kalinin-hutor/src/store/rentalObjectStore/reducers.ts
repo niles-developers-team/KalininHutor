@@ -90,7 +90,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             if (prevState.modelLoading === true) return prevState;
 
             const roomVariants = prevState.model?.roomVariants || [];
-            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.concat({ ...action.roomVariant, status: EntityStatus.Created }) };
+            const updatedModel = { ...prevState.model, roomVariants: roomVariants.concat({ ...action.roomVariant, status: EntityStatus.Created }) };
 
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState };
@@ -102,7 +102,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             action.roomVariant.status = action.roomVariant.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
 
-            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.map(o => o.id === action.roomVariant.id ? action.roomVariant : o) };
+            const updatedModel = { ...prevState.model, roomVariants: roomVariants.map(o => o.id === action.roomVariant.id ? action.roomVariant : o) };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState };
         }
@@ -111,7 +111,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
             const roomVariants = prevState.model?.roomVariants || [];
 
-            const updatedModel = { ...prevState.model || RentalObject.initial, roomVariants: roomVariants.map(o => o.id === action.id ? { ...o, status: EntityStatus.Deleted } : o) };
+            const updatedModel = { ...prevState.model, roomVariants: roomVariants.map(o => o.id === action.id ? { ...o, status: EntityStatus.Deleted } : o) };
             const modelState: RentalObjectModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelState, updating: false };
         }
