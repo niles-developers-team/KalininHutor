@@ -17,8 +17,9 @@ export type AppState = {
     roomCharacteristicState: RoomCharacteristicState
 }
 
-export type ModelsLoadingState = {
+export type ModelsLoadingState<TModel> = {
     modelsLoading: true;
+    models?: TModel[];
 }
 
 export type ModelsLoadedState<TModel> = {
@@ -26,8 +27,9 @@ export type ModelsLoadedState<TModel> = {
     models: TModel[];
 }
 
-export type ModelLoadingState = {
+export type ModelLoadingState<TModel> = {
     modelLoading: true;
+    model?: TModel;
 }
 
 export type ModelLoadedState<TModel> = {
@@ -35,12 +37,13 @@ export type ModelLoadedState<TModel> = {
     model: TModel;
 }
 
-export type ModelUpdatingState = {
-    updating: true;
+export type ModelSavingState = {
+    saving: true;
 }
 
-export type ModelUpdatedState = {
-    updating: false;
+export type ModelSavedState = {
+    saving: false;
+    saved?: boolean;
 }
 
 export type ModelSpecsLoadingState = {

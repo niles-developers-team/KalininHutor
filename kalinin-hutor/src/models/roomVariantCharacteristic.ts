@@ -52,6 +52,6 @@ export namespace RoomVariantCharacteristic {
         roomCharacteristicName: '',
         roomVariantId: null,
 
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

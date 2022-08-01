@@ -68,7 +68,7 @@ export function RoutesSwitch() {
                 <Route path="/catalog" element={<CatalogComponent />} />
                 <Route path="/rental-objects" element={<RentalObjectsComponent />} />
                 <Route path="/rental-objects/:id" element={<RentalObjectComponent />} />
-                <Route path="/rental-objects/:id/booking" element={<BookingComponent />} />
+                <Route path="/rental-objects/:rentalObjectId/booking/:id" element={<BookingComponent />} />
                 <Route path="/me/rental-objects/:id" element={<MyRentalObjectComponent />} />
                 <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
 

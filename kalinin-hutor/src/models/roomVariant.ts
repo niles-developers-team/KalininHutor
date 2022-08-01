@@ -123,6 +123,6 @@ export namespace RoomVariant {
         bedTypes: [],
         characteristics: [],
 
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

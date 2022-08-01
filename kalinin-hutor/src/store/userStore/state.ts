@@ -12,8 +12,8 @@ export type Authenticated = {
     currentUser?: AuthenticatedUser;
 }
 
-export type UserModelState = ModelLoadingState | ModelLoadedState<User>;
-export type UserModelsState = ModelsLoadingState | ModelsLoadedState<User>;
+export type UserModelState = ModelLoadingState<User> | ModelLoadedState<User>;
+export type UserModelsState = ModelsLoadingState<User> | ModelsLoadedState<User>;
 export type UserDeleteState = ModelsDeletingState<User.DeleteRequest> | ModelsDeletedState;
 export type AuthenticationState = Authenticating | Authenticated;
 export type UserState = AuthenticationState & UserModelState & UserModelsState & UserDeleteState;

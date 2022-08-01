@@ -1,4 +1,4 @@
-import { Accessible, Bathtub, Bed, CleaningServices, Crib, Fireplace, Hotel, Info, KingBed, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SingleBed, SoupKitchen, Weekend } from '@mui/icons-material';
+import { Accessible, Bathtub, Bed, Cancel, CheckCircle, CleaningServices, Crib, DriveFileRenameOutline, Fireplace, Hotel, HourglassBottom, Info, KingBed, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SingleBed, SoupKitchen, Weekend } from '@mui/icons-material';
 
 export enum SnackbarVariant {
     success = 'success',
@@ -48,7 +48,7 @@ export enum BedTypes {
 }
 
 export namespace BedTypes {
-    export function getDescription(value: BedTypes) {
+    export function getDescription(value: BedTypes | undefined) {
         switch (value) {
             case BedTypes.BabyBed: return 'Детская кровать';
             case BedTypes.BigDouble: return 'Большая двуспальная кровать';
@@ -140,7 +140,7 @@ export namespace CharacteristicTypes {
         }
     }
 
-    export function getIcon(value: CharacteristicTypes | undefined): JSX.Element | null {
+    export function getIcon(value: CharacteristicTypes | undefined): JSX.Element | undefined {
         switch (value) {
             case CharacteristicTypes.BedRoom: return <Hotel />;
             case CharacteristicTypes.LivingArea: return <Fireplace />;
@@ -155,7 +155,7 @@ export namespace CharacteristicTypes {
             case CharacteristicTypes.Services: return <RoomService />;
             case CharacteristicTypes.Availability: return <Accessible />;
             case CharacteristicTypes.Outdoors: return <NaturePeople />;
-            default: return null;
+            default: return undefined;
         }
     }
 
@@ -176,14 +176,58 @@ export namespace CharacteristicTypes {
     ];
 }
 
+export enum BookingStatuses {    
+    //Черновик
+    Draft,
+    //Новая бронь
+    Created,
+    //Бронь подтверждена
+    Approved,
+    //Бронь закрыта
+    Closed,
+    //Бронь отменена
+    Rejected
+}
+
+export namespace BookingStatuses {
+    export function getDescription(value: BookingStatuses) {
+        switch (value) {
+            case BookingStatuses.Draft: return 'Черновик';
+            case BookingStatuses.Created: return 'Ожидает подтверждение';
+            case BookingStatuses.Approved: return 'Бронь подтверждена';
+            case BookingStatuses.Closed: return 'Бронь закрыта';
+            case BookingStatuses.Rejected: return 'Питание и напитки';
+            default: return 'Бронь отменена'
+        }
+    }
+
+    export function getIcon(value: BookingStatuses): JSX.Element {
+        switch (value) {
+            case BookingStatuses.Draft: return <DriveFileRenameOutline color="disabled" />;
+            case BookingStatuses.Created: return <HourglassBottom color="info" />;
+            case BookingStatuses.Approved: return <CheckCircle color="success" />;
+            case BookingStatuses.Closed: return <CheckCircle color="primary"/>;
+            case BookingStatuses.Rejected: return <Cancel color="error"/>;
+        }
+    }
+
+    export const values: BookingStatuses[] = [
+        BookingStatuses.Draft,
+        BookingStatuses.Created,
+        BookingStatuses.Approved,
+        BookingStatuses.Closed,
+        BookingStatuses.Rejected
+    ];
+}
 
 export enum EntityStatus {
     NotChanged,
+    Draft,
     Created,
     Updated,
     Deleted
 }
 
 export interface IEntity {
-    status: EntityStatus;
+    entityStatus: EntityStatus;
 }

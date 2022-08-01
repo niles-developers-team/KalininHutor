@@ -1,9 +1,12 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, SnackbarVariant } from "../../models";
+import { ApplicationError, Booking, EntityStatus, SnackbarVariant } from "../../models";
 import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { SnackbarActions } from "../snackbarStore/actions";
-
+import { v4 as uuidv4 } from 'uuid';
+import { cookiesService } from "../../services";
+import { createSearchParams } from "react-router-dom";
+import moment from "moment";
 export enum ActionTypes {
     getBookingsRequest = 'GET_BOOKINGS_REQUEST',
     getBookingsSuccess = 'GET_BOOKINGS_SUCCESS',
@@ -61,7 +64,6 @@ export namespace BookingActions {
 
     interface CreateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.createRequest;
-        request: Booking.CreateRequest;
     }
 
     interface CreateSuccessAction extends Action<ActionTypes> {
@@ -120,13 +122,26 @@ export namespace BookingActions {
         | UpdateBooking
         | DeleteBooking;
 
-    export function createBooking(createRequest: Booking.CreateRequest): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
+    export function createBooking(model: Booking): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(createRequest));
+            dispatch(request());
 
             try {
-                const result = await bookingService.create(createRequest);
-                dispatch(SnackbarActions.showSnackbar('Бронь успешно сохранена', SnackbarVariant.success));
+                const result = await bookingService.create({
+                    adultCount: model.adultCount,
+                    childCount: model.childCount,
+                    checkinDate: model.checkinDate,
+                    checkoutDate: model.checkoutDate,
+                    rentalObjectId: model.rentalObjectId,
+                    tenant: model.tenant,
+                    bookingRooms: model.roomVariants.map(o => ({
+                        amount: o.amount,
+                        roomsCount: o.roomsCount,
+                        bedType: o.bedType,
+                        roomVariantId: o.roomVariantId
+                    }))
+                });
+                dispatch(SnackbarActions.showSnackbar('Бронь успешно создана.', SnackbarVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -135,7 +150,7 @@ export namespace BookingActions {
                 return dispatch(failure(error));
             }
 
-            function request(createRequest: Booking.CreateRequest): CreateRequestAction { return { type: ActionTypes.createRequest, request: createRequest }; }
+            function request(): CreateRequestAction { return { type: ActionTypes.createRequest }; }
             function success(booking: Booking): CreateSuccessAction { return { type: ActionTypes.createSuccess, model: booking }; }
             function failure(error: ApplicationError): CreateFailureAction { return { type: ActionTypes.createFailure, error: error }; }
         }
@@ -162,7 +177,48 @@ export namespace BookingActions {
         }
     }
 
+    export function createDraft(draft: Booking): AppThunkAction<CreateSuccessAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { userState } = getState();
+
+            if (!draft.id) {
+                draft.id = uuidv4();
+                draft.entityStatus = EntityStatus.Draft;
+            }
+
+            if (userState.authenticating === false && userState.currentUser) {
+                draft.tenant = userState.currentUser;
+            }
+
+            cookiesService.set('booking-draft', draft);
+            return dispatch({ type: ActionTypes.createSuccess, model: draft });
+        }
+    }
+
+    export function updateDraft(draft: Booking): AppThunkAction<UpdateSuccessAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { userState } = getState();
+            const search = createSearchParams();
+            if (draft.adultCount)
+                search.append('adultsCount', draft.adultCount.toString());
+            if (draft.childCount)
+                search.append('childsCount', draft.childCount.toString());
+            if (draft.checkinDate)
+                search.append('checkinDate', moment(draft.checkinDate).format('YYYY-MM-DD'));
+            if (draft.checkoutDate)
+                search.append('checkoutDate', moment(draft.checkoutDate).format('YYYY-MM-DD'));
+
+            if (userState.authenticating === false && userState.currentUser) {
+                draft.tenant = userState.currentUser;
+            }
+
+            cookiesService.set('booking-draft', draft);
+            return dispatch({ type: ActionTypes.updateSuccess, model: draft });
+        }
+    }
+
     export function clearEditionState(): ClearEditionStateAction {
+        cookiesService.delete('booking-draft');
         return { type: ActionTypes.clearEditionState };
     }
 
@@ -186,26 +242,43 @@ export namespace BookingActions {
         }
     }
 
+    export function getDraft(): AppThunkAction<GetSuccessAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { bookingState } = getState();
+
+            if (bookingState.modelLoading === false && bookingState.model?.entityStatus === EntityStatus.Draft) {
+                return dispatch({ type: ActionTypes.getBookingSuccess, booking: bookingState.model });
+            }
+
+            const draft = cookiesService.get<Booking>('booking-draft');
+            return dispatch({ type: ActionTypes.getBookingSuccess, booking: draft });
+        }
+    }
+
     export function getBooking(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { bookingState } = getState();
+
             dispatch(request(id));
 
-            if (!id)
-                return dispatch(success(Booking.initial));
+            if (bookingState.modelLoading === false)
+                return dispatch(success(bookingState.model));
+            const draft = cookiesService.get<Booking>('booking-draft');
+            if (draft && draft.id === id)
+                return dispatch(success(draft));
 
-            const state = getState();
             let models: Booking[] = [];
 
             try {
-                if (state.bookingState.modelsLoading === true)
+                if (bookingState.modelsLoading === true)
                     models = await bookingService.get({ id });
                 else
-                    models = state.bookingState.models;
+                    models = bookingState.models;
 
                 let model = models.find(o => o.id === id);
 
                 if (!model) {
-                    throw new ApplicationError('Не удалось найти пользователя');
+                    throw new ApplicationError('Не удалось найти бронирование');
                 }
 
                 return dispatch(success(model));

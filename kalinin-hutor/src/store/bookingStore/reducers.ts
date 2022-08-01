@@ -1,9 +1,11 @@
+import { EntityStatus } from "../../models";
 import { ActionTypes, BookingActions } from "./actions";
-import { BookingState, DeleteState, ModelsState, ModelState } from "./state";
+import { BookingState, DeleteState, ModelsState, ModelState, SavingState } from "./state";
 
 const initialState: BookingState = {
     modelsLoading: true,
     modelLoading: true,
+    saving: true,
     deleting: false
 }
 
@@ -36,33 +38,31 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
         }
 
         case ActionTypes.createRequest: {
-            return { ...prevState, modelLoading: true };
+            return { ...prevState, modelLoading: true, saving: true };
         }
         case ActionTypes.createSuccess: {
-            if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
-
-            const model = { ...prevState.model, ...action.model };
-            const models = prevState.models.concat(action.model);
+            const models = [...prevState.models || [], action.model];
 
             const modelsState: ModelsState = { modelsLoading: false, models: models };
-            const modelState: ModelState = { modelLoading: false, model: model };
-            return { ...prevState, ...modelsState, ...modelState };
+            const modelState: ModelState = { modelLoading: false, model: action.model };
+            let savingState: SavingState = { saving: true };
+            if (action.model.entityStatus !== EntityStatus.Draft) {
+                savingState = { saving: false, saved: true };
+            }
+            return { ...prevState, ...modelsState, ...modelState, ...savingState };
         }
         case ActionTypes.createFailure: {
-            return { ...prevState, modelLoading: true };
+            return { ...prevState, modelLoading: true, saving: false, saved: false };
         }
 
         case ActionTypes.updateRequest: {
-            return { ...prevState, modelLoading: true };
+            return { ...prevState, modelLoading: true, saving: true };
         }
         case ActionTypes.updateSuccess: {
-            if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
-
-            const updatedModel = { ...prevState.model, ...action.model };
-            const updatedModels = prevState.models.map(o => o.id === action.model.id ? action.model : o);
+            const updatedModels = prevState.models?.map(o => o.id === action.model.id ? action.model : o) || [];
 
             const modelsState: ModelsState = { modelsLoading: false, models: updatedModels };
-            const modelState: ModelState = { modelLoading: false, model: updatedModel };
+            const modelState: ModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
         case ActionTypes.updateFailure: {
@@ -86,6 +86,7 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
             const deleteState: DeleteState = { deleting: false, deleted: false };
             return { ...prevState, ...deleteState };
         }
+        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelsLoading: true, models: [] };
         default: return prevState;
     }
 }

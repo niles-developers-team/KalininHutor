@@ -54,6 +54,6 @@ export namespace RoomVariantBedType {
 
     export const initial: RoomVariantBedType = {
         bedType: BedTypes.Single,
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

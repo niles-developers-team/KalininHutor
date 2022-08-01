@@ -25,7 +25,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         rentalObjectState: state.rentalObjectState
     }));
 
-    const loading = rentalObjectState.updating || rentalObjectState.modelLoading;
+    const loading = rentalObjectState.saving || rentalObjectState.modelLoading;
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Название', flex: 1 },
@@ -124,7 +124,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                     description: model.description,
                     name: model.name,
                     createRoomVariantsRequests: model.roomVariants
-                        ?.filter(o => o.status === EntityStatus.Created)
+                        ?.filter(o => o.entityStatus === EntityStatus.Created)
                         .map<RoomVariant.CreateRequest>(rv => ({
                             count: rv.count,
                             description: rv.description,
@@ -151,7 +151,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                 })),
                         })),
                     updateRoomVariantsRequests: model.roomVariants
-                        ?.filter(o => o.status === EntityStatus.Updated)
+                        ?.filter(o => o.entityStatus === EntityStatus.Updated)
                         .map<RoomVariant.UpdateRequest>(rv => ({
                             id: rv.id || '',
                             count: rv.count,
@@ -166,7 +166,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                             freeCancellationPeriod: rv.freeCancellationPeriod,
                             rentalObjectId: model.id,
                             createBedTypesRequests: rv.bedTypes
-                                .filter(o => o.status === EntityStatus.Created)
+                                .filter(o => o.entityStatus === EntityStatus.Created)
                                 .map<RoomVariantBedType.CreateRequest>(bt => ({
                                     bedType: bt.bedType,
                                     roomVariantId: bt.roomVariantId || '',
@@ -174,14 +174,14 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                     width: bt.width
                                 })),
                             createCharacteristicsRequests: rv.characteristics
-                                .filter(o => o.status === EntityStatus.Created)
+                                .filter(o => o.entityStatus === EntityStatus.Created)
                                 .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
                                     roomCharacteristicId: ch.roomCharacteristicId || '',
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
                             updateBedTypesRequests: rv.bedTypes
-                                .filter(o => o.status === EntityStatus.Updated)
+                                .filter(o => o.entityStatus === EntityStatus.Updated)
                                 .map<RoomVariantBedType.UpdateRequest>(bt => ({
                                     id: bt.id || '',
                                     bedType: bt.bedType,
@@ -190,7 +190,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                     width: bt.width
                                 })),
                             updateCharacteristicsRequests: rv.characteristics
-                                .filter(o => o.status === EntityStatus.Updated)
+                                .filter(o => o.entityStatus === EntityStatus.Updated)
                                 .map<RoomVariantCharacteristic.UpdateRequest>(ch => ({
                                     id: ch.id || '',
                                     roomCharacteristicId: ch.roomCharacteristicId || '',
@@ -199,18 +199,18 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                 })),
                             deleteBedTypesRequests: ({
                                 ids: rv.bedTypes
-                                    .filter(o => o.status === EntityStatus.Deleted)
+                                    .filter(o => o.entityStatus === EntityStatus.Deleted)
                                     .map(bt => bt.id || '')
                             }),
                             deleteCharacteristicsRequests: ({
                                 ids: rv.characteristics
-                                    .filter(o => o.status === EntityStatus.Deleted)
+                                    .filter(o => o.entityStatus === EntityStatus.Deleted)
                                     .map(ch => ch.id || '')
                             })
                         })),
                     deleteRoomVariantsRequest: ({
                         ids: model.roomVariants
-                            ?.filter(o => o.status === EntityStatus.Deleted)
+                            ?.filter(o => o.entityStatus === EntityStatus.Deleted)
                             .map(rv => rv.id || '') || []
                     })
                 }));
@@ -264,7 +264,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                 </Stack>
                 <DataGrid style={{ height: 400 }}
                     components={{ NoRowsOverlay: NoRoomVariants }}
-                    rows={model.roomVariants?.filter(o => o.status !== EntityStatus.Deleted) || []}
+                    rows={model.roomVariants?.filter(o => o.entityStatus !== EntityStatus.Deleted) || []}
                     columns={columns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}

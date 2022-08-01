@@ -1,6 +1,6 @@
-import { Add, AspectRatio, CurrencyRuble, Remove } from "@mui/icons-material";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
+import { Button, Chip, Divider, IconButton, Skeleton, Stack, Typography } from "@mui/material";
+import pluralize from "plural-ru";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
 
 interface Props {
@@ -28,38 +28,43 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
         return (<Typography>Не найден вариант номера</Typography>)
 
     return (
-        <Stack>
-            <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="h6">{model.name}</Typography>
-                <Typography variant="subtitle2">Цена за {nightsCount} ночей {model.price * nightsCount}<CurrencyRuble /></Typography>
-                <Typography variant="caption">Вмещает {model.maxPersonsCount} гостей</Typography>
-                <Typography variant="caption"><AspectRatio />{model.width} X {model.length}</Typography>
-                {model.bedTypes?.length > 1 ? <Button onClick={onSpecifyBedsClick} disabled={roomsCount === 0}>Уточнить кровати</Button> : null}
-            </Stack>
-            <Stack direction="row">
-                {
-                    model.characteristics.slice(0, 5).map(ch => {
-                        const characteristic = roomCharacteristics.find(o => o.id === ch.roomCharacteristicId);
-                        return (
-                            <Stack direction="row">
-                                {CharacteristicTypes.getIcon(characteristic?.type)}
-                                <Typography key={ch.id}>{characteristic?.name}</Typography>
-                            </Stack>
-                        )
-                    })
-                }
-                {
-                    model.characteristics.length > 5
-                        ? (<Button>Посмотреть все удобства</Button>)
-                        : null
-                }
-            </Stack>
+        <Stack spacing={1} key={model.id}>
             <Stack direction="row" alignItems="center">
-                <Typography>Выбран</Typography>
-                <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount - 1)} disabled={roomsCount === 0}><Remove /></IconButton>
-                <Typography>{roomsCount}</Typography>
-                <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount + 1)}><Add /></IconButton>
-                <Typography>комнат</Typography>
+                <Typography marginRight="1em"><b>{model.name}</b></Typography>
+                <Typography>Цена за {nightsCount} ночей {model.price * nightsCount}</Typography>
+                <CurrencyRuble fontSize="small" />
+            </Stack>
+            <Stack paddingY=".5em" direction="row" spacing={2}>
+                <Skeleton variant="rectangular" width={100} height={100} />
+                <Stack spacing={1}>
+                    <Stack direction="row" spacing={2} alignItems="center" divider={<Divider orientation="vertical" flexItem />}>
+                        <Typography><b>Размер: </b> {model.width} X {model.length} кв.м.</Typography>
+                        <Typography><b>Вмещает: </b> {model.maxPersonsCount} чел.</Typography>
+                        {model.bedTypes?.length > 1 ? <Button size="small" variant="text" onClick={onSpecifyBedsClick} disabled={roomsCount === 0}>Уточнить кровати</Button> : null}
+                    </Stack>
+                    {model?.freeCancellationPeriod ? <Typography><b></b></Typography> : null}
+                    <Typography>{model?.description}</Typography>
+                    <Stack direction="row" spacing={1}>
+                        {
+                            model.characteristics.slice(0, 5).map(ch => {
+                                const characteristic = roomCharacteristics.find(o => o.id === ch.roomCharacteristicId);
+                                return (<Chip key={characteristic?.id} icon={CharacteristicTypes.getIcon(characteristic?.type)} label={characteristic?.name} variant="outlined"></Chip>)
+                            })
+                        }
+                        {
+                            model.characteristics.length > 5
+                                ? (<Button size="small" variant="text">Посмотреть все удобства</Button>)
+                                : null
+                        }
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                        <Typography>{pluralize(roomsCount, 'Выбрана', 'Выбрано')}</Typography>
+                        <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount - 1)} disabled={roomsCount === 0}><Remove /></IconButton>
+                        <Typography>{roomsCount}</Typography>
+                        <IconButton onClick={() => onRoomsCountChanged(model.id || '', roomsCount + 1)}><Add /></IconButton>
+                        <Typography>{pluralize(roomsCount, 'комната', 'комнаты', 'комнат')}</Typography>
+                    </Stack>
+                </Stack>
             </Stack>
         </Stack >
     );

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { RentalObject } from "../../models";
-import { AppState, RentalObjectActions } from "../../store";
+import { AppState, BookingActions, RentalObjectActions } from "../../store";
 import moment from "moment";
 import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "../rentalObjects/RentalObjectInfo";
 import { RentalObjectsBaseFilterComponent } from "../rentalObjects/RentalObjectsFilter";
@@ -39,7 +39,7 @@ export const HomeComponent = function (): JSX.Element {
         if (filter.checkoutDate)
             query.set('checkoutDate', moment(filter.checkoutDate).format('YYYY-MM-DD'));
 
-
+        dispatch(BookingActions.clearEditionState());
         navigate(`/rental-objects?${query.toString()}`)
     }
 

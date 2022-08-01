@@ -83,36 +83,35 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                         <Grid container className="container" alignItems="center">
                             <Button onClick={() => navigate('/')}>КХ</Button>
                             <Button onClick={() => navigate('/catalog')}>Каталог</Button>
-                            <Search color="primary" fontSize="large" />
                             <Grid item xs>
-                                <TextField fullWidth variant="outlined" placeholder="Поиск" />
+                                <TextField size="small" fullWidth variant="outlined" placeholder="Поиск" />
                             </Grid>
-                            <Button>Поиск</Button>
-                            <Button href="/me" onClick={handleAccountClick}>
+                            <Button variant="contained"><Search /></Button>
+                            <Button size="small" href="/me" onClick={handleAccountClick}>
                                 <Grid container direction="column" alignItems="center">
                                     <Face />
                                     <span>{profilePageText}</span>
                                 </Grid>
                             </Button>
-                            <Button href="/favorite">
+                            <Button size="small" href="/favorite">
                                 <Grid container direction="column" alignItems="center">
                                     <Favorite />
                                     <span>Избранное</span>
                                 </Grid>
                             </Button>
-                            <Button href="/my-orders">
+                            <Button size="small" href="/my-orders">
                                 <Grid container direction="column" alignItems="center">
                                     <ShoppingBag />
                                     <span>Заказы</span>
                                 </Grid>
                             </Button>
-                            <Button href="/my-bookings">
+                            <Button size="small" href="/my-bookings">
                                 <Grid container direction="column" alignItems="center">
                                     <Gite />
                                     <span>Брони</span>
                                 </Grid>
                             </Button>
-                            <Button href="/cart">
+                            <Button size="small" href="/cart">
                                 <Grid container direction="column" alignItems="center">
                                     <ShoppingCart />
                                     <span>Корзина</span>

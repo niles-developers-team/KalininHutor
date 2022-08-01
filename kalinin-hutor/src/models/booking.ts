@@ -1,14 +1,16 @@
-import moment from "moment";
-import { BookingRoomVariant, CreateBookingRoomVariantRequest } from "./bookingRoomVariant";
-import { EntityStatus, IEntity } from "./common";
+import { BookingRoomVariant } from "./bookingRoomVariant";
+import { BookingStatuses, IEntity } from "./common";
+import { RentalObject } from "./rentalObject";
+import { User } from "./user";
 
 export interface Booking extends IEntity {
     // Идентификатор брони
     id?: string;
-    // Идентификатор арендатора
-    tenantId?: string;
     // Идентификатор объекта аренды
-    rentalObjectId?: string;
+    rentalObjectId: string;
+    readonly createdAt?: string;
+    readonly status: BookingStatuses;
+    readonly number: number;
     // Количество взрослых
     adultCount: number;
     // Количество детей
@@ -20,7 +22,9 @@ export interface Booking extends IEntity {
     // Дата отъезда
     checkoutDate: string
 
-    roomVariants?: BookingRoomVariant[];
+    roomVariants: BookingRoomVariant[];
+    tenant: User;
+    rentalObject?: RentalObject;
 }
 
 export namespace Booking {
@@ -40,8 +44,7 @@ export namespace Booking {
 
     // Создает бронь, результатом выполнения является GUID
     export interface CreateRequest {
-        // Идентификатор арендатора
-        tenantId: string;
+        tenant: User;
         // Идентификатор объекта аренды
         rentalObjectId: string;
         // Количество взрослых
@@ -54,7 +57,7 @@ export namespace Booking {
         checkoutDate: string
 
         // Коллекция бронируемых вариантов номеров
-        bookingRooms: CreateBookingRoomVariantRequest[];
+        bookingRooms: BookingRoomVariant.CreateRequest[];
     }
 
     // Запрос удаления брони
@@ -75,16 +78,5 @@ export namespace Booking {
         checkinDate: string;
         // Дата отъезда
         checkoutDate: string
-    }
-
-    export const initial: Booking = {
-        adultCount: 0,
-        checkinDate: moment().toISOString(),
-        checkoutDate: moment().add(7, 'days').toISOString(),
-        childCount: 0,
-        total: 0,
-        status: EntityStatus.NotChanged,
-
-        roomVariants: []
     }
 }

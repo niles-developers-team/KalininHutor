@@ -42,12 +42,10 @@ const theme = createTheme(
   ruRU,
 );
 
-const history = createBrowserHistory({ window });
-
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <React.StrictMode>
+  <React.StrictMode >
     <DocumentMeta {...meta}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterMoment}>
