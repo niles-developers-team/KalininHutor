@@ -1,10 +1,9 @@
 namespace KalininHutor.API.DTO;
 
-///<summary> Модель чтения деталей пользователя </summary>
-public class UserDetailsDTO
+public class UserDTO
 {
     ///<summary> Идентификатор пользователя </summary>
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
     ///<summary> Номер телефона </summary>
     public string PhoneNumber { get; set; } = string.Empty;
     ///<summary> Имя </summary>
@@ -13,6 +12,12 @@ public class UserDetailsDTO
     public string? Lastname { get; set; }
     ///<summary> E-mail </summary>
     public string? Email { get; set; }
+}
+
+///<summary> Модель чтения деталей пользователя </summary>
+public class UserDetailsDTO : UserDTO
+{
+    public new Guid Id { get; set; }
     ///<summary> Дата рождения </summary>
     public DateOnly? Birthday { get; set; }
 }

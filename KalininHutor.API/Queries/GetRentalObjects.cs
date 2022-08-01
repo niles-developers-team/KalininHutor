@@ -41,6 +41,12 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObject.GetQuery, 
             result.ForEach(ro => ro.BestDemand = bestDemands.FirstOrDefault(o => o.RentalObjectId == ro.Id));
         }
 
+        if (request.GetRoomVariants)
+        {
+            var roomVariants = await _sender.Send(new RoomVariant.GetQuery { RentalObjectsIds = result.Select(o => o.Id) });
+            result.ForEach(ro => ro.RoomVariants = roomVariants.Where(o => o.RentalObjectId == ro.Id));
+        }
+
         return result;
     }
 }
@@ -51,6 +57,7 @@ public partial class RentalObject
     ///<summary> Очередь получения объектов аренды </summary>
     public class GetQuery : IRequest<IEnumerable<RentalObjectDTO>>
     {
+        public IEnumerable<Guid>? Ids { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? Id { get; set; }
         ///<summary> Индентификатор владельца объекта аренды </summary>
@@ -69,6 +76,8 @@ public partial class RentalObject
         public int RoomsCount { get; set; }
 
         public bool GetBestDemands { get; set; }
+
+        public bool GetRoomVariants { get; set; }
 
         public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
     }

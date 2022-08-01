@@ -18,6 +18,7 @@ public class RentalObjectEntity
 
 public class RentalObjectSearchOptions
 {
+    public Guid? Id { get; set; }
     public Guid? LandlordId { get; set; }
     public string? SearchText { get; set; }
     internal TimeSpan? CheckinTimeSpan { get => CheckinTime.HasValue ? CheckinTime.Value.ToTimeSpan() : null; }
@@ -32,4 +33,5 @@ public class RentalObjectSearchOptions
     public int? RoomsCount { get; set; }
 
     public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
+    public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
 }

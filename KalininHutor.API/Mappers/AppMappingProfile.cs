@@ -11,12 +11,15 @@ using DomainRoomVariant = Domain.Booking.RoomVariant;
 using DomainRoomVariantBedType = Domain.Booking.RoomVariantBedType;
 using DomainRoomVariantCharacteristic = Domain.Booking.RoomVariantCharacteristic;
 using DomainRentalObject = Domain.Booking.RentalObject;
+
 using DomainUser = Domain.Identity.User;
+
+using DomainBooking = Domain.Booking.Booking;
+using DomainBookingRoomVariant = Domain.Booking.BookingRoomVariant;
 
 ///<summary> Профайлер мапперов </summary>
 public class AppMappingProfile : Profile
 {
-
     ///<summary> Конструктор профайлера </summary>
     public AppMappingProfile()
     {
@@ -24,6 +27,31 @@ public class AppMappingProfile : Profile
         CreateMap<DomainRentalObject, RentalObjectEntity>().ReverseMap();
         CreateMap<RentalObject.GetQuery, RentalObjectSearchOptions>().ReverseMap();
         CreateMap<RentalObjectEntity, RentalObjectDTO>();
+
+        CreateMap<DomainBooking, BookingDTO>()
+            .ForMember(o => o.Tenant, o => o.MapFrom(b =>
+                new UserDTO
+                {
+                    Name = b.TenantName,
+                    Id = b.TenantId,
+                    Email = b.TenantEmail,
+                    Lastname = b.TenantLastname,
+                    PhoneNumber = b.TenantPhone
+                }
+            )).ReverseMap();
+        CreateMap<DomainBooking, BookingEntity>().ReverseMap();
+        CreateMap<Booking.GetQuery, BookingSearchOptions>().ReverseMap();
+        CreateMap<BookingEntity, BookingDTO>()
+            .ForMember(o => o.Tenant, o => o.MapFrom(b =>
+                new UserDTO
+                {
+                    Name = b.TenantName,
+                    Id = b.TenantId,
+                    Email = b.TenantEmail,
+                    Lastname = b.TenantLastname,
+                    PhoneNumber = b.TenantPhone
+                }
+            )).ReverseMap();
 
         CreateMap<DomainUser, UserEntity>().ReverseMap();
         CreateMap<DomainUser, UserDetailsDTO>().ReverseMap();
@@ -47,5 +75,10 @@ public class AppMappingProfile : Profile
         CreateMap<RoomVariantCharacteristicDTO, DomainRoomVariantCharacteristic>().ReverseMap();
         CreateMap<DomainRoomVariantCharacteristic, RoomVariantCharacteristicEntity>().ReverseMap();
         CreateMap<RoomVariantCharacteristicDTO, RoomVariantCharacteristicEntity>().ReverseMap();
+
+        CreateMap<BookingRoomVariantRequests.CreateRequest, DomainBookingRoomVariant>().ReverseMap();
+        CreateMap<BookingRoomVariantEntity, DomainBookingRoomVariant>().ReverseMap();
+        CreateMap<BookingRoomVariantEntity, BookingRoomVariantDTO>().ReverseMap();
+        CreateMap<DomainBookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
     }
 }

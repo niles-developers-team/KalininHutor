@@ -1,4 +1,5 @@
 using KalininHutor.Domain.Booking.Enums;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.Domain.Booking;
 public class RentalObject : IEntity<Guid>
@@ -110,18 +111,16 @@ public class RentalObject : IEntity<Guid>
         return roomVariant;
     }
 
-    public Booking CreateBooking(Guid TenantId,
-                                 DateOnly checkInDate, DateOnly checkOutDate,
-                                 int adultCount, int childsCount,
-                                 IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
+    public Booking CreateBooking(User tenant, DateOnly checkInDate, DateOnly checkOutDate,
+                                 int adultCount, int childsCount, IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
     {
         ValidateBookingRoomVariants(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariants);
 
-        var booking = new Booking(Id, TenantId, adultCount, childsCount, checkInDate, checkOutDate);
+        var booking = new Booking(Id, tenant, adultCount, childsCount, checkInDate, checkOutDate);
         foreach (var bookingRoomVariant in bookingRoomVariants)
         {
             var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
-            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, roomVariant.Price, bookingRoomVariant.BookingBedTypes);
+            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, roomVariant.Price, bookingRoomVariant.BedType);
         }
 
         return booking;
@@ -157,11 +156,5 @@ public class RentalObject : IEntity<Guid>
         var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == bookingRoomVariant.RoomVariantId).Distinct();
         if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Count))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
-    }
-
-    private void CheckBookingRoomVariantBeds(int adultCount, int childsCount, BookingRoomVariant bookingRoomVariant, RoomVariant roomVariant)
-    {
-        if (bookingRoomVariant.BookingBedTypes.Any(o => roomVariant.BedTypes.Select(bt => bt.Id).Contains(o.BedTypeId)))
-            throw new ApplicationException("Выбран неизвестный вариант кровати.");
     }
 }

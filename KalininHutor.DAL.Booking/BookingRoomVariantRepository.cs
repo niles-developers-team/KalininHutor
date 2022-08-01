@@ -13,12 +13,13 @@ public class BookingRoomVariantRepository : BaseRepository<BookingRoomVariantEnt
         using var connection = GetConnection();
 
         await connection.QueryBuilder($@"
-            insert into BookingRoomVariants (Id, RoomVariantId, BookingId, Amount)
+            insert into BookingRoomVariants (Id, RoomVariantId, BookingId, Amount, BedType)
             values (
                 {entity.Id},
                 {entity.RoomVariantId},
                 {entity.BookingId},
-                {entity.Amount}
+                {entity.Amount},
+                {entity.BedType}
             )
         ").ExecuteAsync();
     }
@@ -42,6 +43,9 @@ public class BookingRoomVariantRepository : BaseRepository<BookingRoomVariantEnt
 
         if (options.BookingId.HasValue)
             query.Where($"BookingId = {options.BookingId}");
+
+        if(options.BookingsIds != null && options.BookingsIds.Any())
+            query.Where($"BookingId = any({options.BookingsIds})");
 
         return await query.QueryAsync<BookingRoomVariantEntity>();
     }

@@ -83,11 +83,6 @@ builder.Services.AddScoped<JWTHelper>();
         var logger = provider.GetRequiredService<ILogger<BookingRoomVariantRepository>>();
         return new BookingRoomVariantRepository(connectionString, logger);
     });
-    builder.Services.AddScoped<BookingRoomVariantBedTypeRepository>(provider =>
-    {
-        var logger = provider.GetRequiredService<ILogger<BookingRoomVariantBedTypeRepository>>();
-        return new BookingRoomVariantBedTypeRepository(connectionString, logger);
-    });
     builder.Services.AddScoped<RentalObjectRepository>(provider =>
     {
         var logger = provider.GetRequiredService<ILogger<RentalObjectRepository>>();

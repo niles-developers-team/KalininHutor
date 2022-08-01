@@ -19,6 +19,7 @@ public class RentalObjectDTO
     public TimeOnly CheckoutTime { get; protected set; }
 
     public RentalObjectBestDemandDTO? BestDemand { get; set; }
+    public IEnumerable<RoomVariantDTO> RoomVariants { get; set; }
 }
 
 ///<summary> Лучшее предложение по фильтру </summary>

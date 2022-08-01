@@ -2,6 +2,7 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking.Enums;
 
 namespace KalininHutor.API.Requests;
 
@@ -20,7 +21,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
 
     public async Task<Guid> Handle(BookingRoomVariantRequests.CreateRequest request, CancellationToken cancellationToken)
     {
-        var bookingRoomVariant = new DomainBookingVariant(request.RoomVariantId, request.BookingId, request.Amount);
+        var bookingRoomVariant = new DomainBookingVariant(request.RoomVariantId, request.BookingId, request.Amount, request.BedType);
         await _repository.Create(_mapper.Map<BookingRoomVariantEntity>(bookingRoomVariant));
 
         return bookingRoomVariant.Id;
@@ -39,8 +40,6 @@ public partial class BookingRoomVariantRequests
         public Guid RoomVariantId { get; set; }
         ///<summary> </summary>
         public decimal Amount { get; set; }
-
-        ///<summary> Выбранные типы кроватей </summary>
-        public IReadOnlyList<BookingBedTypeRequests.CreateRequest> BedTypes { get; set; } = new List<BookingBedTypeRequests.CreateRequest>();
+        public BedTypes BedType { get; set; }
     }
 }

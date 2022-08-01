@@ -1,7 +1,5 @@
-using KalininHutor.API.Queries;
 using KalininHutor.API.Requests;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KalininHutor.API.Controllers;
@@ -21,21 +19,17 @@ public class BookingController : ControllerBase
 
     ///<summary> Метод получения коллекции броней </summary>
     [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> Get(BookingQueries.GetQuery query) => Ok(await _sender.Send(query));
+    public async Task<IActionResult> Get([FromQuery] Booking.GetQuery query) => Ok(await _sender.Send(query));
 
     ///<summary> Метод создания брони </summary>
     [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> Create(BookingRequests.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create(Booking.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения брони </summary>
     [HttpPatch]
-    [Authorize]
-    public async Task<IActionResult> Update(BookingRequests.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update(Booking.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления брони </summary>
     [HttpDelete]
-    [Authorize]
-    public async Task<IActionResult> Delete(BookingRequests.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete(Booking.UpdateRequest request) => Ok(await _sender.Send(request));
 }

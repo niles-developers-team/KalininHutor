@@ -72,6 +72,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             /**where**/
         ");
 
+        if (options.Id.HasValue)
+            query.Where($"Id = {options.Id}");
+
         if (!string.IsNullOrEmpty(options.SearchText))
             query.Where($"(Name like concat('%', {options.SearchText}, '%') or Address like concat('%', {options.SearchText}, '%'))");
 
@@ -97,6 +100,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
 	                where rvc.RoomCharacteristicId = any({options.SelectedCharacteristicsIds})
                 )
             ");
+
+        if (options.Ids != null && options.Ids.Any())
+            query.Where($@"Id = any({options.Ids})");
 
         return await query.QueryAsync<RentalObjectEntity>();
     }

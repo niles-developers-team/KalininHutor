@@ -52,5 +52,7 @@ public partial class RoomVariant
         public Guid? Id { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? RentalObjectId { get; set; }
+
+        public IEnumerable<Guid>? RentalObjectsIds { get; set; }
     }
 }
