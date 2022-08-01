@@ -26,8 +26,10 @@ class BookingService {
         let url = 'api/booking';
         let conditionIndex: number = 0;
         if (query) {
-            if (query.searchText !== undefined)
+            if (query.searchText)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}searchText=${query.searchText}`;
+            if (query.tenantId)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}tenantId=${query.tenantId}`;
         }
 
         return fetch(url, {

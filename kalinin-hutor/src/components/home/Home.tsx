@@ -39,8 +39,12 @@ export const HomeComponent = function (): JSX.Element {
         if (filter.checkoutDate)
             query.set('checkoutDate', moment(filter.checkoutDate).format('YYYY-MM-DD'));
 
-        dispatch(BookingActions.clearEditionState());
         navigate(`/rental-objects?${query.toString()}`)
+    }
+
+    function handleGoToRentalObject(id: string) {
+        dispatch(BookingActions.clearEditionState());
+        navigate(`/rental-objects/${id}`)
     }
 
     useEffect(() => { dispatch(RentalObjectActions.getRentalObjects()); }, [])
@@ -62,7 +66,7 @@ export const HomeComponent = function (): JSX.Element {
                 (<Grid item key={index}>
                     {rentalObjectState.modelsLoading
                         ? <RentalObjectShortInfoSkeleton />
-                        : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => navigate(`/rental-objects/${ro.id}`)} />
+                        : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => handleGoToRentalObject(ro.id || '')} />
                     }
                 </Grid>)
                 )}

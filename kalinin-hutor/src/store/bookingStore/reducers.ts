@@ -86,7 +86,7 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
             const deleteState: DeleteState = { deleting: false, deleted: false };
             return { ...prevState, ...deleteState };
         }
-        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelsLoading: true, models: [] };
+        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, modelsLoading: true, models: [], model: undefined };
         default: return prevState;
     }
 }

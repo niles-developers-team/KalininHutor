@@ -15,7 +15,6 @@ export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const [user, setUser] = useState<User>(User.initial);
     const navigate = useNavigate();
-    const [rentalObjects, setRentalObjects] = useState<RentalObject[]>([]);
     const { userState, rentalObjectState } = useAppSelector((state: AppState) => ({
         userState: state.userState,
         rentalObjectState: state.rentalObjectState
@@ -24,15 +23,9 @@ export const MeComponent = function (): JSX.Element {
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
             setUser(userState.currentUser === undefined ? User.initial : { ...userState.currentUser });
-            dispatch(RentalObjectActions.getRentalObjects({ landlordId: user.id }));
+            dispatch(RentalObjectActions.getRentalObjects({ landlordId: userState.currentUser?.id }));
         }
     }, [userState.modelLoading]);
-
-    useEffect(() => {
-        if (rentalObjectState.modelsLoading === false) {
-            setRentalObjects(rentalObjectState.models);
-        }
-    }, [rentalObjectState.modelsLoading, rentalObjectState.modelsLoading === false && rentalObjectState.models]);
 
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setUser({ ...user, phoneNumber: event.currentTarget && event.currentTarget.value });
@@ -95,6 +88,8 @@ export const MeComponent = function (): JSX.Element {
         dispatch(UserActions.signout());
         navigate('/');
     }
+
+    const rentalObjects: RentalObject[] = rentalObjectState.models || [];
 
     return (
         <Stack spacing={3}>
