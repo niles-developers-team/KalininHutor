@@ -4,11 +4,12 @@ import { ModelLoadingState, ModelLoadedState, ModelsLoadingState, ModelsLoadedSt
 export type Authenticating = {
     authenticating: true;
     signinRequest: User.SigninRequest;
+    currentUser?: AuthenticatedUser;
 }
 
 export type Authenticated = {
     authenticating: false;
-    authenticated?: boolean;
+    authenticated: boolean;
     currentUser?: AuthenticatedUser;
 }
 

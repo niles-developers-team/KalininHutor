@@ -4,11 +4,11 @@ using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
 using KalininHutor.API.DTO;
+using KalininHutor.Domain.Identity;
+
 namespace KalininHutor.API.Requests;
 
-using DomainUser = Domain.Identity.User;
-
-internal class UserSigninHandler : IRequestHandler<UserRequests.SigninRequest, AuthenticatedUserDetailsDTO>
+internal class UserSigninHandler : IRequestHandler<UserCommands.SigninRequest, AuthenticatedUserDetailsDTO>
 {
     private readonly ISender _sender;
     private readonly UserRepository _userRepository;
@@ -23,15 +23,15 @@ internal class UserSigninHandler : IRequestHandler<UserRequests.SigninRequest, A
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<AuthenticatedUserDetailsDTO> Handle(UserRequests.SigninRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserCommands.SigninRequest request, CancellationToken cancellationToken)
     {
-        var user = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
+        var user = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
 
         if (user == null)
         {
             if (request.WithSignup)
             {
-                return await _sender.Send(new UserRequests.SignupRequest
+                return await _sender.Send(new UserCommands.SignupRequest
                 {
                     Password = request.Password,
                     PhoneNumber = request.PhoneNumber
@@ -52,7 +52,7 @@ internal class UserSigninHandler : IRequestHandler<UserRequests.SigninRequest, A
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class UserRequests
+public partial class UserCommands
 {
     ///<summary> Запрос на авторизацию пользователя </summary>
     public class SigninRequest : IRequest<AuthenticatedUserDetailsDTO>

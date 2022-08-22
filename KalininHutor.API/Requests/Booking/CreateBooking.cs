@@ -4,16 +4,12 @@ using AutoMapper;
 using KalininHutor.DAL.Booking;
 using System.ComponentModel.DataAnnotations;
 using KalininHutor.API.DTO;
+using KalininHutor.Domain.Booking;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRentalObject = Domain.Booking.RentalObject;
-using DomainBooking = Domain.Booking.Booking;
-using DomainBookingRoomVariant = Domain.Booking.BookingRoomVariant;
-using DomainRoomVariant = Domain.Booking.RoomVariant;
-using DomainUser = Domain.Identity.User;
-
-internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, BookingDTO>
+internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequest, BookingDTO>
 {
     private readonly BookingRepository _repository;
     private readonly BookingRoomVariantRepository _bookingRoomVariantsRepository;
@@ -36,23 +32,23 @@ internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Boo
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<BookingDTO> Handle(Booking.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<BookingDTO> Handle(BookingCommands.CreateRequest request, CancellationToken cancellationToken)
     {
-        var rentalObject = _mapper.Map<DomainRentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
+        var rentalObject = _mapper.Map<RentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId));
         var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObjectId });
         var bookings = await _repository.Get(new BookingSearchOptions { RentalObjectId = request.RentalObjectId, });
 
         var bookingRoomVariants = await _bookingRoomVariantsRepository.Get(new BookingRoomVariantSearchOptions { BookingsIds = bookings.Select(o => o.Id).ToList() });
-        var domainBookings = bookings.Select(_mapper.Map<DomainBooking>).ToList();
-        domainBookings.ForEach(b => b.SetRoomVariants(bookingRoomVariants.Where(o => o.BookingId == b.Id).Select(_mapper.Map<DomainBookingRoomVariant>)));
+        var domainBookings = bookings.Select(_mapper.Map<Booking>).ToList();
+        domainBookings.ForEach(b => b.SetRoomVariants(bookingRoomVariants.Where(o => o.BookingId == b.Id).Select(_mapper.Map<BookingRoomVariant>)));
 
-        rentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<DomainRoomVariant>).ToList());
+        rentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<RoomVariant>).ToList());
         rentalObject.SetBookings(domainBookings);
 
-        var booking = rentalObject.CreateBooking(_mapper.Map<DomainUser>(request.Tenant),
+        var booking = rentalObject.CreateBooking(_mapper.Map<User>(request.Tenant),
             request.CheckinDate, request.CheckoutDate,
             request.AdultCount, request.ChildCount,
-            request.BookingRooms.Select(_mapper.Map<DomainBookingRoomVariant>).ToList());
+            request.BookingRooms.Select(_mapper.Map<BookingRoomVariant>).ToList());
 
         await _repository.Create(_mapper.Map<BookingEntity>(booking));
 
@@ -69,7 +65,7 @@ internal class CreateBookingHandler : IRequestHandler<Booking.CreateRequest, Boo
 }
 
 ///<summary> Запросы и очереди бронирования </summary>
-public partial class Booking
+public partial class BookingCommands
 {
     ///<summary> Создает бронь, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<BookingDTO>
@@ -90,6 +86,6 @@ public partial class Booking
         public DateOnly CheckoutDate { get; set; }
 
         ///<summary> Коллекция бронируемых вариантов номеров </summary>
-        public IReadOnlyList<BookingRoomVariantRequests.CreateRequest> BookingRooms { get; set; } = new List<BookingRoomVariantRequests.CreateRequest>();
+        public IReadOnlyList<BookingRoomVariantCommands.CreateRequest> BookingRooms { get; set; } = new List<BookingRoomVariantCommands.CreateRequest>();
     }
 }

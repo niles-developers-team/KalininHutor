@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class GetRoomVariantHandler : IRequestHandler<RoomVariant.GetQuery, IEnumerable<RoomVariantDTO>>
+internal class GetRoomVariantHandler : IRequestHandler<RoomVariantCommands.GetQuery, IEnumerable<RoomVariantDTO>>
 {
     private readonly RoomVariantRepository _repository;
     private readonly RoomVariantBedTypeRepository _roomVariantBedTypeRepository;
@@ -22,7 +22,7 @@ internal class GetRoomVariantHandler : IRequestHandler<RoomVariant.GetQuery, IEn
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<RoomVariantDTO>> Handle(RoomVariant.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RoomVariantDTO>> Handle(RoomVariantCommands.GetQuery request, CancellationToken cancellationToken)
     {
         var entities = await _repository.Get(_mapper.Map<RoomVariantSearchOptions>(request));
 
@@ -43,7 +43,7 @@ internal class GetRoomVariantHandler : IRequestHandler<RoomVariant.GetQuery, IEn
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantCommands
 {
     ///<summary> Очередь получения варинтов номеров </summary>
     public class GetQuery : IRequest<IEnumerable<RoomVariantDTO>>

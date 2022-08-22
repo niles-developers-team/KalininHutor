@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariant.DeleteRequest, Unit>
+internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariantCommands.DeleteRequest, Unit>
 {
     private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
@@ -21,13 +21,13 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariant.DeleteRequ
         _roomVariantBedTypeRepository = roomVariantBedTypeRepository ?? throw new ArgumentNullException(nameof(roomVariantBedTypeRepository));
     }
 
-    public async Task<Unit> Handle(RoomVariant.DeleteRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantCommands.DeleteRequest request, CancellationToken cancellationToken)
     {
         var characteristics = await _roomVariantCharacteristicRepository.Get(new RoomVariantCharacteristicSearchOptions { RoomsVariantsIds = request.Ids });
         var bedTypes = await _roomVariantBedTypeRepository.Get(new RoomVariantBedTypeSearchOptions { RoomsVariantsIds = request.Ids });
 
-        await _sender.Send(new RoomVariantCharacteristic.DeleteRequest { Ids = characteristics.Select(o => o.Id).ToList() });
-        await _sender.Send(new RoomVariantBedType.DeleteRequest { Ids = bedTypes.Select(o => o.Id).ToList() });
+        await _sender.Send(new RoomVariantCharacteristicCommands.DeleteRequest { Ids = characteristics.Select(o => o.Id).ToList() });
+        await _sender.Send(new RoomVariantBedTypeCommands.DeleteRequest { Ids = bedTypes.Select(o => o.Id).ToList() });
 
         await _repository.Delete(request.Ids);
         return Unit.Value;
@@ -35,7 +35,7 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariant.DeleteRequ
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantCommands
 {
     ///<summary> Запрос удаления варинта номера </summary>
     public class DeleteRequest : IRequest<Unit>

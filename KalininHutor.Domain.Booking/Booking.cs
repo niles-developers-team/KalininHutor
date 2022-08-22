@@ -120,10 +120,23 @@ public class Booking : IEntity<Guid>
             throw new ArgumentOutOfRangeException("Дата бронирования не может быть в прошлом.");
     }
 
-    public void AddRoomVariant(Guid roomVariantId, decimal amount, BedTypes bedType)
+    public void AddRoomVariant(Guid roomVariantId, int roomsCount, decimal amount, BedTypes bedType)
     {
-        var roomVariant = new BookingRoomVariant(roomVariantId, Id, amount, bedType);
+        var roomVariant = new BookingRoomVariant(roomVariantId, Id, roomsCount, amount, bedType);
 
         _roomVariants.Add(roomVariant);
+    }
+
+    public void CalculateTotal()
+    {
+        if(_roomVariants == null || !_roomVariants.Any())
+        {
+            throw new Exception("Не заданы забронированные номера");
+        }
+
+        foreach(var roomVariant in _roomVariants)
+        {
+            Total += roomVariant.Amount;
+        }
     }
 }

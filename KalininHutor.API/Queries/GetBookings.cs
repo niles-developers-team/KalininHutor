@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerable<BookingDTO>>
+internal class GetBookingsHandler : IRequestHandler<BookingCommands.GetQuery, IEnumerable<BookingDTO>>
 {
     private readonly BookingRepository _repository;
     private readonly BookingRoomVariantRepository _bookingRoomVariantRepository;
@@ -26,13 +26,13 @@ internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerabl
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<BookingDTO>> Handle(Booking.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookingDTO>> Handle(BookingCommands.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<BookingSearchOptions>(request));
 
         var bookings = result.Select(_mapper.Map<BookingDTO>).ToList();
 
-        var rentalObjects = await _sender.Send(new RentalObject.GetQuery { Ids = bookings.Select(o => o.RentalObjectId), GetRoomVariants = true });
+        var rentalObjects = await _sender.Send(new RentalObjectCommands.GetQuery { Ids = bookings.Select(o => o.RentalObjectId), GetRoomVariants = true });
 
         var roomVariants = await _bookingRoomVariantRepository.Get(new BookingRoomVariantSearchOptions { BookingsIds = bookings.Select(o => o.Id).ToList() });
 
@@ -47,7 +47,7 @@ internal class GetBookingsHandler : IRequestHandler<Booking.GetQuery, IEnumerabl
 }
 
 ///<summary> Запросы и очереди бронирования </summary>
-public partial class Booking
+public partial class BookingCommands
 {
     ///<summary> Очередь получения брони </summary>
     public class GetQuery : IRequest<IEnumerable<BookingDTO>>
@@ -56,11 +56,15 @@ public partial class Booking
         public Guid? Id { get; set; }
         ///<summary> Идентификатор арендатора </summary>
         public Guid? TenantId { get; set; }
+        ///<summary> Идентификатор арендодателя </summary>
+        public Guid? LandlordId { get; set; }
         ///<summary> Поисковая строка </summary>
         public string? SearchText { get; set; }
         ///<summary> Дата заезда </summary>
         public DateTime? CheckinDate { get; set; }
         ///<summary> Дата отъезда </summary>
         public DateTime? CheckoutDate { get; set; }
+        ///<summary>Загружать только неподтвержденные брони</summary>
+        public bool OnlyNotApproved { get; set; }
     }
 }

@@ -1,8 +1,8 @@
-import { Button, Grid, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, Grid, Stack, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { RentalObject, User } from "../../models";
-import { AppState } from "../../store";
+import { Booking, RentalObject } from "../../models";
+import { AppState, BookingActions } from "../../store";
 import { Face } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
@@ -10,78 +10,61 @@ import { UserDetailsComponent } from "./UserDetails";
 import { MyRentalObjectsComponent } from "./MyRentalObjects";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
+import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
-    const [user, setUser] = useState<User>(User.initial);
     const navigate = useNavigate();
-    const { userState, rentalObjectState } = useAppSelector((state: AppState) => ({
-        userState: state.userState,
-        rentalObjectState: state.rentalObjectState
-    }));
+    const { userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
-            setUser(userState.currentUser === undefined ? User.initial : { ...userState.currentUser });
-            dispatch(RentalObjectActions.getRentalObjects({ landlordId: userState.currentUser?.id }));
+            dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id }));
+            dispatch(BookingActions.getLandlordBookings(true));
         }
     }, [userState.modelLoading]);
 
+    useEffect(() => { dispatch(UserActions.getCurrentUser()); }, []);
+
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setUser({ ...user, phoneNumber: event.currentTarget && event.currentTarget.value });
+        dispatch(UserActions.updateUser({ ...currentUser, phoneNumber: event.currentTarget && event.currentTarget.value }));
     }
 
     function handleEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setUser({ ...user, email: event.currentTarget && event.currentTarget.value });
+        dispatch(UserActions.updateUser({ ...currentUser, email: event.currentTarget && event.currentTarget.value }));
 
     }
 
     function handleNameChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setUser({ ...user, name: event.currentTarget && event.currentTarget.value });
+        dispatch(UserActions.updateUser({ ...currentUser, name: event.currentTarget && event.currentTarget.value }));
 
     }
 
     function handleLastnameChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        setUser({ ...user, lastname: event.currentTarget && event.currentTarget.value });
+        dispatch(UserActions.updateUser({ ...currentUser, lastname: event.currentTarget && event.currentTarget.value }));
 
     }
 
     function handleBirthdayChanged(value: string | null | undefined, keyboardInputValue: string | undefined) {
-        setUser({ ...user, birthday: value ? moment(value).format('yyyy-MM-DD') : null });
+        dispatch(UserActions.updateUser({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
     }
 
     function handleBirthdayAccepted(value: string | null | undefined) {
-        setUser({ ...user, birthday: value ? moment(value).format('yyyy-MM-DD') : null });
+        dispatch(UserActions.updateUser({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
     }
 
     function handleUpdateUserDetailsConfirm() {
-        dispatch(UserActions.updateUser({
-            id: user.id || '',
-            phoneNumber: user.phoneNumber,
-            birthday: user.birthday || undefined,
-            email: user.email,
-            lastname: user.lastname,
-            name: user.name
-        }));
+        dispatch(UserActions.updateUser(currentUser));
     }
 
-    function handleUpdateUserDetailsCancel() {
-        if (userState.authenticating === false)
-            setUser(userState.currentUser === undefined ? User.initial : { ...userState.currentUser });
-    }
+    function handleUpdateUserDetailsCancel() { dispatch(UserActions.getCurrentUser()); }
 
-    function handleCreateRentalObject() {
-        navigate(`/me/rental-objects/create`);
-    }
+    function handleCreateRentalObject() { navigate(`/me/rental-objects/create`); }
 
-    function handleEditRentalObject(model: RentalObject) {
-        navigate(`/me/rental-objects/${model.id}`);
-    }
+    function handleEditRentalObject(model: RentalObject) { navigate(`/me/rental-objects/${model.id}`); }
 
     function handleDeleteRentalObject(model: RentalObject) {
-        dispatch(RentalObjectActions.deleteRentalObjects({
-            ids: [(model.id || '')]
-        }));
+        dispatch(RentalObjectActions.deleteRentalObjects({ ids: [(model.id || '')] }));
     }
 
     function handleSignout() {
@@ -89,7 +72,21 @@ export const MeComponent = function (): JSX.Element {
         navigate('/');
     }
 
+    async function handleBookingApprove(booking: Booking) {
+        await dispatch(BookingActions.approveBooking(booking));
+        await dispatch(BookingActions.getLandlordBookings(true));
+    }
+
+    function handleShowBookingInfo(booking: Booking) {
+
+    }
+
+    if (!userState.currentUser)
+        return (<Typography>Ошибка авторизации</Typography>);
+
+    const currentUser = userState.currentUser;
     const rentalObjects: RentalObject[] = rentalObjectState.models || [];
+    const bookings: Booking[] = bookingState.models || [];
 
     return (
         <Stack spacing={3}>
@@ -100,7 +97,7 @@ export const MeComponent = function (): JSX.Element {
                 </Stack>
                 <UserDetailsComponent
                     loading={userState.modelLoading}
-                    user={user}
+                    user={currentUser}
                     onBirthdayAccepted={handleBirthdayAccepted}
                     onBirthdayChanged={handleBirthdayChanged}
                     onEmailChanged={handleEmailChanged}
@@ -111,6 +108,11 @@ export const MeComponent = function (): JSX.Element {
                     onUpdateCancel={handleUpdateUserDetailsCancel}
                 />
             </Stack>
+            <MyRentalObjectsBookingsComponent
+                bookings={bookings}
+                onBookingApprove={handleBookingApprove}
+                onShowInfo={handleShowBookingInfo}
+            />
             <MyRentalObjectsComponent
                 loading={rentalObjectState.modelsLoading}
                 models={rentalObjects}

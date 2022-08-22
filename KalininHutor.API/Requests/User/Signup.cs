@@ -4,12 +4,11 @@ using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
 using KalininHutor.API.DTO;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.API.Requests;
 
-using DomainUser = Domain.Identity.User;
-
-internal class UserSignupHandler : IRequestHandler<UserRequests.SignupRequest, AuthenticatedUserDetailsDTO>
+internal class UserSignupHandler : IRequestHandler<UserCommands.SignupRequest, AuthenticatedUserDetailsDTO>
 {
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -22,14 +21,14 @@ internal class UserSignupHandler : IRequestHandler<UserRequests.SignupRequest, A
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<AuthenticatedUserDetailsDTO> Handle(UserRequests.SignupRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserCommands.SignupRequest request, CancellationToken cancellationToken)
     {
-        var existedUser = _mapper.Map<DomainUser>(await _userRepository.Get(request.PhoneNumber));
+        var existedUser = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
 
         if (existedUser != null)
             throw new ApplicationException("Пользователь с таким номером телефона уже существует.");
 
-        var user = new DomainUser(request.PhoneNumber, request.Password);
+        var user = new User(request.PhoneNumber, request.Password);
 
         await _userRepository.Create(_mapper.Map<UserEntity>(user));
 
@@ -41,7 +40,7 @@ internal class UserSignupHandler : IRequestHandler<UserRequests.SignupRequest, A
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class UserRequests
+public partial class UserCommands
 {
     ///<summary> Запрос на авторизацию пользователя </summary>
     public class SignupRequest : IRequest<AuthenticatedUserDetailsDTO>

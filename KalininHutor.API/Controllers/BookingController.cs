@@ -19,17 +19,27 @@ public class BookingController : ControllerBase
 
     ///<summary> Метод получения коллекции броней </summary>
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Booking.GetQuery query) => Ok(await _sender.Send(query));
+    public async Task<IActionResult> Get([FromQuery] BookingCommands.GetQuery query) => Ok(await _sender.Send(query));
+
+    ///<summary> Метод получения коллекции броней арендодателя </summary>
+    [HttpGet("landlord-bookings")]
+    public async Task<IActionResult> GetLandlordBookings([FromQuery] Guid landlordId, bool onlyNotApproved)
+    {
+        return Ok(await _sender.Send(new BookingCommands.GetQuery { LandlordId = landlordId, OnlyNotApproved = onlyNotApproved }));
+    }
 
     ///<summary> Метод создания брони </summary>
     [HttpPost]
-    public async Task<IActionResult> Create(Booking.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create(BookingCommands.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения брони </summary>
     [HttpPatch]
-    public async Task<IActionResult> Update(Booking.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update(BookingCommands.UpdateRequest request) => Ok(await _sender.Send(request));
+
+    [HttpPatch("approve")]
+    public async Task<IActionResult> ApproveBooking([FromQuery] Guid bookingId) => Ok(await _sender.Send(new BookingCommands.ApproveRequest() { Id = bookingId }));
 
     ///<summary> Метод удаления брони </summary>
     [HttpDelete]
-    public async Task<IActionResult> Delete(Booking.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete(BookingCommands.UpdateRequest request) => Ok(await _sender.Send(request));
 }

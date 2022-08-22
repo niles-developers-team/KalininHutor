@@ -34,12 +34,14 @@ export namespace Booking {
         id?: string;
         // Идентификатор арендатора
         tenantId?: string;
+        landlordId?: string;
         // Поисковая строка
         searchText?: string;
         // Дата заезда
         checkinDate?: string;
         // Дата отъезда
         checkoutDate?: string;
+        onlyNotApproved?: boolean;
     }
 
     // Создает бронь, результатом выполнения является GUID

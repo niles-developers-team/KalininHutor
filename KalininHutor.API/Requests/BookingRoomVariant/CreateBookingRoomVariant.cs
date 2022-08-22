@@ -2,13 +2,12 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
 
 namespace KalininHutor.API.Requests;
 
-using DomainBookingVariant = Domain.Booking.BookingRoomVariant;
-
-internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVariantRequests.CreateRequest, Guid>
+internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVariantCommands.CreateRequest, Guid>
 {
     private readonly BookingRoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -19,9 +18,9 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(BookingRoomVariantRequests.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(BookingRoomVariantCommands.CreateRequest request, CancellationToken cancellationToken)
     {
-        var bookingRoomVariant = new DomainBookingVariant(request.RoomVariantId, request.BookingId, request.Amount, request.BedType);
+        var bookingRoomVariant = new BookingRoomVariant(request.RoomVariantId, request.BookingId, request.RoomsCount, request.Amount, request.BedType);
         await _repository.Create(_mapper.Map<BookingRoomVariantEntity>(bookingRoomVariant));
 
         return bookingRoomVariant.Id;
@@ -29,7 +28,7 @@ internal class CreateBookingRoomVariantHandler : IRequestHandler<BookingRoomVari
 }
 
 ///<summary> Запросы и очереди выбранных номеров </summary>
-public partial class BookingRoomVariantRequests
+public partial class BookingRoomVariantCommands
 {
     ///<summary> Запрос на создание выбранного варианта номера </summary>
     public class CreateRequest : IRequest<Guid>
@@ -38,6 +37,7 @@ public partial class BookingRoomVariantRequests
         public Guid BookingId { get; set; }
         ///<summary> Идентификатор варианта номера </summary>
         public Guid RoomVariantId { get; set; }
+        public int RoomsCount { get; set; }
         ///<summary> </summary>
         public decimal Amount { get; set; }
         public BedTypes BedType { get; set; }

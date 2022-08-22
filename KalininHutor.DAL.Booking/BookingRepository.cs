@@ -97,17 +97,27 @@ public class BookingRepository : BaseRepository<BookingEntity, BookingSearchOpti
         if (options.RentalObjectId.HasValue)
             query.Where($"b.RentalObjectId = {options.RentalObjectId}");
 
+        if (options.LandlordId.HasValue)
+            query.Where($"ro.LandlordId = {options.LandlordId}");
+
+        if (options.OnlyNotApproved)
+            query.Where($"b.Status = 1");
+
         return await query.QueryAsync<BookingEntity>();
     }
 
-    public override Task<BookingEntity> Get(Guid id)
+    public async override Task<BookingEntity> Get(Guid id)
     {
         using var connection = GetConnection();
 
-        return connection.QueryBuilder($@"
+        return await connection.QueryBuilder($@"
             select 
                 b.Id, 
                 b.TenantId,
+                b.TenantName,
+                b.TenantLastname,
+                b.TenantEmail,
+                b.TenantPhone,
                 b.RentalObjectId,
                 b.AdultCount,
                 b.ChildCount,
@@ -119,7 +129,7 @@ public class BookingRepository : BaseRepository<BookingEntity, BookingSearchOpti
                 b.CreatedAt as CreatedAtDateTime
             from Bookings b
             inner join RentalObjects ro on b.RentalObjectId = ro.Id
-            where Id = {id}
+            where b.Id = {id}
         ").QuerySingleOrDefaultAsync<BookingEntity>();
     }
 

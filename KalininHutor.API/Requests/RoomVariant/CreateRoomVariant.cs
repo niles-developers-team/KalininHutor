@@ -5,14 +5,11 @@ using AutoMapper;
 
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
-using Newtonsoft.Json;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRentalObject = Domain.Booking.RentalObject;
-using DomainRoomVariant = Domain.Booking.RoomVariant;
-
-internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequest, Guid>
+internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantCommands.CreateRequest, Guid>
 {
     private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
@@ -27,20 +24,20 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariant.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantCommands.CreateRequest request, CancellationToken cancellationToken)
     {
         if (request.RentalObject == null)
         {
             if (!request.RentalObjectId.HasValue)
                 throw new ApplicationException("Не указан объект аренды");
 
-            request.RentalObject = _mapper.Map<DomainRentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId.Value));
+            request.RentalObject = _mapper.Map<RentalObject>(await _rentalObjectRepository.Get(request.RentalObjectId.Value));
         }
 
         if (request.RentalObject.RoomVariants == null || !request.RentalObject.RoomVariants.Any())
         {
             var roomVariants = await _repository.Get(new RoomVariantSearchOptions { RentalObjectId = request.RentalObject.Id });
-            request.RentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<DomainRoomVariant>).ToList());
+            request.RentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<RoomVariant>).ToList());
         }
 
         var result = request.RentalObject.CreateRoomVariant(request.Name, request.Description,
@@ -66,12 +63,12 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariant.CreateRequ
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantCommands
 {
     ///<summary> Запрос на создание варианта номера </summary>
     public class CreateRequest : IRequest<Guid>
     {
-        internal DomainRentalObject RentalObject { get; set; }
+        internal RentalObject RentalObject { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? RentalObjectId { get; set; }
         ///<summary> Название </summary>
@@ -95,7 +92,7 @@ public partial class RoomVariant
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
 
-        public IReadOnlyList<RoomVariantBedType.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
+        public IReadOnlyList<RoomVariantBedTypeCommands.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.CreateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristicCommands.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.CreateRequest>();
     }
 }

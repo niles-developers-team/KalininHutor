@@ -6,7 +6,7 @@ using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetCurrentUserDetailsHandler : IRequestHandler<UserQueries.GetCurrentUserDetailsQuery, UserDetailsDTO>
+internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCurrentUserDetailsQuery, UserDetailsDTO>
 {
     private readonly ISender _sender;
     private readonly UserRepository _repository;
@@ -19,7 +19,7 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserQueries.GetCur
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
-    public async Task<UserDetailsDTO> Handle(UserQueries.GetCurrentUserDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<UserDetailsDTO> Handle(UserCommands.GetCurrentUserDetailsQuery request, CancellationToken cancellationToken)
     {
         var claim = _context.User.FindFirst("id");
         if (claim == null || claim.Value == null)
@@ -27,12 +27,12 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserQueries.GetCur
 
         var id = Guid.Parse(claim.Value);
 
-        return await _sender.Send(new UserQueries.GetDetailsQuery { Id = id });
+        return await _sender.Send(new UserCommands.GetDetailsQuery { Id = id });
     }
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class UserQueries
+public partial class UserCommands
 {
     ///<summary> Очередь получения деталей пользователя </summary>
     public class GetCurrentUserDetailsQuery : IRequest<UserDetailsDTO>

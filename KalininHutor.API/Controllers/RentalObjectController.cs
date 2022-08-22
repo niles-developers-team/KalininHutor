@@ -21,7 +21,7 @@ public class RentalObjectController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    public async Task<IActionResult> Get([FromQuery] RentalObject.GetQuery query)
+    public async Task<IActionResult> Get([FromQuery] RentalObjectCommands.GetQuery query)
     {
         try
         {
@@ -37,7 +37,7 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RentalObject.CreateRequest request)
+    public async Task<IActionResult> Create([FromBody] RentalObjectCommands.CreateRequest request)
     {
         try
         {
@@ -52,7 +52,7 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод обновления объекта аренды </summary>
     [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] RentalObject.UpdateRequest request)
+    public async Task<IActionResult> Update([FromBody] RentalObjectCommands.UpdateRequest request)
     {
         try
         {
@@ -67,7 +67,7 @@ public class RentalObjectController : ControllerBase
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] RentalObject.DeleteRequest request)
+    public async Task<IActionResult> Delete([FromBody] RentalObjectCommands.DeleteRequest request)
     {
         try
         {

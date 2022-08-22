@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, EntityStatus, SnackbarVariant } from "../../models";
+import { ApplicationError, Booking, BookingStatuses, EntityStatus, SnackbarVariant } from "../../models";
 import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { SnackbarActions } from "../snackbarStore/actions";
@@ -34,7 +34,6 @@ export enum ActionTypes {
 export namespace BookingActions {
     interface GetBookingsRequestAction extends Action<ActionTypes> {
         type: ActionTypes.getBookingsRequest;
-        query?: Booking.GetQuery;
     }
 
     interface GetBookingsSuccessAction extends Action<ActionTypes> {
@@ -78,7 +77,6 @@ export namespace BookingActions {
 
     interface UpdateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.updateRequest;
-        request: Booking.UpdateRequest;
     }
 
     interface UpdateSuccessAction extends Action<ActionTypes> {
@@ -156,13 +154,13 @@ export namespace BookingActions {
         }
     }
 
-    export function updateBooking(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+    export function applyChanges(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
             dispatch(request(updateRequest));
 
             try {
                 const result = await bookingService.update(updateRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
+                dispatch(SnackbarActions.showSnackbar('Бронь успешно сохранена', SnackbarVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -171,7 +169,28 @@ export namespace BookingActions {
                 return dispatch(failure(error));
             }
 
-            function request(updateRequest: Booking.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest, request: updateRequest }; }
+            function request(updateRequest: Booking.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
+            function success(booking: Booking): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: booking }; }
+            function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
+        }
+    }
+
+    export function approveBooking(model: Booking): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+        return async (dispatch) => {
+            dispatch(request());
+
+            try {
+                await bookingService.approveBooking(model.id || '');
+                dispatch(SnackbarActions.showSnackbar('Бронь подтверждена', SnackbarVariant.success));
+                return dispatch(success(model));
+            }
+            catch (error: any) {
+                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+
+                return dispatch(failure(error));
+            }
+
+            function request(): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
             function success(booking: Booking): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: booking }; }
             function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
         }
@@ -222,9 +241,35 @@ export namespace BookingActions {
         return { type: ActionTypes.clearEditionState };
     }
 
+    export function getLandlordBookings(onlyNotApproved: boolean): AppThunkAction<Promise<GetBookingsSuccessAction | GetBookingsFailureAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { userState } = getState();
+            dispatch(request());
+
+            if (userState.authenticating === false && !userState.currentUser) {
+                dispatch(SnackbarActions.showSnackbar('Невозоможно загрузить бронирования неизвестного арендодателя'));
+                return dispatch(failure(new ApplicationError('Невозоможно загрузить бронирования неизвестного арендодателя')));
+            }
+
+            try {
+                const result = await bookingService.getLandlordBookings(userState.authenticating === false && userState.currentUser?.id || '', onlyNotApproved);
+                return dispatch(success(result));
+            }
+            catch (error: any) {
+                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+
+                return dispatch(failure(error));
+            }
+
+            function request(): GetBookingsRequestAction { return { type: ActionTypes.getBookingsRequest }; }
+            function success(bookings: Booking[]): GetBookingsSuccessAction { return { type: ActionTypes.getBookingsSuccess, bookings: bookings }; }
+            function failure(error: ApplicationError): GetBookingsFailureAction { return { type: ActionTypes.getBookingsFailure, error: error }; }
+        }
+    }
+
     export function getBookings(query?: Booking.GetQuery): AppThunkAction<Promise<GetBookingsSuccessAction | GetBookingsFailureAction>> {
         return async dispatch => {
-            dispatch(request(query));
+            dispatch(request());
 
             try {
                 const result = await bookingService.get(query);
@@ -236,7 +281,7 @@ export namespace BookingActions {
                 return dispatch(failure(error));
             }
 
-            function request(query?: Booking.GetQuery): GetBookingsRequestAction { return { type: ActionTypes.getBookingsRequest, query: query }; }
+            function request(): GetBookingsRequestAction { return { type: ActionTypes.getBookingsRequest }; }
             function success(bookings: Booking[]): GetBookingsSuccessAction { return { type: ActionTypes.getBookingsSuccess, bookings: bookings }; }
             function failure(error: ApplicationError): GetBookingsFailureAction { return { type: ActionTypes.getBookingsFailure, error: error }; }
         }

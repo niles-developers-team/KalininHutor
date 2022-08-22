@@ -29,12 +29,14 @@ public class BookingEntity
 
 public class BookingSearchOptions
 {
-    public Guid? Id { get; set; }
+    public Guid? Id { get; protected set; }
     public Guid? RentalObjectId { get; set; }
-    public Guid? TenantId { get; set; }
-    public string? SearchText { get; set; }
+    public Guid? TenantId { get; protected set; }
+    public Guid? LandlordId { get; protected set; }
+    public string? SearchText { get; protected set; }
     public DateOnly? CheckinDate { get; protected set; }
     public DateOnly? CheckoutDate { get; protected set; }
     internal DateTime? CheckinDateTime { get => CheckinDate.HasValue ? CheckinDate.Value.ToDateTime(new TimeOnly()) : null; }
     internal DateTime? CheckoutDateTime { get => CheckoutDate.HasValue ? CheckoutDate.Value.ToDateTime(new TimeOnly()) : null; }
+    public bool OnlyNotApproved { get; protected set; }
 }

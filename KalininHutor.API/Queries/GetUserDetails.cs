@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Queries;
 
-internal class GetUserDetailsHandler : IRequestHandler<UserQueries.GetDetailsQuery, UserDetailsDTO>
+internal class GetUserDetailsHandler : IRequestHandler<UserCommands.GetDetailsQuery, UserDetailsDTO>
 {
     private readonly UserRepository _repository;
     private readonly IMapper _mapper;
@@ -16,14 +16,14 @@ internal class GetUserDetailsHandler : IRequestHandler<UserQueries.GetDetailsQue
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<UserDetailsDTO> Handle(UserQueries.GetDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<UserDetailsDTO> Handle(UserCommands.GetDetailsQuery request, CancellationToken cancellationToken)
     {
         return _mapper.Map<UserDetailsDTO>(await _repository.Get(request.Id));
     }
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class UserQueries
+public partial class UserCommands
 {
     ///<summary> Очередь получения деталей пользователя </summary>
     public class GetDetailsQuery : IRequest<UserDetailsDTO>

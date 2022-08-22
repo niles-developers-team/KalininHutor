@@ -7,12 +7,13 @@ public class BookingRoomVariant : IEntity<Guid>
     public Guid Id { get; protected set; }
     public Guid BookingId { get; protected set; }
     public Guid RoomVariantId { get; protected set; }
+    public int RoomsCount { get; protected set; }
     public decimal Amount { get; protected set; }
     public BedTypes BedType { get; protected set; }
 
     protected BookingRoomVariant() { }
 
-    public BookingRoomVariant(Guid roomVariantId, Guid bookingId, decimal amount, BedTypes bedType)
+    public BookingRoomVariant(Guid roomVariantId, Guid bookingId, int roomsCount, decimal amount, BedTypes bedType)
     {
         if (roomVariantId == null || roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
@@ -26,7 +27,8 @@ public class BookingRoomVariant : IEntity<Guid>
         Id = Guid.NewGuid();
         RoomVariantId = roomVariantId;
         BookingId = bookingId;
-        Amount = Amount;
+        RoomsCount = roomsCount;
+        Amount = amount;
         BedType = bedType;
     }
 }

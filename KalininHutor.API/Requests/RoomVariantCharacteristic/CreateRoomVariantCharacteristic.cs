@@ -1,12 +1,11 @@
 using MediatR;
 using AutoMapper;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRoomVariantCharacteristic = Domain.Booking.RoomVariantCharacteristic;
-
-internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristic.CreateRequest, Guid>
+internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristicCommands.CreateRequest, Guid>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -17,12 +16,12 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariantCharacteristic.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantCharacteristicCommands.CreateRequest request, CancellationToken cancellationToken)
     {
         if(!request.RoomVariantId.HasValue) {
             throw new ApplicationException("Не указан вариант номера");
         }
-        var RoomVariantCharacteristic = new DomainRoomVariantCharacteristic(request.RoomVariantId.Value, request.RoomCharacteristicId, request.Price);
+        var RoomVariantCharacteristic = new RoomVariantCharacteristic(request.RoomVariantId.Value, request.RoomCharacteristicId, request.Price);
         await _repository.Create(_mapper.Map<RoomVariantCharacteristicEntity>(RoomVariantCharacteristic));
 
         return RoomVariantCharacteristic.Id;
@@ -31,7 +30,7 @@ internal class CreateRoomVariantCharacteristicHandler : IRequestHandler<RoomVari
 
 
 ///<summary> Запросы и очереди характеристик вариантов номеров </summary>
-public partial class RoomVariantCharacteristic
+public partial class RoomVariantCharacteristicCommands
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
     public class CreateRequest : IRequest<Guid>

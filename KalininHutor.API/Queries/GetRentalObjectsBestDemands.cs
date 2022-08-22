@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObject.GetRentalObjectsBestDemandsQuery, IEnumerable<RentalObjectBestDemandDTO>>
+internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObjectCommands.GetRentalObjectsBestDemandsQuery, IEnumerable<RentalObjectBestDemandDTO>>
 {
     private readonly RoomVariantRepository _repository;
     private readonly IMapper _mapper;
@@ -16,7 +16,7 @@ internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObject
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<RentalObjectBestDemandDTO>> Handle(RentalObject.GetRentalObjectsBestDemandsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RentalObjectBestDemandDTO>> Handle(RentalObjectCommands.GetRentalObjectsBestDemandsQuery request, CancellationToken cancellationToken)
     {
         var bestDemands = new List<RentalObjectBestDemandDTO>();
 
@@ -39,7 +39,7 @@ internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObject
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectCommands
 {
     ///<summary> Очередь получения объектов аренды </summary>
     public class GetRentalObjectsBestDemandsQuery : IRequest<IEnumerable<RentalObjectBestDemandDTO>>

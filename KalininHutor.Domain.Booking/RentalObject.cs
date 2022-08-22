@@ -117,11 +117,16 @@ public class RentalObject : IEntity<Guid>
         ValidateBookingRoomVariants(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariants);
 
         var booking = new Booking(Id, tenant, adultCount, childsCount, checkInDate, checkOutDate);
+
+        int nightsCount = (int)(checkOutDate.ToDateTime(TimeOnly.MaxValue) - checkInDate.ToDateTime(TimeOnly.MinValue)).TotalDays;
+
         foreach (var bookingRoomVariant in bookingRoomVariants)
         {
             var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
-            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, roomVariant.Price, bookingRoomVariant.BedType);
+            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, bookingRoomVariant.RoomsCount, roomVariant.CalculateAmount(nightsCount, bookingRoomVariant.RoomsCount), bookingRoomVariant.BedType);
         }
+
+        booking.CalculateTotal();
 
         return booking;
     }
