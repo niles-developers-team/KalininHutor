@@ -9,6 +9,7 @@ public class RoomVariantCharacteristicDTO
     public Guid RoomVariantId { get; protected set; }
     ///<summary> Идентификатор характеристики </summary>
     public Guid RoomCharacteristicId { get; protected set; }
+    ///<summary> Название характеристики комнаты </summary>
     public string RoomCharacteristicName { get; protected set; }
     ///<summary> Цена за услугу или удобство </summary>
     public decimal Price { get; protected set; }

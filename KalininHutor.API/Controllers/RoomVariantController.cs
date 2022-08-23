@@ -42,4 +42,3 @@ public class RoomVariantController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete([FromBody] RoomVariantCommands.DeleteRequest request) => Ok(await _sender.Send(request));
 }
-}

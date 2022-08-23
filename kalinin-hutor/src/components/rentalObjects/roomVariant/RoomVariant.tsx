@@ -68,7 +68,7 @@ export const RoomVariantComponent = function (): JSX.Element {
     }
 
     function handleRoomCharacteristicDelete(model: RoomVariantCharacteristic) {
-        if (model.status === EntityStatus.Created)
+        if (model.entityStatus === EntityStatus.Created)
             setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o.id !== model.id)] });
         else
             setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? { ...model, status: EntityStatus.Deleted } : o)] })
@@ -97,10 +97,10 @@ export const RoomVariantComponent = function (): JSX.Element {
 
         if (!model.id) {
             model.id = uuidv4();
-            model.status = EntityStatus.Created;
+            model.entityStatus = EntityStatus.Created;
             setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] });
         } else {
-            model.status = model.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
+            model.entityStatus = model.entityStatus === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
             setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? model : o)] })
         }
         setCharacteristicDialogOpen(false);
@@ -108,7 +108,7 @@ export const RoomVariantComponent = function (): JSX.Element {
     }
 
     function handleBedTypeDelete(model: RoomVariantBedType) {
-        if (model.status === EntityStatus.Created)
+        if (model.entityStatus === EntityStatus.Created)
             setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o.id !== model.id)] })
         else
             setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? { ...model, status: EntityStatus.Deleted } : o)] })
@@ -131,10 +131,10 @@ export const RoomVariantComponent = function (): JSX.Element {
     function handleBedVariantDialogConfirm(model: RoomVariantBedType) {
         if (!model.id) {
             model.id = uuidv4();
-            model.status = EntityStatus.Created;
+            model.entityStatus = EntityStatus.Created;
             setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] })
         } else {
-            model.status = model.status === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
+            model.entityStatus = model.entityStatus === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
             setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] })
         }
         setBedVariantDialogOpen(false);
@@ -179,7 +179,7 @@ export const RoomVariantComponent = function (): JSX.Element {
             />
             <RoomVariantCharacteristicsComponent
                 loading={loading}
-                models={roomVariant.characteristics.filter(o => o.status !== EntityStatus.Deleted)}
+                models={roomVariant.characteristics.filter(o => o.entityStatus !== EntityStatus.Deleted)}
                 characteristics={roomsCharacteristics}
                 onCreate={handleRoomCharacteristicCreate}
                 onEdit={handleRoomCharacteristicEdit}
@@ -187,7 +187,7 @@ export const RoomVariantComponent = function (): JSX.Element {
             />
             <RoomVariantBedTypesComponent
                 loading={loading}
-                models={roomVariant.bedTypes.filter(o => o.status !== EntityStatus.Deleted)}
+                models={roomVariant.bedTypes.filter(o => o.entityStatus !== EntityStatus.Deleted)}
                 onCreate={handleBedTypeCreate}
                 onEdit={handleBedTypeEdit}
                 onDelete={handleBedTypeDelete}

@@ -57,6 +57,7 @@ public partial class RentalObjectCommands
     ///<summary> Очередь получения объектов аренды </summary>
     public class GetQuery : IRequest<IEnumerable<RentalObjectDTO>>
     {
+        ///<summary> Коллекция идентификаторов объектов аренды </summary>
         public IEnumerable<Guid>? Ids { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? Id { get; set; }
@@ -75,10 +76,13 @@ public partial class RentalObjectCommands
         ///<summary> Количество комнат </summary>
         public int RoomsCount { get; set; }
 
+        ///<summary> Нужно ли получать лучшие предложения </summary>
         public bool GetBestDemands { get; set; }
 
+        ///<summary> Нужно ли получать варианты номеров </summary>
         public bool GetRoomVariants { get; set; }
 
+        ///<summary> Фильтр по выбранным характеристикам</summary>
         public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
     }
 }

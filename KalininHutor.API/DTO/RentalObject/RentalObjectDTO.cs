@@ -18,7 +18,9 @@ public class RentalObjectDTO
     ///<summary> Время отъезда объекта аренды </summary>
     public TimeOnly CheckoutTime { get; protected set; }
 
+    ///<summary> Лучшие предложения </summary>
     public RentalObjectBestDemandDTO? BestDemand { get; set; }
+    ///<summary> Варианты номеров </summary>
     public IEnumerable<RoomVariantDTO> RoomVariants { get; set; }
 }
 

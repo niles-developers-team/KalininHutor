@@ -1,5 +1,6 @@
 namespace KalininHutor.API.DTO;
 
+///<summary> Модель отображения данных пользователя </summary>
 public class UserDTO
 {
     ///<summary> Идентификатор пользователя </summary>
@@ -17,6 +18,7 @@ public class UserDTO
 ///<summary> Модель чтения деталей пользователя </summary>
 public class UserDetailsDTO : UserDTO
 {
+    ///<summary>Идентификатор пользователя</summary>
     public new Guid Id { get; set; }
     ///<summary> Дата рождения </summary>
     public DateOnly? Birthday { get; set; }

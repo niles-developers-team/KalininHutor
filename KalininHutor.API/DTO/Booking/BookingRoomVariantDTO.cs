@@ -13,6 +13,8 @@ public class BookingRoomVariantDTO
     public Guid BookingId { get; protected set; }
     ///<summary> Всего за номер (руб.) </summary>
     public decimal Amount { get; protected set; }
+    ///<summary> Выбранный тип кровати </summary>
     public BedTypes BedType { get; protected set; }
+    ///<summary> Выбранное количество комнат </summary>
     public int RoomsCount { get; protected set; }
 }

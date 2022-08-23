@@ -28,6 +28,8 @@ public class RoomVariantDTO
     ///<summary> Всего номеров свободно </summary>
     public int FreeCount { get; protected set; }
 
+    ///<summary> Доступные типы кроватей варианта номера </summary>
     public IReadOnlyList<RoomVariantBedTypeDTO> BedTypes { get; set; }
+    ///<summary> Доступные сервисы и услуги варианта номера </summary>
     public IReadOnlyList<RoomVariantCharacteristicDTO> Characteristics { get; set; }
 }

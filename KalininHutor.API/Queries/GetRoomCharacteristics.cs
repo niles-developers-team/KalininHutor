@@ -33,6 +33,7 @@ public partial class RoomCharacteristicCommands
         public Guid? Id { get; set; }
         ///<summary> Поисковая строка </summary>
         public string? SearchText { get; set; } = string.Empty;
+        ///<summary> Размер страницы </summary>
         public int? Take { get; set; }
     }
 }
