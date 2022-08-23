@@ -72,7 +72,7 @@ public partial class BookingCommands
     {
         ///<summary> Идентификатор арендатора </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>
-        public UserDetailsDTO Tenant { get; set; }
+        public UserDetailsDTO Tenant { get; set; } = new UserDetailsDTO();
         ///<summary> Идентификатор объекта аренды </summary>
         [Required]
         public Guid RentalObjectId { get; set; }

@@ -1,35 +1,75 @@
 import { CurrencyRuble, Info } from "@mui/icons-material";
 import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
 import { Booking } from "../../models";
 
 interface Props {
     bookings: Booking[];
+    loading: boolean;
     onBookingApprove: (booking: Booking) => void;
     onShowInfo: (booking: Booking) => void;
+}
+
+function NoBookings(): JSX.Element {
+    return (
+        <GridOverlay>
+            <Typography color="GrayText" variant="subtitle2">Вы еще не зарегистрировали объект аренды</Typography>
+        </GridOverlay>
+    );
 }
 
 export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Element {
     const { bookings, onBookingApprove, onShowInfo } = props;
 
+    const columns: GridColDef<Booking>[] = [
+        {
+            field: 'rentalObject', sortable: false, headerName: 'Объект аренды', flex: 1, renderCell: ({ row: o }) => (
+                <Typography><a href={`/me/rental-objects/${o.rentalObjectId}`}>{o.rentalObject?.name}</a></Typography>
+            )
+        },
+        {
+            field: 'tenant', sortable: false, headerName: 'Гость', flex: 1, renderCell: ({ row: o }) => (
+                <Stack>
+                    <Typography>{o.tenant.name} {o.tenant.lastname}</Typography>
+                    <Typography>{o.tenant.phoneNumber}</Typography>
+                </Stack>
+            )
+        },
+        {
+            field: 'total', type: "number", headerName: 'Сумма', renderCell: ({ row: o }) => (
+                <Stack direction="row">
+                    <Typography>{o.total}</Typography>
+                    <CurrencyRuble fontSize="small" />
+                </Stack>
+            )
+        },
+        {
+            field: 'actions', type: 'actions', sortable: false, headerName: '', minWidth: 180, renderCell: (o) => (
+                <Stack direction="row">
+                    <Button onClick={() => onBookingApprove(o.row)}>Подтвердить</Button>
+                    <IconButton onClick={() => onShowInfo(o.row)}><Info /></IconButton>
+                </Stack>
+            )
+        }
+    ];
 
     return (
         <Stack spacing={2}>
             <Typography color="GrayText" variant="h6">Не подтвержденные бронирования</Typography>
-            {bookings.map(o => (
-                <Stack>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Typography><a href={`/me/rental-objects/${o.rentalObjectId}`}>{o.rentalObject?.name}</a></Typography>
-                        <Typography>{moment(o.checkinDate).format('DD.MM.yyyy')} - {moment(o.checkoutDate).format('DD.MM.yyyy')}</Typography>
-                        <Grid item xs />
-                        <Typography>{o.total}</Typography>
-                        <CurrencyRuble fontSize="small" />
-                        <Button onClick={() =>onBookingApprove(o)}>Подтвердить</Button>
-                        <IconButton onClick={() => onShowInfo(o)}><Info /></IconButton>
-                    </Stack>
-                    <Typography color="GrayText">{o.tenant.name} {o.tenant.lastname}</Typography>
-                </Stack>
-            ))}
+            <DataGrid
+                autoHeight
+                components={{
+                    NoRowsOverlay: NoBookings
+                }}
+                rows={bookings}
+                columns={columns}
+                rowsPerPageOptions={[10, 25]}
+                loading={props.loading}
+                disableSelectionOnClick
+                disableColumnFilter
+                disableColumnMenu
+            />
         </Stack>
     );
 }

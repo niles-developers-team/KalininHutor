@@ -140,7 +140,7 @@ public class RentalObject : IEntity<Guid>
         if (_bookings == null)
             throw new MissingFieldException("Брони объекта аренды не были загружены");
 
-        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Select(brv => brv.RoomVariantId).Contains(o.Id));
+        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId== o.Id));
 
         var visitorsSum = adultCount + childsCount;
         if (visitorsSum > selectedRoomVariants.Sum(o => o.MaxPersonsCount))

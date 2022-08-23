@@ -164,16 +164,21 @@ export const RentalObjectComponent = function (): JSX.Element {
         navigate(`/rental-objects/${id}/booking/${booking?.id}`);
     }
 
-    function handleDatesChanged(startDate: string, endDate: string) {
+    function handleDatesChanged(startDate: string | undefined, endDate: string | undefined) {
         if (!booking) {
             dispatch(SnackbarActions.showSnackbar('Ошибка при попытке создать бронь.', SnackbarVariant.error));
             return;
         }
 
+        if (!startDate || !endDate) {
+            dispatch(SnackbarActions.showSnackbar('Не выбраны даты брони.', SnackbarVariant.error));
+            return;
+        }
+
         dispatch(BookingActions.updateDraft({
             ...booking,
-            checkinDate: moment(startDate).toISOString(),
-            checkoutDate: moment(endDate).toISOString()
+            checkinDate: startDate,
+            checkoutDate: endDate
         }));
     }
 
@@ -210,12 +215,12 @@ export const RentalObjectComponent = function (): JSX.Element {
                                 <Stack direction="row" spacing={2}>
                                     <Stack>
                                         <Typography variant="subtitle1"><b>Заезд</b></Typography>
-                                        <Typography>{moment(booking?.checkinDate).format('DD.MM.YYYY')}</Typography>
+                                        <Typography>{checkinDate.format('DD.MM.YYYY')}</Typography>
                                     </Stack>
                                     <Divider orientation="vertical" flexItem />
                                     <Stack>
                                         <Typography variant="subtitle1"><b>Отъезд</b></Typography>
-                                        <Typography>{moment(booking?.checkoutDate).format('DD.MM.YYYY')}</Typography>
+                                        <Typography>{checkoutDate.format('DD.MM.YYYY')}</Typography>
                                     </Stack>
                                 </Stack>
                             </Button>
@@ -253,8 +258,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             anchorEl={datesAnchorEl}
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                             onClose={() => setDatesAnchorEl(null)}
-                            startDate={moment(booking?.checkinDate).toISOString()}
-                            endDate={moment(booking?.checkoutDate).toISOString()}
+                            startDate={booking?.checkinDate}
+                            endDate={booking?.checkoutDate}
                             onDatesChanged={handleDatesChanged}
                         />
                         <VisitorsPopoverComponent

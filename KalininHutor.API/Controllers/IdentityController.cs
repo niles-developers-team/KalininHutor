@@ -19,6 +19,7 @@ public class UserController : ControllerBase
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
+    ///<summary> Метод получения данных о текущем пользователе </summary>
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> Me()

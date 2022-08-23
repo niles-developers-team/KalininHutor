@@ -1,8 +1,8 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Booking, RentalObject } from "../../models";
-import { AppState, BookingActions } from "../../store";
+import { AppState, BookingActions, RoomCharacteristicActions } from "../../store";
 import { Face } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
@@ -11,11 +11,20 @@ import { MyRentalObjectsComponent } from "./MyRentalObjects";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
+import { BookingDetailsDialog } from "./BookingDetailsDialog";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
+    const {
+        userState,
+        rentalObjectState,
+        bookingState,
+        roomCharacteristicState
+    } = useAppSelector((state: AppState) => state);
+
+    const [bookingInfoDialogOpen, setBookingInfoDialogOpen] = useState<boolean>(false);
+    const [selectedBooking, setSelectedBooking] = useState<Booking>();
 
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
@@ -24,7 +33,10 @@ export const MeComponent = function (): JSX.Element {
         }
     }, [userState.modelLoading]);
 
-    useEffect(() => { dispatch(UserActions.getCurrentUser()); }, []);
+    useEffect(() => {
+        dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+        dispatch(UserActions.getCurrentUser());
+    }, []);
 
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
         dispatch(UserActions.updateUser({ ...currentUser, phoneNumber: event.currentTarget && event.currentTarget.value }));
@@ -78,7 +90,13 @@ export const MeComponent = function (): JSX.Element {
     }
 
     function handleShowBookingInfo(booking: Booking) {
+        setBookingInfoDialogOpen(true);
+        setSelectedBooking(booking);
+    }
 
+    function handleCloseBookingInfo() {
+        setBookingInfoDialogOpen(false);
+        setSelectedBooking(undefined);
     }
 
     if (!userState.currentUser)
@@ -87,6 +105,7 @@ export const MeComponent = function (): JSX.Element {
     const currentUser = userState.currentUser;
     const rentalObjects: RentalObject[] = rentalObjectState.models || [];
     const bookings: Booking[] = bookingState.models || [];
+    const characteristics = roomCharacteristicState.models || [];
 
     return (
         <Stack spacing={3}>
@@ -110,6 +129,7 @@ export const MeComponent = function (): JSX.Element {
             </Stack>
             <MyRentalObjectsBookingsComponent
                 bookings={bookings}
+                loading={bookingState.modelsLoading}
                 onBookingApprove={handleBookingApprove}
                 onShowInfo={handleShowBookingInfo}
             />
@@ -123,6 +143,13 @@ export const MeComponent = function (): JSX.Element {
                 <Grid item xs />
                 <Button color="error" onClick={handleSignout}>Выйти из аккаунта</Button>
             </Stack>
+            <BookingDetailsDialog
+                open={bookingInfoDialogOpen}
+                booking={selectedBooking}
+                characteristics={characteristics}
+                onApprove={handleBookingApprove}
+                onClose={handleCloseBookingInfo}
+            />
         </Stack>
     );
 }

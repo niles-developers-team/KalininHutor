@@ -71,11 +71,11 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
 
     const searchDisabled = !filter.adultsCount || !filter.roomsCount || !filter.checkinDate || !filter.checkoutDate;
 
-    function handleDatesChanged(startDate: string, endDate: string) {
+    function handleDatesChanged(startDate: string | undefined, endDate: string | undefined) {
         onFilterUpdate({
             ...filter,
-            checkinDate: moment(startDate).toISOString(),
-            checkoutDate: moment(endDate).toISOString()
+            checkinDate: startDate,
+            checkoutDate: endDate
         });
     }
 
@@ -109,8 +109,8 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
                 anchorEl={datesAnchorEl}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                 onClose={() => setDatesAnchorEl(null)}
-                startDate={moment(filter.checkinDate).toISOString()}
-                endDate={moment(filter.checkoutDate).toISOString()}
+                startDate={filter.checkinDate}
+                endDate={filter.checkoutDate}
                 onDatesChanged={handleDatesChanged}
             />
             <VisitorsPopoverComponent

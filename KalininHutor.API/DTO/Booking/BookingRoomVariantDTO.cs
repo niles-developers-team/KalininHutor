@@ -13,5 +13,6 @@ public class BookingRoomVariantDTO
     public Guid BookingId { get; protected set; }
     ///<summary> Всего за номер (руб.) </summary>
     public decimal Amount { get; protected set; }
-    public BedTypes BedType { get; set; }
+    public BedTypes BedType { get; protected set; }
+    public int RoomsCount { get; protected set; }
 }
