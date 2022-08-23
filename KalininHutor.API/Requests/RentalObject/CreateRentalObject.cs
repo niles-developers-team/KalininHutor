@@ -2,12 +2,12 @@ using MediatR;
 using AutoMapper;
 
 using KalininHutor.DAL.Booking;
+using KalininHutor.API.DTO;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRentalObject = Domain.Booking.RentalObject;
-
-internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRequest, Guid>
+internal class CreateRentalObjectHandler : IRequestHandler<RentalObjectCommands.CreateRequest, RentalObjectDTO>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -20,9 +20,9 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RentalObject.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<RentalObjectDTO> Handle(RentalObjectCommands.CreateRequest request, CancellationToken cancellationToken)
     {
-        var rentalObject = new DomainRentalObject(request.Name, request.Description,
+        var rentalObject = new RentalObject(request.Name, request.Description,
                         request.Address, request.CheckinTime, request.CheckoutTime, request.LandlordId);
         await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
@@ -32,15 +32,15 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObject.CreateRe
             await _sender.Send(createRoomVariantsRequest);
         }
 
-        return rentalObject.Id;
+        return _mapper.Map<RentalObjectDTO>(rentalObject);
     }
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectCommands
 {
     ///<summary> Создает объект аренды, результатом выполнения является GUID </summary>
-    public class CreateRequest : IRequest<Guid>
+    public class CreateRequest : IRequest<RentalObjectDTO>
     {
         ///<summary> Название объекта аренды </summary>
         public string Name { get; set; } = string.Empty;
@@ -57,6 +57,6 @@ public partial class RentalObject
         ///<summary> Время отъезда </summary>
         public TimeOnly? CheckoutTime { get; set; }
 
-        public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
+        public IReadOnlyList<RoomVariantCommands.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();
     }
 }

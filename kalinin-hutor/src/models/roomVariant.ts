@@ -106,8 +106,8 @@ export namespace RoomVariant {
         updateBedTypesRequests: RoomVariantBedType.UpdateRequest[];
         updateCharacteristicsRequests: RoomVariantCharacteristic.UpdateRequest[];
 
-        deleteBedTypesRequests: RoomVariantBedType.DeleteRequest[];
-        deleteCharacteristicsRequests: RoomVariantCharacteristic.DeleteRequest[];
+        deleteBedTypesRequests: RoomVariantBedType.DeleteRequest;
+        deleteCharacteristicsRequests: RoomVariantCharacteristic.DeleteRequest;
     }
 
     export const initial: RoomVariant = {
@@ -123,6 +123,6 @@ export namespace RoomVariant {
         bedTypes: [],
         characteristics: [],
 
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

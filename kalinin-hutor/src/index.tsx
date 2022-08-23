@@ -15,6 +15,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { ruRU } from "@mui/x-data-grid";
 
+import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
+import { createBrowserHistory } from "history";
+
 import './index.css';
 import './themes/bootstrap.scss';
 import '@fontsource/roboto/300.css';
@@ -42,7 +45,7 @@ const theme = createTheme(
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <React.StrictMode>
+  <React.StrictMode >
     <DocumentMeta {...meta}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterMoment}>

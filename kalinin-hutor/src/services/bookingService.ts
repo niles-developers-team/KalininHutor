@@ -22,13 +22,34 @@ class BookingService {
             .then(handleJsonResponse as ResponseHandler<Booking>);
     }
 
+    public async approveBooking(id: string): Promise<void> {
+        return fetch(`api/booking/approve?bookingId=${id}`, {
+            credentials: 'include',
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(handleJsonResponse as ResponseHandler<void>);
+    }
+
     public async get(query?: Booking.GetQuery): Promise<Booking[]> {
         let url = 'api/booking';
         let conditionIndex: number = 0;
         if (query) {
-            if (query.searchText !== undefined)
+            if (query.searchText)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}searchText=${query.searchText}`;
+            if (query.tenantId)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}tenantId=${query.tenantId}`;
         }
+
+        return fetch(url, {
+            credentials: 'include',
+            method: 'GET',
+        })
+            .then(handleJsonResponse as ResponseHandler<Booking[]>);
+    }
+
+    public async getLandlordBookings(landlordId: string, onlyNotApproved: boolean): Promise<Booking[]> {
+        let url = `api/booking/landlord-bookings?landlordId=${landlordId}&onlyNotApproved=${onlyNotApproved}`;
 
         return fetch(url, {
             credentials: 'include',

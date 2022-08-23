@@ -4,12 +4,11 @@ using AutoMapper;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using KalininHutor.API.DTO;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRoomCharacteristic = Domain.Booking.RoomCharacteristic;
-
-internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristic.CreateRequest, RoomCharacteristicDTO>
+internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristicCommands.CreateRequest, RoomCharacteristicDTO>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -20,9 +19,9 @@ internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<RoomCharacteristicDTO> Handle(RoomCharacteristic.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<RoomCharacteristicDTO> Handle(RoomCharacteristicCommands.CreateRequest request, CancellationToken cancellationToken)
     {
-        var entity = new DomainRoomCharacteristic(request.Name, request.Description, request.Type);
+        var entity = new RoomCharacteristic(request.Name, request.Description, request.Type);
         await _repository.Create(_mapper.Map<RoomCharacteristicEntity>(entity));
 
         return _mapper.Map<RoomCharacteristicDTO>(entity);
@@ -30,7 +29,7 @@ internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteris
 }
 
 ///<summary> Запросы и очереди характеристик номеров </summary>
-public partial class RoomCharacteristic
+public partial class RoomCharacteristicCommands
 {
     ///<summary> Запрос на создание характеристики номера </summary>
     public class CreateRequest : IRequest<RoomCharacteristicDTO>

@@ -1,13 +1,16 @@
-import moment from "moment";
-import { CreateBookingRoomVariantRequest } from "./bookingRoomVariant";
+import { BookingRoomVariant } from "./bookingRoomVariant";
+import { BookingStatuses, IEntity } from "./common";
+import { RentalObject } from "./rentalObject";
+import { User } from "./user";
 
-export interface Booking {
+export interface Booking extends IEntity {
     // Идентификатор брони
-    id: string | null;
-    // Идентификатор арендатора
-    tenantId: string | null;
+    id?: string;
     // Идентификатор объекта аренды
-    rentalObjectId: string | null;
+    rentalObjectId: string;
+    readonly createdAt?: string;
+    readonly status: BookingStatuses;
+    readonly number: number;
     // Количество взрослых
     adultCount: number;
     // Количество детей
@@ -18,6 +21,10 @@ export interface Booking {
     checkinDate: string;
     // Дата отъезда
     checkoutDate: string
+
+    roomVariants: BookingRoomVariant[];
+    tenant: User;
+    rentalObject?: RentalObject;
 }
 
 export namespace Booking {
@@ -27,18 +34,19 @@ export namespace Booking {
         id?: string;
         // Идентификатор арендатора
         tenantId?: string;
+        landlordId?: string;
         // Поисковая строка
         searchText?: string;
         // Дата заезда
         checkinDate?: string;
         // Дата отъезда
         checkoutDate?: string;
+        onlyNotApproved?: boolean;
     }
 
     // Создает бронь, результатом выполнения является GUID
     export interface CreateRequest {
-        // Идентификатор арендатора
-        tenantId: string;
+        tenant: User;
         // Идентификатор объекта аренды
         rentalObjectId: string;
         // Количество взрослых
@@ -51,7 +59,7 @@ export namespace Booking {
         checkoutDate: string
 
         // Коллекция бронируемых вариантов номеров
-        bookingRooms: CreateBookingRoomVariantRequest[];
+        bookingRooms: BookingRoomVariant.CreateRequest[];
     }
 
     // Запрос удаления брони
@@ -72,16 +80,5 @@ export namespace Booking {
         checkinDate: string;
         // Дата отъезда
         checkoutDate: string
-    }
-
-    export const initial: Booking = {
-        adultCount: 0,
-        checkinDate: moment().toISOString(),
-        checkoutDate: moment().add(7, 'days').toISOString(),
-        childCount: 0,
-        id: null,
-        rentalObjectId: null,
-        tenantId: null,
-        total: 0
     }
 }

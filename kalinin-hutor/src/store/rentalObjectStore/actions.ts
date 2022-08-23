@@ -307,8 +307,7 @@ export namespace RentalObjectActions {
     }
 
     export function getRentalObjectRoomVariants(id: string | undefined): AppThunkAction<Promise<GetRoomVariantsSuccessAction | GetRoomVariantsFailureAction>> {
-        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
+        return async (dispatch: AppThunkDispatch) => {
             dispatch(request(id));
 
             if (!id || id === 'create')

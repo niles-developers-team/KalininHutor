@@ -20,8 +20,7 @@ public class RoomVariantController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    [Authorize]
-    public async Task<IActionResult> Get([FromQuery] RoomVariant.GetQuery query)
+    public async Task<IActionResult> Get([FromQuery] RoomVariantCommands.GetQuery query)
     {
         var result = await _sender.Send(query);
 
@@ -31,15 +30,16 @@ public class RoomVariantController : ControllerBase
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RoomVariant.CreateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody] RoomVariantCommands.CreateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод обновления объекта аренды </summary>
     [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] RoomVariant.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] RoomVariantCommands.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] RoomVariant.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] RoomVariantCommands.DeleteRequest request) => Ok(await _sender.Send(request));
+}
 }

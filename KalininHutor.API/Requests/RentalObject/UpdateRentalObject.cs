@@ -1,12 +1,11 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRentalObject = Domain.Booking.RentalObject;
-
-internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRequest, Unit>
+internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.UpdateRequest, Unit>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -19,22 +18,25 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RentalObject.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<DomainRentalObject>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
 
-        foreach (var req in request.CreateRoomVariantsRequests)
-        {
-            req.RentalObject = entity;
-            await _sender.Send(req);
-        }
+        if (request.CreateRoomVariantsRequests != null)
+            foreach (var req in request.CreateRoomVariantsRequests)
+            {
+                req.RentalObject = entity;
+                await _sender.Send(req);
+            }
 
+        if (request.UpdateRoomVariantsRequests != null)
         foreach (var req in request.UpdateRoomVariantsRequests)
             await _sender.Send(req);
 
+        if (request.DeleteRoomVariantsRequest != null)
         await _sender.Send(request.DeleteRoomVariantsRequest);
 
         return Unit.Value;
@@ -42,7 +44,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObject.UpdateRe
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectCommands
 {
     ///<summary> Запрос обновления объекта аренды </summary>
     public class UpdateRequest : IRequest<Unit>
@@ -63,10 +65,10 @@ public partial class RentalObject
         ///<summary> Идентификатор объекта аренды </summary>
         public TimeOnly CheckoutTime { get; set; }
 
-        public IReadOnlyList<RoomVariant.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariant.CreateRequest>();
+        public IReadOnlyList<RoomVariantCommands.CreateRequest>? CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();
 
-        public IReadOnlyList<RoomVariant.UpdateRequest> UpdateRoomVariantsRequests { get; set; } = new List<RoomVariant.UpdateRequest>();
+        public IReadOnlyList<RoomVariantCommands.UpdateRequest>? UpdateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.UpdateRequest>();
 
-        public RoomVariant.DeleteRequest DeleteRoomVariantsRequest { get; set; }
+        public RoomVariantCommands.DeleteRequest? DeleteRoomVariantsRequest { get; set; }
     }
 }

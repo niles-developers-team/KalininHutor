@@ -8,6 +8,7 @@ export interface RoomVariantCharacteristic extends IEntity {
     roomVariantId: string | null;
     // Идентификатор характеристики
     roomCharacteristicId: string | null;
+    roomCharacteristicName: string;
     // Цена за услугу или удобство
     price?: number;
 
@@ -35,7 +36,7 @@ export namespace RoomVariantCharacteristic {
     // Запрос удаления характеристики варианта номера
     export interface DeleteRequest {
         // Идентификатор характеристики номера
-        id: string;
+        ids: string[];
     }
     // Запрос обновления характеристики варианта номера
     export interface UpdateRequest {
@@ -48,8 +49,9 @@ export namespace RoomVariantCharacteristic {
     export const initial: RoomVariantCharacteristic = {
         id: null,
         roomCharacteristicId: null,
+        roomCharacteristicName: '',
         roomVariantId: null,
 
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

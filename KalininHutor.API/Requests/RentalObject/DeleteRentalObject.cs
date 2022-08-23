@@ -3,7 +3,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteRentalObjectHandler : IRequestHandler<RentalObject.DeleteRequest, Unit>
+internal class DeleteRentalObjectHandler : IRequestHandler<RentalObjectCommands.DeleteRequest, Unit>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -16,10 +16,10 @@ internal class DeleteRentalObjectHandler : IRequestHandler<RentalObject.DeleteRe
         _roomVariantRepository = roomVariantRepository ?? throw new ArgumentNullException(nameof(roomVariantRepository));
     }
 
-    public async Task<Unit> Handle(RentalObject.DeleteRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RentalObjectCommands.DeleteRequest request, CancellationToken cancellationToken)
     {
         var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectsIds = request.Ids });
-        await _sender.Send(new RoomVariant.DeleteRequest { Ids = roomVariants.Select(o => o.Id).ToList() });
+        await _sender.Send(new RoomVariantCommands.DeleteRequest { Ids = roomVariants.Select(o => o.Id).ToList() });
 
         await _repository.Delete(request.Ids);
         return Unit.Value;
@@ -27,12 +27,12 @@ internal class DeleteRentalObjectHandler : IRequestHandler<RentalObject.DeleteRe
 }
 
 ///<summary> Запросы и очереди объектов аренды </summary>
-public partial class RentalObject
+public partial class RentalObjectCommands
 {
     ///<summary> Запрос удаления объекта аренды </summary>
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор объекта аренды </summary>
-        public IReadOnlyList<Guid> Ids { get; set; }
+        public IReadOnlyList<Guid>? Ids { get; set; }
     }
 }

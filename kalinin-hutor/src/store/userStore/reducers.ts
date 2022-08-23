@@ -3,6 +3,7 @@ import { AuthenticationState, UserDeleteState, UserModelsState, UserModelState, 
 
 const initialState: UserState = {
     authenticating: false,
+    authenticated: false,
     modelsLoading: true,
     modelLoading: true,
     deleting: false
@@ -24,7 +25,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         }
 
         case ActionTypes.signOut: {
-            const state: AuthenticationState = { authenticating: false, authenticated: false, currentUser: undefined }
+            const state: AuthenticationState = { authenticating: false, authenticated: false }
             return { ...prevState, ...state };
         }
 
@@ -39,7 +40,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         }
         case ActionTypes.getCurrentUserFailure: {
             const state: UserModelState = { modelLoading: true };
-            const authState: AuthenticationState = { authenticating: false, authenticated: false, currentUser: undefined }
+            const authState: AuthenticationState = { authenticating: false, authenticated: false }
             return { ...prevState, ...state, ...authState };
         }
 

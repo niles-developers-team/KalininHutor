@@ -8,7 +8,6 @@ public class RoomVariantBedType : IEntity<Guid>
     public BedTypes BedType { get; protected set; }
     public double? Width { get; protected set; }
     public double? Length { get; protected set; }
-    public int MaxInRoom { get; protected set; }
 
     protected RoomVariantBedType() { }
 
@@ -22,7 +21,7 @@ public class RoomVariantBedType : IEntity<Guid>
         RoomVariantId = roomVariantId;
         BedType = bedType;
 
-        SetSize(width, length, maxInRoom);
+        SetSize(width, length);
     }
 
     private void CheckSize(double? width, double? length)
@@ -32,11 +31,10 @@ public class RoomVariantBedType : IEntity<Guid>
             throw new ArgumentOutOfRangeException("Размер кровати должен быть больше 0.");
     }
 
-    public void SetSize(double? width, double? length, int maxInRoom)
+    public void SetSize(double? width, double? length)
     {
         CheckSize(width, length);
         Width = width;
         Length = length;
-        MaxInRoom = maxInRoom;
     }
 }

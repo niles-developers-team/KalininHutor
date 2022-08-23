@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristic.GetQuery, IEnumerable<RoomCharacteristicDTO>>
+internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristicCommands.GetQuery, IEnumerable<RoomCharacteristicDTO>>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -16,7 +16,7 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristi
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<RoomCharacteristicDTO>> Handle(RoomCharacteristic.GetQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RoomCharacteristicDTO>> Handle(RoomCharacteristicCommands.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RoomCharacteristicSearchOptions>(request));
         return result.Select(_mapper.Map<RoomCharacteristicDTO>).ToList();
@@ -24,7 +24,7 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristi
 }
 
 ///<summary> Запросы и очереди характеристик номеров </summary>
-public partial class RoomCharacteristic
+public partial class RoomCharacteristicCommands
 {
     ///<summary> Очередь получения удобств и услуг</summary>
     public class GetQuery : IRequest<IEnumerable<RoomCharacteristicDTO>>

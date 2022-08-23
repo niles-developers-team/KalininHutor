@@ -72,14 +72,15 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
                 rv.Count,
                 rv.FreeCount
             from RoomVariants rv
-            /*where*/
+            /**where**/
+            order by Price desc, Name asc
         ");
 
         if (options.RentalObjectId.HasValue)
             query.Where($"RentalObjectId = {options.RentalObjectId}");
 
         if (options.RentalObjectsIds != null && options.RentalObjectsIds.Any())
-            query.Where($"RentalObjectId = any({options.RentalObjectsIds})");
+            query.Where($"RentalObjectId = any ({options.RentalObjectsIds})");
 
         return await query.QueryAsync<RoomVariantEntity>();
     }

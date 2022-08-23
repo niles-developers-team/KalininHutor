@@ -1,9 +1,8 @@
-import { AppBar, Button, Grid, Slide, Snackbar, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { AppState, SnackbarActions, SnackbarActionTypes } from "../store";
-import { sessionService } from "../services";
+import { AppState, SnackbarActions } from "../store";
 import { useEffect, useState } from "react";
 import { SnackbarVariant } from "../models";
 import { MessageSnackbar } from "./common";
@@ -59,13 +58,12 @@ export const LayoutComponent = function (props: Props): JSX.Element {
         setMessage(snackbarState.message);
     }, [snackbarState]);
 
-    function handleAccountClick() {
-        if (!sessionService.isUserAuthenticated()) {
+    function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
+        if (!userState.authenticating && !userState.authenticated) {
+            event.preventDefault();
             props.onSigninDialogOpen();
             return;
         }
-
-        navigate('/me');
     }
 
     let profilePageText = 'Войти';
@@ -80,40 +78,40 @@ export const LayoutComponent = function (props: Props): JSX.Element {
     return (
         <Grid container direction="row">
             <HideOnScroll {...props}>
-                <AppBar position="sticky" color="default">
+                <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Toolbar>
                         <Grid container className="container" alignItems="center">
+                            <Button onClick={() => navigate('/')}>КХ</Button>
                             <Button onClick={() => navigate('/catalog')}>Каталог</Button>
-                            <Search color="primary" fontSize="large" />
                             <Grid item xs>
-                                <TextField fullWidth variant="outlined" placeholder="Поиск" />
+                                <TextField size="small" fullWidth variant="outlined" placeholder="Поиск" />
                             </Grid>
-                            <Button>Поиск</Button>
-                            <Button onClick={handleAccountClick}>
+                            <Button variant="contained"><Search /></Button>
+                            <Button size="small" href="/me" onClick={handleAccountClick}>
                                 <Grid container direction="column" alignItems="center">
                                     <Face />
                                     <span>{profilePageText}</span>
                                 </Grid>
                             </Button>
-                            <Button onClick={() => navigate('/favorite')}>
+                            <Button size="small" href="/favorite">
                                 <Grid container direction="column" alignItems="center">
                                     <Favorite />
                                     <span>Избранное</span>
                                 </Grid>
                             </Button>
-                            <Button onClick={() => navigate('/my-orders')}>
+                            <Button size="small" href="/my-orders">
                                 <Grid container direction="column" alignItems="center">
                                     <ShoppingBag />
                                     <span>Заказы</span>
                                 </Grid>
                             </Button>
-                            <Button onClick={() => navigate('/my-bookings')}>
+                            <Button size="small" href="/my-bookings">
                                 <Grid container direction="column" alignItems="center">
                                     <Gite />
                                     <span>Брони</span>
                                 </Grid>
                             </Button>
-                            <Button onClick={() => navigate('/cart')}>
+                            <Button size="small" href="/cart">
                                 <Grid container direction="column" alignItems="center">
                                     <ShoppingCart />
                                     <span>Корзина</span>
@@ -123,9 +121,9 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <Grid container direction="column" alignItems="center" component="main">
+            <Container component="main" sx={{ marginTop: "40px" }}>
                 {props.children}
-            </Grid>
+            </Container>
             <Toolbar color="primary">
             </Toolbar>
             <MessageSnackbar

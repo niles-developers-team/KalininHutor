@@ -122,7 +122,6 @@ export namespace UserActions {
 
     export interface UpdateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.updateRequest;
-        request: User.UpdateRequest;
     }
 
     export interface UpdateSuccessAction extends Action<ActionTypes> {
@@ -230,7 +229,7 @@ export namespace UserActions {
 
             try {
                 let user: User | undefined = undefined;
-                    user = await userService.getCurrentUser();
+                user = await userService.getCurrentUser();
                 if (!user) {
                     throw new ApplicationError('Не удалось найти пользователя');
                 }
@@ -249,12 +248,23 @@ export namespace UserActions {
         }
     }
 
-    export function updateUser(updateRequest: User.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+    export function updateUser(user: User): UpdateSuccessAction {
+        return { type: ActionTypes.updateSuccess, model: user };
+    }
+
+    export function applyChanges(user: User): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(updateRequest));
+            dispatch(request());
 
             try {
-                const result = await userService.update(updateRequest);
+                const result = await userService.update({
+                    id: user.id || '',
+                    phoneNumber: user.phoneNumber,
+                    birthday: user.birthday || undefined,
+                    email: user.email,
+                    lastname: user.lastname,
+                    name: user.name
+                });
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
                 return dispatch(success(result));
             }
@@ -264,7 +274,7 @@ export namespace UserActions {
                 return dispatch(failure(error));
             }
 
-            function request(request: User.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest, request: request }; }
+            function request(): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
             function success(user: User): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: user }; }
             function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
         }

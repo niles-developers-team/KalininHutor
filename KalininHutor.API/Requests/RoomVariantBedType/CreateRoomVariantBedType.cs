@@ -3,12 +3,11 @@ using AutoMapper;
 
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRoomVariantBedType = Domain.Booking.RoomVariantBedType;
-
-internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedType.CreateRequest, Guid>
+internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeCommands.CreateRequest, Guid>
 {
     private readonly RoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -19,21 +18,21 @@ internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(RoomVariantBedType.CreateRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RoomVariantBedTypeCommands.CreateRequest request, CancellationToken cancellationToken)
     {
         if (!request.RoomVariantId.HasValue)
         {
             throw new ApplicationException("Не указан вариант номера");
         }
-        var RoomVariantBedType = new DomainRoomVariantBedType(request.RoomVariantId.Value, request.BedType, request.Width, request.Length, request.MaxInRoom);
-        await _repository.Create(_mapper.Map<RoomVariantBedTypeEntity>(RoomVariantBedType));
+        var roomVariantBedType = new RoomVariantBedType(request.RoomVariantId.Value, request.BedType, request.Width, request.Length, request.MaxInRoom);
+        await _repository.Create(_mapper.Map<RoomVariantBedTypeEntity>(roomVariantBedType));
 
-        return RoomVariantBedType.Id;
+        return roomVariantBedType.Id;
     }
 }
 
 ///<summary> Запросы и очереди вариантов кроватей </summary>
-public partial class RoomVariantBedType
+public partial class RoomVariantBedTypeCommands
 {
     ///<summary> Запрос создания варианта кровати номера </summary>
     public class CreateRequest : IRequest<Guid>

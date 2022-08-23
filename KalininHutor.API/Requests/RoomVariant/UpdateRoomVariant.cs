@@ -1,13 +1,12 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-using DomainRoomVariant = Domain.Booking.RoomVariant;
-
-internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequest, Unit>
+internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.UpdateRequest, Unit>
 {
     private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
@@ -20,9 +19,9 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RoomVariant.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<DomainRoomVariant>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<RoomVariant>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
         entity.SetPriceAndLimit(request.Price, request.MaxPersonsCount);
         entity.SetSize(request.Width, request.Length);
@@ -30,44 +29,44 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariant.UpdateRequ
         entity.SetCounts(request.Count, request.FreeCount);
         await _repository.Update(_mapper.Map<RoomVariantEntity>(entity));
 
+        if (request.CreateBedTypesRequests != null)
         foreach (var req in request.CreateBedTypesRequests)
         {
             req.RoomVariantId = entity.Id;
             await _sender.Send(req);
         }
 
+        if (request.CreateCharacteristicsRequests != null)
         foreach (var req in request.CreateCharacteristicsRequests)
         {
             req.RoomVariantId = entity.Id;
             await _sender.Send(req);
         }
 
+        if (request.UpdateBedTypesRequests != null)
         foreach (var req in request.UpdateBedTypesRequests)
         {
             await _sender.Send(req);
         }
 
+        if (request.UpdateCharacteristicsRequests != null)
         foreach (var req in request.UpdateCharacteristicsRequests)
         {
             await _sender.Send(req);
         }
 
-        foreach (var req in request.DeleteBedTypesRequests)
-        {
-            await _sender.Send(req);
-        }
+        if (request.DeleteBedTypesRequests != null)
+            await _sender.Send(request.DeleteBedTypesRequests);
 
-        foreach (var req in request.DeleteCharacteristicsRequests)
-        {
-            await _sender.Send(req);
-        }
+        if (request.DeleteCharacteristicsRequests != null)
+            await _sender.Send(request.DeleteCharacteristicsRequests);
 
         return Unit.Value;
     }
 }
 
 ///<summary> Запросы и очереди вариантов номеров </summary>
-public partial class RoomVariant
+public partial class RoomVariantCommands
 {
     ///<summary> Запрос обновления варинта номера </summary>
     public class UpdateRequest : IRequest<Unit>
@@ -97,13 +96,13 @@ public partial class RoomVariant
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
 
-        public IReadOnlyList<RoomVariantBedType.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedType.CreateRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.CreateRequest>();
+        public IReadOnlyList<RoomVariantBedTypeCommands.CreateRequest>? CreateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.CreateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristicCommands.CreateRequest>? CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.CreateRequest>();
 
-        public IReadOnlyList<RoomVariantBedType.UpdateRequest> UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedType.UpdateRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.UpdateRequest> UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.UpdateRequest>();
+        public IReadOnlyList<RoomVariantBedTypeCommands.UpdateRequest>? UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.UpdateRequest>();
+        public IReadOnlyList<RoomVariantCharacteristicCommands.UpdateRequest>? UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.UpdateRequest>();
 
-        public IReadOnlyList<RoomVariantBedType.DeleteRequest> DeleteBedTypesRequests { get; set; } = new List<RoomVariantBedType.DeleteRequest>();
-        public IReadOnlyList<RoomVariantCharacteristic.DeleteRequest> DeleteCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristic.DeleteRequest>();
+        public RoomVariantBedTypeCommands.DeleteRequest? DeleteBedTypesRequests { get; set; }
+        public RoomVariantCharacteristicCommands.DeleteRequest? DeleteCharacteristicsRequests { get; set; }
     }
 }

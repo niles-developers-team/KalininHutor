@@ -19,8 +19,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
                 {entity.RoomVariantId},
                 {entity.BedType},
                 {entity.Width},
-                {entity.Length},
-                {entity.MaxInRoom}
+                {entity.Length}
             )
         ").ExecuteAsync();
     }
@@ -37,7 +36,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-                select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
+                select Id, RoomVariantId, BedType, Width, Length
                 from RoomVariantBedTypes
                 /**where**/
             ");
@@ -56,7 +55,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         return await connection.QueryBuilder($@"
-            select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
+            select Id, RoomVariantId, BedType, Width, Length
             from RoomVariantBedTypes
             where Id = {id}
         ").QuerySingleOrDefaultAsync<RoomVariantBedTypeEntity>();
@@ -69,8 +68,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         await connection.QueryBuilder($@"
             update RoomVariantBedTypes
             set Width = {entity.Width},
-                Length = {entity.Length},
-                MaxInRoom = {entity.MaxInRoom}
+                Length = {entity.Length}
             where Id = {entity.Id}
         ").ExecuteAsync();
 

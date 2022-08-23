@@ -2,17 +2,15 @@ import { BedTypes, EntityStatus, IEntity } from "./common";
 
 export interface RoomVariantBedType extends IEntity {
     // Идентификатор варианта кровати
-    id: string | null;
+    id?: string;
     // Идентификатор номера
-    roomVariantId: string | null;
+    roomVariantId?: string;
     // Тип кровати
     bedType: BedTypes;
     // Ширина кровати
     width?: number;
     // Длина кровати
     length?: number;
-    // Максимально в комнате
-    maxInRoom: number;
 }
 
 export namespace RoomVariantBedType {
@@ -27,43 +25,35 @@ export namespace RoomVariantBedType {
     // Запрос создания варианта кровати номера
     export interface CreateRequest {
         // Идентификатор номера
-        roomVariantId: string | null;
+        roomVariantId: string;
         // Тип кровати
         bedType: BedTypes;
         // Ширина кровати
         width?: number;
         // Длина кровати
         length?: number;
-        // Максимально в комнате
-        maxInRoom: number;
     }
 
     // Запрос удаления варианта кровати в номере
     export interface DeleteRequest {
         // Идентификатор варианта кровати
-        id: string;
+        ids: string[];
     }
 
     // Запрос обновления варианта кровати
     export interface UpdateRequest {
         // Идентификатор варианта кровати
-        id: string | null;
+        id: string;
         // Тип кровати
         bedType: BedTypes;
         // Ширина кровати
         width?: number;
         // Длина кровати
         length?: number;
-        // Максимально в комнате
-        maxInRoom: number;
     }
 
     export const initial: RoomVariantBedType = {
-        id: null,
         bedType: BedTypes.Single,
-        maxInRoom: 0,
-        roomVariantId: null,
-
-        status: EntityStatus.NotChanged
+        entityStatus: EntityStatus.NotChanged
     }
 }

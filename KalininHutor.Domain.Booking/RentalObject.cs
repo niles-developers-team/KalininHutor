@@ -1,4 +1,5 @@
 using KalininHutor.Domain.Booking.Enums;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.Domain.Booking;
 public class RentalObject : IEntity<Guid>
@@ -110,19 +111,22 @@ public class RentalObject : IEntity<Guid>
         return roomVariant;
     }
 
-    public Booking CreateBooking(Guid TenantId,
-                                 DateOnly checkInDate, DateOnly checkOutDate,
-                                 int adultCount, int childsCount,
-                                 IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
+    public Booking CreateBooking(User tenant, DateOnly checkInDate, DateOnly checkOutDate,
+                                 int adultCount, int childsCount, IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
     {
         ValidateBookingRoomVariants(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariants);
 
-        var booking = new Booking(Id, TenantId, adultCount, childsCount, checkInDate, checkOutDate);
+        var booking = new Booking(Id, tenant, adultCount, childsCount, checkInDate, checkOutDate);
+
+        int nightsCount = (int)(checkOutDate.ToDateTime(TimeOnly.MaxValue) - checkInDate.ToDateTime(TimeOnly.MinValue)).TotalDays;
+
         foreach (var bookingRoomVariant in bookingRoomVariants)
         {
             var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
-            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, roomVariant.Price, bookingRoomVariant.BookingBedTypes);
+            booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, bookingRoomVariant.RoomsCount, roomVariant.CalculateAmount(nightsCount, bookingRoomVariant.RoomsCount), bookingRoomVariant.BedType);
         }
+
+        booking.CalculateTotal();
 
         return booking;
     }
@@ -136,7 +140,7 @@ public class RentalObject : IEntity<Guid>
         if (_bookings == null)
             throw new MissingFieldException("Брони объекта аренды не были загружены");
 
-        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Select(brv => brv.RoomVariantId).Contains(o.Id));
+        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId== o.Id));
 
         var visitorsSum = adultCount + childsCount;
         if (visitorsSum > selectedRoomVariants.Sum(o => o.MaxPersonsCount))
@@ -157,11 +161,5 @@ public class RentalObject : IEntity<Guid>
         var bookedRoomVariants = _bookings.Where(o => o.CheckinDate >= checkInDate || o.CheckoutDate <= o.CheckoutDate).SelectMany(o => o.RoomVariants).Where(o => o.RoomVariantId == bookingRoomVariant.RoomVariantId).Distinct();
         if (bookedRoomVariants.Count() == _roomVariants.Sum(o => o.Count))
             throw new ApplicationException("Нет свободного варианта номера на указанные даты.");
-    }
-
-    private void CheckBookingRoomVariantBeds(int adultCount, int childsCount, BookingRoomVariant bookingRoomVariant, RoomVariant roomVariant)
-    {
-        if (bookingRoomVariant.BookingBedTypes.Any(o => roomVariant.BedTypes.Select(bt => bt.Id).Contains(o.BedTypeId)))
-            throw new ApplicationException("Выбран неизвестный вариант кровати.");
     }
 }

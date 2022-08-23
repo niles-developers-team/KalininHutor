@@ -1,13 +1,12 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
 using KalininHutor.DAL.Identity;
+using KalininHutor.Domain.Identity;
 using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-using DomainUser = Domain.Identity.User;
-
-internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, UserDetailsDTO>
+internal class UpdateUserHandler : IRequestHandler<UserCommands.UpdateRequest, UserDetailsDTO>
 {
     private readonly UserRepository _repository;
     private readonly IMapper _mapper;
@@ -18,9 +17,9 @@ internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, U
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<UserDetailsDTO> Handle(UserRequests.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<UserDetailsDTO> Handle(UserCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
-        var entity = _mapper.Map<DomainUser>(await _repository.Get(request.Id));
+        var entity = _mapper.Map<User>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Lastname, request.Email, request.Birthday);
         await _repository.Update(_mapper.Map<UserEntity>(entity));
         return _mapper.Map<UserDetailsDTO>(entity);
@@ -28,7 +27,7 @@ internal class UpdateUserHandler : IRequestHandler<UserRequests.UpdateRequest, U
 }
 
 ///<summary> Запросы и очереди пользователей </summary>
-public partial class UserRequests
+public partial class UserCommands
 {
     ///<summary> Запрос на изменение пользователя </summary>
     public class UpdateRequest : IRequest<UserDetailsDTO>

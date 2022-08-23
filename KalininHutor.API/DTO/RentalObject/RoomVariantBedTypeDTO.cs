@@ -15,6 +15,4 @@ public class RoomVariantBedTypeDTO
     public double? Width { get; protected set; }
     ///<summary> Длина кровати </summary>
     public double? Length { get; protected set; }
-    ///<summary> Максимально в комнате </summary>
-    public int MaxInRoom { get; protected set; }
 }

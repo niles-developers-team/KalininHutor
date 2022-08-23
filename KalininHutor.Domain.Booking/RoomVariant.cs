@@ -150,6 +150,11 @@ public class RoomVariant : IEntity<Guid>
         return true;
     }
 
+    public decimal CalculateAmount(int nightsCount, int roomsCount)
+    {
+        return Price * nightsCount * roomsCount;
+    }
+
     private int GetMaxBedInRoom(double? width, double? length)
     {
         if (!width.HasValue || width == 0 ||
