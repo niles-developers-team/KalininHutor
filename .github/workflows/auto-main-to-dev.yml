@@ -35,4 +35,3 @@ jobs:
           author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           body: ${{ env.GIT_COMMIT_MESSAGE_BODY }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          delete-branch: true
