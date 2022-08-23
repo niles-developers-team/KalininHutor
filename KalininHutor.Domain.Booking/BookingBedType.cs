@@ -11,7 +11,7 @@ public class BookingBedType : IEntity<Guid>
 
     public BookingBedType(Guid bookingRoomVariantId, Guid bedTypeId, int count)
     {
-        if(bookingRoomVariantId == null || bookingRoomVariantId == Guid.Empty)
+        if(bookingRoomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор бронируемого номера.");
 
         if (count < 0)

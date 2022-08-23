@@ -33,6 +33,6 @@ public partial class RentalObjectCommands
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор объекта аренды </summary>
-        public IReadOnlyList<Guid>? Ids { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

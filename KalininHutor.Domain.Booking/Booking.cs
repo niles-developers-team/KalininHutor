@@ -10,10 +10,10 @@ public class Booking : IEntity<Guid>
     public Guid Id { get; protected set; }
     public Guid? TenantId { get; protected set; }
     public long Number { get; protected set; }
-    public string TenantName { get; protected set; }
-    public string TenantLastname { get; protected set; }
-    public string TenantEmail { get; protected set; }
-    public string TenantPhone { get; protected set; }
+    public string TenantName { get; protected set; } = string.Empty;
+    public string TenantLastname { get; protected set; } = string.Empty;
+    public string TenantEmail { get; protected set; } = string.Empty;
+    public string TenantPhone { get; protected set; } = string.Empty;
     public Guid RentalObjectId { get; protected set; }
     public int AdultCount { get; protected set; }
     public int ChildCount { get; protected set; }

@@ -27,6 +27,6 @@ public partial class UserCommands
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор пользователя </summary>
-        public IReadOnlyList<Guid> Ids { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

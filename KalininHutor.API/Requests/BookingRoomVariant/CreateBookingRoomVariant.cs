@@ -37,9 +37,11 @@ public partial class BookingRoomVariantCommands
         public Guid BookingId { get; set; }
         ///<summary> Идентификатор варианта номера </summary>
         public Guid RoomVariantId { get; set; }
+        ///<summary> Выбранное количество комнат </summary>
         public int RoomsCount { get; set; }
-        ///<summary> </summary>
+        ///<summary> Всего за комнаты </summary>
         public decimal Amount { get; set; }
+        ///<summary> Выбранные варианты кровати </summary>
         public BedTypes BedType { get; set; }
     }
 }

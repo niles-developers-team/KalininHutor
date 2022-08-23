@@ -27,6 +27,6 @@ public partial class RoomCharacteristicCommands
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор характеристики номера </summary>
-        public IReadOnlyList<Guid> Ids { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

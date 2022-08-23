@@ -10,7 +10,7 @@ public class RoomVariantCharacteristicDTO
     ///<summary> Идентификатор характеристики </summary>
     public Guid RoomCharacteristicId { get; protected set; }
     ///<summary> Название характеристики комнаты </summary>
-    public string RoomCharacteristicName { get; protected set; }
+    public string RoomCharacteristicName { get; protected set; } = string.Empty;
     ///<summary> Цена за услугу или удобство </summary>
     public decimal Price { get; protected set; }
 }

@@ -27,9 +27,9 @@ public class BookingDTO
     public BookingStatuses Status { get; protected set; } = BookingStatuses.Draft;
 
     ///<summary> Арендатор </summary>
-    public UserDTO Tenant { get; set; }
+    public UserDTO Tenant { get; set; } = new UserDTO();
     ///<summary> Объект аренды </summary>
-    public RentalObjectDTO RentalObject { get; set; }
+    public RentalObjectDTO RentalObject { get; set; } = new RentalObjectDTO();
     ///<summary> Бронируемые варианты номеров </summary>
-    public IEnumerable<BookingRoomVariantDTO> RoomVariants { get; set; }
+    public IEnumerable<BookingRoomVariantDTO> RoomVariants { get; set; } = new List<BookingRoomVariantDTO>();
 }

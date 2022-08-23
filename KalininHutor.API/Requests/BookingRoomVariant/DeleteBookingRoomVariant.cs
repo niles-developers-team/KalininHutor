@@ -26,6 +26,6 @@ public partial class BookingRoomVariantCommands
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор выбранного варианта номера </summary>
-        public IReadOnlyList<Guid> Ids { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

@@ -21,7 +21,7 @@ public class RentalObjectDTO
     ///<summary> Лучшие предложения </summary>
     public RentalObjectBestDemandDTO? BestDemand { get; set; }
     ///<summary> Варианты номеров </summary>
-    public IEnumerable<RoomVariantDTO> RoomVariants { get; set; }
+    public IEnumerable<RoomVariantDTO> RoomVariants { get; set; } = new List<RoomVariantDTO>();
 }
 
 ///<summary> Лучшее предложение по фильтру </summary>
