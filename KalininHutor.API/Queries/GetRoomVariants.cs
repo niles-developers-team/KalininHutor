@@ -53,6 +53,7 @@ public partial class RoomVariantCommands
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? RentalObjectId { get; set; }
 
+        ///<summary> Коллекция идентификаторов объектов аренды </summary>
         public IEnumerable<Guid>? RentalObjectsIds { get; set; }
     }
 }

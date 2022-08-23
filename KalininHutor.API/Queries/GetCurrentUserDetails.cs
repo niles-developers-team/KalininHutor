@@ -15,7 +15,7 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCu
     public GetCurrentUserDetailsHandler(UserRepository repository, IHttpContextAccessor contextAccessor, ISender sender)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _context = contextAccessor == null ? throw new ArgumentNullException(nameof(contextAccessor)) : contextAccessor.HttpContext;
+        _context = contextAccessor != null ? contextAccessor.HttpContext : throw new ArgumentNullException(nameof(contextAccessor));
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
