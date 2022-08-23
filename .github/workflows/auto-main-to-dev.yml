@@ -1,0 +1,38 @@
+# This is a basic workflow that is manually triggered
+
+name: Auto merge main to dev
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches:
+      - main
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "greet"
+  greet:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: checking out code
+        uses: actions/checkout@v2
+        
+      - name: extract git commit data
+        uses: rlespinasse/git-commit-data-action@v1.x
+        
+      - name: Raise Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: "dev"
+          base: master
+          title: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
+          committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
+          author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
+          body: ${{ env.GIT_COMMIT_MESSAGE_BODY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-branch: true
