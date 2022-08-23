@@ -1,13 +1,14 @@
 using MediatR;
 using AutoMapper;
 
-using KalininHutor.Domain.Booking;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking.Enums;
+using KalininHutor.API.DTO;
+using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Requests;
 
-internal class CreateRoomCharacteristicHandler : IRequestHandler<CreateRoomCharacteristicRequest, Guid>
+internal class CreateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristicCommands.CreateRequest, RoomCharacteristicDTO>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -18,22 +19,26 @@ internal class CreateRoomCharacteristicHandler : IRequestHandler<CreateRoomChara
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Guid> Handle(CreateRoomCharacteristicRequest request, CancellationToken cancellationToken)
+    public async Task<RoomCharacteristicDTO> Handle(RoomCharacteristicCommands.CreateRequest request, CancellationToken cancellationToken)
     {
-        var RoomCharacteristic = new RoomCharacteristic(request.Name, request.Description, request.Type);
-        await _repository.Create(_mapper.Map<RoomCharacteristicEntity>(RoomCharacteristic));
+        var entity = new RoomCharacteristic(request.Name, request.Description, request.Type);
+        await _repository.Create(_mapper.Map<RoomCharacteristicEntity>(entity));
 
-        return RoomCharacteristic.Id;
+        return _mapper.Map<RoomCharacteristicDTO>(entity);
     }
 }
 
-///<summary> Запрос на создание характеристики номера </summary>
-public class CreateRoomCharacteristicRequest : IRequest<Guid>
+///<summary> Запросы и очереди характеристик номеров </summary>
+public partial class RoomCharacteristicCommands
 {
-    ///<summary> Название объекта аренды </summary>
-    public string Name { get; set; } = string.Empty;
-    ///<summary> Описание объекта аренды </summary>
-    public string Description { get; set; } = string.Empty;
-    ///<summary> Тип характеристики </summary>
-    public CharacteristicTypes Type { get; set; }
+    ///<summary> Запрос на создание характеристики номера </summary>
+    public class CreateRequest : IRequest<RoomCharacteristicDTO>
+    {
+        ///<summary> Название объекта аренды </summary>
+        public string Name { get; set; } = string.Empty;
+        ///<summary> Описание объекта аренды </summary>
+        public string Description { get; set; } = string.Empty;
+        ///<summary> Тип характеристики </summary>
+        public CharacteristicTypes Type { get; set; }
+    }
 }

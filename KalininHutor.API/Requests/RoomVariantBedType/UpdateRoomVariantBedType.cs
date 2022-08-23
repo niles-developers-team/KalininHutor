@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<UpdateRoomVariantBedTypeRequest, Unit>
+internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeCommands.UpdateRequest, Unit>
 {
     private readonly RoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -16,24 +16,28 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<UpdateRoomVaria
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRoomVariantBedTypeRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantBedTypeCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RoomVariantBedType>(await _repository.Get(request.Id));
-        entity.SetSize(request.Width, request.Length, request.MaxInRoom);
+        entity.SetSize(request.Width, request.Length);
         await _repository.Update(_mapper.Map<RoomVariantBedTypeEntity>(entity));
         return Unit.Value;
     }
 }
 
-///<summary> Запрос обновления варианта кровати </summary>
-public class UpdateRoomVariantBedTypeRequest : IRequest<Unit>
+///<summary> Запросы и очереди вариантов кроватей </summary>
+public partial class RoomVariantBedTypeCommands
 {
-    ///<summary> Идентификатор варианта кровати </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Ширина кровати </summary>
-    public double? Width { get; protected set; }
-    ///<summary> Длина кровати </summary>
-    public double? Length { get; protected set; }
-    ///<summary> Максимально в комнате </summary>
-    public int MaxInRoom { get; protected set; }
+    ///<summary> Запрос обновления варианта кровати </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор варианта кровати </summary>
+        public Guid Id { get; protected set; }
+        ///<summary> Ширина кровати </summary>
+        public double? Width { get; protected set; }
+        ///<summary> Длина кровати </summary>
+        public double? Length { get; protected set; }
+        ///<summary> Максимально в комнате </summary>
+        public int MaxInRoom { get; protected set; }
+    }
 }

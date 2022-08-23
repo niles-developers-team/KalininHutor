@@ -6,7 +6,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomCharacteristicRequest, Unit>
+internal class UpdateRoomCharacteristicHandler : IRequestHandler<RoomCharacteristicCommands.UpdateRequest, Unit>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomChara
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRoomCharacteristicRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomCharacteristicCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RoomCharacteristic>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.Type);
@@ -26,15 +26,19 @@ internal class UpdateRoomCharacteristicHandler : IRequestHandler<UpdateRoomChara
     }
 }
 
-///<summary> Запрос обновления характеристики номера </summary>
-public class UpdateRoomCharacteristicRequest : IRequest<Unit>
+///<summary> Запросы и очереди характеристик номеров </summary>
+public partial class RoomCharacteristicCommands
 {
-    ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; set; }
-    ///<summary> Название характеристики номера </summary>
-    public string Name { get; set; } = string.Empty;
-    ///<summary> Описание характеристики номера </summary>
-    public string Description { get; set; } = string.Empty;
-    ///<summary> Тип характеристики </summary>
-    public CharacteristicTypes Type { get; set; }
+    ///<summary> Запрос обновления характеристики номера </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор характеристики номера </summary>
+        public Guid Id { get; set; }
+        ///<summary> Название характеристики номера </summary>
+        public string Name { get; set; } = string.Empty;
+        ///<summary> Описание характеристики номера </summary>
+        public string Description { get; set; } = string.Empty;
+        ///<summary> Тип характеристики </summary>
+        public CharacteristicTypes Type { get; set; }
+    }
 }

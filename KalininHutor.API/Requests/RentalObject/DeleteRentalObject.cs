@@ -3,26 +3,36 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class DeleteRentalObjectHandler : IRequestHandler<DeleteRentalObjectRequest, Unit>
+internal class DeleteRentalObjectHandler : IRequestHandler<RentalObjectCommands.DeleteRequest, Unit>
 {
+    private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
+    private readonly RoomVariantRepository _roomVariantRepository;
 
-    public DeleteRentalObjectHandler(RentalObjectRepository repository)
+    public DeleteRentalObjectHandler(ISender sender, RentalObjectRepository repository, RoomVariantRepository roomVariantRepository)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _roomVariantRepository = roomVariantRepository ?? throw new ArgumentNullException(nameof(roomVariantRepository));
     }
 
-    public async Task<Unit> Handle(DeleteRentalObjectRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RentalObjectCommands.DeleteRequest request, CancellationToken cancellationToken)
     {
-        await _repository.Delete(request.Id);
+        var roomVariants = await _roomVariantRepository.Get(new RoomVariantSearchOptions { RentalObjectsIds = request.Ids });
+        await _sender.Send(new RoomVariantCommands.DeleteRequest { Ids = roomVariants.Select(o => o.Id).ToList() });
 
+        await _repository.Delete(request.Ids);
         return Unit.Value;
     }
 }
 
-///<summary> Запрос удаления объекта аренды </summary>
-public class DeleteRentalObjectRequest : IRequest<Unit>
+///<summary> Запросы и очереди объектов аренды </summary>
+public partial class RentalObjectCommands
 {
-    ///<summary> Идентификатор объекта аренды </summary>
-    public Guid Id { get; set; }
+    ///<summary> Запрос удаления объекта аренды </summary>
+    public class DeleteRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор объекта аренды </summary>
+        public IReadOnlyList<Guid>? Ids { get; set; }
+    }
 }

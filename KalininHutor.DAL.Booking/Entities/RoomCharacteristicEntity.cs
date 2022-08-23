@@ -18,4 +18,5 @@ public class RoomCharacteristicSearchOptions
     public string? SearchText { get; set; }
     ///<summary> Тип (Зона) харакетистики </summary>
     public int? Type { get; protected set; }
+    public int? Take { get; protected set; }
 }

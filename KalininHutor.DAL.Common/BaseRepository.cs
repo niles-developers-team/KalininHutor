@@ -17,7 +17,7 @@ public abstract class BaseRepository<T, TSearchOptions> : IRepository<T, TSearch
 
     public abstract Task Create(T entity);
 
-    public abstract Task Delete(Guid id);
+    public abstract Task Delete(IReadOnlyList<Guid> ids);
 
     public abstract Task<IEnumerable<T>> Get(TSearchOptions options);
 

@@ -1,11 +1,11 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
-using KalininHutor.Domain.Booking.Enums;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Requests;
 
-internal class GetRoomCharacteristicsHandler : IRequestHandler<GetRoomCharacteristicsQuery, IEnumerable<GetRoomCharacteristicsResponse>>
+internal class GetRoomCharacteristicsHandler : IRequestHandler<RoomCharacteristicCommands.GetQuery, IEnumerable<RoomCharacteristicDTO>>
 {
     private readonly RoomCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -16,31 +16,23 @@ internal class GetRoomCharacteristicsHandler : IRequestHandler<GetRoomCharacteri
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<GetRoomCharacteristicsResponse>> Handle(GetRoomCharacteristicsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RoomCharacteristicDTO>> Handle(RoomCharacteristicCommands.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<RoomCharacteristicSearchOptions>(request));
-        return result.Select(_mapper.Map<GetRoomCharacteristicsResponse>).ToList();
+        return result.Select(_mapper.Map<RoomCharacteristicDTO>).ToList();
     }
 }
 
-///<summary> Очередь получения удобств и услуг</summary>
-public class GetRoomCharacteristicsQuery : IRequest<IEnumerable<GetRoomCharacteristicsResponse>>
+///<summary> Запросы и очереди характеристик номеров </summary>
+public partial class RoomCharacteristicCommands
 {
-    ///<summary> Идентификатор характеристики </summary>
-    public Guid Id { get; set; }
-    ///<summary> Поисковая строка </summary>
-    public string SearchText { get; set; } = string.Empty;
-}
-
-///<summary> Модель чтения брони </summary>
-public class GetRoomCharacteristicsResponse
-{
-    ///<summary> Идентификатор характеристики </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Название характеристики </summary>
-    public string Name { get; protected set; } = string.Empty;
-    ///<summary> Описание харакетирстики </summary>
-    public string Description { get; protected set; } = string.Empty;
-    ///<summary> Тип (Зона) харакетистики </summary>
-    public CharacteristicTypes Type { get; protected set; }
+    ///<summary> Очередь получения удобств и услуг</summary>
+    public class GetQuery : IRequest<IEnumerable<RoomCharacteristicDTO>>
+    {
+        ///<summary> Идентификатор характеристики </summary>
+        public Guid? Id { get; set; }
+        ///<summary> Поисковая строка </summary>
+        public string? SearchText { get; set; } = string.Empty;
+        public int? Take { get; set; }
+    }
 }

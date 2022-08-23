@@ -1,47 +1,72 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using KalininHutor.Domain.Identity;
 using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
+using KalininHutor.API.DTO;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.API.Requests;
 
-internal class UserSigninHandler : IRequestHandler<UserSigninRequest, string>
+internal class UserSigninHandler : IRequestHandler<UserCommands.SigninRequest, AuthenticatedUserDetailsDTO>
 {
+    private readonly ISender _sender;
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly JWTHelper _jwtHelper;
 
-    public UserSigninHandler(UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
+    public UserSigninHandler(ISender sender, UserRepository userRepository, JWTHelper jwtHelper, IMapper mapper)
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _jwtHelper = jwtHelper ?? throw new ArgumentNullException(nameof(jwtHelper));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(UserSigninRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserCommands.SigninRequest request, CancellationToken cancellationToken)
     {
         var user = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
 
         if (user == null)
-            throw new ApplicationException("Не найден пользователь с таким номером телефона.");
+        {
+            if (request.WithSignup)
+            {
+                return await _sender.Send(new UserCommands.SignupRequest
+                {
+                    Password = request.Password,
+                    PhoneNumber = request.PhoneNumber
+                });
+            }
+            else
+                throw new ApplicationException("Не найден пользователь с таким номером телефона.");
+        }
 
         if (!user.VerifyPassword(request.Password))
             throw new ApplicationException("Неправильный пароль");
 
-        return _jwtHelper.GenerateToken(user.Id);
+        var userDTO = _mapper.Map<AuthenticatedUserDetailsDTO>(user);
+        userDTO.Token = _jwtHelper.GenerateToken(user.Id);
+
+        return userDTO;
     }
 }
 
-///<summary> Запрос на авторизацию пользователя </summary>
-public class UserSigninRequest : IRequest<string>
+///<summary> Запросы и очереди пользователей </summary>
+public partial class UserCommands
 {
-    ///<summary> Номер телефона пользователя </summary>
-    [Required]
-    public string PhoneNumber { get; set; } = string.Empty;
+    ///<summary> Запрос на авторизацию пользователя </summary>
+    public class SigninRequest : IRequest<AuthenticatedUserDetailsDTO>
+    {
+        ///<summary> Номер телефона пользователя </summary>
+        [Required]
+        public string PhoneNumber { get; set; } = string.Empty;
 
-    ///<summary> Пароль пользователя </summary>
-    [Required]
-    public string Password { get; set; } = string.Empty;
+        ///<summary> Пароль пользователя </summary>
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        ///<summary> Необходима ли регистрация? </summary>
+        [Required]
+        public bool WithSignup { get; set; } = false;
+    }
 }

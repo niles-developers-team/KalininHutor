@@ -88,6 +88,9 @@ public class RoomVariant : IEntity<Guid>
         if (count < 0 || freeCount <= 0)
             throw new ArgumentOutOfRangeException("Количество номеров не может быть меньше 0.");
 
+        if (freeCount > count)
+            throw new ArgumentOutOfRangeException("Количество свободных номеров не может быть больше всего количества номеров.");
+
         Count = count;
         FreeCount = freeCount;
     }
@@ -145,6 +148,11 @@ public class RoomVariant : IEntity<Guid>
             throw new ApplicationException("Превышено допустимое количество человек в номере.");
 
         return true;
+    }
+
+    public decimal CalculateAmount(int nightsCount, int roomsCount)
+    {
+        return Price * nightsCount * roomsCount;
     }
 
     private int GetMaxBedInRoom(double? width, double? length)

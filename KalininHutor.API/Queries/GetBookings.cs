@@ -1,61 +1,70 @@
-using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Requests;
 
-internal class GetBookingsHandler : IRequestHandler<GetBookingsQuery, IEnumerable<GetBookingsResponse>>
+internal class GetBookingsHandler : IRequestHandler<BookingCommands.GetQuery, IEnumerable<BookingDTO>>
 {
     private readonly BookingRepository _repository;
+    private readonly BookingRoomVariantRepository _bookingRoomVariantRepository;
+    private readonly ISender _sender;
+
     private readonly IMapper _mapper;
 
-    public GetBookingsHandler(BookingRepository repository, IMapper mapper)
+    public GetBookingsHandler(
+        ISender sender,
+        BookingRepository repository,
+        BookingRoomVariantRepository bookingRoomVariantRepository,
+        IMapper mapper
+    )
     {
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _bookingRoomVariantRepository = bookingRoomVariantRepository ?? throw new ArgumentNullException(nameof(bookingRoomVariantRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<GetBookingsResponse>> Handle(GetBookingsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookingDTO>> Handle(BookingCommands.GetQuery request, CancellationToken cancellationToken)
     {
         var result = await _repository.Get(_mapper.Map<BookingSearchOptions>(request));
-        return result.Select(_mapper.Map<GetBookingsResponse>).ToList();
+
+        var bookings = result.Select(_mapper.Map<BookingDTO>).ToList();
+
+        var rentalObjects = await _sender.Send(new RentalObjectCommands.GetQuery { Ids = bookings.Select(o => o.RentalObjectId), GetRoomVariants = true });
+
+        var roomVariants = await _bookingRoomVariantRepository.Get(new BookingRoomVariantSearchOptions { BookingsIds = bookings.Select(o => o.Id).ToList() });
+
+        bookings.ForEach(b =>
+        {
+            b.RentalObject = rentalObjects.First(o => o.Id == b.RentalObjectId);
+            b.RoomVariants = roomVariants.Where(o => o.BookingId == b.Id).Select(_mapper.Map<BookingRoomVariantDTO>);
+        });
+
+        return bookings;
     }
 }
 
-///<summary> Очередь получения брони </summary>
-public class GetBookingsQuery : IRequest<IEnumerable<GetBookingsResponse>>
+///<summary> Запросы и очереди бронирования </summary>
+public partial class BookingCommands
 {
-    ///<summary> Идентификатор брони </summary>
-    public Guid? Id { get; set; }
-    ///<summary> Идентификатор арендатора </summary>
-    [Required]
-    public Guid? TenantId { get; set; }
-    ///<summary> Поисковая строка </summary>
-    public string? SearchText { get; set; }
-    ///<summary> Дата заезда </summary>
-    public DateOnly? CheckinDate { get; set; }
-    ///<summary> Дата отъезда </summary>
-    public DateOnly? CheckoutDate { get; set; }
-}
-
-///<summary> Модель чтения брони </summary>
-public class GetBookingsResponse
-{
-    ///<summary> Идентификатор брони </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Идентификатор арендатора </summary>
-    public Guid TenantId { get; protected set; }
-    ///<summary> Идентификатор объекта аренды </summary>
-    public Guid RentalObjectId { get; protected set; }
-    ///<summary> Количество взрослых </summary>
-    public int AdultCount { get; protected set; }
-    ///<summary> Количество детей </summary>
-    public int ChildCount { get; protected set; }
-    ///<summary> Всего за бронь (руб.) </summary>
-    public decimal Total { get; protected set; }
-    ///<summary> Дата заезда </summary>
-    public DateOnly CheckinDate { get; set; }
-    ///<summary> Дата отъезда </summary>
-    public DateOnly CheckoutDate { get; set; }
+    ///<summary> Очередь получения брони </summary>
+    public class GetQuery : IRequest<IEnumerable<BookingDTO>>
+    {
+        ///<summary> Идентификатор брони </summary>
+        public Guid? Id { get; set; }
+        ///<summary> Идентификатор арендатора </summary>
+        public Guid? TenantId { get; set; }
+        ///<summary> Идентификатор арендодателя </summary>
+        public Guid? LandlordId { get; set; }
+        ///<summary> Поисковая строка </summary>
+        public string? SearchText { get; set; }
+        ///<summary> Дата заезда </summary>
+        public DateTime? CheckinDate { get; set; }
+        ///<summary> Дата отъезда </summary>
+        public DateTime? CheckoutDate { get; set; }
+        ///<summary>Загружать только неподтвержденные брони</summary>
+        public bool OnlyNotApproved { get; set; }
+    }
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using KalininHutor.API.Requests;
-using KalininHutor.API.Queries;
 using Microsoft.AspNetCore.Authorization;
+using KalininHutor.API.Queries;
+using KalininHutor.API.Requests;
 
 namespace KalininHutor.API.Controllers;
 
@@ -21,26 +21,61 @@ public class RentalObjectController : ControllerBase
 
     ///<summary> Метод получения коллекции объектов аренды </summary>
     [HttpGet()]
-    [Authorize]
-    public async Task<IActionResult> Get([FromQuery]GetRentalObjectsQuery query)
+    public async Task<IActionResult> Get([FromQuery] RentalObjectCommands.GetQuery query)
     {
-        var result = await _sender.Send(query);
-
-        return Ok(result);
+        try
+        {
+            var result = await _sender.Send(query);
+            return Ok(result);
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
     }
 
     ///<summary> Метод создания объекта аренды </summary>
     [HttpPost()]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody]CreateRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Create([FromBody] RentalObjectCommands.CreateRequest request)
+    {
+        try
+        {
+            return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(500, exc.Message);
+        }
+    }
 
     ///<summary> Метод обновления объекта аренды </summary>
-    [HttpPut()]
+    [HttpPatch()]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody]UpdateRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] RentalObjectCommands.UpdateRequest request)
+    {
+        try
+        {
+            return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(500, exc.Message);
+        }
+    }
 
     ///<summary> Метод удаления объекта аренды  </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromQuery]DeleteRentalObjectRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] RentalObjectCommands.DeleteRequest request)
+    {
+        try
+        {
+           return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
+    }
 }

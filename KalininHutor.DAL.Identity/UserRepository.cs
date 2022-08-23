@@ -26,11 +26,11 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from Users where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from Users where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<UserEntity>> Get(UserSearchOptions options)
@@ -79,17 +79,20 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
     {
         using var connection = GetConnection();
 
-        return await connection.QueryBuilder($@"
+        var result = await connection.QueryBuilder($@"
             select 
                 Id, 
                 PhoneNumber, 
+                Password,
                 Name, 
                 Lastname, 
                 Email, 
                 BirthDay as BirthDayDateTime 
             from Users
             where PhoneNumber = {phoneNumber}
-        ").QuerySingleAsync<UserEntity>();
+        ").QuerySingleOrDefaultAsync<UserEntity>();
+
+        return result;
     }
 
     public override async Task Update(UserEntity entity)
@@ -99,7 +102,6 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
             update Users
             set
                 PhoneNumber = {entity.PhoneNumber},
-                Password = {entity.Password},
                 Name = {entity.Name},
                 Lastname ={entity.Lastname},
                 Email = {entity.Email},

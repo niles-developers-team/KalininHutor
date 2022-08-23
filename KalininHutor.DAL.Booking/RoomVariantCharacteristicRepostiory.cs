@@ -23,11 +23,11 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomVariantCharacteristics where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RoomVariantCharacteristics where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomVariantCharacteristicEntity>> Get(RoomVariantCharacteristicSearchOptions options)
@@ -35,13 +35,22 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-            select Id, RoomVariantId, RoomCharacteristicId, Price
-            from RoomVariantCharacteristics
-            /*where*/
+            select 
+                rvch.Id, 
+                rvch.RoomVariantId, 
+                rvch.RoomCharacteristicId, 
+                ch.Name as RoomCharacteristicName,
+                rvch.Price
+            from RoomVariantCharacteristics rvch
+            inner join RoomCharacteristics ch on rvch.RoomCharacteristicId = ch.Id
+            /**where**/
         ");
 
         if (options.RoomVariantId.HasValue)
             query.Where($"RoomVariantId = {options.RoomVariantId}");
+
+        if (options.RoomsVariantsIds != null)
+            query.Where($"RoomVariantId = any({options.RoomsVariantsIds})");
 
         return await query.QueryAsync<RoomVariantCharacteristicEntity>();
     }

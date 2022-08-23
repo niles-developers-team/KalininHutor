@@ -1,53 +1,84 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Requests;
 
-internal class GetRentalObjectsHandler : IRequestHandler<GetRentalObjectsQuery, IEnumerable<GetRentalObjectResponse>>
+internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.GetQuery, IEnumerable<RentalObjectDTO>>
 {
     private readonly RentalObjectRepository _repository;
+    private readonly ISender _sender;
     private readonly IMapper _mapper;
 
-    public GetRentalObjectsHandler(RentalObjectRepository repository, IMapper mapper)
+    public GetRentalObjectsHandler(RentalObjectRepository repository, ISender sender, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<GetRentalObjectResponse>> Handle(GetRentalObjectsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<RentalObjectDTO>> Handle(RentalObjectCommands.GetQuery request, CancellationToken cancellationToken)
     {
-        var result = await _repository.Get(_mapper.Map<RentalObjectSearchOptions>(request));
-        return result.Select(_mapper.Map<GetRentalObjectResponse>).ToList();
+        var rentalObjects = await _repository.Get(_mapper.Map<RentalObjectSearchOptions>(request));
+        var result = rentalObjects.Select(_mapper.Map<RentalObjectDTO>).ToList();
+
+        if (request.GetBestDemands)
+        {
+            if (!request.CheckinDate.HasValue || !request.CheckoutDate.HasValue)
+                throw new ApplicationException("При получении лучших предложений необходимо указывать даты заезда/отъезда");
+
+            var nightsCount = (request.CheckoutDate.Value - request.CheckinDate.Value).Days;
+
+            var bestDemands = await _sender.Send(new RentalObjectCommands.GetRentalObjectsBestDemandsQuery
+            {
+                AdultsCount = request.AdultsCount,
+                ChildsCount = request.ChildsCount,
+                NightsCount = nightsCount,
+                RentalObjectsIds = result.Select(o => o.Id).ToList()
+            });
+
+            result.ForEach(ro => ro.BestDemand = bestDemands.FirstOrDefault(o => o.RentalObjectId == ro.Id));
+        }
+
+        if (request.GetRoomVariants)
+        {
+            var roomVariants = await _sender.Send(new RoomVariantCommands.GetQuery { RentalObjectsIds = result.Select(o => o.Id) });
+            result.ForEach(ro => ro.RoomVariants = roomVariants.Where(o => o.RentalObjectId == ro.Id));
+        }
+
+        return result;
     }
 }
 
-///<summary> Очередь получения объектов аренды </summary>
-public class GetRentalObjectsQuery : IRequest<IEnumerable<GetRentalObjectResponse>>
+///<summary> Запросы и очереди объектов аренды </summary>
+public partial class RentalObjectCommands
 {
-    ///<summary> Идентификатор объекта аренды </summary>
-    public Guid? Id { get; set; }
-    ///<summary> Индентификатор владельца объекта аренды </summary>
-    public Guid? LandlordId { get; set; }
-    ///<summary> Строка поиска </summary>
-    public string? SearchText { get; set; }
-    ///<summary> Время заезда </summary>
-    public TimeOnly? CheckinTime { get; set; }
-    ///<summary> Время отъезда </summary>
-    public TimeOnly? CheckoutTime { get; set; }
-}
+    ///<summary> Очередь получения объектов аренды </summary>
+    public class GetQuery : IRequest<IEnumerable<RentalObjectDTO>>
+    {
+        public IEnumerable<Guid>? Ids { get; set; }
+        ///<summary> Идентификатор объекта аренды </summary>
+        public Guid? Id { get; set; }
+        ///<summary> Индентификатор владельца объекта аренды </summary>
+        public Guid? LandlordId { get; set; }
+        ///<summary> Строка поиска </summary>
+        public string? SearchText { get; set; }
+        ///<summary> Время заезда </summary>
+        public DateTime? CheckinDate { get; set; }
+        ///<summary> Время отъезда </summary>
+        public DateTime? CheckoutDate { get; set; }
+        ///<summary> Количество взрослых </summary>
+        public int AdultsCount { get; set; }
+        ///<summary> Количество детей </summary>
+        public int ChildsCount { get; set; }
+        ///<summary> Количество комнат </summary>
+        public int RoomsCount { get; set; }
 
-///<summary> Модель чтения объекта аренды </summary>
-public class GetRentalObjectResponse
-{
-    ///<summary> Идентификатор объекта аренды </summary>
-    public Guid Id { get; protected set; }
-    ///<summary> Название объекта аренды  </summary>
-    public string Name { get; protected set; } = string.Empty;
-    ///<summary> Описание объекта аренды </summary>
-    public string Description { get; protected set; } = string.Empty;
-    ///<summary> Время заезда объекта аренды </summary>
-    public TimeOnly CheckinTime { get; protected set; }
-    ///<summary> Время отъезда объекта аренды </summary>
-    public TimeOnly CheckoutTime { get; protected set; }
+        public bool GetBestDemands { get; set; }
+
+        public bool GetRoomVariants { get; set; }
+
+        public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
+    }
 }

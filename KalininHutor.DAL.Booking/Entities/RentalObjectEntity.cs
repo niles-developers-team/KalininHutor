@@ -18,10 +18,20 @@ public class RentalObjectEntity
 
 public class RentalObjectSearchOptions
 {
+    public Guid? Id { get; set; }
     public Guid? LandlordId { get; set; }
     public string? SearchText { get; set; }
     internal TimeSpan? CheckinTimeSpan { get => CheckinTime.HasValue ? CheckinTime.Value.ToTimeSpan() : null; }
     internal TimeSpan? CheckoutTimeSpan { get => CheckoutTime.HasValue ? CheckoutTime.Value.ToTimeSpan() : null; }
     public TimeOnly? CheckinTime { get; protected set; }
     public TimeOnly? CheckoutTime { get; protected set; }
+    ///<summary> Количество взрослых </summary>
+    public int? AdultsCount { get; set; }
+    ///<summary> Количество детей </summary>
+    public int? ChildsCount { get; set; }
+    ///<summary> Количество комнат </summary>
+    public int? RoomsCount { get; set; }
+
+    public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
+    public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
 }

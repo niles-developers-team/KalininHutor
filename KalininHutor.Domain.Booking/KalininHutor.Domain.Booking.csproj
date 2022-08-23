@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KalininHutor.Domain.Common\KalininHutor.Domain.Common.csproj" />
+    <ProjectReference Include="..\KalininHutor.Domain.Identity\KalininHutor.Domain.Identity.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KalininHutor.API.Requests;
 
-internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRoomVariantCharacteristicRequest, Unit>
+internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<RoomVariantCharacteristicCommands.UpdateRequest, Unit>
 {
     private readonly RoomVariantCharacteristicRepository _repository;
     private readonly IMapper _mapper;
@@ -16,7 +16,7 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(UpdateRoomVariantCharacteristicRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RoomVariantCharacteristicCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RoomVariantCharacteristic>(await _repository.Get(request.Id));
         entity.SetPrice(request.Price);
@@ -25,11 +25,16 @@ internal class UpdateRoomVariantCharacteristicHandler : IRequestHandler<UpdateRo
     }
 }
 
-///<summary> Запрос обновления характеристики варианта номера </summary>
-public class UpdateRoomVariantCharacteristicRequest : IRequest<Unit>
+
+///<summary> Запросы и очереди характеристик вариантов номеров </summary>
+public partial class RoomVariantCharacteristicCommands
 {
-    ///<summary> Идентификатор характеристики номера </summary>
-    public Guid Id { get; set; }
-    ///<summary> Цена за услугу или удобство </summary>
-    public decimal? Price { get; set; }
+    ///<summary> Запрос обновления характеристики варианта номера </summary>
+    public class UpdateRequest : IRequest<Unit>
+    {
+        ///<summary> Идентификатор характеристики номера </summary>
+        public Guid Id { get; set; }
+        ///<summary> Цена за услугу или удобство </summary>
+        public decimal? Price { get; set; }
+    }
 }

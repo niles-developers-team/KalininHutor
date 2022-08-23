@@ -1,18 +1,19 @@
+using KalininHutor.Domain.Booking.Enums;
+
 namespace KalininHutor.Domain.Booking;
 
 public class BookingRoomVariant : IEntity<Guid>
 {
-    protected HashSet<BookingBedType>? _bookingBedTypes = new HashSet<BookingBedType>();
-
     public Guid Id { get; protected set; }
     public Guid BookingId { get; protected set; }
     public Guid RoomVariantId { get; protected set; }
+    public int RoomsCount { get; protected set; }
     public decimal Amount { get; protected set; }
-    public IReadOnlyList<BookingBedType>? BookingBedTypes { get => _bookingBedTypes?.ToList(); protected set => _bookingBedTypes = value?.ToHashSet(); }
+    public BedTypes BedType { get; protected set; }
 
     protected BookingRoomVariant() { }
 
-    public BookingRoomVariant(Guid roomVariantId, Guid bookingId, decimal amount)
+    public BookingRoomVariant(Guid roomVariantId, Guid bookingId, int roomsCount, decimal amount, BedTypes bedType)
     {
         if (roomVariantId == null || roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
@@ -23,15 +24,11 @@ public class BookingRoomVariant : IEntity<Guid>
         if (amount < 0)
             throw new ArgumentNullException("Цена за аренду номера не может быть отрицательной.");
 
+        Id = Guid.NewGuid();
         RoomVariantId = roomVariantId;
         BookingId = bookingId;
-        Amount = Amount;
-    }
-
-    public void AddBedTypes(Guid bedTypeId, int count)
-    {
-        var bookingBedType = new BookingBedType(Id, bedTypeId, count);
-
-        _bookingBedTypes.Add(bookingBedType);
+        RoomsCount = roomsCount;
+        Amount = amount;
+        BedType = bedType;
     }
 }

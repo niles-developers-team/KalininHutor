@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using KalininHutor.Domain.Identity;
 using KalininHutor.DAL.Identity;
 using MediatR;
 using KalininHutor.API.Helpers;
+using KalininHutor.API.DTO;
+using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.API.Requests;
 
-internal class UserSignupHandler : IRequestHandler<UserSignupRequest, string>
+internal class UserSignupHandler : IRequestHandler<UserCommands.SignupRequest, AuthenticatedUserDetailsDTO>
 {
     private readonly UserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ internal class UserSignupHandler : IRequestHandler<UserSignupRequest, string>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<string> Handle(UserSignupRequest request, CancellationToken cancellationToken)
+    public async Task<AuthenticatedUserDetailsDTO> Handle(UserCommands.SignupRequest request, CancellationToken cancellationToken)
     {
         var existedUser = _mapper.Map<User>(await _userRepository.Get(request.PhoneNumber));
 
@@ -31,18 +32,25 @@ internal class UserSignupHandler : IRequestHandler<UserSignupRequest, string>
 
         await _userRepository.Create(_mapper.Map<UserEntity>(user));
 
-        return _jwtHelper.GenerateToken(user.Id);
+        var userDTO = _mapper.Map<AuthenticatedUserDetailsDTO>(user);
+        userDTO.Token = _jwtHelper.GenerateToken(user.Id);
+
+        return userDTO;
     }
 }
 
-///<summary> Запрос на авторизацию пользователя </summary>
-public class UserSignupRequest : IRequest<string>
+///<summary> Запросы и очереди пользователей </summary>
+public partial class UserCommands
 {
-    ///<summary> Номер телефона пользователя </summary>
-    [Required]
-    public string PhoneNumber { get; set; } = string.Empty;
+    ///<summary> Запрос на авторизацию пользователя </summary>
+    public class SignupRequest : IRequest<AuthenticatedUserDetailsDTO>
+    {
+        ///<summary> Номер телефона пользователя </summary>
+        [Required]
+        public string PhoneNumber { get; set; } = string.Empty;
 
-    ///<summary> Пароль пользователя </summary>
-    [Required]
-    public string Password { get; set; } = string.Empty;
+        ///<summary> Пароль пользователя </summary>
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
 }

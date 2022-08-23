@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using KalininHutor.Domain;
 
 namespace KalininHutor.Domain.Identity;
+
 public class User : IEntity<Guid>
 {
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
-    protected string? PasswordHash { get; set; }
+    public string? Password { get; protected set; }
     public string? Name { get; protected set; }
     public string? Lastname { get; protected set; }
     public string? Email { get; protected set; }
@@ -21,16 +21,18 @@ public class User : IEntity<Guid>
 
         Id = Guid.NewGuid();
         PhoneNumber = phoneNumber;
-        PasswordHash = EncryptPassword(password);
+        Password = EncryptPassword(password);
     }
 
-    public void SetInfo(string name, string lastname, string email, DateOnly birthday)
+    public void SetInfo(string? name, string? lastname, string? email, DateOnly? birthday)
     {
-        ValidateEmail(email);
+        if (!string.IsNullOrEmpty(email))
+            ValidateEmail(email);
 
         Name = name;
         Lastname = lastname;
         Email = email;
+        BirthDay = birthday;
     }
 
     public string GenPassword()
@@ -42,7 +44,7 @@ public class User : IEntity<Guid>
 
     public string EncryptPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password);
 
-    public bool VerifyPassword(string password) => BCrypt.Net.BCrypt.Verify(password, PasswordHash);
+    public bool VerifyPassword(string password) => BCrypt.Net.BCrypt.Verify(password, Password);
 
     public void ValidateEmail(string email)
     {
@@ -68,7 +70,7 @@ public class User : IEntity<Guid>
         if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException("Не указан пароль.");
 
-        if (password.Length != 4 || !Regex.IsMatch(password, "/^([0-9]{5})$/g"))
+        if (password.Length != 5 || !Regex.IsMatch(password, "^([0-9]{5})$"))
             throw new ArgumentException("Неправильный формат пароля");
     }
 

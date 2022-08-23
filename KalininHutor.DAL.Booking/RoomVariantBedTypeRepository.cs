@@ -19,17 +19,16 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
                 {entity.RoomVariantId},
                 {entity.BedType},
                 {entity.Width},
-                {entity.Length},
-                {entity.MaxInRoom}
+                {entity.Length}
             )
         ").ExecuteAsync();
     }
 
-    public override async Task Delete(Guid id)
+    public override async Task Delete(IReadOnlyList<Guid> ids)
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from RoomVariantBedTypes where Id = {id}").ExecuteAsync();
+        await connection.QueryBuilder($@"delete from RoomVariantBedTypes where Id = any({ids})").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<RoomVariantBedTypeEntity>> Get(RoomVariantBedTypeSearchOptions options)
@@ -37,13 +36,16 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         var query = connection.QueryBuilder($@"
-            select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
-            from RoomVariantBedTypes
-            /*where*/
-        ");
+                select Id, RoomVariantId, BedType, Width, Length
+                from RoomVariantBedTypes
+                /**where**/
+            ");
 
         if (options.RoomVariantId.HasValue)
             query.Where($"RoomVariantId = {options.RoomVariantId}");
+
+        if (options.RoomsVariantsIds != null)
+            query.Where($"RoomVariantId = any({options.RoomsVariantsIds})");
 
         return await query.QueryAsync<RoomVariantBedTypeEntity>();
     }
@@ -53,7 +55,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         return await connection.QueryBuilder($@"
-            select Id, RoomVariantId, BedType, Width, Length, MaxInRoom
+            select Id, RoomVariantId, BedType, Width, Length
             from RoomVariantBedTypes
             where Id = {id}
         ").QuerySingleOrDefaultAsync<RoomVariantBedTypeEntity>();
@@ -66,10 +68,9 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         await connection.QueryBuilder($@"
             update RoomVariantBedTypes
             set Width = {entity.Width},
-                Length = {entity.Length},
-                MaxInRoom = {entity.MaxInRoom}
+                Length = {entity.Length}
             where Id = {entity.Id}
         ").ExecuteAsync();
-    
+
     }
 }
