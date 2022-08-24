@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, BookingStatuses, EntityStatus, SnackbarVariant } from "../../models";
+import { ApplicationError, Booking, EntityStatus, SnackbarVariant } from "../../models";
 import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { SnackbarActions } from "../snackbarStore/actions";
@@ -16,6 +16,9 @@ export enum ActionTypes {
     getBookingSuccess = 'GET_BOOKING_SUCCESS',
     getBookingFailure = 'GET_BOOKING_FAILURE',
 
+    createDraft = 'CREATE_DRAFT',
+    updateDraft = 'UPDATE_DRAFT',
+
     createRequest = 'CREATE_BOOKING_REQUEST',
     createSuccess = 'CREATE_BOOKING_SUCCESS',
     createFailure = 'CREATE_BOOKING_FAILURE',
@@ -24,11 +27,11 @@ export enum ActionTypes {
     updateSuccess = 'UPDATE_BOOKING_SUCCESS',
     updateFailure = 'UPDATE_BOOKING_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
-
     deleteRequest = 'DELETE_BOOKING_REQUEST',
     deleteSuccess = 'DELETE_BOOKING_SUCCESS',
     deleteFailure = 'DELETE_BOOKING_FAILURE',
+
+    clearEditionState = 'CLEAR_EDITION_STATE',
 }
 
 export namespace BookingActions {
@@ -59,6 +62,16 @@ export namespace BookingActions {
     interface GetFailureAction extends Action<ActionTypes> {
         type: ActionTypes.getBookingFailure;
         error: ApplicationError;
+    }
+
+    interface CreateDraftAction extends Action<ActionTypes> {
+        type: ActionTypes.createDraft;
+        draft: Booking;
+    }
+
+    interface UpdateDraftAction extends Action<ActionTypes> {
+        type: ActionTypes.updateDraft;
+        draft: Booking;
     }
 
     interface CreateRequestAction extends Action<ActionTypes> {
@@ -95,11 +108,11 @@ export namespace BookingActions {
 
     interface DeleteRequestAction extends Action<ActionTypes> {
         type: ActionTypes.deleteRequest;
-        request: Booking.DeleteRequest;
     }
 
     interface DeleteSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.deleteSuccess;
+        id: string;
     }
 
     interface DeleteFailureAction extends Action<ActionTypes> {
@@ -109,6 +122,7 @@ export namespace BookingActions {
 
     type GetBookings = GetBookingsRequestAction | GetBookingsSuccessAction | GetBookingsFailureAction;
     type GetBooking = GetRequestAction | GetSuccessAction | GetFailureAction;
+    type DraftBooking = CreateDraftAction | UpdateDraftAction;
     type CreateBooking = CreateRequestAction | CreateSuccessAction | CreateFailureAction;
     type UpdateBooking = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
     type DeleteBooking = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
@@ -116,6 +130,7 @@ export namespace BookingActions {
     export type BookingActions = GetBookings
         | GetBooking
         | ClearEditionStateAction
+        | DraftBooking
         | CreateBooking
         | UpdateBooking
         | DeleteBooking;
@@ -154,7 +169,7 @@ export namespace BookingActions {
         }
     }
 
-    export function applyChanges(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+    export function updateBooking(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
             dispatch(request(updateRequest));
 
@@ -196,7 +211,7 @@ export namespace BookingActions {
         }
     }
 
-    export function createDraft(draft: Booking): AppThunkAction<CreateSuccessAction> {
+    export function createDraft(draft: Booking): AppThunkAction<CreateDraftAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
 
@@ -210,11 +225,11 @@ export namespace BookingActions {
             }
 
             cookiesService.set('booking-draft', draft);
-            return dispatch({ type: ActionTypes.createSuccess, model: draft });
+            return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
 
-    export function updateDraft(draft: Booking): AppThunkAction<UpdateSuccessAction> {
+    export function updateDraft(draft: Booking): AppThunkAction<UpdateDraftAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
             const search = createSearchParams();
@@ -232,7 +247,7 @@ export namespace BookingActions {
             }
 
             cookiesService.set('booking-draft', draft);
-            return dispatch({ type: ActionTypes.updateSuccess, model: draft });
+            return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
     }
 
@@ -342,12 +357,12 @@ export namespace BookingActions {
 
     export function deleteBookings(deleteRequest: Booking.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(deleteRequest));
+            dispatch(request());
 
             try {
                 await bookingService.delete(deleteRequest);
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
-                return dispatch(success());
+                return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
@@ -355,8 +370,8 @@ export namespace BookingActions {
                 return dispatch(failure(error));
             }
 
-            function request(request: Booking.DeleteRequest): DeleteRequestAction { return { type: ActionTypes.deleteRequest, request: request }; }
-            function success(): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess }; }
+            function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
+            function success(id: string): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
         }
     }
