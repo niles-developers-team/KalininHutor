@@ -1,4 +1,4 @@
-import { BedTypes } from "./common";
+import { BedTypes } from ".";
 
 // Модель чтения выбранного варианта номера
 export interface BookingRoomVariant {
