@@ -1,4 +1,50 @@
-import { BedTypes, EntityStatus, IEntity } from "./common";
+import { Bed, Crib, KingBed, SingleBed, Weekend } from "@mui/icons-material";
+import { EntityStatus, IEntity } from "./common";
+
+export enum BedTypes {
+    // Односпальная кровать 
+    Single,
+    // Большая односпальная кровать 
+    BigSingle,
+    // Двуспальная кровать 
+    Double,
+    // Большая двуспальная кровать 
+    BigDouble,
+    // Детская кровать 
+    BabyBed
+}
+
+export namespace BedTypes {
+    export function getDescription(value: BedTypes | undefined) {
+        switch (value) {
+            case BedTypes.BabyBed: return 'Детская кровать';
+            case BedTypes.BigDouble: return 'Большая двуспальная кровать';
+            case BedTypes.BigSingle: return 'Большие односпальные кровати';
+            case BedTypes.Double: return 'Двуспальная кровать';
+            case BedTypes.Single: return 'Односпальные кровати';
+            default: return 'Неизвестный тип кровати'
+        }
+    }
+
+    export function getIcon(value: BedTypes | undefined): JSX.Element | null {
+        switch (value) {
+            case BedTypes.BabyBed: return <Crib />;
+            case BedTypes.BigDouble: return <Bed />;
+            case BedTypes.BigSingle: return <Weekend />;
+            case BedTypes.Double: return <KingBed />;
+            case BedTypes.Single: return <SingleBed />;
+            default: return null;
+        }
+    }
+
+    export const values: BedTypes[] = [
+        BedTypes.Single,
+        BedTypes.Double,
+        BedTypes.BigSingle,
+        BedTypes.BigDouble,
+        BedTypes.BabyBed
+    ];
+}
 
 export interface RoomVariantBedType extends IEntity {
     // Идентификатор варианта кровати

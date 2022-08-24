@@ -1,6 +1,16 @@
-import { EntityStatus, IEntity, PaymentOptions } from "./common";
+import { EntityStatus, IEntity } from "./common";
 import { RoomVariantBedType } from "./roomVariantBedType";
 import { RoomVariantCharacteristic } from "./roomVariantCharacteristic";
+
+export enum PaymentOptions {
+    // Можно оплатить онлайн 
+    Online,
+    // Оплата на месте только наличными 
+    CashOnTheSpot,
+    // Оплата на месте картой или наличными 
+    ByCardOrCashOnTheSpot
+}
+
 export interface RoomVariant extends IEntity {
     // Идентификатор варинта номера объекта аренды
     id?: string;
