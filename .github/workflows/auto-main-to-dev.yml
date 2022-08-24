@@ -29,7 +29,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           branch: "dev"
-          base: main
+          base: master
           title: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
           committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
