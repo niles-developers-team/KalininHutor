@@ -41,6 +41,6 @@ public partial class RoomVariantCommands
     public class DeleteRequest : IRequest<Unit>
     {
         ///<summary> Идентификатор варинта номера</summary>
-        public IReadOnlyList<Guid> Ids { get; set; }
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

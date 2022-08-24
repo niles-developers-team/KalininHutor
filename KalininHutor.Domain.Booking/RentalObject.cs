@@ -1,12 +1,11 @@
 using KalininHutor.Domain.Booking.Enums;
-using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.Domain.Booking;
 public class RentalObject : IEntity<Guid>
 {
     private HashSet<FileObject>? _photos;
-    private HashSet<RoomVariant>? _roomVariants;
-    private HashSet<Booking>? _bookings;
+    private HashSet<RoomVariant> _roomVariants = new HashSet<RoomVariant>();
+    private HashSet<Booking> _bookings = new HashSet<Booking>();
 
     public Guid Id { get; protected set; }
 
@@ -22,11 +21,11 @@ public class RentalObject : IEntity<Guid>
 
     public TimeOnly? CheckoutTime { get; protected set; }
 
-    public IReadOnlyList<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
+    public IEnumerable<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
 
-    public IReadOnlyList<RoomVariant>? RoomVariants { get => _roomVariants?.ToList(); protected set => _roomVariants = value?.ToHashSet(); }
+    public IEnumerable<RoomVariant> RoomVariants { get => _roomVariants; protected set => _roomVariants = value.ToHashSet(); }
 
-    public IReadOnlyList<Booking>? Bookings { get => _bookings?.ToList(); protected set => _bookings = value?.ToHashSet(); }
+    public IEnumerable<Booking> Bookings { get => _bookings; protected set => _bookings = value.ToHashSet(); }
 
     protected RentalObject() { }
 
@@ -111,7 +110,7 @@ public class RentalObject : IEntity<Guid>
         return roomVariant;
     }
 
-    public Booking CreateBooking(User tenant, DateOnly checkInDate, DateOnly checkOutDate,
+    public Booking CreateBooking(Tenant tenant, DateOnly checkInDate, DateOnly checkOutDate,
                                  int adultCount, int childsCount, IReadOnlyList<BookingRoomVariant> bookingRoomVariants)
     {
         ValidateBookingRoomVariants(checkInDate, checkOutDate, adultCount, childsCount, bookingRoomVariants);
@@ -122,7 +121,7 @@ public class RentalObject : IEntity<Guid>
 
         foreach (var bookingRoomVariant in bookingRoomVariants)
         {
-            var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId);
+            var roomVariant = _roomVariants.SingleOrDefault(o => o.Id == bookingRoomVariant.RoomVariantId) ?? throw new Exception("Не найден вариант номера");
             booking.AddRoomVariant(bookingRoomVariant.RoomVariantId, bookingRoomVariant.RoomsCount, roomVariant.CalculateAmount(nightsCount, bookingRoomVariant.RoomsCount), bookingRoomVariant.BedType);
         }
 

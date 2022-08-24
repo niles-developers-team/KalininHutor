@@ -37,11 +37,11 @@ public partial class UserCommands
         ///<summary> Номер телефона </summary>
         public string PhoneNumber { get; set; } = string.Empty;
         ///<summary> Имя </summary>
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         ///<summary> Фамилия </summary>
-        public string? Lastname { get; set; }
+        public string Lastname { get; set; } = string.Empty;
         ///<summary> E-mail </summary>
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         ///<summary> Дата рождения </summary>
         public DateOnly? Birthday { get; set; }
     }

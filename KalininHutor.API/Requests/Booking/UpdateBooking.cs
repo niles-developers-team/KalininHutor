@@ -22,7 +22,6 @@ internal class UpdateBookingHandler : IRequestHandler<BookingCommands.UpdateRequ
         var entity = _mapper.Map<Booking>(await _repository.Get(request.Id));
         entity.SetVisitorsCount(request.AdultCount, request.ChildsCount);
         entity.SetBookingDates(request.CheckinDate, request.CheckoutDate);
-        entity.SetStatus(request.Status);
         await _repository.Update(_mapper.Map<BookingEntity>(entity));
         return Unit.Value;
     }
@@ -49,7 +48,5 @@ public partial class BookingCommands
 
         ///<summary> Идентификатор объекта аренды </summary>
         public DateOnly CheckoutDate { get; set; }
-
-        public BookingStatuses Status { get; set; }
     }
 }

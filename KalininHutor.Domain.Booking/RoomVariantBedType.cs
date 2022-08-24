@@ -15,7 +15,7 @@ public class RoomVariantBedType : IEntity<Guid>
     {
         Id = Guid.NewGuid();
 
-        if (roomVariantId == null || roomVariantId == Guid.Empty)
+        if (roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
 
         RoomVariantId = roomVariantId;

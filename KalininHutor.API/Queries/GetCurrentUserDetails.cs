@@ -15,7 +15,7 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCu
     public GetCurrentUserDetailsHandler(UserRepository repository, IHttpContextAccessor contextAccessor, ISender sender)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _context = contextAccessor != null ? contextAccessor.HttpContext : throw new ArgumentNullException(nameof(contextAccessor));
+        _context = contextAccessor != null && contextAccessor.HttpContext != null ? contextAccessor.HttpContext : throw new ArgumentNullException(nameof(contextAccessor));
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
@@ -35,7 +35,5 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCu
 public partial class UserCommands
 {
     ///<summary> Очередь получения деталей пользователя </summary>
-    public class GetCurrentUserDetailsQuery : IRequest<UserDetailsDTO>
-    {
-    }
+    public class GetCurrentUserDetailsQuery : IRequest<UserDetailsDTO> { }
 }

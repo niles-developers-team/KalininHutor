@@ -45,7 +45,7 @@ internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequ
         rentalObject.SetRoomVariants(roomVariants.Select(_mapper.Map<RoomVariant>).ToList());
         rentalObject.SetBookings(domainBookings);
 
-        var booking = rentalObject.CreateBooking(_mapper.Map<User>(request.Tenant),
+        var booking = rentalObject.CreateBooking(_mapper.Map<Tenant>(request.Tenant),
             request.CheckinDate, request.CheckoutDate,
             request.AdultCount, request.ChildCount,
             request.BookingRooms.Select(_mapper.Map<BookingRoomVariant>).ToList());

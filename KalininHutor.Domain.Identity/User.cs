@@ -2,15 +2,16 @@
 
 namespace KalininHutor.Domain.Identity;
 
-public class User : IEntity<Guid>
+public class User : IUser
 {
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
-    public string? Password { get; protected set; }
-    public string? Name { get; protected set; }
-    public string? Lastname { get; protected set; }
-    public string? Email { get; protected set; }
+    public  string Name { get; protected set; } = string.Empty;
+    public string Lastname { get; protected set; } = string.Empty;
+    public string Email { get; protected set; } = string.Empty;
     public DateOnly? BirthDay { get; protected set; }
+    
+    public string Password { get; protected set; } = string.Empty;
 
     protected User() { }
     public User(string phoneNumber, string password)
@@ -24,7 +25,7 @@ public class User : IEntity<Guid>
         Password = EncryptPassword(password);
     }
 
-    public void SetInfo(string? name, string? lastname, string? email, DateOnly? birthday)
+    public void SetInfo(string name, string lastname, string email, DateOnly? birthday)
     {
         if (!string.IsNullOrEmpty(email))
             ValidateEmail(email);

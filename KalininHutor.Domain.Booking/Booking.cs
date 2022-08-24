@@ -1,5 +1,4 @@
 using KalininHutor.Domain.Booking.Enums;
-using KalininHutor.Domain.Identity;
 
 namespace KalininHutor.Domain.Booking;
 
@@ -10,10 +9,10 @@ public class Booking : IEntity<Guid>
     public Guid Id { get; protected set; }
     public Guid? TenantId { get; protected set; }
     public long Number { get; protected set; }
-    public string TenantName { get; protected set; }
-    public string TenantLastname { get; protected set; }
-    public string TenantEmail { get; protected set; }
-    public string TenantPhone { get; protected set; }
+    public string TenantName { get; protected set; } = string.Empty;
+    public string TenantLastname { get; protected set; } = string.Empty;
+    public string TenantEmail { get; protected set; } = string.Empty;
+    public string TenantPhone { get; protected set; } = string.Empty;
     public Guid RentalObjectId { get; protected set; }
     public int AdultCount { get; protected set; }
     public int ChildCount { get; protected set; }
@@ -23,17 +22,14 @@ public class Booking : IEntity<Guid>
     public decimal Total { get; protected set; }
     public BookingStatuses Status { get; protected set; } = BookingStatuses.Draft;
 
-    public IReadOnlyList<BookingRoomVariant>? RoomVariants { get => _roomVariants?.ToList(); protected set => _roomVariants = value?.ToHashSet(); }
+    public IEnumerable<BookingRoomVariant> RoomVariants { get => _roomVariants ?? throw new Exception("Не загружены выбранные варианты номеров"); protected set => _roomVariants = value?.ToHashSet(); }
 
     protected Booking() { }
 
-    public Booking(Guid rentalObjectId, User tenant, int adultCount, int childCount, DateOnly checkinDate, DateOnly checkoutDate)
+    public Booking(Guid rentalObjectId, Tenant tenant, int adultCount, int childCount, DateOnly checkinDate, DateOnly checkoutDate)
     {
         if (rentalObjectId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
-
-        if (tenant == null)
-            throw new ArgumentNullException("Не указан идентификатор арендатора.");
 
         CheckVisitorsCount(adultCount, childCount);
         CheckBookingPeriod(checkinDate, checkoutDate);
@@ -92,10 +88,14 @@ public class Booking : IEntity<Guid>
         CheckoutDate = checkoutDate;
     }
 
-    private void CheckTenant(User tenant)
+    private void CheckTenant(Tenant tenant)
     {
+        if (tenant == null)
+            throw new ArgumentNullException("Не указан идентификатор арендатора.");
+
         if (tenant.Id == Guid.Empty)
             throw new ArgumentNullException("Не указан арендатор");
+
         if (string.IsNullOrEmpty(tenant.Name) ||
             string.IsNullOrEmpty(tenant.Lastname) ||
             string.IsNullOrEmpty(tenant.Email))
@@ -124,17 +124,20 @@ public class Booking : IEntity<Guid>
     {
         var roomVariant = new BookingRoomVariant(roomVariantId, Id, roomsCount, amount, bedType);
 
+        if (_roomVariants == null)
+            _roomVariants = new HashSet<BookingRoomVariant>();
+
         _roomVariants.Add(roomVariant);
     }
 
     public void CalculateTotal()
     {
-        if(_roomVariants == null || !_roomVariants.Any())
+        if (_roomVariants == null || !_roomVariants.Any())
         {
             throw new Exception("Не заданы забронированные номера");
         }
 
-        foreach(var roomVariant in _roomVariants)
+        foreach (var roomVariant in _roomVariants)
         {
             Total += roomVariant.Amount;
         }

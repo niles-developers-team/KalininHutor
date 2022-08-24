@@ -45,7 +45,7 @@ public partial class RentalObjectCommands
     public class GetRentalObjectsBestDemandsQuery : IRequest<IEnumerable<RentalObjectBestDemandDTO>>
     {
         ///<summary> Коллекция идентификаторов объектов аренды</summary>
-        public IReadOnlyList<Guid> RentalObjectsIds { get; set; }
+        public IReadOnlyList<Guid> RentalObjectsIds { get; set; } = new List<Guid>();
         ///<summary> Количество взрослых </summary>
         public int AdultsCount { get; set; }
         ///<summary> Количество детей </summary>

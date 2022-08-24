@@ -1,4 +1,4 @@
-import { Accessible, Bathtub, Bed, Cancel, CheckCircle, CleaningServices, Crib, DriveFileRenameOutline, Fireplace, Hotel, HourglassBottom, Info, KingBed, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, Shower, SingleBed, SoupKitchen, Weekend } from '@mui/icons-material';
+import { Accessible, Bathtub, Bed, Cancel, CheckCircle, CleaningServices, Crib, DriveFileRenameOutline, Fireplace, Hotel, HourglassBottom, Info, KingBed, LiveTv, LocalParking, NaturePeople, Panorama, RoomService, SingleBed, SoupKitchen, Weekend } from '@mui/icons-material';
 
 export enum SnackbarVariant {
     success = 'success',

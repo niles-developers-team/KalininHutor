@@ -57,6 +57,7 @@ public partial class RentalObjectCommands
         ///<summary> Время отъезда </summary>
         public TimeOnly? CheckoutTime { get; set; }
 
+        ///<summary> Коллекция вариантов номеров к созданию </summary>
         public IReadOnlyList<RoomVariantCommands.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();
     }
 }
