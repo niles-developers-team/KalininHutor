@@ -37,15 +37,6 @@ export type ModelLoadedState<TModel> = {
     model: TModel;
 }
 
-export type ModelSavingState = {
-    saving: true;
-}
-
-export type ModelSavedState = {
-    saving: false;
-    saved?: boolean;
-}
-
 export type ModelSpecsLoadingState = {
     modelSpecsLoading: true;
 }
@@ -56,10 +47,8 @@ export type ModelSpecsLoadedState = {
 
 export type ModelsDeletingState<TRequest> = {
     deleting: true;
-    deleteRequest: TRequest;
 }
 
 export type ModelsDeletedState = {
     deleting: false;
-    deleted?: boolean;
 }
