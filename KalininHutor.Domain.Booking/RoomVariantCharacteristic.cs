@@ -12,10 +12,10 @@ public class RoomVariantCharacteristic : IEntity<Guid>
     {
         Id = Guid.NewGuid();
 
-        if (roomVariantId == null || roomVariantId == Guid.Empty)
+        if (roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
 
-        if (roomCharacteristicId == null || roomCharacteristicId == Guid.Empty)
+        if (roomCharacteristicId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор харакеристики.");
 
         RoomVariantId = roomVariantId;

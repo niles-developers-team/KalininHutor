@@ -33,11 +33,11 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
             }
 
         if (request.UpdateRoomVariantsRequests != null)
-        foreach (var req in request.UpdateRoomVariantsRequests)
-            await _sender.Send(req);
+            foreach (var req in request.UpdateRoomVariantsRequests)
+                await _sender.Send(req);
 
         if (request.DeleteRoomVariantsRequest != null)
-        await _sender.Send(request.DeleteRoomVariantsRequest);
+            await _sender.Send(request.DeleteRoomVariantsRequest);
 
         return Unit.Value;
     }
@@ -65,10 +65,11 @@ public partial class RentalObjectCommands
         ///<summary> Идентификатор объекта аренды </summary>
         public TimeOnly CheckoutTime { get; set; }
 
+        ///<summary> Коллекция создания вариантов номеров </summary>
         public IReadOnlyList<RoomVariantCommands.CreateRequest>? CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();
-
+        ///<summary> Коллекция редактирования вариантов номеров </summary>
         public IReadOnlyList<RoomVariantCommands.UpdateRequest>? UpdateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.UpdateRequest>();
-
+        ///<summary> Коллекция удаления вариантов номеров </summary>
         public RoomVariantCommands.DeleteRequest? DeleteRoomVariantsRequest { get; set; }
     }
 }

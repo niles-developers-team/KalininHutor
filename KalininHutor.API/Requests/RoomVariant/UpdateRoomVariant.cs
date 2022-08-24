@@ -96,13 +96,19 @@ public partial class RoomVariantCommands
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
 
+        ///<summary> Коллекция создания вариантов кроватей </summary>
         public IReadOnlyList<RoomVariantBedTypeCommands.CreateRequest>? CreateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.CreateRequest>();
+        ///<summary> Коллекция создания характеристик номеров </summary>
         public IReadOnlyList<RoomVariantCharacteristicCommands.CreateRequest>? CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.CreateRequest>();
 
+        ///<summary> Коллекция редактирования вариантов кроватей </summary>
         public IReadOnlyList<RoomVariantBedTypeCommands.UpdateRequest>? UpdateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.UpdateRequest>();
+        ///<summary> Коллекция редактирования вариантов кроватей </summary>
         public IReadOnlyList<RoomVariantCharacteristicCommands.UpdateRequest>? UpdateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.UpdateRequest>();
 
+        ///<summary> Коллекция удаления вариантов кроватей </summary>
         public RoomVariantBedTypeCommands.DeleteRequest? DeleteBedTypesRequests { get; set; }
+        ///<summary> Коллекция удаления вариантов кроватей </summary>
         public RoomVariantCharacteristicCommands.DeleteRequest? DeleteCharacteristicsRequests { get; set; }
     }
 }

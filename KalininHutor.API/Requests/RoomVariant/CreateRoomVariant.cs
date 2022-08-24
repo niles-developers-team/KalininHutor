@@ -68,7 +68,7 @@ public partial class RoomVariantCommands
     ///<summary> Запрос на создание варианта номера </summary>
     public class CreateRequest : IRequest<Guid>
     {
-        internal RentalObject RentalObject { get; set; }
+        internal RentalObject? RentalObject { get; set; }
         ///<summary> Идентификатор объекта аренды </summary>
         public Guid? RentalObjectId { get; set; }
         ///<summary> Название </summary>
@@ -92,7 +92,9 @@ public partial class RoomVariantCommands
         ///<summary> Всего номеров свободно </summary>
         public int FreeCount { get; set; }
 
+        ///<summary> Коллекция создания вариантов кроватей </summary>
         public IReadOnlyList<RoomVariantBedTypeCommands.CreateRequest> CreateBedTypesRequests { get; set; } = new List<RoomVariantBedTypeCommands.CreateRequest>();
+        ///<summary> Коллекция создания характеристик номеров </summary>
         public IReadOnlyList<RoomVariantCharacteristicCommands.CreateRequest> CreateCharacteristicsRequests { get; set; } = new List<RoomVariantCharacteristicCommands.CreateRequest>();
     }
 }

@@ -15,10 +15,10 @@ public class BookingRoomVariant : IEntity<Guid>
 
     public BookingRoomVariant(Guid roomVariantId, Guid bookingId, int roomsCount, decimal amount, BedTypes bedType)
     {
-        if (roomVariantId == null || roomVariantId == Guid.Empty)
+        if (roomVariantId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор варианта номера.");
 
-        if (bookingId == null || bookingId == Guid.Empty)
+        if (bookingId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор брони.");
 
         if (amount < 0)

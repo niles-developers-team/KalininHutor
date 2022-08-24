@@ -36,7 +36,7 @@ public class RoomVariant : IEntity<Guid>
     {
         Id = Guid.NewGuid();
 
-        if (rentalObjectId == null || rentalObjectId == Guid.Empty)
+        if (rentalObjectId == Guid.Empty)
             throw new ArgumentNullException("Не указан идентификатор объекта аренды.");
 
         SetInfo(name, description, paymentOption);
