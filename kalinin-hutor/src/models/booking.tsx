@@ -6,7 +6,6 @@ export interface Booking extends IEntity {
     // Идентификатор брони
     id?: string;
     // Идентификатор объекта аренды
-    rentalObjectId: string;
     readonly createdAt?: string;
     readonly status: BookingStatuses;
     readonly number: number;
@@ -23,7 +22,7 @@ export interface Booking extends IEntity {
 
     roomVariants: BookingRoomVariant[];
     tenant: User;
-    rentalObject?: RentalObject;
+    rentalObject: RentalObject;
 }
 
 export namespace Booking {

@@ -13,64 +13,46 @@ import { RoomVariantCharacteristicsComponent } from "./RoomVariantCharacteristic
 import { RoomVariantDetailsComponent } from "./RoomVariantDetails";
 import { v4 as uuidv4 } from 'uuid';
 import { ArrowBack } from "@mui/icons-material";
+import { RoomVariantActions } from "../../../store/roomVariantStore";
 
 export const RoomVariantComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id, rentalObjectId } = useParams();
-    const { roomCharacteristicState, rentalObjectState } = useAppSelector((state: AppState) => ({
-        rentalObjectState: state.rentalObjectState,
-        roomCharacteristicState: state.roomCharacteristicState
-    }));
+    const { roomCharacteristicState, roomVariantState } = useAppSelector((state: AppState) => state);
     const [characteristicSearch, setCharacteristicSearch] = useState<string>();
-    const [isCharacteristicSearchInProgress, setIsCharacteristicSearchInProgress] = useState<boolean>(true);
     const debouncedSearch = useDebounce(characteristicSearch, 500);
 
-    useEffect(() => { dispatch(RentalObjectActions.getRentalObject(rentalObjectId)); }, [rentalObjectId]);
+    useEffect(() => { init() }, [rentalObjectId]);
 
-    useEffect(() => {
-        if (rentalObjectState.modelLoading === false) {
-            const roomVariant = rentalObjectState.model.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
+    async function init() {
+        if (!rentalObjectId)
+            return;
 
-            if (roomCharacteristicState.modelsLoading === false) {
-                roomVariant.characteristics.forEach(rvch => {
-                    const characteristic = roomCharacteristicState.models.find(o => o.id === rvch.roomCharacteristicId);
-                    rvch.roomCharacteristic = characteristic ? { ...characteristic } : RoomCharacteristic.initial;
-                });
-            }
-            setRoomVariant({ ...roomVariant });
+        await dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
+        if (!id || id === 'create') {
+            await dispatch(RoomVariantActions.getDraft());
+        } else {
+            await dispatch(RoomVariantActions.getRoomVariant(id));
         }
-    }, [id, rentalObjectState.modelLoading, rentalObjectState.modelSpecsLoading]);
 
-    useEffect(() => {
-        if (roomCharacteristicState.modelsLoading === false) {
-            setRoomsCharateristics([...roomCharacteristicState.models]);
-        }
-    }, [roomCharacteristicState.modelsLoading]);
+    }
 
     useEffect(() => {
         dispatch(RoomCharacteristicActions.getRoomCharacteristics({ searchText: debouncedSearch, take: 10 }));
-        setIsCharacteristicSearchInProgress(false);
     }, [debouncedSearch]);
 
-    const [roomVariant, setRoomVariant] = useState<RoomVariant>(RoomVariant.initial);
-    const [roomsCharacteristics, setRoomsCharateristics] = useState<RoomCharacteristic[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [characteristicDialogOpen, setCharacteristicDialogOpen] = useState<boolean>(false);
     const [bedVariantDialogOpen, setBedVariantDialogOpen] = useState<boolean>(false);
 
     const [roomCharacteristic, setRoomCharacteristic] = useState<RoomVariantCharacteristic>({ ...RoomVariantCharacteristic.initial });
     const [bedType, setBedType] = useState<RoomVariantBedType>({ ...RoomVariantBedType.initial });
 
-    function handleCharacteristicDialogClose() {
-        setCharacteristicDialogOpen(false);
-    }
-
     function handleRoomCharacteristicDelete(model: RoomVariantCharacteristic) {
-        if (model.entityStatus === EntityStatus.Created)
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o.id !== model.id)] });
+        if (model.entityStatus === EntityStatus.Draft)
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o.id !== model.id)] }));
         else
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] })
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] }));
     }
 
     function handleRoomCharacteristicEdit(model: RoomVariantCharacteristic) {
@@ -96,21 +78,21 @@ export const RoomVariantComponent = function (): JSX.Element {
 
         if (!model.id) {
             model.id = uuidv4();
-            model.entityStatus = EntityStatus.Created;
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] });
+            model.entityStatus = EntityStatus.Draft;
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] }));
         } else {
-            model.entityStatus = model.entityStatus === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
-            setRoomVariant({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? model : o)] })
+            model.entityStatus = model.entityStatus === EntityStatus.Draft ? EntityStatus.Draft : EntityStatus.Updated;
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? model : o)] }));
         }
         setCharacteristicDialogOpen(false);
         setRoomCharacteristic(RoomVariantCharacteristic.initial);
     }
 
     function handleBedTypeDelete(model: RoomVariantBedType) {
-        if (model.entityStatus === EntityStatus.Created)
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o.id !== model.id)] })
+        if (model.entityStatus === EntityStatus.Draft)
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o.id !== model.id)] }));
         else
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] })
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] }));
     }
 
     function handleBedTypeEdit(model: RoomVariantBedType) {
@@ -123,33 +105,21 @@ export const RoomVariantComponent = function (): JSX.Element {
         setBedVariantDialogOpen(true);
     }
 
-    function handleBedVariantDialogDiscard() {
-        setBedVariantDialogOpen(false);
-    }
-
     function handleBedVariantDialogConfirm(model: RoomVariantBedType) {
         if (!model.id) {
             model.id = uuidv4();
-            model.entityStatus = EntityStatus.Created;
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] })
+            model.entityStatus = EntityStatus.Draft;
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] }));
         } else {
-            model.entityStatus = model.entityStatus === EntityStatus.Created ? EntityStatus.Created : EntityStatus.Updated;
-            setRoomVariant({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] })
+            model.entityStatus = model.entityStatus === EntityStatus.Draft ? EntityStatus.Draft : EntityStatus.Updated;
+            dispatch(RoomVariantActions.updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] }));
         }
         setBedVariantDialogOpen(false);
         setBedType(RoomVariantBedType.initial);
     }
 
-    function handleCharacteristicSearch(searchText: string) {
-        setCharacteristicSearch(searchText);
-        setIsCharacteristicSearchInProgress(true);
-    }
-
-    function handleDiscard() {
-        if (rentalObjectState.modelLoading === false) {
-            const roomVariant = rentalObjectState.model?.roomVariants?.find(o => o.id === id) || RoomVariant.initial;
-            setRoomVariant({ ...roomVariant });
-        }
+    async function handleDiscard() {
+        await init();
         setBedType({ ...RoomVariantBedType.initial });
         setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
     }
@@ -165,6 +135,13 @@ export const RoomVariantComponent = function (): JSX.Element {
         navigate(`/me/rental-objects/${rentalObjectId}`);
     }
 
+    const loading = roomVariantState.modelLoading;
+
+    if (!roomVariantState.model)
+        return (<Typography></Typography>);
+
+    const roomVariant = roomVariantState.model;
+
     return (
         <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -174,12 +151,12 @@ export const RoomVariantComponent = function (): JSX.Element {
             <RoomVariantDetailsComponent
                 model={roomVariant}
                 loading={loading}
-                onDetailsChanged={(model: RoomVariant) => setRoomVariant({ ...model })}
+                onDetailsChanged={(model: RoomVariant) => dispatch(RoomVariantActions.updateDraft({ ...model }))}
             />
             <RoomVariantCharacteristicsComponent
                 loading={loading}
                 models={roomVariant.characteristics.filter(o => o.entityStatus !== EntityStatus.Deleted)}
-                characteristics={roomsCharacteristics}
+                characteristics={roomCharacteristicState.models || []}
                 onCreate={handleRoomCharacteristicCreate}
                 onEdit={handleRoomCharacteristicEdit}
                 onDelete={handleRoomCharacteristicDelete}
@@ -198,16 +175,16 @@ export const RoomVariantComponent = function (): JSX.Element {
             </Stack>
             <CharacteristicDialog
                 model={roomCharacteristic}
-                characteristics={roomsCharacteristics}
-                searching={isCharacteristicSearchInProgress}
-                onSearch={handleCharacteristicSearch}
-                onDiscard={handleCharacteristicDialogClose}
+                characteristics={roomCharacteristicState.models || []}
+                searching={roomCharacteristicState.modelsLoading}
+                onSearch={(searchText) => setCharacteristicSearch(searchText)}
+                onDiscard={() => setCharacteristicDialogOpen(false)}
                 onConfirm={handleCharacteristicDialogConfirm}
                 open={characteristicDialogOpen}
             />
             <BedVariantDialog
                 model={bedType}
-                onDiscard={handleBedVariantDialogDiscard}
+                onDiscard={() => setBedVariantDialogOpen(false)}
                 onConfirm={handleBedVariantDialogConfirm}
                 open={bedVariantDialogOpen}
             />

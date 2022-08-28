@@ -18,7 +18,7 @@ export interface RentalObject extends IEntity {
     landlord: User;
 
     bestDemand?: RentalObjectBestDemand;
-    roomVariants?: RoomVariant[];
+    roomVariants: RoomVariant[];
 }
 
 export interface RentalObjectBestDemand {

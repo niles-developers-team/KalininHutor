@@ -25,7 +25,7 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
     const columns: GridColDef<Booking>[] = [
         {
             field: 'rentalObject', sortable: false, headerName: 'Объект аренды', flex: 1, renderCell: ({ row: o }) => (
-                <Typography><a href={`/me/rental-objects/${o.rentalObjectId}`}>{o.rentalObject?.name}</a></Typography>
+                <Typography><a href={`/me/rental-objects/${o.rentalObject.id}`}>{o.rentalObject?.name}</a></Typography>
             )
         },
         {

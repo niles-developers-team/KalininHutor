@@ -28,8 +28,8 @@ export enum ActionTypes {
     getUserSuccess = 'GET_USER_SUCCESS',
     getUserFailure = 'GET_USER_FAILURE',
 
-    createDraft = 'CREATE_DRAFT',
-    updateDraft = 'UPDATE_DRAFT',
+    createDraft = 'CREATE_USER_DRAFT',
+    updateDraft = 'UPDATE_USER_DRAFT',
 
     updateRequest = 'UPDATE_USER_REQUEST',
     updateSuccess = 'UPDATE_USER_SUCCESS',

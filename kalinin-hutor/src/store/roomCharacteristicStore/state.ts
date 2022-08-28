@@ -3,5 +3,5 @@ import { ModelLoadingState, ModelLoadedState, ModelsLoadingState, ModelsLoadedSt
 
 export type RoomCharacteristicModelState = ModelLoadingState<RoomCharacteristic> | ModelLoadedState<RoomCharacteristic>;
 export type RoomCharacteristicModelsState = ModelsLoadingState<RoomCharacteristic> | ModelsLoadedState<RoomCharacteristic>;
-export type RoomCharacteristicDeleteState = ModelsDeletingState<RoomCharacteristic.DeleteRequest> | ModelsDeletedState;
+export type RoomCharacteristicDeleteState = ModelsDeletingState | ModelsDeletedState;
 export type RoomCharacteristicState = RoomCharacteristicModelState & RoomCharacteristicModelsState & RoomCharacteristicDeleteState;

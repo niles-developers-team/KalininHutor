@@ -17,7 +17,7 @@ export const BookingRoomVariantInfo = function (props: Props): JSX.Element {
     } = props;
     return (
         <Stack>
-            <Typography><b>{roomVariant?.name}</b></Typography>
+            <Typography><b>{bookingRoomVariant.roomsCount} X {roomVariant?.name}</b></Typography>
             <Stack paddingY=".5em" direction="row" spacing={2}>
                 <Skeleton variant="rectangular" width={100} height={100} />
                 <Stack>

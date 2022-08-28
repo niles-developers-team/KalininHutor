@@ -16,8 +16,8 @@ export enum ActionTypes {
     getBookingSuccess = 'GET_BOOKING_SUCCESS',
     getBookingFailure = 'GET_BOOKING_FAILURE',
 
-    createDraft = 'CREATE_DRAFT',
-    updateDraft = 'UPDATE_DRAFT',
+    createDraft = 'CREATE_BOOKING_DRAFT',
+    updateDraft = 'UPDATE_BOOKING_DRAFT',
 
     createRequest = 'CREATE_BOOKING_REQUEST',
     createSuccess = 'CREATE_BOOKING_SUCCESS',
@@ -145,7 +145,7 @@ export namespace BookingActions {
                     childCount: model.childCount,
                     checkinDate: model.checkinDate,
                     checkoutDate: model.checkoutDate,
-                    rentalObjectId: model.rentalObjectId,
+                    rentalObjectId: model.rentalObject.id,
                     tenant: model.tenant,
                     bookingRooms: model.roomVariants.map(o => ({
                         amount: o.amount,
@@ -154,6 +154,9 @@ export namespace BookingActions {
                         roomVariantId: o.roomVariantId
                     }))
                 });
+
+                result.entityStatus = EntityStatus.NotChanged;
+
                 dispatch(SnackbarActions.showSnackbar('Бронь успешно создана.', SnackbarVariant.success));
                 return dispatch(success(result));
             }
@@ -246,8 +249,16 @@ export namespace BookingActions {
                 draft.tenant = userState.currentUser;
             }
 
+            if (draft.entityStatus !== EntityStatus.Draft) {
+                draft.entityStatus = EntityStatus.Updated;
+            }
+
+            const nightsCount = moment(draft.checkoutDate).dayOfYear() - moment(draft.checkinDate).dayOfYear();
+            const roomVariants = draft.roomVariants.map(o => ({ ...o, amount: o.price * o.roomsCount * nightsCount }));
+            const total = roomVariants.reduce((sum, curr) => sum += curr.amount, 0);
+
             cookiesService.set('booking-draft', draft);
-            return dispatch({ type: ActionTypes.updateDraft, draft: draft });
+            return dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, total: total, roomVariants: roomVariants } });
         }
     }
 
@@ -267,7 +278,7 @@ export namespace BookingActions {
             }
 
             try {
-                const result = await bookingService.getLandlordBookings(userState.authenticating === false && userState.currentUser?.id || '', onlyNotApproved);
+                const result = await bookingService.getLandlordBookings(userState.currentUser?.id || '', onlyNotApproved);
                 return dispatch(success(result));
             }
             catch (error: any) {

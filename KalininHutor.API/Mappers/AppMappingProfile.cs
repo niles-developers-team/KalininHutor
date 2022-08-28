@@ -48,6 +48,7 @@ public class AppMappingProfile : Profile
         CreateMap<User, UserDetailsDTO>().ReverseMap();
         CreateMap<UserEntity, UserDetailsDTO>().ReverseMap();
         CreateMap<User, AuthenticatedUserDetailsDTO>().ReverseMap();
+        CreateMap<UserDetailsDTO, Tenant>().ReverseMap();
 
         CreateMap<RoomCharacteristic, RoomCharacteristicDTO>().ReverseMap();
         CreateMap<RoomCharacteristicCommands.GetQuery, RoomCharacteristicSearchOptions>().ReverseMap();

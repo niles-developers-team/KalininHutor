@@ -1,5 +1,5 @@
 import { ActionTypes, UserActions } from "./actions";
-import { AuthenticationState, UserDeleteState, UserModelsState, UserModelState, UserState } from "./state";
+import { AuthenticationState, UserModelsState, UserModelState, UserState } from "./state";
 
 const initialState: UserState = {
     authenticating: false,

@@ -15,8 +15,8 @@ export enum ActionTypes {
     getRentalObjectSuccess = 'GET_RENTALOBJECT_SUCCESS',
     getRentalObjectFailure = 'GET_RENTALOBJECT_FAILURE',
 
-    createDraft = 'CREATE_DRAFT',
-    updateDraft = 'UPDATE_DRAFT',
+    createDraft = 'CREATE_RENTALOBJECT_DRAFT',
+    updateDraft = 'UPDATE_RENTALOBJECT_DRAFT',
 
     createRequest = 'CREATE_RENTALOBJECT_REQUEST',
     createSuccess = 'CREATE_RENTALOBJECT_SUCCESS',
@@ -377,14 +377,11 @@ export namespace RentalObjectActions {
             const { rentalObjectState } = getState();
 
             dispatch(request(id));
-            if (rentalObjectState.modelLoading === false) {
-                return dispatch(success(rentalObjectState.model));
-            }
 
             let models: RentalObject[] = [];
 
             try {
-                if (rentalObjectState.modelsLoading === true) {
+                if (rentalObjectState.modelsLoading) {
                     models = await rentalObjectService.get({ id });
                 }
                 else {
@@ -397,9 +394,9 @@ export namespace RentalObjectActions {
                     throw new ApplicationError('Не удалось найти объект аренды');
                 }
 
-                dispatch(getRentalObjectRoomVariants(id));
+                var result = dispatch(success(model));
 
-                return dispatch(success(model));
+                return result;
             }
             catch (error: any) {
                 dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
@@ -434,34 +431,6 @@ export namespace RentalObjectActions {
         }
     }
 
-    export function getRentalObjectRoomVariants(id: string): AppThunkAction<Promise<UpdateDraftAction | ClearEditionStateAction>> {
-        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-
-            if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
-                return dispatch(failure());
-            }
-            const model = rentalObjectState.model;
-
-            dispatch(request(id));
-            try {
-                const result = await roomVariantService.get({ rentalObjectId: id });
-
-                model.roomVariants = result;
-
-                return dispatch(success(model));
-            }
-            catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
-                return dispatch(failure());
-            }
-            function request(rentalObjectId: string): GetRequestAction { return { type: ActionTypes.getRentalObjectRequest, id: rentalObjectId } };
-            function success(draft: RentalObject): UpdateDraftAction { return { type: ActionTypes.updateDraft, draft: draft }; }
-            function failure(): ClearEditionStateAction { return { type: ActionTypes.clearEditionState }; }
-        }
-    }
-
     export function appendRoomVariant(roomVariant: RoomVariant): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState } = getState();
@@ -473,9 +442,10 @@ export namespace RentalObjectActions {
             roomVariant.entityStatus = EntityStatus.Draft;
 
             const model = rentalObjectState.model;
-            model.roomVariants?.push({ ...roomVariant });
 
-            return { type: ActionTypes.updateDraft, draft: model };
+            return {
+                type: ActionTypes.updateDraft, draft: { ...model, roomVariants: [...model.roomVariants || [], roomVariant] }
+            };
         }
     }
 
@@ -487,9 +457,8 @@ export namespace RentalObjectActions {
                 return { type: ActionTypes.clearEditionState };
             }
             const model = rentalObjectState.model;
-            model.roomVariants?.map(o => o.id === roomVariant.id ? { ...roomVariant } : o, []);
 
-            return { type: ActionTypes.updateDraft, draft: model };
+            return { type: ActionTypes.updateDraft, draft: { ...model, roomVariants: model.roomVariants?.map(o => o.id === roomVariant.id ? { ...roomVariant } : o, []) } };
         }
     }
 

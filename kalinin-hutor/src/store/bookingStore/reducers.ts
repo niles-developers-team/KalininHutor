@@ -1,5 +1,5 @@
 import { ActionTypes, BookingActions } from "./actions";
-import { BookingState, ModelsState, ModelState } from "./state";
+import { BookingState, BookingModelsState, BookingModelState } from "./state";
 
 const initialState: BookingState = {
     modelsLoading: true,
@@ -24,16 +24,16 @@ export function bookingReducer(prevState: BookingState = initialState, action: B
 
         case ActionTypes.createRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.createSuccess: {
-            const modelsState: ModelsState = { modelsLoading: false, models: [...prevState.models || [], action.model] };
-            const modelState: ModelState = { modelLoading: false, model: action.model };
+            const modelsState: BookingModelsState = { modelsLoading: false, models: [...prevState.models || [], action.model] };
+            const modelState: BookingModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
         case ActionTypes.createFailure: return { ...prevState, modelLoading: true };
 
         case ActionTypes.updateRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.updateSuccess: {
-            const modelsState: ModelsState = { modelsLoading: false, models: prevState.models?.map(o => o.id === action.model.id ? action.model : o) || [] };
-            const modelState: ModelState = { modelLoading: false, model: action.model };
+            const modelsState: BookingModelsState = { modelsLoading: false, models: prevState.models?.map(o => o.id === action.model.id ? action.model : o) || [] };
+            const modelState: BookingModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
         case ActionTypes.updateFailure: return { ...prevState, modelLoading: true };

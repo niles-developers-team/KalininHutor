@@ -3,6 +3,7 @@ import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { BookingState } from "./bookingStore";
 import { RentalObjectState } from "./rentalObjectStore";
 import { RoomCharacteristicState } from "./roomCharacteristicStore";
+import { RoomVariantState } from "./roomVariantStore";
 import { SnackbarState } from "./snackbarStore";
 import { UserState } from "./userStore";
 
@@ -14,7 +15,8 @@ export type AppState = {
     bookingState: BookingState,
     rentalObjectState: RentalObjectState,
     snackbarState: SnackbarState,
-    roomCharacteristicState: RoomCharacteristicState
+    roomCharacteristicState: RoomCharacteristicState,
+    roomVariantState: RoomVariantState
 }
 
 export type ModelsLoadingState<TModel> = {
@@ -45,7 +47,7 @@ export type ModelSpecsLoadedState = {
     modelSpecsLoading: false;
 }
 
-export type ModelsDeletingState<TRequest> = {
+export type ModelsDeletingState = {
     deleting: true;
 }
 
