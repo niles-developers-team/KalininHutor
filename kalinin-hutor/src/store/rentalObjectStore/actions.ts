@@ -143,7 +143,7 @@ export namespace RentalObjectActions {
                 return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalObjectState.model });
             }
 
-            const draft = cookiesService.get<RentalObject>('booking-draft');
+            const draft = cookiesService.get<RentalObject>('rental-object-draft');
             return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
         }
     }
@@ -180,7 +180,8 @@ export namespace RentalObjectActions {
     }
 
     export function createRentalObject(model: RentalObject): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
-        return async dispatch => {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
             dispatch(request());
 
             try {
@@ -191,7 +192,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     landlordId: model.landlord.id,
                     name: model.name,
-                    createRoomVariantsRequests: model.roomVariants?.map<RoomVariant.CreateRequest>(rv => ({
+                    createRoomVariantsRequests: roomVariantState.models?.map<RoomVariant.CreateRequest>(rv => ({
                         count: rv.count,
                         description: rv.description,
                         freeCount: rv.freeCount,
@@ -233,7 +234,8 @@ export namespace RentalObjectActions {
     }
 
     export function updateRentalObject(model: RentalObject): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
-        return async (dispatch) => {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
             dispatch(request());
 
             try {
@@ -243,7 +245,7 @@ export namespace RentalObjectActions {
                     checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
                     description: model.description,
                     name: model.name,
-                    createRoomVariantsRequests: model.roomVariants
+                    createRoomVariantsRequests: roomVariantState.models
                         ?.filter(o => o.entityStatus === EntityStatus.Draft)
                         .map<RoomVariant.CreateRequest>(rv => ({
                             count: rv.count,
@@ -270,7 +272,7 @@ export namespace RentalObjectActions {
                                     price: ch.price
                                 })),
                         })),
-                    updateRoomVariantsRequests: model.roomVariants
+                    updateRoomVariantsRequests: roomVariantState.models
                         ?.filter(o => o.entityStatus === EntityStatus.Updated)
                         .map<RoomVariant.UpdateRequest>(rv => ({
                             id: rv.id || '',
@@ -329,7 +331,7 @@ export namespace RentalObjectActions {
                             })
                         })),
                     deleteRoomVariantsRequest: ({
-                        ids: model.roomVariants?.filter(o => o.entityStatus === EntityStatus.Deleted)
+                        ids: roomVariantState.models?.filter(o => o.entityStatus === EntityStatus.Deleted)
                             .map(rv => rv.id || '') || []
                     })
                 });
@@ -428,51 +430,6 @@ export namespace RentalObjectActions {
             function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
             function success(ids: string[]): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, ids: ids }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
-        }
-    }
-
-    export function appendRoomVariant(roomVariant: RoomVariant): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
-        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-            if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
-                return { type: ActionTypes.clearEditionState };
-            }
-
-            roomVariant.entityStatus = EntityStatus.Draft;
-
-            const model = rentalObjectState.model;
-
-            return {
-                type: ActionTypes.updateDraft, draft: { ...model, roomVariants: [...model.roomVariants || [], roomVariant] }
-            };
-        }
-    }
-
-    export function applyRoomVariant(roomVariant: RoomVariant): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
-        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-            if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
-                return { type: ActionTypes.clearEditionState };
-            }
-            const model = rentalObjectState.model;
-
-            return { type: ActionTypes.updateDraft, draft: { ...model, roomVariants: model.roomVariants?.map(o => o.id === roomVariant.id ? { ...roomVariant } : o, []) } };
-        }
-    }
-
-    export function deleteRoomVariant(id: string): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
-        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-            if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
-                return { type: ActionTypes.clearEditionState };
-            }
-            const model = rentalObjectState.model;
-            model.roomVariants?.filter(o => o.id !== id);
-
-            return { type: ActionTypes.updateDraft, draft: model };
         }
     }
 }

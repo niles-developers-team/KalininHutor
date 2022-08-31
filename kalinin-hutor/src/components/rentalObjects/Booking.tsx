@@ -14,11 +14,7 @@ export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id, rentalObjectId } = useParams();
-    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => ({
-        bookingState: state.bookingState,
-        rentalObjectState: state.rentalObjectState,
-        roomCharacteristicState: state.roomCharacteristicState
-    }));
+    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         if (!id)
@@ -126,7 +122,9 @@ export const BookingComponent = function (): JSX.Element {
                         <Button onClick={handleChangeBooking}>Уточнить варианты</Button>
                     </Stack>
                     {model.roomVariants?.map((brv, index) => {
-                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId) || RoomVariant.initial;
+                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId);
+                        if(!roomVariant)
+                        return (<Skeleton></Skeleton>)
 
                         return (<BookingRoomVariantInfo
                             bookingRoomVariant={brv}

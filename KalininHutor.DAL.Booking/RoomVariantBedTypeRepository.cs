@@ -13,7 +13,7 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
         using var connection = GetConnection();
 
         await connection.QueryBuilder($@"
-            insert into RoomVariantBedTypes (Id, RoomVariantId, BedType, Width, Length, MaxInRoom)
+            insert into RoomVariantBedTypes (Id, RoomVariantId, BedType, Width, Length)
             values (
                 {entity.Id},
                 {entity.RoomVariantId},

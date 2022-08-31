@@ -1,9 +1,10 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RoomVariant, SnackbarVariant } from "../../models";
+import { ApplicationError, BedTypes, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
 import { cookiesService, roomVariantService } from "../../services";
 import { AppState, AppThunkAction, AppThunkDispatch } from "../appState";
 import { SnackbarActions } from "../snackbarStore";
 import { v4 as uuidv4 } from 'uuid';
+import { RoomCharacteristicActions, RoomCharacteristicActionTypes } from "../roomCharacteristicStore";
 
 export enum ActionTypes {
     getRoomVariantsRequest = 'GET_ROOMVARIANTS_REQUEST',
@@ -84,7 +85,6 @@ export namespace RoomVariantActions {
 
     interface CreateFailureAction extends Action<ActionTypes> {
         type: ActionTypes.createFailure;
-        error: ApplicationError;
     }
 
     interface UpdateRequestAction extends Action<ActionTypes> {
@@ -98,7 +98,6 @@ export namespace RoomVariantActions {
 
     interface UpdateFailureAction extends Action<ActionTypes> {
         type: ActionTypes.updateFailure;
-        error: ApplicationError;
     }
 
     interface ClearEditionStateAction extends Action<ActionTypes> {
@@ -116,7 +115,6 @@ export namespace RoomVariantActions {
 
     interface DeleteFailureAction extends Action<ActionTypes> {
         type: ActionTypes.deleteFailure;
-        error: ApplicationError;
     }
 
     type GetRoomVariants = GetRoomVariantsRequestAction | GetRoomVariantsSuccessAction | GetRoomVariantsFailureAction;
@@ -135,8 +133,15 @@ export namespace RoomVariantActions {
         | DeleteRoomVariant;
 
     export function getRoomVariants(rentalObjectId: string): AppThunkAction<Promise<GetRoomVariantsSuccessAction | GetRoomVariantsFailureAction>> {
-        return async dispatch => {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
+
+            if (roomVariantState.modelsLoading === false) {
+                return dispatch(success(roomVariantState.models));
+            }
+
             dispatch(request());
+
             try {
                 const result = await roomVariantService.get({ rentalObjectId: rentalObjectId });
 
@@ -152,7 +157,7 @@ export namespace RoomVariantActions {
         }
     }
 
-    export function getRoomVariant(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
+    export function getRoomVariant(id: string | undefined): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { roomVariantState } = getState();
 
@@ -169,6 +174,12 @@ export namespace RoomVariantActions {
                 }
 
                 let model = models.find(o => o.id === id);
+
+                if (!model) {
+                    const draftResult = dispatch(RoomVariantActions.getDraft());
+                    if (draftResult.roomvariant)
+                        model = draftResult.roomvariant;
+                }
 
                 if (!model) {
                     throw new ApplicationError('Не удалось найти вариант номера');
@@ -198,7 +209,7 @@ export namespace RoomVariantActions {
                 return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: roomVariantState.model });
             }
 
-            const draft = cookiesService.get<RoomVariant>('booking-draft');
+            const draft = cookiesService.get<RoomVariant>('room-variant-draft');
             return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: draft });
         }
     }
@@ -219,7 +230,7 @@ export namespace RoomVariantActions {
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            cookiesService.set('rental-object-draft', draft);
+            cookiesService.set('room-variant-draft', draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -230,13 +241,162 @@ export namespace RoomVariantActions {
 
             if (!rentalObjectState.model) {
                 dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
-                return { type: ActionTypes.clearEditionState };
+                return dispatch({ type: ActionTypes.clearEditionState });
             }
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            cookiesService.set('rental-object-draft', draft);
+            cookiesService.set('room-variant-draft', draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
+    }
+
+    export function create(model: RoomVariant): AppThunkAction<CreateSuccessAction | CreateFailureAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+            if (!rentalObjectState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch({ type: ActionTypes.createFailure });
+            }
+
+            return dispatch({ type: ActionTypes.createSuccess, model: model });
+        }
+    }
+
+    export function update(model: RoomVariant): AppThunkAction<UpdateSuccessAction | UpdateFailureAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+            if (!rentalObjectState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch({ type: ActionTypes.updateFailure });
+            }
+
+            if (model.entityStatus !== EntityStatus.Draft) {
+                model.entityStatus = EntityStatus.Updated;
+            }
+
+            return dispatch({ type: ActionTypes.updateSuccess, model: model });
+        };
+    }
+
+    export function deleteRoomVariant(id: string): AppThunkAction<DeleteSuccessAction | DeleteFailureAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState, roomVariantState } = getState();
+            if (!rentalObjectState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch({ type: ActionTypes.deleteFailure });
+            }
+
+            const model = roomVariantState.models?.find(o => o.id === id);
+            if (model && model.entityStatus !== EntityStatus.Draft) {
+                model.entityStatus = EntityStatus.Deleted;
+            }
+
+            return dispatch({ type: ActionTypes.deleteSuccess, ids: [id] });
+        }
+    }
+
+    export function addRoomCharacteristic(model: RoomVariantCharacteristic): AppThunkAction<Promise<UpdateDraftAction | ClearEditionStateAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
+
+            if (!roomVariantState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch(failure());
+            }
+
+            const roomVariant = roomVariantState.model;
+
+            if (model.roomCharacteristic && !model.roomCharacteristic.id) {
+                const result = await dispatch(RoomCharacteristicActions.createRoomCharacteristic({
+                    description: model.roomCharacteristic.description,
+                    name: model.roomCharacteristic.name,
+                    type: model.roomCharacteristic.type
+                }))
+                if (result.type === RoomCharacteristicActionTypes.createSuccess)
+                    model.roomCharacteristic = result.model;
+            }
+            
+            model.roomVariantId = roomVariant.id;
+
+            if (!model.id) {
+                model.id = uuidv4();
+                model.entityStatus = EntityStatus.Draft;
+                return await dispatch(updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics, model] }));
+            } else {
+                model.roomVariantId = roomVariant.id;
+                model.entityStatus = model.entityStatus === EntityStatus.Draft ? EntityStatus.Draft : EntityStatus.Updated;
+                return await dispatch(updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? model : o)] }));
+            }
+
+            function failure(): ClearEditionStateAction { return { type: ActionTypes.clearEditionState } };
+        }
+    }
+
+    export function deleteRoomCharacteristic(model: RoomVariantCharacteristic): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
+
+            if (!roomVariantState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch(failure());
+            }
+            const roomVariant = roomVariantState.model;
+
+            if (model.entityStatus === EntityStatus.Draft)
+                return dispatch(updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.filter(o => o.id !== model.id)] }));
+            else
+                return dispatch(updateDraft({ ...roomVariant, characteristics: [...roomVariant.characteristics.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] }));
+
+            function failure(): ClearEditionStateAction { return { type: ActionTypes.clearEditionState } };
+        }
+    }
+
+    export function addBedType(model: RoomVariantBedType): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
+
+            if (!roomVariantState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch(failure());
+            }
+            const roomVariant = roomVariantState.model;
+
+            model.roomVariantId = roomVariant.id;
+
+            if (!model.id) {
+                model.id = uuidv4();
+                model.entityStatus = EntityStatus.Draft;
+                return dispatch(updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes, model] }));
+            } else {
+                model.entityStatus = model.entityStatus === EntityStatus.Draft ? EntityStatus.Draft : EntityStatus.Updated;
+                return dispatch(updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? model : o)] }));
+            }
+
+            function failure(): ClearEditionStateAction { return { type: ActionTypes.clearEditionState } };
+        }
+    }
+
+    export function deleteBedType(model: RoomVariantBedType): AppThunkAction<UpdateDraftAction | ClearEditionStateAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomVariantState } = getState();
+
+            if (!roomVariantState.model) {
+                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                return dispatch(failure());
+            }
+            const roomVariant = roomVariantState.model;
+
+            if (model.entityStatus === EntityStatus.Draft)
+                return dispatch(updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.filter(o => o.id !== model.id)] }));
+            else
+                return dispatch(updateDraft({ ...roomVariant, bedTypes: [...roomVariant.bedTypes.map(o => o.id === model.id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] }));
+
+            function failure(): ClearEditionStateAction { return { type: ActionTypes.clearEditionState } };
+        }
+    }
+
+    export function clearEditionState(): ClearEditionStateAction {
+        return { type: ActionTypes.clearEditionState };
     }
 }

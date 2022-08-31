@@ -23,8 +23,6 @@ function NoRoomVariants(): JSX.Element {
 export const MyRentalObjectComponent = function (): JSX.Element {
     const { rentalObjectState, userState, roomVariantState } = useAppSelector((state: AppState) => state);
 
-    const loading = rentalObjectState.modelLoading;
-
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Название', flex: 1 },
         { field: 'description', headerName: 'Описание', flex: 1 },
@@ -63,7 +61,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
     }
 
     function handleRoomVariantDelete(roomVariant: RoomVariant) {
-        dispatch(RentalObjectActions.deleteRoomVariant(roomVariant.id || ''));
+        dispatch(RoomVariantActions.deleteRoomVariant(roomVariant.id || ''));
     }
 
     async function handleDiscard() {
@@ -85,6 +83,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         dispatch(RentalObjectActions.clearEditionState());
         navigate(`/me`)
     }
+
+    const loading = rentalObjectState.modelLoading;
 
     if (!rentalObjectState.model)
         return (<Typography>Не найден объект аренды</Typography>);
@@ -134,7 +134,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                 </Stack>
                 <DataGrid style={{ height: 400 }}
                     components={{ NoRowsOverlay: NoRoomVariants }}
-                    rows={roomVariants.filter(o => o.entityStatus !== EntityStatus.Deleted) || []}
+                    rows={roomVariants}
                     columns={columns}
                     pageSize={5}
                     loading={loading}

@@ -45,7 +45,7 @@ export function roomVariantReducer(prevState: RoomVariantState = initialState, a
         }
         case ActionTypes.deleteFailure: return { ...prevState, deleting: false };
 
-        case ActionTypes.clearEditionState: return { ...initialState };
+        case ActionTypes.clearEditionState: return { ...prevState, modelLoading: true, deleting: false, model: undefined }; 
         default: return prevState;
     }
 }

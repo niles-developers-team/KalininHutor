@@ -14,10 +14,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const query = useQuery();
     let [searchParams, setSearchParams] = useSearchParams();
-    const { rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => ({
-        rentalObjectState: state.rentalObjectState,
-        roomCharacteristicState: state.roomCharacteristicState
-    }));
+    const { rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     const [filter, setFilter] = useState<RentalObject.GetQuery>({
         adultsCount: 1,

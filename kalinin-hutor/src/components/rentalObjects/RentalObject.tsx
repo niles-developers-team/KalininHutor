@@ -13,12 +13,7 @@ import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const { roomCharacteristicState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => ({
-        bookingState: state.bookingState,
-        roomCharacteristicState: state.roomCharacteristicState,
-        rentalObjectState: state.rentalObjectState
-    }));
-
+    const { roomCharacteristicState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     const query = useQuery();
     const navigate = useNavigate();
@@ -27,7 +22,6 @@ export const RentalObjectComponent = function (): JSX.Element {
     const [specifyBedsOpen, setSpecifyBedsOpen] = useState<boolean>(false);
     const [specifyBedsRoomVariant, setSpecifyBedsRoomVariant] = useState<RoomVariant>();
     const [specifiedBedType, setSpecifiedBetType] = useState<RoomVariantBedType>();
-
 
     const [personsAnchorEl, setPersonsAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [datesAnchorEl, setDatesAnchorEl] = useState<HTMLButtonElement | null>(null);
