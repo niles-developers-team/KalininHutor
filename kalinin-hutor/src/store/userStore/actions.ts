@@ -30,6 +30,7 @@ export enum ActionTypes {
 
     createDraft = 'CREATE_USER_DRAFT',
     updateDraft = 'UPDATE_USER_DRAFT',
+    updateCurrentUserDraft = 'UPDATE_CURRENT_USER_DRAFT',
 
     updateRequest = 'UPDATE_USER_REQUEST',
     updateSuccess = 'UPDATE_USER_SUCCESS',
@@ -165,12 +166,17 @@ export namespace UserActions {
         draft: User;
     }
 
+    interface UpdateCurrentUserDraftAction extends Action<ActionTypes> {
+        type: ActionTypes.updateCurrentUserDraft;
+        draft: User;
+    }
+
     type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
     type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
     type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
     type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
     type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
-    type DraftUser  = CreateDraftAction | UpdateDraftAction;
+    type DraftUser  = CreateDraftAction | UpdateDraftAction | UpdateCurrentUserDraftAction;
     type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
     type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
 
@@ -180,6 +186,7 @@ export namespace UserActions {
         | GetCurrentUser
         | GetUsers
         | GetUser
+        | DraftUser
         | ClearEditionStateAction
         | UpdateUser
         | DeleteUser;
@@ -262,8 +269,12 @@ export namespace UserActions {
         }
     }
 
-    export function updateDraft(user: User): UpdateSuccessAction {
-        return { type: ActionTypes.updateSuccess, model: user };
+    export function updateDraft(user: User): UpdateDraftAction {
+        return { type: ActionTypes.updateDraft, draft: user };
+    }
+
+    export function updateCurrentUserDraft(user: User): UpdateCurrentUserDraftAction {
+        return { type: ActionTypes.updateCurrentUserDraft, draft: user };
     }
 
     export function updateUser(user: User): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {

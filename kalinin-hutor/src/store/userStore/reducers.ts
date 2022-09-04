@@ -17,6 +17,10 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
 
         case ActionTypes.signOut: return { ...prevState, authenticating: false, authenticated: false };
 
+        case ActionTypes.createDraft: return { ...prevState, modelLoading: false, model: action.draft };
+        case ActionTypes.updateDraft: return { ...prevState, modelLoading: false, model: { ...action.draft } };
+        case ActionTypes.updateCurrentUserDraft: return { ...prevState, modelLoading: false, model: { ...action.draft }, currentUser: { ...action.draft } };
+
         case ActionTypes.getCurrentUserRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.getCurrentUserSuccess: {
             const modelState: UserModelState = { modelLoading: false, model: action.user };
@@ -47,7 +51,7 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
             return { ...prevState, deleting: false, modelsLoading: false, models: updatedModels };
         }
         case ActionTypes.deleteFailure: return { ...prevState, deleting: false };
-        
+
         case ActionTypes.clearEditionState: return { ...initialState };
         default: return prevState;
     }
