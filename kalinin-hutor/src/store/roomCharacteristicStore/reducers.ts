@@ -9,35 +9,15 @@ const initialState: RoomCharacteristicState = {
 
 export function roomCharacteristicReducer(prevState: RoomCharacteristicState = initialState, action: RoomCharacteristicActions.RoomCharacteristicActions): RoomCharacteristicState {
     switch (action.type) {
-        case RoomCharacteristicActionTypes.getRoomCharacteristicRequest: {
-            const state: RoomCharacteristicModelState = { modelLoading: true };
-            return { ...prevState, ...state };
-        }
-        case RoomCharacteristicActionTypes.getRoomCharacteristicSuccess: {
-            const state: RoomCharacteristicModelState = { modelLoading: false, model: action.roomcharacteristic };
-            return { ...prevState, ...state };
-        }
-        case RoomCharacteristicActionTypes.getRoomCharacteristicFailure: {
-            const state: RoomCharacteristicModelState = { modelLoading: true };
-            return { ...prevState, ...state };
-        }
+        case RoomCharacteristicActionTypes.getRoomCharacteristicRequest: return { ...prevState, modelLoading: true };
+        case RoomCharacteristicActionTypes.getRoomCharacteristicSuccess: return { ...prevState, modelLoading: false, model: action.roomcharacteristic };
+        case RoomCharacteristicActionTypes.getRoomCharacteristicFailure: return { ...prevState, modelLoading: true };
 
-        case RoomCharacteristicActionTypes.getRoomCharacteristicsRequest: {
-            const state: RoomCharacteristicModelsState = { modelsLoading: true };
-            return { ...prevState, ...state };
-        }
-        case RoomCharacteristicActionTypes.getRoomCharacteristicsSuccess: {
-            const state: RoomCharacteristicModelsState = { modelsLoading: false, models: action.roomcharacteristics };
-            return { ...prevState, ...state };
-        }
-        case RoomCharacteristicActionTypes.getRoomCharacteristicsFailure: {
-            const state: RoomCharacteristicModelsState = { modelsLoading: false, models: [] };
-            return { ...prevState, ...state };
-        }
+        case RoomCharacteristicActionTypes.getRoomCharacteristicsRequest: return { ...prevState, modelsLoading: true };
+        case RoomCharacteristicActionTypes.getRoomCharacteristicsSuccess: return { ...prevState, modelsLoading: false, models: action.roomcharacteristics };
+        case RoomCharacteristicActionTypes.getRoomCharacteristicsFailure: return { ...prevState, modelsLoading: false, models: [] };
 
-        case RoomCharacteristicActionTypes.createRequest: {
-            return { ...prevState, modelLoading: true };
-        }
+        case RoomCharacteristicActionTypes.createRequest: return { ...prevState, modelLoading: true };
         case RoomCharacteristicActionTypes.createSuccess: {
             if (prevState.modelsLoading === true) return prevState;
 
@@ -47,13 +27,9 @@ export function roomCharacteristicReducer(prevState: RoomCharacteristicState = i
             const modelState: RoomCharacteristicModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case RoomCharacteristicActionTypes.createFailure: {
-            return { ...prevState, modelLoading: true };
-        }
+        case RoomCharacteristicActionTypes.createFailure: return { ...prevState, modelLoading: true };
 
-        case RoomCharacteristicActionTypes.updateRequest: {
-            return { ...prevState, modelLoading: true };
-        }
+        case RoomCharacteristicActionTypes.updateRequest: return { ...prevState, modelLoading: true };
         case RoomCharacteristicActionTypes.updateSuccess: {
             if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
 
@@ -64,27 +40,14 @@ export function roomCharacteristicReducer(prevState: RoomCharacteristicState = i
             const modelState: RoomCharacteristicModelState = { modelLoading: false, model: updatedModel };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case RoomCharacteristicActionTypes.updateFailure: {
-            return { ...prevState, modelLoading: true };
-        }
+        case RoomCharacteristicActionTypes.updateFailure: return { ...prevState, modelLoading: true };
 
-        case RoomCharacteristicActionTypes.deleteRequest: {
-            const deleteState: RoomCharacteristicDeleteState = { deleting: true, deleteRequest: action.request };
-            return { ...prevState, ...deleteState };
-        }
+        case RoomCharacteristicActionTypes.deleteRequest: return { ...prevState, deleting: true };
         case RoomCharacteristicActionTypes.deleteSuccess: {
-            if (prevState.modelsLoading === false && prevState.deleting === true) {
-                const state: RoomCharacteristicModelsState = { modelsLoading: false, models: prevState.models.filter((model) => prevState.deleteRequest && model.id !== prevState.deleteRequest.id) };
-                const deleteState: RoomCharacteristicDeleteState = { deleting: false, deleted: true };
-                return { ...prevState, ...deleteState, ...state };
-            }
-
-            return prevState;
+            const updatedModels = prevState.models?.filter((model) => model.id !== action.id) || [];
+            return { ...prevState, deleting: false, modelsLoading: false, models: updatedModels };
         }
-        case RoomCharacteristicActionTypes.deleteFailure: {
-            const deleteState: RoomCharacteristicDeleteState = { deleting: false, deleted: false };
-            return { ...prevState, ...deleteState };
-        }
+        case RoomCharacteristicActionTypes.deleteFailure: return { ...prevState, deleting: false };
         default: return prevState;
     }
 }

@@ -3,7 +3,6 @@ import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState, SnackbarActions } from "../store";
-import { useEffect, useState } from "react";
 import { SnackbarVariant } from "../models";
 import { MessageSnackbar } from "./common";
 
@@ -39,24 +38,7 @@ function HideOnScroll(props: HideOnScrollProps) {
 export const LayoutComponent = function (props: Props): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { userState, snackbarState } = useAppSelector((state: AppState) => ({
-        userState: state.userState,
-        snackbarState: state.snackbarState
-    }));
-    const [variant, setVariant] = useState<SnackbarVariant>(SnackbarVariant.info);
-    const [open, setOpen] = useState<boolean>(false);
-    const [message, setMessage] = useState<string>('');
-
-    useEffect(() => {
-        if (snackbarState.show !== true) {
-            setOpen(false);
-            return;
-        }
-
-        setVariant(snackbarState.variant);
-        setOpen(true);
-        setMessage(snackbarState.message);
-    }, [snackbarState]);
+    const { userState, snackbarState } = useAppSelector((state: AppState) => state);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
         if (!userState.authenticating && !userState.authenticated) {
@@ -73,6 +55,14 @@ export const LayoutComponent = function (props: Props): JSX.Element {
             profilePageText = `${user.name} ${user.lastname[0].toUpperCase()}.`;
         else
             profilePageText = 'Личный кабинет';
+    }
+
+    let variant: SnackbarVariant = SnackbarVariant.info;
+    let message: string = '';
+    const open = snackbarState.show;
+    if (snackbarState.show) {
+        variant = snackbarState.variant;
+        message = snackbarState.message;
     }
 
     return (

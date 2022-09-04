@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, For
 import moment from "moment";
 import pluralize from "plural-ru";
 import { useEffect, useState } from "react";
-import { createSearchParams, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
 import { BedTypes, Booking, BookingStatuses, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, SnackbarVariant, User } from "../../models"
@@ -13,12 +13,7 @@ import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const { roomCharacteristicState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => ({
-        bookingState: state.bookingState,
-        roomCharacteristicState: state.roomCharacteristicState,
-        rentalObjectState: state.rentalObjectState
-    }));
-
+    const { roomCharacteristicState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     const query = useQuery();
     const navigate = useNavigate();
@@ -28,7 +23,6 @@ export const RentalObjectComponent = function (): JSX.Element {
     const [specifyBedsRoomVariant, setSpecifyBedsRoomVariant] = useState<RoomVariant>();
     const [specifiedBedType, setSpecifiedBetType] = useState<RoomVariantBedType>();
 
-
     const [personsAnchorEl, setPersonsAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [datesAnchorEl, setDatesAnchorEl] = useState<HTMLButtonElement | null>(null);
     const personsPopoverOpen = Boolean(personsAnchorEl);
@@ -37,13 +31,18 @@ export const RentalObjectComponent = function (): JSX.Element {
     const datesPopoverId = datesPopoverOpen ? 'dates-popover' : undefined;
 
     useEffect(() => {
+        if (!id)
+            return;
+
         dispatch(RentalObjectActions.getRentalObject(id));
-        dispatch(BookingActions.getDraft());
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, []);
 
     useEffect(() => {
-        if (!id)
+        if (rentalObjectState.modelLoading)
+            return;
+        var result = dispatch(BookingActions.getDraft());
+        if (result.booking)
             return;
 
         const adultsCount = parseInt(query.get('adultsCount') || '') || 1;
@@ -51,23 +50,21 @@ export const RentalObjectComponent = function (): JSX.Element {
         const checkinDate = query.get('checkinDate') || undefined;
         const checkoutDate = query.get('checkoutDate') || undefined;
 
-        if (bookingState.modelLoading === false && !bookingState.model) {
-            dispatch(BookingActions.createDraft({
-                rentalObjectId: id,
-                rentalObject: model,
-                adultCount: adultsCount,
-                checkinDate: checkinDate || moment().format('YYYY-MM-DD'),
-                checkoutDate: checkoutDate || moment().add(10, 'days').format('YYYY-MM-DD'),
-                childCount: childsCount,
-                entityStatus: EntityStatus.Created,
-                total: 0,
-                number: 0,
-                status: BookingStatuses.Draft,
-                tenant: User.initial,
-                roomVariants: []
-            }));
-        }
-    }, [bookingState.modelLoading]);
+        dispatch(BookingActions.createDraft({
+            rentalObject: model,
+            adultCount: adultsCount,
+            checkinDate: checkinDate || moment().format('YYYY-MM-DD'),
+            checkoutDate: checkoutDate || moment().add(10, 'days').format('YYYY-MM-DD'),
+            childCount: childsCount,
+            entityStatus: EntityStatus.Draft,
+            total: 0,
+            number: 0,
+            status: BookingStatuses.Draft,
+            tenant: User.initial,
+            roomVariants: []
+        }));
+
+    }, [rentalObjectState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)
@@ -92,7 +89,8 @@ export const RentalObjectComponent = function (): JSX.Element {
             bookingRoomVariants.push({
                 roomVariantId: roomVariantId,
                 roomsCount: newCount,
-                amount: newAmount,
+                price: roomVariant.price,
+                amount: 0,
                 bedType: roomVariant.bedTypes[0].bedType
             });
         } else if (newCount > 0) {
@@ -101,9 +99,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             bookingRoomVariants = bookingRoomVariants.filter(o => o.roomVariantId !== roomVariantId);
         }
 
-        const total: number = bookingRoomVariants.reduce((p, c) => p + c.amount, 0)
-
-        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants, total: total }));
+        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants }));
     }
 
     function formatRoomVariants() {
@@ -182,12 +178,12 @@ export const RentalObjectComponent = function (): JSX.Element {
         }));
     }
 
-    const model: RentalObject | undefined = rentalObjectState.model;
 
-    if (rentalObjectState.modelLoading === false && !model) {
-        dispatch(SnackbarActions.showSnackbar('Ошибка при загрузке объекта аренды', SnackbarVariant.error));
+    if (!rentalObjectState.model) {
         return (<Typography>Возникла ошибка при загрузке объекта аренды</Typography>);
     }
+
+    const model: RentalObject = rentalObjectState.model;
 
     if (!bookingState.model) {
         return (<Typography>Возникла ошибка при формировании брони</Typography>);

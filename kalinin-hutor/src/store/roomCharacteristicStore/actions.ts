@@ -96,11 +96,11 @@ export namespace RoomCharacteristicActions {
 
     interface DeleteRequestAction extends Action<RoomCharacteristicActionTypes> {
         type: RoomCharacteristicActionTypes.deleteRequest;
-        request: RoomCharacteristic.DeleteRequest;
     }
 
     interface DeleteSuccessAction extends Action<RoomCharacteristicActionTypes> {
         type: RoomCharacteristicActionTypes.deleteSuccess;
+        id: string;
     }
 
     interface DeleteFailureAction extends Action<RoomCharacteristicActionTypes> {
@@ -225,12 +225,12 @@ export namespace RoomCharacteristicActions {
 
     export function deleteRoomCharacteristics(deleteRequest: RoomCharacteristic.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(deleteRequest));
+            dispatch(request());
 
             try {
                 await roomCharacteristicService.delete(deleteRequest);
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
-                return dispatch(success());
+                return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
@@ -238,8 +238,8 @@ export namespace RoomCharacteristicActions {
                 return dispatch(failure(error));
             }
 
-            function request(request: RoomCharacteristic.DeleteRequest): DeleteRequestAction { return { type: RoomCharacteristicActionTypes.deleteRequest, request: request }; }
-            function success(): DeleteSuccessAction { return { type: RoomCharacteristicActionTypes.deleteSuccess }; }
+            function request(): DeleteRequestAction { return { type: RoomCharacteristicActionTypes.deleteRequest }; }
+            function success(id: string): DeleteSuccessAction { return { type: RoomCharacteristicActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: RoomCharacteristicActionTypes.deleteFailure, error: error }; }
         }
     }

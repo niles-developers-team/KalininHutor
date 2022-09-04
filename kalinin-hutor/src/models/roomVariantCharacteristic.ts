@@ -5,7 +5,7 @@ export interface RoomVariantCharacteristic extends IEntity {
     // Идентификатор характеристики номера
     id: string | null;
     // Идентификатор номера
-    roomVariantId: string | null;
+    roomVariantId: string;
     // Идентификатор характеристики
     roomCharacteristicId: string | null;
     roomCharacteristicName: string;
@@ -50,7 +50,7 @@ export namespace RoomVariantCharacteristic {
         id: null,
         roomCharacteristicId: null,
         roomCharacteristicName: '',
-        roomVariantId: null,
+        roomVariantId: '',
 
         entityStatus: EntityStatus.NotChanged
     }

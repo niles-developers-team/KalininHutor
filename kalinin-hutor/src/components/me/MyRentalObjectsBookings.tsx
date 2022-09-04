@@ -1,7 +1,6 @@
 import { CurrencyRuble, Info } from "@mui/icons-material";
-import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
-import moment from "moment";
 import { Booking } from "../../models";
 
 interface Props {
@@ -25,7 +24,7 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
     const columns: GridColDef<Booking>[] = [
         {
             field: 'rentalObject', sortable: false, headerName: 'Объект аренды', flex: 1, renderCell: ({ row: o }) => (
-                <Typography><a href={`/me/rental-objects/${o.rentalObjectId}`}>{o.rentalObject?.name}</a></Typography>
+                <Typography><a href={`/me/rental-objects/${o.rentalObject.id}`}>{o.rentalObject?.name}</a></Typography>
             )
         },
         {

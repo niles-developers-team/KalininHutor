@@ -1,11 +1,21 @@
-import { EntityStatus, IEntity, PaymentOptions } from "./common";
+import { EntityStatus, IEntity } from "./common";
 import { RoomVariantBedType } from "./roomVariantBedType";
 import { RoomVariantCharacteristic } from "./roomVariantCharacteristic";
+
+export enum PaymentOptions {
+    // Можно оплатить онлайн 
+    Online,
+    // Оплата на месте только наличными 
+    CashOnTheSpot,
+    // Оплата на месте картой или наличными 
+    ByCardOrCashOnTheSpot
+}
+
 export interface RoomVariant extends IEntity {
     // Идентификатор варинта номера объекта аренды
-    id?: string;
+    id: string;
     // Идентификатор объекта аренды
-    rentalObjectId?: string;
+    rentalObjectId: string;
     // Название
     name: string;
     // Описание
@@ -108,21 +118,5 @@ export namespace RoomVariant {
 
         deleteBedTypesRequests: RoomVariantBedType.DeleteRequest;
         deleteCharacteristicsRequests: RoomVariantCharacteristic.DeleteRequest;
-    }
-
-    export const initial: RoomVariant = {
-        count: 0,
-        description: '',
-        freeCount: 0,
-        length: 0,
-        maxPersonsCount: 0,
-        name: '',
-        paymentOption: PaymentOptions.CashOnTheSpot,
-        price: 0,
-        width: 0,
-        bedTypes: [],
-        characteristics: [],
-
-        entityStatus: EntityStatus.NotChanged
     }
 }

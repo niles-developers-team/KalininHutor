@@ -39,34 +39,32 @@ export const MeComponent = function (): JSX.Element {
     }, []);
 
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        dispatch(UserActions.updateUser({ ...currentUser, phoneNumber: event.currentTarget && event.currentTarget.value }));
+        dispatch(UserActions.updateDraft({ ...currentUser, phoneNumber: event.currentTarget && event.currentTarget.value }));
     }
 
     function handleEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        dispatch(UserActions.updateUser({ ...currentUser, email: event.currentTarget && event.currentTarget.value }));
+        dispatch(UserActions.updateDraft({ ...currentUser, email: event.currentTarget && event.currentTarget.value }));
 
     }
 
     function handleNameChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        dispatch(UserActions.updateUser({ ...currentUser, name: event.currentTarget && event.currentTarget.value }));
-
+        dispatch(UserActions.updateDraft({ ...currentUser, name: event.currentTarget && event.currentTarget.value }));
     }
 
     function handleLastnameChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        dispatch(UserActions.updateUser({ ...currentUser, lastname: event.currentTarget && event.currentTarget.value }));
-
+        dispatch(UserActions.updateDraft({ ...currentUser, lastname: event.currentTarget && event.currentTarget.value }));
     }
 
     function handleBirthdayChanged(value: string | null | undefined, keyboardInputValue: string | undefined) {
-        dispatch(UserActions.updateUser({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
+        dispatch(UserActions.updateDraft({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
     }
 
     function handleBirthdayAccepted(value: string | null | undefined) {
-        dispatch(UserActions.updateUser({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
+        dispatch(UserActions.updateDraft({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
     }
 
     function handleUpdateUserDetailsConfirm() {
-        dispatch(UserActions.updateUser(currentUser));
+        dispatch(UserActions.updateDraft(currentUser));
     }
 
     function handleUpdateUserDetailsCancel() { dispatch(UserActions.getCurrentUser()); }

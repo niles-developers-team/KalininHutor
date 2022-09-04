@@ -23,9 +23,7 @@ import { BookingComponent } from "./rentalObjects/Booking";
 
 
 export function RoutesSwitch() {
-    const { userState } = useAppSelector((state: AppState) => ({
-        userState: state.userState
-    }));
+    const { userState } = useAppSelector((state: AppState) => state);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();

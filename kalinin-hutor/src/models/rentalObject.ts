@@ -1,10 +1,10 @@
+import { IEntity } from "./common";
 import { RoomVariant } from "./roomVariant";
+import { User } from "./user";
 
-export interface RentalObject {
+export interface RentalObject extends IEntity {
     // Идентификатор объекта аренды
-    id?: string;
-    // Идентификатор владельца
-    landlordId: string | null;
+    id: string;
     // Название объекта аренды 
     name: string;
     // Описание объекта аренды
@@ -15,8 +15,10 @@ export interface RentalObject {
     // Время отъезда объекта аренды
     checkoutTime: string;
 
+    landlord: User;
+
     bestDemand?: RentalObjectBestDemand;
-    roomVariants?: RoomVariant[];
+    roomVariants: RoomVariant[];
 }
 
 export interface RentalObjectBestDemand {
@@ -74,15 +76,5 @@ export namespace RentalObject {
 
     export interface DeleteRequest {
         ids: string[];
-    }
-
-    export const initial: RentalObject = {
-        checkinTime: '12:00:00',
-        checkoutTime: '12:00:00',
-        description: '',
-        address: '',
-        landlordId: null,
-        name: '',
-        roomVariants: []
     }
 }

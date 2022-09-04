@@ -28,6 +28,9 @@ export enum ActionTypes {
     getUserSuccess = 'GET_USER_SUCCESS',
     getUserFailure = 'GET_USER_FAILURE',
 
+    createDraft = 'CREATE_USER_DRAFT',
+    updateDraft = 'UPDATE_USER_DRAFT',
+
     updateRequest = 'UPDATE_USER_REQUEST',
     updateSuccess = 'UPDATE_USER_SUCCESS',
     updateFailure = 'UPDATE_USER_FAILURE',
@@ -140,11 +143,11 @@ export namespace UserActions {
 
     export interface DeleteRequestAction extends Action<ActionTypes> {
         type: ActionTypes.deleteRequest;
-        request: User.DeleteRequest;
     }
 
     export interface DeleteSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.deleteSuccess;
+        id: string;
     }
 
     export interface DeleteFailureAction extends Action<ActionTypes> {
@@ -152,13 +155,24 @@ export namespace UserActions {
         error: ApplicationError;
     }
 
-    export type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
-    export type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
-    export type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
-    export type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
-    export type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
-    export type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
-    export type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
+    interface CreateDraftAction extends Action<ActionTypes> {
+        type: ActionTypes.createDraft;
+        draft: User;
+    }
+
+    interface UpdateDraftAction extends Action<ActionTypes> {
+        type: ActionTypes.updateDraft;
+        draft: User;
+    }
+
+    type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
+    type Signup = SignupRequestAction | SignupSuccessAction | SignupFailureAction;
+    type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
+    type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
+    type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
+    type DraftUser  = CreateDraftAction | UpdateDraftAction;
+    type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
+    type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
 
     export type UserActions = Signin
         | Signup
@@ -248,11 +262,11 @@ export namespace UserActions {
         }
     }
 
-    export function updateUser(user: User): UpdateSuccessAction {
+    export function updateDraft(user: User): UpdateSuccessAction {
         return { type: ActionTypes.updateSuccess, model: user };
     }
 
-    export function applyChanges(user: User): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+    export function updateUser(user: User): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
             dispatch(request());
 
@@ -340,12 +354,12 @@ export namespace UserActions {
 
     export function deleteUsers(deleteRequest: User.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request(deleteRequest));
+            dispatch(request());
 
             try {
                 await userService.delete(deleteRequest);
                 dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
-                return dispatch(success());
+                return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
@@ -353,8 +367,8 @@ export namespace UserActions {
                 return dispatch(failure(error));
             }
 
-            function request(request: User.DeleteRequest): DeleteRequestAction { return { type: ActionTypes.deleteRequest, request: request }; }
-            function success(): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess }; }
+            function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
+            function success(id: string): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
         }
     }

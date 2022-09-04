@@ -4,7 +4,7 @@ import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mu
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
 
-import { Booking, EntityStatus, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
+import { Booking, EntityStatus, RentalObject, RoomCharacteristic } from "../../models";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { BookingDetailsComponent } from "./BookingDetails";
@@ -14,27 +14,19 @@ export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id, rentalObjectId } = useParams();
-    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => ({
-        bookingState: state.bookingState,
-        rentalObjectState: state.rentalObjectState,
-        roomCharacteristicState: state.roomCharacteristicState
-    }));
+    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         if (!id)
+            return;
+
+        if (!rentalObjectId)
             return;
 
         dispatch(BookingActions.getBooking(id));
         dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, [id, rentalObjectId]);
-
-    useEffect(() => {
-        if (bookingState.saving === false && bookingState.saved) {
-            dispatch(BookingActions.clearEditionState());
-            navigate('/my-bookings');
-        }
-    }, [bookingState.saving]);
 
     function handleChangeBooking() {
         if (!model)
@@ -50,18 +42,21 @@ export const BookingComponent = function (): JSX.Element {
         if (model.checkoutDate)
             search.append('checkoutDate', moment(model.checkoutDate).format('YYYY-MM-DD'));
 
-        navigate(`/rental-objects/${model.rentalObjectId}?${search}`);
+        navigate(`/rental-objects/${model.rentalObject.id}?${search}`);
     }
 
     async function handleConfirmBooking() {
         if (!model)
             return;
 
-        if (model.entityStatus === EntityStatus.Created || model.entityStatus === EntityStatus.Draft) {
+        if (model.entityStatus === EntityStatus.Draft) {
             await dispatch(BookingActions.createBooking(model));
         } else if (model.entityStatus === EntityStatus.Updated) {
             //await dispatch(BookingActions.updateBooking(model));
         }
+
+        dispatch(BookingActions.clearEditionState());
+        navigate('/my-bookings');
     }
 
     if (!bookingState.model)
@@ -127,7 +122,9 @@ export const BookingComponent = function (): JSX.Element {
                         <Button onClick={handleChangeBooking}>Уточнить варианты</Button>
                     </Stack>
                     {model.roomVariants?.map((brv, index) => {
-                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId) || RoomVariant.initial;
+                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId);
+                        if(!roomVariant)
+                        return (<Skeleton></Skeleton>)
 
                         return (<BookingRoomVariantInfo
                             bookingRoomVariant={brv}

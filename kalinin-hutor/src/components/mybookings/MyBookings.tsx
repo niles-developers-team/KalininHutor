@@ -10,11 +10,13 @@ export const MyBookingsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const { bookingState, userState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
-    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); }, []);
-    useEffect(() => {
-        if (userState.authenticating === false && userState.currentUser)
+    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); });
+    useEffect(() => { getCurrentUserBookings(); }, [userState.modelLoading]);
+
+    function getCurrentUserBookings() {
+        if (userState.currentUser)
             dispatch(BookingActions.getBookings({ tenantId: userState.currentUser.id }));
-    }, [userState.authenticating === false && userState.currentUser]);
+    }
 
     const bookings = bookingState.models || [];
     const characteristics = roomCharacteristicState.models || [];
@@ -31,17 +33,16 @@ export const MyBookingsComponent = function (): JSX.Element {
                             <Typography color="GrayText">{BookingStatuses.getDescription(booking.status)}</Typography>
                         </Stack>
                         <Typography variant="h6"><b>{booking.rentalObject?.name}</b></Typography>
-                        <Typography><b>Информация о госте:</b></Typography>
-                        {!booking.tenant ? null
-                            : (
-                                <Stack> <Typography>{booking.tenant.name}</Typography>
-                                </Stack>)
-                        }
+                        <Stack direction="row" spacing={1}>
+                            <Typography><b>Информация о госте:</b></Typography>
+                            <Typography>{booking.tenant.name}</Typography>
+                            <Typography>{booking.tenant.lastname}</Typography>
+                        </Stack>
                         {booking.roomVariants?.map((brv, index) => {
-                            const roomVariant = booking.rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId);
+                            const roomVariant = booking.rentalObject.roomVariants?.find(o => o.id === brv.roomVariantId);
                             if (!roomVariant) {
                                 dispatch(SnackbarActions.showSnackbar('Не удалось найти вариант номера'));
-                                return;
+                                return (<Typography>Не удалось найти вариант номера</Typography>);
                             }
 
                             return (<BookingRoomVariantInfo

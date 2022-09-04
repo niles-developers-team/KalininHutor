@@ -1,5 +1,5 @@
 import { ActionTypes, UserActions } from "./actions";
-import { AuthenticationState, UserDeleteState, UserModelsState, UserModelState, UserState } from "./state";
+import { AuthenticationState, UserModelsState, UserModelState, UserState } from "./state";
 
 const initialState: UserState = {
     authenticating: false,
@@ -11,95 +11,44 @@ const initialState: UserState = {
 
 export function userReducer(prevState: UserState = initialState, action: UserActions.UserActions): UserState {
     switch (action.type) {
-        case ActionTypes.signinRequest: {
-            const state: AuthenticationState = { authenticating: true, signinRequest: action.request };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.signinSuccess: {
-            const state: AuthenticationState = { authenticating: false, authenticated: true, currentUser: action.user }
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.signinFailure: {
-            const state: AuthenticationState = { authenticating: false, authenticated: false }
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.signinRequest: return { ...prevState, authenticating: true, signinRequest: action.request };
+        case ActionTypes.signinSuccess: return { ...prevState, authenticating: false, authenticated: true, currentUser: action.user };
+        case ActionTypes.signinFailure: return { ...prevState, authenticating: false, authenticated: false };
 
-        case ActionTypes.signOut: {
-            const state: AuthenticationState = { authenticating: false, authenticated: false }
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.signOut: return { ...prevState, authenticating: false, authenticated: false };
 
-        case ActionTypes.getCurrentUserRequest: {
-            const state: UserModelState = { modelLoading: true }
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getCurrentUserRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.getCurrentUserSuccess: {
             const modelState: UserModelState = { modelLoading: false, model: action.user };
             const authState: AuthenticationState = { authenticating: false, authenticated: true, currentUser: action.user }
             return { ...prevState, ...modelState, ...authState };
         }
-        case ActionTypes.getCurrentUserFailure: {
-            const state: UserModelState = { modelLoading: true };
-            const authState: AuthenticationState = { authenticating: false, authenticated: false }
-            return { ...prevState, ...state, ...authState };
-        }
+        case ActionTypes.getCurrentUserFailure: return { ...prevState, modelLoading: true, authenticating: false, authenticated: false };
 
-        case ActionTypes.getUserRequest: {
-            const state: UserModelState = { modelLoading: true };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.getUserSuccess: {
-            const state: UserModelState = { modelLoading: false, model: action.user };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.getUserFailure: {
-            const state: UserModelState = { modelLoading: true };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getUserRequest: return { ...prevState, modelLoading: true };
+        case ActionTypes.getUserSuccess: return { ...prevState, modelLoading: false, model: action.user };
+        case ActionTypes.getUserFailure: return { ...prevState, modelLoading: true };
 
-        case ActionTypes.getUsersRequest: {
-            const state: UserModelsState = { modelsLoading: true };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.getUsersSuccess: {
-            const state: UserModelsState = { modelsLoading: false, models: action.users };
-            return { ...prevState, ...state };
-        }
-        case ActionTypes.getUsersFailure: {
-            const state: UserModelsState = { modelsLoading: false, models: [] };
-            return { ...prevState, ...state };
-        }
+        case ActionTypes.getUsersRequest: return { ...prevState, modelsLoading: true };
+        case ActionTypes.getUsersSuccess: return { ...prevState, modelsLoading: false, models: action.users };
+        case ActionTypes.getUsersFailure: return { ...prevState, modelsLoading: false, models: [] };
 
-        case ActionTypes.updateRequest: return prevState;
+        case ActionTypes.updateRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.updateSuccess: {
-            if (prevState.modelsLoading === true || prevState.modelLoading === true) return prevState;
-            
-            const updatedModel = { ...prevState.model, ...action.model };
-            const updatedModels = prevState.models.map(o => o.id === action.model.id ? action.model : o);
-
-            const modelsState: UserModelsState = { modelsLoading: false, models: updatedModels };
-            const modelState: UserModelState = { modelLoading: false, model: updatedModel };
+            const modelsState: UserModelsState = { modelsLoading: false, models: prevState.models?.map(o => o.id === action.model.id ? action.model : o) || [] };
+            const modelState: UserModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case ActionTypes.updateFailure: return prevState;
+        case ActionTypes.updateFailure: return { ...prevState, modelLoading: true };
 
-        case ActionTypes.deleteRequest: {
-            const deleteState: UserDeleteState = { deleting: true, deleteRequest: action.request };
-            return { ...prevState, ...deleteState };
-        }
+        case ActionTypes.deleteRequest: return { ...prevState, deleting: true };
         case ActionTypes.deleteSuccess: {
-            if (prevState.modelsLoading === false && prevState.deleting === true) {
-                const state: UserModelsState = { modelsLoading: false, models: prevState.models.filter((model) => prevState.deleteRequest && model.id !== prevState.deleteRequest.id) };
-                const deleteState: UserDeleteState = { deleting: false, deleted: true };
-                return { ...prevState, ...deleteState, ...state };
-            }
-
-            return prevState;
+            const updatedModels = prevState.models?.filter((model) => model.id !== action.id) || [];
+            return { ...prevState, deleting: false, modelsLoading: false, models: updatedModels };
         }
-        case ActionTypes.deleteFailure: {
-            const deleteState: UserDeleteState = { deleting: false, deleted: false };
-            return { ...prevState, ...deleteState };
-        }
+        case ActionTypes.deleteFailure: return { ...prevState, deleting: false };
+        
+        case ActionTypes.clearEditionState: return { ...initialState };
         default: return prevState;
     }
 }
