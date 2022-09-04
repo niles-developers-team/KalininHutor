@@ -21,9 +21,7 @@ export const HomeComponent = function (): JSX.Element {
         roomsCount: 1,
         searchText: ''
     });
-    const { rentalObjectState } = useAppSelector((state: AppState) => ({
-        rentalObjectState: state.rentalObjectState
-    }));
+    const { rentalObjectState } = useAppSelector((state: AppState) => state);
 
     function handleSearch() {
         if (filter.searchText)

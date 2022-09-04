@@ -1,4 +1,18 @@
-import { Hotel, Fireplace, Bathtub, CleaningServices, SoupKitchen, Panorama, Info, LocalParking, LiveTv, Weekend, RoomService, Accessible, NaturePeople } from "@mui/icons-material";
+import {
+    Hotel,
+    Fireplace,
+    Bathtub,
+    CleaningServices,
+    SoupKitchen,
+    Panorama,
+    Info,
+    LocalParking,
+    LiveTv,
+    Weekend,
+    RoomService,
+    Accessible,
+    NaturePeople
+} from "@mui/icons-material";
 
 export enum CharacteristicTypes {
     // Спальня

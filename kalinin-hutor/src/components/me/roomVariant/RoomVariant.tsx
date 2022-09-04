@@ -1,11 +1,10 @@
 import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useDebounce } from "../../../hooks";
-import { EntityStatus, PaymentOptions, RoomCharacteristic, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
+import { EntityStatus, PaymentOptions, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
 import { AppState, RentalObjectActions } from "../../../store";
 import { RoomCharacteristicActions } from "../../../store/roomCharacteristicStore";
-import { RoomCharacteristicActionTypes } from "../../../store/roomCharacteristicStore/actions";
 import { BedVariantDialog } from "./BedVariantDialog";
 import { CharacteristicDialog } from "./CharacteristicDialog";
 import { RoomVariantBedTypesComponent } from "./RoomVariantBedTypes";
@@ -13,7 +12,7 @@ import { RoomVariantCharacteristicsComponent } from "./RoomVariantCharacteristic
 import { RoomVariantDetailsComponent } from "./RoomVariantDetails";
 import { v4 as uuidv4 } from 'uuid';
 import { ArrowBack } from "@mui/icons-material";
-import { ActionTypes, RoomVariantActions } from "../../../store/roomVariantStore";
+import { RoomVariantActions } from "../../../store/roomVariantStore";
 
 export const RoomVariantComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();

@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, BedTypes, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
+import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
 import { cookiesService, roomVariantService } from "../../services";
 import { AppState, AppThunkAction, AppThunkDispatch } from "../appState";
 import { SnackbarActions } from "../snackbarStore";

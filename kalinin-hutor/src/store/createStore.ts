@@ -1,4 +1,4 @@
-import { combineReducers, Store } from "redux";
+import { Store } from "redux";
 import thunkMiddleware from 'redux-thunk';
 
 import { AppState } from "./appState";

@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
-import { cookiesService, rentalObjectService, roomVariantService } from "../../services";
+import { cookiesService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { SnackbarActions } from "../snackbarStore/actions";
 import { v4 as uuidv4 } from 'uuid';

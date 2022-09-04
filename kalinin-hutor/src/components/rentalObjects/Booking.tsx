@@ -4,7 +4,7 @@ import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mu
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
 
-import { Booking, EntityStatus, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
+import { Booking, EntityStatus, RentalObject, RoomCharacteristic } from "../../models";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { BookingDetailsComponent } from "./BookingDetails";

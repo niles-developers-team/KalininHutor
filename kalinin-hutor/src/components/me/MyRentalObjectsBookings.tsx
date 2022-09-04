@@ -1,7 +1,6 @@
 import { CurrencyRuble, Info } from "@mui/icons-material";
-import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
-import moment from "moment";
 import { Booking } from "../../models";
 
 interface Props {

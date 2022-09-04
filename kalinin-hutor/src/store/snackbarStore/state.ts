@@ -8,6 +8,8 @@ export type SnackbarShow = {
 
 export type SnackbarHide = {
     show: false;
+    variant?: SnackbarVariant;
+    message?: string;
 }
 
 export type SnackbarState = SnackbarShow | SnackbarHide;
