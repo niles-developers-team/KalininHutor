@@ -12,6 +12,7 @@ using KalininHutor.DAL.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using KalininHutor.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ var connectionString = builder.Configuration.GetConnectionString("Postgres");
 var secret = builder.Configuration.GetValue<string>("Secret");
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 builder.Services.AddRouting();
@@ -150,4 +152,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<BookingHub>("/hubs/booking");
+
 app.Run();
