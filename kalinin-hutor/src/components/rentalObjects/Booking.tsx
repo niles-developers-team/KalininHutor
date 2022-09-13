@@ -4,7 +4,7 @@ import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mu
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
 
-import { Booking, EntityStatus, RentalObject, RoomCharacteristic } from "../../models";
+import { Booking, EntityStatus, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { BookingDetailsComponent } from "./BookingDetails";
@@ -14,7 +14,7 @@ export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id, rentalObjectId } = useParams();
-    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
+    const { bookingState, rentalObjectState, roomVariantState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         if (!id)
@@ -64,6 +64,7 @@ export const BookingComponent = function (): JSX.Element {
 
     const model: Booking = bookingState.model;
     const rentalObject: RentalObject | undefined = rentalObjectState.model;
+    const roomVariants: RoomVariant[] = roomVariantState.models || [];
     const characteristics: RoomCharacteristic[] = roomCharacteristicState.models || [];
 
     const nightsCount = moment(model.checkoutDate).dayOfYear() - moment(model.checkinDate).dayOfYear();
@@ -74,7 +75,7 @@ export const BookingComponent = function (): JSX.Element {
                 <BookingDetailsComponent
                     model={model}
                     nightsCount={nightsCount}
-                    rentalObjectRoomVariants={rentalObject?.roomVariants || []}
+                    rentalObjectRoomVariants={roomVariants}
                     onConfirmBooking={handleConfirmBooking}
                 />
                 <Stack spacing={2}>
@@ -122,7 +123,7 @@ export const BookingComponent = function (): JSX.Element {
                         <Button onClick={handleChangeBooking}>Уточнить варианты</Button>
                     </Stack>
                     {model.roomVariants?.map((brv, index) => {
-                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId);
+                        const roomVariant = roomVariants.find(o => o.id === brv.roomVariantId);
                         if(!roomVariant)
                         return (<Skeleton></Skeleton>)
 

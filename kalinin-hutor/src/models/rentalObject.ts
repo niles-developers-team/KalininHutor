@@ -49,6 +49,7 @@ export namespace RentalObject {
         roomsCount?: number;
 
         getBestDemands?: boolean;
+        getRoomVariants?: boolean;
 
         selectedCharacteristicsIds?: (string | undefined)[];
     }

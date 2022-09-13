@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState, SnackbarActions } from "../store";
 import { SnackbarVariant } from "../models";
 import { MessageSnackbar } from "./common";
+import { HubConnection } from "@microsoft/signalr";
+import { useEffect, useState } from "react";
+import { sessionService } from "../services";
 
 interface Props extends RouteProps {
     onSigninDialogOpen: () => void;
@@ -39,6 +42,25 @@ export const LayoutComponent = function (props: Props): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { userState, snackbarState } = useAppSelector((state: AppState) => state);
+    const [connection, setConnection] = useState<HubConnection>();
+
+    useEffect(() => {
+        setConnection(sessionService.initSignalR());
+    }, []);
+
+
+    useEffect(() => {
+        if (connection) {
+            connection
+                .start()
+                .then(() => { 
+                    connection.on('ReceiveNotification', result => {
+                        dispatch(SnackbarActions.showSnackbar(result.message, result.variant))
+                    }); 
+                })
+                .catch((error) => console.log(error));
+        }
+    }, [connection]);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
         if (!userState.authenticating && !userState.authenticated) {

@@ -1,6 +1,7 @@
 import { StorageItem } from "../models";
 import jwt_decode from "jwt-decode";
 import { cookiesService } from "./cookiesService";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 class SessionService {
     private originalFetch: typeof fetch = fetch.bind(window);
@@ -10,6 +11,19 @@ class SessionService {
 
     public init(): void {
         this.mixSessionFetch();
+    }
+
+    public initSignalR(): HubConnection | undefined {
+        const storageItem = this.getStorageItem();
+
+        if (!storageItem)
+            return undefined;
+
+        return new HubConnectionBuilder()
+            .withUrl("https://localhost:7294/hubs/notifications", { accessTokenFactory: () => storageItem.token })
+            .withAutomaticReconnect()
+            .configureLogging(LogLevel.Information)
+            .build();
     }
 
     public isUserAuthenticated(): boolean {
@@ -71,7 +85,7 @@ class SessionService {
             // Url correction in case we want to send a request to new api
             // TODO: Remove in future
             if (typeof input === "string") {
-                const prefixRegex = /^\/?api\//;
+                const prefixRegex = /^\/?(api|hubs)\//;
                 const matches = prefixRegex.exec(input);
 
                 if (matches && matches.length > 0) {

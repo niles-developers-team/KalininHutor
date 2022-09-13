@@ -14,7 +14,7 @@ public class NotifyRepository : BaseRepository<NotifyEntity, NotifySearchOptions
 
         await connection.QueryBuilder($@"
             insert into Notifies (Id, UserID, Type, Message, Variant, CreatedAt)
-            (
+            values (
                 {entity.Id},
                 {entity.UserId},
                 {entity.Type},

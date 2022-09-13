@@ -1,8 +1,10 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
 using KalininHutor.API.Requests;
+using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
 using KalininHutor.DAL.Identity;
+using KalininHutor.Domain;
 using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Identity;
 
@@ -72,5 +74,10 @@ public class AppMappingProfile : Profile
         CreateMap<BookingRoomVariantEntity, BookingRoomVariant>().ReverseMap();
         CreateMap<BookingRoomVariantEntity, BookingRoomVariantDTO>().ReverseMap();
         CreateMap<BookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
+        
+        CreateMap<NotificationsCommands.Create, Notify>().ReverseMap();
+        CreateMap<NotifyEntity, Notify>().ReverseMap();
+        CreateMap<NotifyEntity, NotificationDTO>().ReverseMap();
+        CreateMap<Notify, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
     }
 }

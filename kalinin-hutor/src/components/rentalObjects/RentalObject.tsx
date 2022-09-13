@@ -8,12 +8,13 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
 import { BedTypes, Booking, BookingStatuses, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, SnackbarVariant, User } from "../../models"
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, SnackbarActions } from "../../store";
+import { RoomVariantActions } from "../../store/roomVariantStore";
 import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const { roomCharacteristicState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
+    const { roomCharacteristicState, roomVariantState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     const query = useQuery();
     const navigate = useNavigate();
@@ -36,6 +37,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         dispatch(RentalObjectActions.getRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+        dispatch(RoomVariantActions.getRoomVariants(id));
     }, []);
 
     useEffect(() => {
@@ -76,7 +78,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         let bookingRoomVariants = [...booking.roomVariants];
 
         const bookingRoomVariant = bookingRoomVariants.find(o => o.roomVariantId === roomVariantId);
-        const roomVariant = model.roomVariants?.find(o => o.id === roomVariantId);
+        const roomVariant = roomVariants.find(o => o.id === roomVariantId);
 
         const newAmount = (roomVariant?.price || 0) * nightsCount * newCount;
 
@@ -106,7 +108,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         if (!model)
             return;
 
-        return model.roomVariants?.map(roomVariant => {
+        return roomVariants.map(roomVariant => {
             const roomsCount = booking?.roomVariants?.find(o => o.roomVariantId === roomVariant.id)?.roomsCount || 0;
             return (
                 <RoomVariantInfoComponent
@@ -190,6 +192,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     const booking: Booking = bookingState.model;
+    const roomVariants: RoomVariant[] = roomVariantState.models || [];
 
     const roomCharacteristics = roomCharacteristicState.models || [];
 
@@ -236,7 +239,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                             <Divider flexItem />
                             <Typography variant="subtitle1"><b>Вы выбрали:</b></Typography>
                             {booking?.roomVariants?.map(brv => {
-                                const roomVariant = model?.roomVariants?.find(o => o.id === brv.roomVariantId)
+                                const roomVariant = roomVariants.find(o => o.id === brv.roomVariantId)
                                 return <Typography key={roomVariant?.id}>{brv.roomsCount} x {roomVariant?.name}</Typography>
                             }
                             )}
