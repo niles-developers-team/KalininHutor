@@ -1,7 +1,7 @@
 namespace KalininHutor.Domain;
 
 ///<summary> Уведомление </summary>
-public class Notify : IEntity<Guid>
+public class Notification : IEntity<Guid>
 {
     ///<summary> Идентификатор  </summary>
     public Guid Id { get; protected set; }
@@ -24,9 +24,9 @@ public class Notify : IEntity<Guid>
     ///<summary> Прочитано ли уведомление получателем </summary>
     public bool Read { get; protected set; }
 
-    protected Notify() { }
+    protected Notification() { }
 
-    public Notify(Guid userId, NotifyType type, string message, NotifyVariant variant)
+    public Notification(Guid userId, NotifyType type, string message, NotifyVariant variant)
     {
         Id = Guid.NewGuid();
         UserId = userId;
@@ -34,4 +34,6 @@ public class Notify : IEntity<Guid>
         Message = message;
         Variant = variant;
     }
+
+    public void SetRead(bool read) => Read = read;
 }

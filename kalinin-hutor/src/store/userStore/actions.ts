@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { AuthenticatedUser, ApplicationError, User, SnackbarVariant } from "../../models";
+import { AuthenticatedUser, ApplicationError, User, SnackbarVariant, NotificationCommands } from "../../models";
 import { sessionService } from "../../services";
 import { userService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
@@ -31,6 +31,7 @@ export enum ActionTypes {
     createDraft = 'CREATE_USER_DRAFT',
     updateDraft = 'UPDATE_USER_DRAFT',
     updateCurrentUserDraft = 'UPDATE_CURRENT_USER_DRAFT',
+    updateCurrentUser = 'UPDATE_CURRENT_USER',
 
     updateRequest = 'UPDATE_USER_REQUEST',
     updateSuccess = 'UPDATE_USER_SUCCESS',
@@ -86,7 +87,7 @@ export namespace UserActions {
     export interface GetCurrentUserSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.getCurrentUserSuccess;
         currentUserLoading?: boolean;
-        user: User;
+        user: AuthenticatedUser;
     }
 
     export interface GetCurrentUserFailureAction extends Action<ActionTypes> {
@@ -122,6 +123,11 @@ export namespace UserActions {
     export interface GetFailureAction extends Action<ActionTypes> {
         type: ActionTypes.getUserFailure;
         error: ApplicationError;
+    }
+
+    export interface UpdateCurrentUserAction extends Action<ActionTypes> {
+        type: ActionTypes.updateCurrentUser;
+        currentUser: AuthenticatedUser;
     }
 
     export interface UpdateRequestAction extends Action<ActionTypes> {
@@ -168,7 +174,7 @@ export namespace UserActions {
 
     interface UpdateCurrentUserDraftAction extends Action<ActionTypes> {
         type: ActionTypes.updateCurrentUserDraft;
-        draft: User;
+        draft: AuthenticatedUser;
     }
 
     type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
@@ -176,7 +182,7 @@ export namespace UserActions {
     type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
     type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
     type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
-    type DraftUser  = CreateDraftAction | UpdateDraftAction | UpdateCurrentUserDraftAction;
+    type DraftUser = CreateDraftAction | UpdateDraftAction | UpdateCurrentUserDraftAction;
     type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
     type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
 
@@ -189,7 +195,8 @@ export namespace UserActions {
         | DraftUser
         | ClearEditionStateAction
         | UpdateUser
-        | DeleteUser;
+        | DeleteUser
+        | UpdateCurrentUserAction;
 
     export function signin(options: User.SigninRequest): AppThunkAction<Promise<SigninSuccessAction | SigninFailureAction>> {
         return async (dispatch: AppThunkDispatch) => {
@@ -249,8 +256,7 @@ export namespace UserActions {
             dispatch(request());
 
             try {
-                let user: User | undefined = undefined;
-                user = await userService.getCurrentUser();
+                const user = await userService.getCurrentUser();
                 if (!user) {
                     throw new ApplicationError('Не удалось найти пользователя');
                 }
@@ -264,7 +270,7 @@ export namespace UserActions {
             }
 
             function request(): GetCurrentUserRequestAction { return { type: ActionTypes.getCurrentUserRequest, currentUserLoading: true }; }
-            function success(user: User): GetCurrentUserSuccessAction { return { type: ActionTypes.getCurrentUserSuccess, currentUserLoading: false, user: user }; }
+            function success(user: AuthenticatedUser): GetCurrentUserSuccessAction { return { type: ActionTypes.getCurrentUserSuccess, currentUserLoading: false, user: user }; }
             function failure(error: ApplicationError): GetCurrentUserFailureAction { return { type: ActionTypes.getCurrentUserFailure, error: error }; }
         }
     }
@@ -273,7 +279,7 @@ export namespace UserActions {
         return { type: ActionTypes.updateDraft, draft: user };
     }
 
-    export function updateCurrentUserDraft(user: User): UpdateCurrentUserDraftAction {
+    export function updateCurrentUserDraft(user: AuthenticatedUser): UpdateCurrentUserDraftAction {
         return { type: ActionTypes.updateCurrentUserDraft, draft: user };
     }
 
@@ -365,7 +371,7 @@ export namespace UserActions {
 
     export function deleteUsers(deleteRequest: User.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request());
+            dispatch((): DeleteRequestAction => { return { type: ActionTypes.deleteRequest }; });
 
             try {
                 await userService.delete(deleteRequest);
@@ -378,9 +384,29 @@ export namespace UserActions {
                 return dispatch(failure(error));
             }
 
-            function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
             function success(id: string): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
+        }
+    }
+
+    export function pushNotification(notification: Notification): AppThunkAction<UpdateCurrentUserAction | ClearEditionStateAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { userState } = getState();
+
+            if (!userState.currentUser)
+                return clearEditionState();
+
+            dispatch(SnackbarActions.showSnackbar(notification.message, notification.variant));
+
+            const currentUser = userState.currentUser;
+
+            if (!currentUser.notifications) {
+                currentUser.notifications = [];
+            }
+
+            currentUser.notifications = [notification, ...currentUser.notifications];
+
+            return dispatch((): UpdateCurrentUserAction => { return { type: ActionTypes.updateCurrentUser, currentUser: currentUser } });
         }
     }
 }

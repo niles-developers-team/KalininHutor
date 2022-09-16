@@ -1,21 +1,19 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
-using KalininHutor.API.Hubs;
 using KalininHutor.DAL;
 using KalininHutor.Domain;
 using MediatR;
-using Microsoft.AspNetCore.SignalR;
 
 namespace KalininHutor.API.Requests;
 
-internal class CreateNotifyHandler : IRequestHandler<NotificationsCommands.CreateSuccess>
+internal class CreateNotifyHandler : IRequestHandler<NotificationCommands.Create>
 {
-    private readonly NotifyRepository _repository;
+    private readonly NotificationRepository _repository;
     private readonly INotificationInformer _informer;
     private readonly IMapper _mapper;
 
     public CreateNotifyHandler(
-        NotifyRepository repository,
+        NotificationRepository repository,
         INotificationInformer informer,
         IMapper mapper
     )
@@ -26,11 +24,11 @@ internal class CreateNotifyHandler : IRequestHandler<NotificationsCommands.Creat
     }
 
 
-    public async Task<Unit> Handle(NotificationsCommands.CreateSuccess request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(NotificationCommands.Create request, CancellationToken cancellationToken)
     {
-        var notify = new Notify(request.UserID, request.Type, request.Message, request.Variant);
+        var notify = new Notification(request.UserID, request.Type, request.Message, request.Variant);
 
-        await _repository.Create(_mapper.Map<NotifyEntity>(notify));
+        await _repository.Create(_mapper.Map<NotificationEntity>(notify));
 
         await _informer.ReceiveNotification(_mapper.Map<NotificationDTO>(notify));
 
@@ -38,27 +36,21 @@ internal class CreateNotifyHandler : IRequestHandler<NotificationsCommands.Creat
     }
 }
 
-public class NotificationsCommands
+public partial class NotificationCommands
 {
-    public abstract class Create : IRequest
+    public class Create : IRequest
     {
-        public virtual NotifyVariant Variant { get; }
+        public NotifyVariant Variant { get; }
         public string Message { get; set; }
         public NotifyType Type { get; set; }
         public Guid UserID { get; set; }
 
-        public Create(string message, NotifyType type, Guid userId)
+        public Create(NotifyVariant variant, string message, NotifyType type, Guid userId)
         {
+            Variant = variant;
             Message = message;
             Type = type;
             UserID = userId;
         }
-    }
-
-    public class CreateSuccess : Create
-    {
-        public override NotifyVariant Variant => NotifyVariant.Success;
-
-        public CreateSuccess(string message, NotifyType type, Guid userId) : base(message, type, userId) { }
     }
 }

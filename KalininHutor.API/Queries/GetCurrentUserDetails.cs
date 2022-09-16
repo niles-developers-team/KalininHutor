@@ -1,10 +1,8 @@
-using AutoMapper;
 using KalininHutor.API.DTO;
-using KalininHutor.API.Helpers;
 using KalininHutor.DAL.Identity;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Requests;
 
 internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCurrentUserDetailsQuery, UserDetailsDTO>
 {

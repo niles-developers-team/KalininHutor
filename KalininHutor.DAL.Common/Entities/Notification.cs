@@ -1,7 +1,7 @@
 namespace KalininHutor.DAL;
 
 ///<summary> Уведомление </summary>
-public class NotifyEntity : IEntity<Guid>
+public class NotificationEntity : IEntity<Guid>
 {
     ///<summary> Идентификатор  </summary>
     public Guid Id { get; protected set; }
@@ -16,7 +16,7 @@ public class NotifyEntity : IEntity<Guid>
     public string Message { get; protected set; }
 
     ///<summary> Вариант уведомления </summary>
-    public int Variant { get; protected set; }
+    public string Variant { get; protected set; }
 
     ///<summary> Время создания </summary>
     public DateTime CreatedAt { get; protected set; }
@@ -25,7 +25,18 @@ public class NotifyEntity : IEntity<Guid>
     public bool Read { get; protected set; }
 }
 
-public class NotifySearchOptions
+public enum NotificationStatus
 {
-    public Guid? UserId { get; protected set; }
+    All,
+    OnlyRead,
+    OnlyUnread
+}
+
+public class NotificationSearchOptions
+{
+    public Guid? UserId { get; set; }
+
+    public NotificationStatus? Status { get; set; }
+
+    public int? Type { get; set; }
 }

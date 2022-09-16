@@ -50,6 +50,7 @@ public class AppMappingProfile : Profile
         CreateMap<User, UserDetailsDTO>().ReverseMap();
         CreateMap<UserEntity, UserDetailsDTO>().ReverseMap();
         CreateMap<User, AuthenticatedUserDetailsDTO>().ReverseMap();
+        CreateMap<UserDTO, Tenant>().ReverseMap();
         CreateMap<UserDetailsDTO, Tenant>().ReverseMap();
 
         CreateMap<RoomCharacteristic, RoomCharacteristicDTO>().ReverseMap();
@@ -75,9 +76,9 @@ public class AppMappingProfile : Profile
         CreateMap<BookingRoomVariantEntity, BookingRoomVariantDTO>().ReverseMap();
         CreateMap<BookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
         
-        CreateMap<NotificationsCommands.Create, Notify>().ReverseMap();
-        CreateMap<NotifyEntity, Notify>().ReverseMap();
-        CreateMap<NotifyEntity, NotificationDTO>().ReverseMap();
-        CreateMap<Notify, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
+        CreateMap<NotificationCommands.Create, Notification>().ReverseMap();
+        CreateMap<NotificationEntity, Notification>().ReverseMap();
+        CreateMap<NotificationEntity, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
+        CreateMap<Notification, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
     }
 }

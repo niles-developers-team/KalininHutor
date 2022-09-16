@@ -22,6 +22,8 @@ public class UserDetailsDTO : UserDTO
     public new Guid Id { get; set; }
     ///<summary> Дата рождения </summary>
     public DateOnly? Birthday { get; set; }
+
+    public IEnumerable<NotificationDTO> Notifications { get; set; }
 }
 
 public class HubUser

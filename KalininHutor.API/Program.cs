@@ -105,10 +105,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<JWTHelper>();
 
 {
-    builder.Services.AddScoped<NotifyRepository>(provider =>
+    builder.Services.AddScoped<NotificationRepository>(provider =>
     {
-        var logger = provider.GetRequiredService<ILogger<NotifyRepository>>();
-        return new NotifyRepository(connectionString, logger);
+        var logger = provider.GetRequiredService<ILogger<NotificationRepository>>();
+        return new NotificationRepository(connectionString, logger);
     });
     builder.Services.AddScoped<BookingRepository>(provider =>
     {

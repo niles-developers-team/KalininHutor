@@ -63,7 +63,7 @@ internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequ
 
         dto.RentalObject = _mapper.Map<RentalObjectDTO>(rentalObject);
 
-        await _sender.Send(new NotificationsCommands.CreateSuccess("Добавлена новая бронь", NotifyType.BookingCreated, rentalObject.LandlordId));
+        await _sender.Send(new NotificationCommands.Create(NotifyVariant.Info, "Добавлена новая бронь", NotifyType.BookingCreated, rentalObject.LandlordId));
 
         return dto;
     }
@@ -77,7 +77,7 @@ public partial class BookingCommands
     {
         ///<summary> Идентификатор арендатора </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>
-        public UserDetailsDTO Tenant { get; set; } = new UserDetailsDTO();
+        public UserDTO Tenant { get; set; } = new UserDTO();
         ///<summary> Идентификатор объекта аренды </summary>
         [Required]
         public Guid RentalObjectId { get; set; }

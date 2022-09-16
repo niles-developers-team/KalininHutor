@@ -1,9 +1,9 @@
-import { AppBar, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { AppState, SnackbarActions } from "../store";
-import { SnackbarVariant } from "../models";
+import { AppState, SnackbarActions, UserActions } from "../store";
+import { SnackbarVariant, NotificationCommands } from "../models";
 import { MessageSnackbar } from "./common";
 import { HubConnection } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
@@ -53,10 +53,10 @@ export const LayoutComponent = function (props: Props): JSX.Element {
         if (connection) {
             connection
                 .start()
-                .then(() => { 
-                    connection.on('ReceiveNotification', result => {
-                        dispatch(SnackbarActions.showSnackbar(result.message, result.variant))
-                    }); 
+                .then(() => {
+                    connection.on('ReceiveNotification', (result: Notification) => {
+                        dispatch(UserActions.pushNotification(result))
+                    });
                 })
                 .catch((error) => console.log(error));
         }
@@ -81,11 +81,12 @@ export const LayoutComponent = function (props: Props): JSX.Element {
 
     let variant: SnackbarVariant = SnackbarVariant.info;
     let message: string = '';
-    const open = snackbarState.show;
     if (snackbarState.show) {
         variant = snackbarState.variant;
         message = snackbarState.message;
     }
+
+    const unreadNotificationsCount = userState.currentUser?.notifications?.filter(o => !o.read).length;
 
     return (
         <Grid container direction="row">
@@ -101,7 +102,10 @@ export const LayoutComponent = function (props: Props): JSX.Element {
                             <Button variant="contained"><Search /></Button>
                             <Button size="small" href="/me" onClick={handleAccountClick}>
                                 <Grid container direction="column" alignItems="center">
-                                    <Face />
+                                    {unreadNotificationsCount ? (<Badge badgeContent={unreadNotificationsCount} color="error">
+                                        <Face />
+                                    </Badge>) : (<Face />)}
+
                                     <span>{profilePageText}</span>
                                 </Grid>
                             </Button>

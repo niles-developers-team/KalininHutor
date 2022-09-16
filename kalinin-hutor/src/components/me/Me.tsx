@@ -12,6 +12,7 @@ import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
+import { MyNotificationsComponent } from "./notifications/MyNotifications";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -125,6 +126,9 @@ export const MeComponent = function (): JSX.Element {
                     onUpdateCancel={handleUpdateUserDetailsCancel}
                 />
             </Stack>
+            <MyNotificationsComponent
+                notifications={currentUser.notifications}
+            />
             <MyRentalObjectsBookingsComponent
                 bookings={bookings}
                 loading={bookingState.modelsLoading}
