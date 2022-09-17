@@ -27,7 +27,7 @@ public class NotificationController : ControllerBase
 
     ///<summary> Метод изменения брони </summary>
     [HttpPatch("mark-as-read")]
-    public async Task<IActionResult> ReadNotification(Guid id) => Ok(await _sender.Send(new NotificationCommands.Update { Id = id, Read = true }));
+    public async Task<IActionResult> ReadNotification([FromBody] Guid id) => Ok(await _sender.Send(new NotificationCommands.Update { Id = id, Read = true }));
 
     ///<summary> Метод удаления брони </summary>
     [HttpDelete]

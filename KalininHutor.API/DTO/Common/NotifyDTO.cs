@@ -10,4 +10,5 @@ public class NotificationDTO
     public string Message { get; protected set; }
     public string Variant { get; protected set; }
     public DateTime CreatedAt { get; protected set; }
+    public bool Read { get; protected set; }
 }

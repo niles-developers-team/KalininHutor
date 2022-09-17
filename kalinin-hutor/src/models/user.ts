@@ -1,5 +1,3 @@
-import { SnackbarVariant } from "./common";
-
 export interface User {
     id?: string;
     phoneNumber: string;
@@ -11,7 +9,6 @@ export interface User {
 
 export interface AuthenticatedUser extends User {
     readonly token?: string;
-    notifications: Notification[];
 }
 
 export namespace User {

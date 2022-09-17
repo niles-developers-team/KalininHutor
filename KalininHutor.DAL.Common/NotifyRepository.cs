@@ -81,7 +81,7 @@ public class NotificationRepository : BaseRepository<NotificationEntity, Notific
                 Read
             from Notifications
             where Id = {id}
-        ").ExecuteScalarAsync<NotificationEntity>();
+        ").QuerySingleOrDefaultAsync<NotificationEntity>();
     }
 
     public override async Task Update(NotificationEntity entity)

@@ -21,7 +21,7 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCu
     {
         var claim = _context.User.FindFirst("id");
         if (claim == null || claim.Value == null)
-            throw new ApplicationException();
+            throw new UnauthorizedAccessException();
 
         var id = Guid.Parse(claim.Value);
 

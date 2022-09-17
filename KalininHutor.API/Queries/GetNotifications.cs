@@ -8,16 +8,24 @@ namespace KalininHutor.API.Requests;
 internal class GetNotificationsHandler : IRequestHandler<NotificationCommands.Get, IEnumerable<NotificationDTO>>
 {
     private readonly NotificationRepository _repository;
+    private readonly HttpContext _context;
     private readonly IMapper _mapper;
 
-    public GetNotificationsHandler(NotificationRepository repository, IMapper mapper)
+    public GetNotificationsHandler(NotificationRepository repository, IHttpContextAccessor contextAccessor, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _context = contextAccessor != null && contextAccessor.HttpContext != null ? contextAccessor.HttpContext : throw new ArgumentNullException(nameof(contextAccessor));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<IEnumerable<NotificationDTO>> Handle(NotificationCommands.Get request, CancellationToken cancellationToken)
     {
+        var claim = _context.User.FindFirst("id");
+        if (claim == null || claim.Value == null)
+            throw new UnauthorizedAccessException();
+
+        request.UserId = Guid.Parse(claim.Value);
+
         var result = await _repository.Get(_mapper.Map<NotificationSearchOptions>(request));
         return result.Select(_mapper.Map<NotificationDTO>).ToList();
     }
@@ -33,5 +41,6 @@ public partial class NotificationCommands
         public Guid? Id { get; set; }
         ///<summary> Идентификатор номера </summary>
         public Guid? RoomVariantId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

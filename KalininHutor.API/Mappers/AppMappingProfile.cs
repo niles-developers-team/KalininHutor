@@ -77,8 +77,9 @@ public class AppMappingProfile : Profile
         CreateMap<BookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
         
         CreateMap<NotificationCommands.Create, Notification>().ReverseMap();
+        CreateMap<NotificationCommands.Get, NotificationSearchOptions>().ReverseMap();
         CreateMap<NotificationEntity, Notification>().ReverseMap();
-        CreateMap<NotificationEntity, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
+        CreateMap<NotificationEntity, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => Enum.Parse<NotifyVariant>(s.Variant).ToString().ToLower())).ReverseMap();
         CreateMap<Notification, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
     }
 }

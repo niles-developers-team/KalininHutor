@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
-import { BedTypes, Booking, BookingStatuses, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, SnackbarVariant, User } from "../../models"
-import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, SnackbarActions } from "../../store";
+import { BedTypes, Booking, BookingStatuses, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, User } from "../../models"
+import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { RoomVariantActions } from "../../store/roomVariantStore";
 import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
@@ -84,7 +84,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         if (!bookingRoomVariant) {
             if (!roomVariant?.bedTypes || !roomVariant.bedTypes.length) {
-                dispatch(SnackbarActions.showSnackbar('Не загружены варианты кроватей номера'));
+                dispatch(NotificationActions.showSnackbar('Не загружены варианты кроватей номера'));
                 return;
             }
 
@@ -143,7 +143,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         let bookingRoomVariants = [...booking.roomVariants];
 
         if (!specifiedBedType) {
-            dispatch(SnackbarActions.showSnackbar("Не указан вариант кровати.", SnackbarVariant.error));
+            dispatch(NotificationActions.showSnackbar("Не указан вариант кровати.", NotificationVariant.error));
             return;
         }
 
@@ -164,12 +164,12 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     function handleDatesChanged(startDate: string | undefined, endDate: string | undefined) {
         if (!booking) {
-            dispatch(SnackbarActions.showSnackbar('Ошибка при попытке создать бронь.', SnackbarVariant.error));
+            dispatch(NotificationActions.showSnackbar('Ошибка при попытке создать бронь.', NotificationVariant.error));
             return;
         }
 
         if (!startDate || !endDate) {
-            dispatch(SnackbarActions.showSnackbar('Не выбраны даты брони.', SnackbarVariant.error));
+            dispatch(NotificationActions.showSnackbar('Не выбраны даты брони.', NotificationVariant.error));
             return;
         }
 

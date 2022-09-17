@@ -1,9 +1,9 @@
 import { Action } from "redux";
-import { AuthenticatedUser, ApplicationError, User, SnackbarVariant, NotificationCommands } from "../../models";
+import { AuthenticatedUser, ApplicationError, User, NotificationVariant, Notification } from "../../models";
 import { sessionService } from "../../services";
 import { userService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 
 export enum ActionTypes {
     signinRequest = 'SIGN_IN_REQUEST',
@@ -31,7 +31,6 @@ export enum ActionTypes {
     createDraft = 'CREATE_USER_DRAFT',
     updateDraft = 'UPDATE_USER_DRAFT',
     updateCurrentUserDraft = 'UPDATE_CURRENT_USER_DRAFT',
-    updateCurrentUser = 'UPDATE_CURRENT_USER',
 
     updateRequest = 'UPDATE_USER_REQUEST',
     updateSuccess = 'UPDATE_USER_SUCCESS',
@@ -125,11 +124,6 @@ export namespace UserActions {
         error: ApplicationError;
     }
 
-    export interface UpdateCurrentUserAction extends Action<ActionTypes> {
-        type: ActionTypes.updateCurrentUser;
-        currentUser: AuthenticatedUser;
-    }
-
     export interface UpdateRequestAction extends Action<ActionTypes> {
         type: ActionTypes.updateRequest;
     }
@@ -195,8 +189,7 @@ export namespace UserActions {
         | DraftUser
         | ClearEditionStateAction
         | UpdateUser
-        | DeleteUser
-        | UpdateCurrentUserAction;
+        | DeleteUser;
 
     export function signin(options: User.SigninRequest): AppThunkAction<Promise<SigninSuccessAction | SigninFailureAction>> {
         return async (dispatch: AppThunkDispatch) => {
@@ -211,7 +204,7 @@ export namespace UserActions {
                 }
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -235,7 +228,7 @@ export namespace UserActions {
                 }
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -264,7 +257,7 @@ export namespace UserActions {
                 return dispatch(success(user));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -296,11 +289,11 @@ export namespace UserActions {
                     lastname: user.lastname,
                     name: user.name
                 });
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -324,7 +317,7 @@ export namespace UserActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -358,7 +351,7 @@ export namespace UserActions {
                 return dispatch(success(user));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -375,38 +368,17 @@ export namespace UserActions {
 
             try {
                 await userService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 
             function success(id: string): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
-        }
-    }
-
-    export function pushNotification(notification: Notification): AppThunkAction<UpdateCurrentUserAction | ClearEditionStateAction> {
-        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { userState } = getState();
-
-            if (!userState.currentUser)
-                return clearEditionState();
-
-            dispatch(SnackbarActions.showSnackbar(notification.message, notification.variant));
-
-            const currentUser = userState.currentUser;
-
-            if (!currentUser.notifications) {
-                currentUser.notifications = [];
-            }
-
-            currentUser.notifications = [notification, ...currentUser.notifications];
-
-            return dispatch((): UpdateCurrentUserAction => { return { type: ActionTypes.updateCurrentUser, currentUser: currentUser } });
         }
     }
 }

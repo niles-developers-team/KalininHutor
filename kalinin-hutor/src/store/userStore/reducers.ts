@@ -45,8 +45,6 @@ export function userReducer(prevState: UserState = initialState, action: UserAct
         }
         case ActionTypes.updateFailure: return { ...prevState, modelLoading: true };
 
-        case ActionTypes.updateCurrentUser: return { ...prevState, currentUser: { ...action.currentUser } };
-
         case ActionTypes.deleteRequest: return { ...prevState, deleting: true };
         case ActionTypes.deleteSuccess: {
             const updatedModels = prevState.models?.filter((model) => model.id !== action.id) || [];

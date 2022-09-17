@@ -1,5 +1,5 @@
 import { handleJsonResponse, ResponseHandler, handleResponse } from "../helpers";
-import { NotificationCommands } from "../models";
+import { NotificationCommands, Notification } from "../models";
 
 class NotificationService {
     public async create(request: NotificationCommands.Create): Promise<Notification> {
@@ -17,7 +17,7 @@ class NotificationService {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            body: JSON.stringify(id)
         })
             .then(handleJsonResponse as ResponseHandler<Notification>);
     }
