@@ -3,14 +3,14 @@ import moment from "moment";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { BookingStatuses } from "../../models";
-import { AppState, BookingActions, RoomCharacteristicActions, SnackbarActions } from "../../store";
+import { AppState, BookingActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { BookingRoomVariantInfo } from "../rentalObjects/BookingRoomVariantInfo";
 
 export const MyBookingsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const { bookingState, userState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
-    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); });
+    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); }, []);
     useEffect(() => { getCurrentUserBookings(); }, [userState.modelLoading]);
 
     function getCurrentUserBookings() {
@@ -32,7 +32,10 @@ export const MyBookingsComponent = function (): JSX.Element {
                             {BookingStatuses.getIcon(booking.status)}
                             <Typography color="GrayText">{BookingStatuses.getDescription(booking.status)}</Typography>
                         </Stack>
-                        <Typography variant="h6"><b>{booking.rentalObject?.name}</b></Typography>
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                            <Typography variant="h6"><b>{booking.rentalObject?.name}</b></Typography>
+                            <Typography>c {moment(booking.checkinDate).format('DD.MM.YY')} по {moment(booking.checkoutDate).format('DD.MM.YY')}</Typography>
+                        </Stack>
                         <Stack direction="row" spacing={1}>
                             <Typography><b>Информация о госте:</b></Typography>
                             <Typography>{booking.tenant.name}</Typography>
@@ -41,7 +44,7 @@ export const MyBookingsComponent = function (): JSX.Element {
                         {booking.roomVariants?.map((brv, index) => {
                             const roomVariant = booking.rentalObject.roomVariants?.find(o => o.id === brv.roomVariantId);
                             if (!roomVariant) {
-                                dispatch(SnackbarActions.showSnackbar('Не удалось найти вариант номера'));
+                                dispatch(NotificationActions.showSnackbar('Не удалось найти вариант номера'));
                                 return (<Typography>Не удалось найти вариант номера</Typography>);
                             }
 

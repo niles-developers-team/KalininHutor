@@ -2,7 +2,7 @@ import { Button, Grid, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Booking, RentalObject } from "../../models";
-import { AppState, BookingActions, RoomCharacteristicActions } from "../../store";
+import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
 import { Face } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
@@ -12,6 +12,7 @@ import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
+import { MyNotificationsComponent } from "./notifications/MyNotifications";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -20,7 +21,8 @@ export const MeComponent = function (): JSX.Element {
         userState,
         rentalObjectState,
         bookingState,
-        roomCharacteristicState
+        roomCharacteristicState,
+        notificationState
     } = useAppSelector((state: AppState) => state);
 
     const [bookingInfoDialogOpen, setBookingInfoDialogOpen] = useState<boolean>(false);
@@ -97,6 +99,10 @@ export const MeComponent = function (): JSX.Element {
         setSelectedBooking(undefined);
     }
 
+    function handleMarkNotifyAsRead(id: string) {
+        dispatch(NotificationActions.markAsRead(id));
+    }
+
     if (!userState.currentUser)
         return (<Typography>Ошибка авторизации</Typography>);
 
@@ -125,6 +131,10 @@ export const MeComponent = function (): JSX.Element {
                     onUpdateCancel={handleUpdateUserDetailsCancel}
                 />
             </Stack>
+            <MyNotificationsComponent
+                notifications={notificationState.models}
+                markAsRead={handleMarkNotifyAsRead}
+            />
             <MyRentalObjectsBookingsComponent
                 bookings={bookings}
                 loading={bookingState.modelsLoading}

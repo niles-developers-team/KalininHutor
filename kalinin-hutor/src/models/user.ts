@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface AuthenticatedUser extends User {
-    token?: string;
+    readonly token?: string;
 }
 
 export namespace User {

@@ -5,7 +5,7 @@ using KalininHutor.DAL.Booking;
 using System.ComponentModel.DataAnnotations;
 using KalininHutor.API.DTO;
 using KalininHutor.Domain.Booking;
-using KalininHutor.Domain.Identity;
+using KalininHutor.Domain;
 
 namespace KalininHutor.API.Requests;
 
@@ -16,13 +16,15 @@ internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequ
     private readonly RentalObjectRepository _rentalObjectRepository;
     private readonly RoomVariantRepository _roomVariantRepository;
     private readonly IMapper _mapper;
+    private readonly ISender _sender;
 
     public CreateBookingHandler(
         BookingRepository repository,
         RentalObjectRepository rentalObjectRepository,
         RoomVariantRepository roomVariantRepository,
         BookingRoomVariantRepository bookingRoomVariantsRepository,
-        IMapper mapper
+        IMapper mapper,
+        ISender sender
     )
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -30,6 +32,7 @@ internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequ
         _roomVariantRepository = roomVariantRepository ?? throw new ArgumentNullException(nameof(roomVariantRepository));
         _bookingRoomVariantsRepository = bookingRoomVariantsRepository ?? throw new ArgumentNullException(nameof(bookingRoomVariantsRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
     public async Task<BookingDTO> Handle(BookingCommands.CreateRequest request, CancellationToken cancellationToken)
@@ -60,6 +63,8 @@ internal class CreateBookingHandler : IRequestHandler<BookingCommands.CreateRequ
 
         dto.RentalObject = _mapper.Map<RentalObjectDTO>(rentalObject);
 
+        await _sender.Send(new NotificationCommands.Create(NotifyVariant.Info, "Добавлена новая бронь", NotifyType.BookingCreated, rentalObject.LandlordId));
+
         return dto;
     }
 }
@@ -72,7 +77,7 @@ public partial class BookingCommands
     {
         ///<summary> Идентификатор арендатора </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>
-        public UserDetailsDTO Tenant { get; set; } = new UserDetailsDTO();
+        public UserDTO Tenant { get; set; } = new UserDTO();
         ///<summary> Идентификатор объекта аренды </summary>
         [Required]
         public Guid RentalObjectId { get; set; }

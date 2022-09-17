@@ -41,5 +41,5 @@ public class BookingController : ControllerBase
 
     ///<summary> Метод удаления брони </summary>
     [HttpDelete]
-    public async Task<IActionResult> Delete(BookingCommands.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete(BookingCommands.DeleteRequest request) => Ok(await _sender.Send(request));
 }

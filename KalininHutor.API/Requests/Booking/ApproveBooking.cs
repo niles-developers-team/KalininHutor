@@ -1,5 +1,6 @@
 using AutoMapper;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain;
 using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
 using MediatR;
@@ -10,11 +11,13 @@ internal class ApproveBookingHandler : IRequestHandler<BookingCommands.ApproveRe
 {
     private readonly BookingRepository _repository;
     private readonly IMapper _mapper;
-
-    public ApproveBookingHandler(BookingRepository repository, IMapper mapper)
+    private readonly ISender _sender;
+    public ApproveBookingHandler(BookingRepository repository, IMapper mapper,
+        ISender sender)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
 
     public async Task<Unit> Handle(BookingCommands.ApproveRequest request, CancellationToken cancellationToken)
@@ -22,6 +25,7 @@ internal class ApproveBookingHandler : IRequestHandler<BookingCommands.ApproveRe
         var entity = _mapper.Map<Booking>(await _repository.Get(request.Id));
         entity.SetStatus(BookingStatuses.Approved);
         await _repository.Update(_mapper.Map<BookingEntity>(entity));
+        await _sender.Send(new NotificationCommands.Create(NotifyVariant.Info, $"Бронь #{entity.Number} подтверждена", NotifyType.BookingApproved, entity.TenantId.Value));
         return Unit.Value;
     }
 }

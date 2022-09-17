@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
+import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant } from "../../models";
 import { cookiesService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 
@@ -218,11 +218,11 @@ export namespace RentalObjectActions {
                     }))
 
                 });
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -335,11 +335,11 @@ export namespace RentalObjectActions {
                             .map(rv => rv.id || '') || []
                     })
                 });
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -363,7 +363,7 @@ export namespace RentalObjectActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -401,7 +401,7 @@ export namespace RentalObjectActions {
                 return result;
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -418,12 +418,12 @@ export namespace RentalObjectActions {
 
             try {
                 await rentalObjectService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.ids));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 

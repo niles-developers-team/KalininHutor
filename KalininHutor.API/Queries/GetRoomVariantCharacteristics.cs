@@ -3,7 +3,7 @@ using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API;
 
 internal class GetRoomVariantCharacteristicsHandler : IRequestHandler<RoomVariantCharacteristicCommands.GetQuery, IEnumerable<RoomVariantCharacteristicDTO>>
 {

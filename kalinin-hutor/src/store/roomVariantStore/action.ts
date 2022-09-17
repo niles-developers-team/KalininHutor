@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
+import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant } from "../../models";
 import { cookiesService, roomVariantService } from "../../services";
 import { AppState, AppThunkAction, AppThunkDispatch } from "../appState";
-import { SnackbarActions } from "../snackbarStore";
+import { NotificationActions } from "../notificationStore";
 import { v4 as uuidv4 } from 'uuid';
 import { RoomCharacteristicActions, RoomCharacteristicActionTypes } from "../roomCharacteristicStore";
 
@@ -148,7 +148,7 @@ export namespace RoomVariantActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
             function request(): GetRoomVariantsRequestAction { return { type: ActionTypes.getRoomVariantsRequest } };
@@ -190,7 +190,7 @@ export namespace RoomVariantActions {
                 return result;
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -219,7 +219,7 @@ export namespace RoomVariantActions {
             const { rentalObjectState } = getState();
 
             if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return { type: ActionTypes.clearEditionState };
             }
 
@@ -240,7 +240,7 @@ export namespace RoomVariantActions {
             const { rentalObjectState } = getState();
 
             if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch({ type: ActionTypes.clearEditionState });
             }
 
@@ -255,7 +255,7 @@ export namespace RoomVariantActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState } = getState();
             if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch({ type: ActionTypes.createFailure });
             }
 
@@ -267,7 +267,7 @@ export namespace RoomVariantActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState } = getState();
             if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch({ type: ActionTypes.updateFailure });
             }
 
@@ -283,7 +283,7 @@ export namespace RoomVariantActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState, roomVariantState } = getState();
             if (!rentalObjectState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch({ type: ActionTypes.deleteFailure });
             }
 
@@ -301,7 +301,7 @@ export namespace RoomVariantActions {
             const { roomVariantState } = getState();
 
             if (!roomVariantState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch(failure());
             }
 
@@ -338,7 +338,7 @@ export namespace RoomVariantActions {
             const { roomVariantState } = getState();
 
             if (!roomVariantState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch(failure());
             }
             const roomVariant = roomVariantState.model;
@@ -357,7 +357,7 @@ export namespace RoomVariantActions {
             const { roomVariantState } = getState();
 
             if (!roomVariantState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch(failure());
             }
             const roomVariant = roomVariantState.model;
@@ -382,7 +382,7 @@ export namespace RoomVariantActions {
             const { roomVariantState } = getState();
 
             if (!roomVariantState.model) {
-                dispatch(SnackbarActions.showSnackbar('Не найден объект аренды', SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch(failure());
             }
             const roomVariant = roomVariantState.model;

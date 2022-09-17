@@ -22,6 +22,14 @@ public class UserDetailsDTO : UserDTO
     public new Guid Id { get; set; }
     ///<summary> Дата рождения </summary>
     public DateOnly? Birthday { get; set; }
+
+    public IEnumerable<NotificationDTO> Notifications { get; set; }
+}
+
+public class HubUser
+{
+    public Guid Id { get; set; }
+    public HashSet<string> ConnectionIds { get; set; }
 }
 
 ///<summary> Модель чтения аутентифицированного пользователя </summary>

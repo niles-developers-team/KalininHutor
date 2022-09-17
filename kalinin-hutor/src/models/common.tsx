@@ -1,10 +1,3 @@
-export enum SnackbarVariant {
-    success = 'success',
-    error = 'error',
-    warning = 'warning',
-    info = 'info'
-}
-
 export class UnauthorizedError extends Error { }
 
 export class ApplicationError extends Error {

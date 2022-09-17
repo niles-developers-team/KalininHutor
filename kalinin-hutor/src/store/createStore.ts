@@ -7,7 +7,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { userReducer } from "./userStore";
 import { bookingReducer } from "./bookingStore";
 import { rentalObjectReducer } from "./rentalObjectStore";
-import { snackbarReducer } from "./snackbarStore";
+import { notificationReducer } from "./notificationStore";
 import { roomCharacteristicReducer } from "./roomCharacteristicStore";
 import { roomVariantReducer } from "./roomVariantStore";
 
@@ -19,7 +19,7 @@ export default function configureAppStore(): Store<AppState> {
         reducer: {
             bookingState: bookingReducer,
             rentalObjectState: rentalObjectReducer,
-            snackbarState: snackbarReducer,
+            notificationState: notificationReducer,
             userState: userReducer,
             roomCharacteristicState: roomCharacteristicReducer,
             roomVariantState: roomVariantReducer

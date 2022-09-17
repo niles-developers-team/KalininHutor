@@ -45,6 +45,8 @@ class RentalObjectService {
 
             if (query.getBestDemands !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}getBestDemands=${query.getBestDemands}`;
+            if (query.getRoomVariants !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}getRoomVariants=${query.getRoomVariants}`;
 
             if (query.selectedCharacteristicsIds !== undefined)
                 for (let id of query.selectedCharacteristicsIds)
