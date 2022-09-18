@@ -3,8 +3,10 @@ using System.Text;
 
 namespace KalininHutor.API.Helpers;
 
+///<summary> ZIP Архиватор </summary>
 public static class GZIP
 {
+    ///<summary> Сжимает массив байтов </summary>
     public static byte[] Zip(byte[] src)
     {
         using (var msi = new MemoryStream(src))
@@ -20,6 +22,7 @@ public static class GZIP
         }
     }
 
+    ///<summary> Сжимает строку в массив байтов </summary>
     public static byte[] ZipFromString(string src)
     {
         var bytes = Encoding.Unicode.GetBytes(src);
@@ -37,6 +40,7 @@ public static class GZIP
         }
     }
 
+    ///<summary> Распаковывает массив байтов </summary>
     public static byte[] Unzip(byte[] src)
     {
         using (var msi = new MemoryStream(src))
@@ -48,6 +52,7 @@ public static class GZIP
         }
     }
 
+    ///<summary> Разжимает массив байтов в строку </summary>
     public static string UnzipToString(byte[] src)
     {
         using (var msi = new MemoryStream(src))

@@ -38,13 +38,24 @@ internal class CreateNotifyHandler : IRequestHandler<NotificationCommands.Create
 
 public partial class NotificationCommands
 {
+
+    ///<summary> Команда на создания уведомления </summary>
     public class Create : IRequest
     {
+
+        ///<summary> Вариант отображения </summary>
         public NotifyVariant Variant { get; }
+
+        ///<summary> Сообщение </summary>
         public string Message { get; set; }
+
+        ///<summary> Тип </summary>
         public NotifyType Type { get; set; }
+
+        ///<summary> Идентификатор пользователя </summary>
         public Guid UserID { get; set; }
 
+        ///<summary> Конструктор команды </summary>
         public Create(NotifyVariant variant, string message, NotifyType type, Guid userId)
         {
             Variant = variant;

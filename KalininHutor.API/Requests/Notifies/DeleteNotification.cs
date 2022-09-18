@@ -21,8 +21,10 @@ internal class DeleteNotificationHandler : IRequestHandler<NotificationCommands.
 
 public partial class NotificationCommands
 {
+    ///<summary> Команда на удаление уведомления </summary>
     public class Delete : IRequest
     {
-        public IReadOnlyList<Guid> Ids { get; set; }
+        ///<summary> Идентификаторы уведомлений, которые необходимо удалить </summary>
+        public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();
     }
 }

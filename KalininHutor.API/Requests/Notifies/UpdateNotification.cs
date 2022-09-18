@@ -30,9 +30,12 @@ internal class UpdateNotificationHandler : IRequestHandler<NotificationCommands.
 
 public partial class NotificationCommands
 {
+    ///<summary> Команда на обновление уведомления </summary>
     public class Update : IRequest
     {
+        ///<summary> Идентфикатор уведомления, которое необходимо обновить </summary>
         public Guid Id { get; set; }
+        ///<summary> Прочитано уведомление или нет </summary>
         public bool Read { get; set; }
     }
 }

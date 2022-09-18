@@ -13,10 +13,10 @@ public class NotificationEntity : IEntity<Guid>
     public int Type { get; protected set; }
 
     ///<summary> Сообщение в уведомлении </summary>
-    public string Message { get; protected set; }
+    public string Message { get; protected set; } = string.Empty;
 
     ///<summary> Вариант уведомления </summary>
-    public string Variant { get; protected set; }
+    public string Variant { get; protected set; } = "Info";
 
     ///<summary> Время создания </summary>
     public DateTime CreatedAt { get; protected set; }

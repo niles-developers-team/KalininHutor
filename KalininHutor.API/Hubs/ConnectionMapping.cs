@@ -1,10 +1,12 @@
 namespace KalininHutor.API.Hubs;
 
-public class ConnectionMapping<T>
+///<summary> Коллекция подключений </summary>
+public class ConnectionMapping<T> where T : notnull
 {
     private readonly Dictionary<T, HashSet<string>> _connections =
         new Dictionary<T, HashSet<string>>();
 
+    ///<summary> Количество подключений </summary>
     public int Count
     {
         get
@@ -13,6 +15,7 @@ public class ConnectionMapping<T>
         }
     }
 
+    ///<summary> Добавить подключение </summary>
     public void Add(T key, string connectionId)
     {
         lock (_connections)
@@ -27,12 +30,14 @@ public class ConnectionMapping<T>
         }
     }
 
+    ///<summary> Получить подключения </summary>
     public IEnumerable<string> GetConnections(T key)
     {
         lock (_connections)
             return _connections.TryGetValue(key, out var connections) ? connections : Enumerable.Empty<string>();
     }
 
+    ///<summary> Удалить подключение </summary>
     public void Remove(string connectionId)
     {
         lock (_connections)
@@ -46,6 +51,7 @@ public class ConnectionMapping<T>
             }
     }
 
+    ///<summary> Удалить подключение </summary>
     public void Remove(T key, string connectionId)
     {
         lock (_connections)
@@ -61,6 +67,7 @@ public class ConnectionMapping<T>
         }
     }
 
+    ///<summary> Получить ключи </summary>
     public T[] GetKeys()
     {
         lock (_connections)

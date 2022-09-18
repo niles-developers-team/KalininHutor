@@ -41,6 +41,7 @@ public partial class NotificationCommands
         public Guid? Id { get; set; }
         ///<summary> Идентификатор номера </summary>
         public Guid? RoomVariantId { get; set; }
+        ///<summary> Идентфикатор пользователя </summary>
         public Guid UserId { get; set; }
     }
 }

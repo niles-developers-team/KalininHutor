@@ -25,7 +25,9 @@ internal class ApproveBookingHandler : IRequestHandler<BookingCommands.ApproveRe
         var entity = _mapper.Map<Booking>(await _repository.Get(request.Id));
         entity.SetStatus(BookingStatuses.Approved);
         await _repository.Update(_mapper.Map<BookingEntity>(entity));
-        await _sender.Send(new NotificationCommands.Create(NotifyVariant.Info, $"Бронь #{entity.Number} подтверждена", NotifyType.BookingApproved, entity.TenantId.Value));
+        if (entity.TenantId.HasValue)
+            await _sender.Send(new NotificationCommands.Create(NotifyVariant.Info, $"Бронь #{entity.Number} подтверждена", NotifyType.BookingApproved, entity.TenantId.Value));
+            
         return Unit.Value;
     }
 }

@@ -22,5 +22,5 @@ public class FileObjectEntity : IEntity<Guid>
 
 public class FileObjectSearchOptions
 {
-    public IReadOnlyList<Guid> Ids { get; set; }
+    public List<Guid> Ids { get; set; } = new List<Guid>();
 }
