@@ -150,6 +150,11 @@ builder.Services.AddScoped<JWTHelper>();
         var logger = provider.GetRequiredService<ILogger<UserRepository>>();
         return new UserRepository(connectionString, logger);
     });
+    builder.Services.AddScoped<FileObjectRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<FileObjectRepository>>();
+        return new FileObjectRepository(connectionString, logger);
+    });
 }
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 

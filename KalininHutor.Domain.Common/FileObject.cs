@@ -16,7 +16,7 @@ public class FileObject : IEntity<Guid>
     public byte[] Body { get; protected set; } = new byte[0];
     
     ///<summary> Дата создания </summary>
-    public DateOnly DateCreated { get; protected set; }
+    public DateTime CreatedAt { get; protected set; }
 
     ///<summary> Закрытый конструктор для ORM </summary>
     protected FileObject() { }
@@ -35,6 +35,6 @@ public class FileObject : IEntity<Guid>
         Name = name;
         Extension = extension;
         Body = body;
-        DateCreated = DateOnly.FromDateTime(DateTime.Now);
+        CreatedAt = DateTime.Now;
     }
 }

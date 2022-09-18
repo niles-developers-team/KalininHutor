@@ -5,9 +5,9 @@ namespace KalininHutor.API.Requests;
 
 internal class DeleteNotificationHandler : IRequestHandler<NotificationCommands.Delete>
 {
-    private readonly NotificationRepository _repository;
+    private readonly FileObjectRepository _repository;
 
-    public DeleteNotificationHandler(NotificationRepository repository)
+    public DeleteNotificationHandler(FileObjectRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
