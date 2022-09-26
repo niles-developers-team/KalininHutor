@@ -1,3 +1,5 @@
+import { FileObject } from "./common";
+
 export interface User {
     id?: string;
     phoneNumber: string;
@@ -5,6 +7,7 @@ export interface User {
     name?: string;
     lastname?: string;
     birthday: string | null;
+    avatar?: FileObject;
 }
 
 export interface AuthenticatedUser extends User {
@@ -37,6 +40,8 @@ export namespace User {
         name?: string;
         lastname?: string;
         birthday?: string;
+        newAvatar?: FileObject;
+        deleteAvatar?: boolean;
     }
 
     export interface DeleteRequest {

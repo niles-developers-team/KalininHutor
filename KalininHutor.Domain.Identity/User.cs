@@ -11,6 +11,7 @@ public class User : IUser
     public string Email { get; protected set; } = string.Empty;
     public DateOnly? BirthDay { get; protected set; }
 
+    public Guid? AvatarId { get; protected set; }
     public FileObject? Avatar { get; protected set; }
 
     public string Password { get; protected set; } = string.Empty;
@@ -84,5 +85,11 @@ public class User : IUser
 
         if (Regex.IsMatch(phoneNumber, @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/g"))
             throw new ArgumentException("Неверный формат номера телефона.");
+    }
+
+    public void CreateAvatar(string name, string extension, byte[] body, int sortOrder)
+    {
+        Avatar = new FileObject(name, extension, body, sortOrder, Id);
+        AvatarId = Avatar.Id;
     }
 }

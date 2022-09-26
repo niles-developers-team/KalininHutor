@@ -2,7 +2,7 @@ using KalininHutor.API.DTO;
 using KalininHutor.DAL.Identity;
 using MediatR;
 
-namespace KalininHutor.API.Requests;
+namespace KalininHutor.API.Commands;
 
 internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCurrentUserDetailsQuery, UserDetailsDTO>
 {

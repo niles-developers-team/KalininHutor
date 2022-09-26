@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using KalininHutor.API.Requests;
+using KalininHutor.API.Commands;
 
 namespace KalininHutor.API.Controllers;
 
@@ -42,15 +42,15 @@ public class UserController : ControllerBase
     ///<summary> Метод регистрации </summary>
     [HttpPost("sign-up")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signup([FromBody] Requests.UserCommands.SignupRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signup([FromBody] UserCommands.SignupRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения пользователя </summary>
     [HttpPatch("update")]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] Requests.UserCommands.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] UserCommands.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления пользователя </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] Requests.UserCommands.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] UserCommands.DeleteRequest request) => Ok(await _sender.Send(request));
 }

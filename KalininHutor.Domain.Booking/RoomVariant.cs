@@ -132,14 +132,7 @@ public class RoomVariant : IEntity<Guid>
         return roomBedType;
     }
 
-    public void AddPhotos(ICollection<FileObject> photos)
-    {
-        if (_photos == null)
-            throw new MissingFieldException("Фотографии номера не были загружены");
-
-        foreach (var photo in photos)
-            _photos.Add(photo);
-    }
+    public void SetPhotos(ICollection<FileObject> photos) => _photos = photos.ToHashSet();
 
     public bool IsAvailableForBooking(int adultCount, int childsCount)
     {

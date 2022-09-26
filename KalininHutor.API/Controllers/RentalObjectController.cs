@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using KalininHutor.API.Requests;
+using KalininHutor.API.Commands;
 
 namespace KalininHutor.API.Controllers;
 

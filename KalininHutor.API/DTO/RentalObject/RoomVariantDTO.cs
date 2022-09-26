@@ -29,7 +29,9 @@ public class RoomVariantDTO
     public int FreeCount { get; protected set; }
 
     ///<summary> Доступные типы кроватей варианта номера </summary>
-    public IReadOnlyList<RoomVariantBedTypeDTO> BedTypes { get; set; } = new List<RoomVariantBedTypeDTO>();
+    public IEnumerable<RoomVariantBedTypeDTO> BedTypes { get; set; } = new List<RoomVariantBedTypeDTO>();
     ///<summary> Доступные сервисы и услуги варианта номера </summary>
-    public IReadOnlyList<RoomVariantCharacteristicDTO> Characteristics { get; set; } = new List<RoomVariantCharacteristicDTO>();
+    public IEnumerable<RoomVariantCharacteristicDTO> Characteristics { get; set; } = new List<RoomVariantCharacteristicDTO>();
+    ///<summary> Фотографии варианта номера </summary>
+    public IEnumerable<FileObjectDTO> Photos { get; set; } = new List<FileObjectDTO>();
 }

@@ -287,7 +287,8 @@ export namespace UserActions {
                     birthday: user.birthday || undefined,
                     email: user.email,
                     lastname: user.lastname,
-                    name: user.name
+                    name: user.name,
+                    newAvatar: user.avatar
                 });
                 dispatch(NotificationActions.showSnackbar('Пользователь успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));

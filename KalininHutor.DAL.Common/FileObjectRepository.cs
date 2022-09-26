@@ -13,14 +13,16 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
         using var connection = GetConnection();
 
         await connection.QueryBuilder($@"
-            insert into FileObjects (Id, UserID, Type, Message, Variant, CreatedAt)
+            insert into FileObjects (Id, Name, Extension, CompressedBody, CreatedAt, SortOrder, ParentId)
             values (
                 {entity.Id},
+                {entity.Name},
+                {entity.Extension},
                 {entity.CompressedBody},
                 {entity.CreatedAt},
-                {entity.Extension},
-                {entity.Name}
-            )
+                {entity.SortOrder},
+                {entity.ParentId}
+            );
         ").ExecuteAsync();
     }
 
@@ -28,7 +30,9 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
     {
         using var connection = GetConnection();
 
-        await connection.QueryBuilder($@"delete from FileObjects where Id = any({ids})").ExecuteAsync();
+        await connection.QueryBuilder($@"
+            delete from FileObjects where Id = any({ids});
+        ").ExecuteAsync();
     }
 
     public override async Task<IEnumerable<FileObjectEntity>> Get(FileObjectSearchOptions options)
@@ -38,17 +42,25 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
         var query = connection.QueryBuilder($@"
             select 
                 Id, 
-                Body,
+                Name,
+                Extension,
+                CompressedBody,
                 CreatedAt, 
-                Extension, 
-                Name
+                SortOrder, 
+                ParentId
             from FileObjects
             /**where**/
-            order by CreatedAt desc
+            order by SortOrder
         ");
 
-        if (options.Ids.Any())
+        if (options.Ids?.Any() ?? false)
             query.Where($"Id = any({options.Ids})");
+
+        if (options.ParentsIds?.Any() ?? false)
+            query.Where($"ParentId = any({options.ParentsIds})");
+
+        if (options.ParentId.HasValue)
+            query.Where($"ParentId = {options.ParentId}");
 
         return await query.QueryAsync<FileObjectEntity>();
     }
@@ -60,10 +72,12 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
         return await connection.QueryBuilder($@"
             select 
                 Id, 
-                Body,
+                Name,
+                Extension,
+                CompressedBody,
                 CreatedAt, 
-                Extension, 
-                Name
+                SortOrder, 
+                ParentId
             from FileObjects
             where Id = {id}
         ").QuerySingleOrDefaultAsync<FileObjectEntity>();
@@ -74,8 +88,11 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
         using var connection = GetConnection();
 
         await connection.QueryBuilder($@"
-            update FileObjects
-            set Name = {entity.Name}
+            update FileObjects set 
+                Name = {entity.Name},
+                Extension = {entity.Extension},
+                CompressedBody = {entity.CompressedBody},
+                SortOrder = {entity.SortOrder}
             where Id = {entity.Id}
         ").ExecuteAsync();
     }

@@ -1,7 +1,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, RentalObject } from "../../models";
+import { Booking, FileObject, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
 import { Face } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
@@ -103,6 +103,15 @@ export const MeComponent = function (): JSX.Element {
         dispatch(NotificationActions.markAsRead(id));
     }
 
+    async function handleAvatarChanged(file: File) {
+        const avatar: FileObject = {
+            body: Array.from(new Uint8Array(await file.arrayBuffer())),
+            extension: file.type,
+            name: file.name
+        };
+        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
+    }
+
     if (!userState.currentUser)
         return (<Typography>Ошибка авторизации</Typography>);
 
@@ -113,24 +122,19 @@ export const MeComponent = function (): JSX.Element {
 
     return (
         <Stack spacing={3}>
-            <Stack direction="row" spacing={3}>
-                <Stack>
-                    <Face color="primary" sx={{ fontSize: 200 }} />
-                    <Button>Выбрать фото</Button>
-                </Stack>
-                <UserDetailsComponent
-                    loading={userState.modelLoading}
-                    user={currentUser}
-                    onBirthdayAccepted={handleBirthdayAccepted}
-                    onBirthdayChanged={handleBirthdayChanged}
-                    onEmailChanged={handleEmailChanged}
-                    onLastnameChanged={handleLastnameChanged}
-                    onNameChanged={handleNameChanged}
-                    onPhoneNumberChanged={handlePhoneNumberChanged}
-                    onUpdateConfirm={handleUpdateUserDetailsConfirm}
-                    onUpdateCancel={handleUpdateUserDetailsCancel}
-                />
-            </Stack>
+            <UserDetailsComponent
+                loading={userState.modelLoading}
+                user={currentUser}
+                onBirthdayAccepted={handleBirthdayAccepted}
+                onBirthdayChanged={handleBirthdayChanged}
+                onEmailChanged={handleEmailChanged}
+                onLastnameChanged={handleLastnameChanged}
+                onNameChanged={handleNameChanged}
+                onPhoneNumberChanged={handlePhoneNumberChanged}
+                onAvatarChanged={handleAvatarChanged}
+                onUpdateConfirm={handleUpdateUserDetailsConfirm}
+                onUpdateCancel={handleUpdateUserDetailsCancel}
+            />
             <MyNotificationsComponent
                 notifications={notificationState.models}
                 markAsRead={handleMarkNotifyAsRead}

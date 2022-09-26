@@ -45,7 +45,8 @@ export const RoomVariantComponent = function (): JSX.Element {
                 paymentOption: PaymentOptions.ByCardOrCashOnTheSpot,
                 price: 0,
                 width: 0,
-                rentalObjectId: rentalObjectId
+                rentalObjectId: rentalObjectId,
+                photos: []
             }));
         } else {
             await dispatch(RoomVariantActions.getRoomVariant(id));

@@ -1,4 +1,4 @@
-using KalininHutor.API.Requests;
+using KalininHutor.API.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,7 +3,7 @@ using KalininHutor.API.DTO;
 using KalininHutor.DAL;
 using MediatR;
 
-namespace KalininHutor.API.Requests;
+namespace KalininHutor.API.Commands;
 
 internal class GetNotificationsHandler : IRequestHandler<NotificationCommands.Get, IEnumerable<NotificationDTO>>
 {

@@ -35,3 +35,10 @@ export enum EntityStatus {
 export interface IEntity {
     entityStatus: EntityStatus;
 }
+
+export interface FileObject {
+    readonly id?: string;
+    name: string;
+    body: number[];
+    extension: string;
+}

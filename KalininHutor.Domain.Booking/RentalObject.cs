@@ -51,6 +51,8 @@ public class RentalObject : IEntity<Guid>
         LandlordId = ownerId;
     }
 
+    public void SetPhotos(ICollection<FileObject> photos) => _photos = photos.ToHashSet();
+
     public void SetRoomVariants(IReadOnlyList<RoomVariant> variants)
     {
         if (variants.Any(o => o.RentalObjectId != Id))
@@ -97,7 +99,7 @@ public class RentalObject : IEntity<Guid>
         _photos.Add(photo);
     }
 
-    public RoomVariant CreateRoomVariant(string name, string description, decimal price, 
+    public RoomVariant CreateRoomVariant(string name, string description, decimal price,
                                         int maxPersonsCount, double width, double length,
                                         int? freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
     {
@@ -139,7 +141,7 @@ public class RentalObject : IEntity<Guid>
         if (_bookings == null)
             throw new MissingFieldException("Брони объекта аренды не были загружены");
 
-        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId== o.Id));
+        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId == o.Id));
 
         var visitorsSum = adultCount + childsCount;
         if (visitorsSum > selectedRoomVariants.Sum(o => o.MaxPersonsCount))

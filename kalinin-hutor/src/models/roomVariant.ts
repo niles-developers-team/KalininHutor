@@ -1,4 +1,4 @@
-import { EntityStatus, IEntity } from "./common";
+import { FileObject, IEntity } from "./common";
 import { RoomVariantBedType } from "./roomVariantBedType";
 import { RoomVariantCharacteristic } from "./roomVariantCharacteristic";
 
@@ -39,6 +39,7 @@ export interface RoomVariant extends IEntity {
 
     characteristics: RoomVariantCharacteristic[];
     bedTypes: RoomVariantBedType[];
+    photos: FileObject[];
 }
 
 export namespace RoomVariant {
@@ -77,6 +78,7 @@ export namespace RoomVariant {
 
         createBedTypesRequests: RoomVariantBedType.CreateRequest[];
         createCharacteristicsRequests: RoomVariantCharacteristic.CreateRequest[];
+        createPhotos?: FileObject[];
     }
 
     // Запрос удаления варинта номера
@@ -118,5 +120,8 @@ export namespace RoomVariant {
 
         deleteBedTypesRequests: RoomVariantBedType.DeleteRequest;
         deleteCharacteristicsRequests: RoomVariantCharacteristic.DeleteRequest;
+        
+        createPhotos?: FileObject[];
+        deletePhotos?: FileObject[];
     }
 }
