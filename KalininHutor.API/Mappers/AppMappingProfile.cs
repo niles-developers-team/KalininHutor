@@ -84,17 +84,14 @@ public class AppMappingProfile : Profile
         CreateMap<Notification, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
 
         CreateMap<FileObjectEntity, FileObject>()
-            //.ForMember(o => o.Body, o => o.MapFrom(s => GZIP.Unzip(s.CompressedBody)))
-            .ForMember(o => o.Body, o => o.MapFrom(s => s.CompressedBody))
+            .ForMember(o => o.Body, o => o.MapFrom(s => GZIP.UnzipToStringBase64(s.CompressedBody)))
             .ReverseMap()
-            //.ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.Zip(s.Body)));
-            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => s.Body));
+            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
         CreateMap<FileObjectEntity, FileObjectDTO>()
-            //.ForMember(o => o.Body, o => o.MapFrom(s => GZIP.Unzip(s.CompressedBody)))
-            .ForMember(o => o.Body, o => o.MapFrom(s => s.CompressedBody))
+            .ForMember(o => o.Body, o => o.MapFrom(s => GZIP.UnzipToStringBase64(s.CompressedBody)))
             .ReverseMap()
-            //.ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.Zip(s.Body)));
-            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => s.Body));
-        CreateMap<FileObject, FileObjectDTO>().ReverseMap();
+            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
+        CreateMap<FileObject, FileObjectDTO>()
+            .ReverseMap();
     }
 }

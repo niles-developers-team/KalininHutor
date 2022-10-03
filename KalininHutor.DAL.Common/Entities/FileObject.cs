@@ -12,6 +12,8 @@ public class FileObjectEntity : IEntity<Guid>
     ///<summary> Расширение </summary>
     public string Extension { get; protected set; } = string.Empty;
 
+    public string Body { get; protected set; } = string.Empty;
+
     ///<summary> Сжатые данные файла </summary>
     public byte[] CompressedBody { get; protected set; } = new byte[0];
 

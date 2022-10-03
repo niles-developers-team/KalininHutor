@@ -47,17 +47,11 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
             event.target.value = '';
     }
 
-    function createSrcFromArray(buffer: number[]) {
-        const blob = new Blob([new Uint8Array(buffer)]);
-        return URL.createObjectURL(blob);
-    }
-
     return (
         <Stack direction="row" spacing={3}>
             <Stack>
                 {props.user.avatar ? (
-                    // <img height={200} width={200} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body.toString()}`} />
-                    <img height={200} width={200} src={createSrcFromArray(props.user.avatar.body)}></img>
+                    <img height={200} width={200} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
                 ) : (
                     <Face color="primary" sx={{ fontSize: 200 }} />
                 )}

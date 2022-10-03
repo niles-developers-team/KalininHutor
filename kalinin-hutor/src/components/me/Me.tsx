@@ -3,7 +3,7 @@ import { createRef, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Booking, FileObject, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
-import { Face } from '@mui/icons-material';
+import { Face, RedeemRounded } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
 import { UserDetailsComponent } from "./UserDetails";
@@ -104,12 +104,24 @@ export const MeComponent = function (): JSX.Element {
     }
 
     async function handleAvatarChanged(file: File) {
-        const avatar: FileObject = {
-            body: Array.from(new Uint8Array(await file.arrayBuffer())),
-            extension: file.type,
-            name: file.name
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        if (!reader)
+            return;
+        reader.onload = () => {
+            if (!reader.result || typeof reader.result !== 'string')
+                return;
+
+            const body = reader.result.substring(reader.result.indexOf(',') + 1);
+
+            const avatar: FileObject = {
+                body: body,
+                extension: file.type,
+                name: file.name
+            };
+            dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
         };
-        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
     }
 
     if (!userState.currentUser)

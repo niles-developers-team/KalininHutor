@@ -39,6 +39,6 @@ export interface IEntity {
 export interface FileObject {
     readonly id?: string;
     name: string;
-    body: number[];
+    body: string;
     extension: string;
 }
