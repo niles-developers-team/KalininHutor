@@ -26,22 +26,12 @@ internal class UpdateUserHandler : IRequestHandler<UserCommands.UpdateRequest, U
         var entity = _mapper.Map<User>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Lastname, request.Email, request.Birthday);
 
-        if (request.DeleteAvatar)
-        {
-            request.NewAvatar = null;
-            await _fileObjectRepository.Delete(new List<Guid> { entity.AvatarId ?? Guid.Empty });
-        }
-        else if (request.NewAvatar != null)
-        {
-            if (entity.AvatarId.HasValue)
-            {
-                await _fileObjectRepository.Delete(new List<Guid> { entity.AvatarId ?? Guid.Empty });
-            }
+        request.NewAvatar = null;
+        await _fileObjectRepository.Delete(new List<Guid> { entity.AvatarId ?? Guid.Empty });
 
-            entity.CreateAvatar(request.NewAvatar.Name, request.NewAvatar.Extension, request.NewAvatar.Body, 0);
+        entity.CreateAvatar(request.NewAvatar.Name, request.NewAvatar.Extension, request.NewAvatar.Body, 0);
 
-            await _fileObjectRepository.Create(_mapper.Map<FileObjectEntity>(entity.Avatar));
-        }
+        await _fileObjectRepository.Create(_mapper.Map<FileObjectEntity>(entity.Avatar));
 
         await _repository.Update(_mapper.Map<UserEntity>(entity));
         return _mapper.Map<UserDetailsDTO>(entity);
@@ -69,8 +59,5 @@ public partial class UserCommands
 
         ///<summary> Новый аватар пользователя </summary>
         public FileObjectDTO? NewAvatar { get; set; }
-
-        ///<summary> Нужно ли удалять аватар </summary>
-        public bool DeleteAvatar { get; set; }
     }
 }
