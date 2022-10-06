@@ -26,7 +26,12 @@ internal class UpdateUserHandler : IRequestHandler<UserCommands.UpdateRequest, U
         var entity = _mapper.Map<User>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Lastname, request.Email, request.Birthday);
 
-        await _fileObjectRepository.Delete(new List<Guid> { entity.AvatarId ?? Guid.Empty });
+        var avatars = await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentId = request.Id });
+
+        if (avatars != null)
+        {
+            await _fileObjectRepository.Delete(avatars.Select(o => o.Id).ToList());
+        }
         if (request.NewAvatar != null)
         {
             entity.CreateAvatar(request.NewAvatar.Name, request.NewAvatar.Extension, request.NewAvatar.Body, 0);
