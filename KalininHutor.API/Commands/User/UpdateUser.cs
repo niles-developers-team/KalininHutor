@@ -35,9 +35,8 @@ internal class UpdateUserHandler : IRequestHandler<UserCommands.UpdateRequest, U
         if (request.NewAvatar != null)
         {
             entity.CreateAvatar(request.NewAvatar.Name, request.NewAvatar.Extension, request.NewAvatar.Body, 0);
-        }
-
         await _fileObjectRepository.Create(_mapper.Map<FileObjectEntity>(entity.Avatar));
+        }
 
         await _repository.Update(_mapper.Map<UserEntity>(entity));
         return _mapper.Map<UserDetailsDTO>(entity);

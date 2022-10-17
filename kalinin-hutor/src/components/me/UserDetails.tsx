@@ -1,4 +1,4 @@
-import { Close, Edit, Face, Save } from "@mui/icons-material";
+import { Close, Delete, Edit, Face, Save } from "@mui/icons-material";
 import { Button, CircularProgress, Grid, IconButton, Stack, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import { createRef, useState } from "react";
@@ -14,6 +14,7 @@ export interface UserDetailsProps {
     onBirthdayChanged: (value: string | null | undefined, keyboardInputValue: string | undefined) => void;
     onBirthdayAccepted: (value: string | null | undefined) => void;
     onAvatarChanged: (file: File) => void;
+    onAvatarDelete: () => void;
     onUpdateConfirm: () => void;
     onUpdateCancel: () => void;
 }
@@ -49,13 +50,16 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
 
     return (
         <Stack direction="row" spacing={3}>
-            <Stack>
+            <Stack spacing={1}>
                 {props.user.avatar ? (
-                    <img height={200} width={200} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
+                    <img height={200} width={200} style={{objectFit: "cover"}} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
                 ) : (
                     <Face color="primary" sx={{ fontSize: 200 }} />
                 )}
-                <Button onClick={handleFileChangeClick} type="submit" disabled={!editMode}>Выбрать фото</Button>
+                <Stack direction="row" spacing={1}>
+                    <Button fullWidth onClick={handleFileChangeClick} type="submit" disabled={!editMode}>Выбрать фото</Button>
+                    {props.user.avatar ? (<IconButton disabled={!editMode} onClick={props.onAvatarDelete}><Delete /></IconButton>) : null}
+                </Stack>
                 <input accept=".png,.jpeg,.jpg" hidden type="file" ref={fileInput} onChange={(event) => handleAvatarChange(event)} />
             </Stack>
             <Stack spacing={2}>
@@ -89,6 +93,6 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
                     renderInput={(params) => <TextField type="date" {...params} />}
                 />
             </Stack>
-        </Stack>
+        </Stack >
     )
 }

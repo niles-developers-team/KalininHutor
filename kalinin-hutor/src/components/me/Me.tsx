@@ -118,10 +118,15 @@ export const MeComponent = function (): JSX.Element {
             const avatar: FileObject = {
                 body: body,
                 extension: file.type,
-                name: file.name
+                name: file.name,
+                order: 0
             };
             dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
         };
+    }
+
+    function handleAvatarDelete() {
+        dispatch(UserActions.updateCurrentUserDraft({...currentUser, avatar: undefined}));
     }
 
     if (!userState.currentUser)
@@ -144,6 +149,7 @@ export const MeComponent = function (): JSX.Element {
                 onNameChanged={handleNameChanged}
                 onPhoneNumberChanged={handlePhoneNumberChanged}
                 onAvatarChanged={handleAvatarChanged}
+                onAvatarDelete={handleAvatarDelete}
                 onUpdateConfirm={handleUpdateUserDetailsConfirm}
                 onUpdateCancel={handleUpdateUserDetailsCancel}
             />

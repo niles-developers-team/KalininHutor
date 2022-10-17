@@ -1,10 +1,11 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant } from "../../models";
+import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
 import { cookiesService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
+import { readAsDataURL } from "../../helpers/fileHelpers";
 
 export enum ActionTypes {
     getRentalObjectsRequest = 'GET_RENTALOBJECTS_REQUEST',
@@ -176,6 +177,35 @@ export namespace RentalObjectActions {
 
             cookiesService.set('rental-object-draft', draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
+        }
+    }
+
+    export function appendPhotoToDraft(fileList: FileList): AppThunkAction {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+            const draft = rentalObjectState.model;
+
+            if (!draft)
+                return;
+
+                const photos: FileObject[] = [];
+
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
+
+                const body = await readAsDataURL(file);
+
+                const photo: FileObject = {
+                    body: body,
+                    extension: file.type,
+                    name: file.name,
+                    order: draft.photos?.reduce((a, b) => Math.max(a, b.order), 0)
+                };
+
+                photos.push(photo);
+            }
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...draft.photos, ...photos] } });
         }
     }
 

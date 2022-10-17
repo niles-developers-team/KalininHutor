@@ -3,10 +3,10 @@ import { Button, Grid, IconButton, Stack, TextField, Typography } from "@mui/mat
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, createRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { EntityStatus, RoomVariant } from "../../models";
+import { EntityStatus, FileObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { RoomVariantActions } from "../../store/roomVariantStore";
@@ -22,6 +22,7 @@ function NoRoomVariants(): JSX.Element {
 
 export const MyRentalObjectComponent = function (): JSX.Element {
     const { rentalObjectState, userState, roomVariantState } = useAppSelector((state: AppState) => state);
+    const fileInput = createRef<HTMLInputElement>();
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Название', flex: 1 },
@@ -84,6 +85,20 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         navigate(`/me`)
     }
 
+    function handleAddPhoto() {
+        fileInput.current?.click();
+    }
+
+    async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
+        event.preventDefault();
+        if (!event?.target?.files?.length) return;
+
+        await dispatch(RentalObjectActions.appendPhotoToDraft(event?.target?.files));
+
+        if (event?.target)
+            event.target.value = '';
+    }
+
     const loading = rentalObjectState.modelLoading;
 
     if (!rentalObjectState.model)
@@ -124,6 +139,16 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         onChange={(value: string | null) => { dispatch(RentalObjectActions.updateDraft({ ...model, checkoutTime: value || '12:00' })) }}
                         renderInput={(params) => <TextField {...params} />}
                     />
+                </Stack>
+            </Stack>
+            <Stack>
+                <Stack direction="row" spacing={2}>
+                    <Typography color="GrayText" variant="h6">Фотографии объекта</Typography>
+                    <Button onClick={handleAddPhoto}>Добавить</Button>
+                    <input accept=".png,.jpeg,.jpg" hidden multiple type="file" ref={fileInput} onChange={(event) => handlePhotoChange(event)} />
+                </Stack>
+                <Stack direction="row" spacing={2}>
+                    {model.photos.map(photo => <img height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                 </Stack>
             </Stack>
             <Stack style={{ height: 400 }}>

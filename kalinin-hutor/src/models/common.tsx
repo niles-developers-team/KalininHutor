@@ -41,4 +41,5 @@ export interface FileObject {
     name: string;
     body: string;
     extension: string;
+    order: number;
 }
