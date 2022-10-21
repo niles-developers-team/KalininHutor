@@ -29,7 +29,7 @@ export namespace RoomVariantCharacteristic {
         // Идентификатор номера
         roomVariantId: string | null;
         // Идентификатор характеристики
-        roomCharacteristicId: string;
+        characteristic?: RoomCharacteristic;
         // Цена за услугу или удобство
         price?: number;
     }

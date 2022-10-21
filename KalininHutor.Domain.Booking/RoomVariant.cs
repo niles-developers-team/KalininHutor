@@ -1,7 +1,7 @@
 using KalininHutor.Domain.Booking.Enums;
 
 namespace KalininHutor.Domain.Booking;
-public class RoomVariant : IEntity<Guid>
+public class RoomVariant : IEntity<Guid>, IEntityWithPhotos
 {
     private HashSet<FileObject>? _photos;
     private HashSet<RoomVariantBedType>? _bedTypes;
@@ -19,9 +19,9 @@ public class RoomVariant : IEntity<Guid>
     public PaymentOptions PaymentOption { get; protected set; }
     public int Count { get; protected set; }
     public int FreeCount { get; protected set; }
-    public IReadOnlyList<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
-    public IReadOnlyList<RoomVariantBedType>? BedTypes { get => _bedTypes?.ToList(); protected set => _bedTypes = value?.ToHashSet(); }
-    public IReadOnlyList<RoomVariantCharacteristic>? Characteristics { get => _characteristics?.ToList(); protected set => _characteristics = value?.ToHashSet(); }
+    public IReadOnlyList<FileObject> Photos { get => _photos?.ToList() ?? throw new NullReferenceException(nameof(Photos)); protected set => _photos = value.ToHashSet(); }
+    public IReadOnlyList<RoomVariantBedType> BedTypes { get => _bedTypes?.ToList() ?? throw new NullReferenceException(nameof(BedTypes)); protected set => _bedTypes = value.ToHashSet(); }
+    public IReadOnlyList<RoomVariantCharacteristic> Characteristics { get => _characteristics?.ToList() ?? throw new NullReferenceException(nameof(Characteristics)); protected set => _characteristics = value.ToHashSet(); }
 
     public double Size => Width * Length;
 
@@ -29,7 +29,7 @@ public class RoomVariant : IEntity<Guid>
 
     protected RoomVariant() { }
 
-    public RoomVariant(Guid rentalObjectId, string name, string description,
+    internal RoomVariant(Guid rentalObjectId, string name, string description,
                        decimal price, int maxPersonsCount,
                        double width, double length, int? freeCancelationPeriod,
                        PaymentOptions paymentOption, int count, int freeCount)
@@ -46,6 +46,10 @@ public class RoomVariant : IEntity<Guid>
         SetCounts(count, freeCount);
 
         RentalObjectId = rentalObjectId;
+
+        _photos = new HashSet<FileObject>();
+        _bedTypes = new HashSet<RoomVariantBedType>();
+        _characteristics = new HashSet<RoomVariantCharacteristic>();
     }
 
     public void SetInfo(string name, string description, PaymentOptions paymentOption)
@@ -103,11 +107,8 @@ public class RoomVariant : IEntity<Guid>
         FreeCancellationPeriod = freeCancellationPeriod;
     }
 
-    public RoomVariantCharacteristic AddCharacteristic(RoomCharacteristic characteristic, decimal? price)
+    public RoomVariantCharacteristic CreateCharacteristic(RoomCharacteristic characteristic, decimal? price)
     {
-        if (_characteristics == null)
-            throw new MissingFieldException("Харакеристики варианта номера не были загружены");
-
         if (_characteristics.Any(o => o.RoomCharacteristicId == characteristic.Id))
             throw new ApplicationException($"Для варианта номера уже добавлена услуга {characteristic.Name}");
 
@@ -118,11 +119,8 @@ public class RoomVariant : IEntity<Guid>
         return roomCharacteristic;
     }
 
-    public RoomVariantBedType AddBedType(BedTypes bedType, double? width, double? length, int? maxInRoom)
+    public RoomVariantBedType CreateBedType(BedTypes bedType, double? width, double? length, int? maxInRoom)
     {
-        if (_bedTypes == null)
-            throw new MissingFieldException("Варианты кроватей номера не были загружены");
-
         if (!maxInRoom.HasValue)
             maxInRoom = GetMaxBedInRoom(width, length);
 
@@ -158,4 +156,7 @@ public class RoomVariant : IEntity<Guid>
 
         return (int)(Size / bedSize);
     }
+
+    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+     => _photos.Add(new FileObject(name, extension, body, sortOrder, Id));
 }

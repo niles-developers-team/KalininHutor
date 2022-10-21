@@ -1,7 +1,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { createRef, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, FileObject, RentalObject } from "../../models";
+import { Booking, EntityStatus, FileObject, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
 import { Face, RedeemRounded } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
@@ -119,7 +119,8 @@ export const MeComponent = function (): JSX.Element {
                 body: body,
                 extension: file.type,
                 name: file.name,
-                order: 0
+                order: 0,
+                entityStatus: EntityStatus.Draft
             };
             dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
         };

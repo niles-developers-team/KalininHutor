@@ -17,13 +17,25 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Cr
     private readonly RoomVariantRepository _repository;
     private readonly RentalObjectRepository _rentalObjectRepository;
     private readonly FileObjectRepository _fileObjectRepository;
+    private readonly RoomVariantCharacteristicRepository _roomCharacteristicsRepository;
+    private readonly RoomVariantBedTypeRepository _bedTypesRepository;
     private readonly IMapper _mapper;
 
-    public CreateRoomVariantHandler(ISender sender, RoomVariantRepository repository, RentalObjectRepository rentalObjectRepository, FileObjectRepository fileObjectRepository, IMapper mapper)
+    public CreateRoomVariantHandler(
+        ISender sender, 
+        RoomVariantRepository repository,
+        RentalObjectRepository rentalObjectRepository, 
+        RoomVariantCharacteristicRepository roomCharacteristicsRepository,
+        RoomVariantBedTypeRepository bedTypesRepository,
+        FileObjectRepository fileObjectRepository, 
+        IMapper mapper
+    )
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _rentalObjectRepository = rentalObjectRepository ?? throw new ArgumentNullException(nameof(rentalObjectRepository));
+        _roomCharacteristicsRepository = roomCharacteristicsRepository ?? throw new ArgumentNullException(nameof(roomCharacteristicsRepository));
+        _bedTypesRepository = bedTypesRepository ?? throw new ArgumentNullException(nameof(bedTypesRepository));
         _fileObjectRepository = fileObjectRepository ?? throw new ArgumentNullException(nameof(fileObjectRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -49,22 +61,28 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Cr
         request.FreeCancellationPeriod, request.PaymentOption, request.Count, request.FreeCount);
         await _repository.Create(_mapper.Map<RoomVariantEntity>(result));
 
-
         foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
-        {
-            createBedTypesRequest.RoomVariantId = result.Id;
-            await _sender.Send(createBedTypesRequest);
-        }
+            result.CreateBedType(
+                createBedTypesRequest.BedType,
+                createBedTypesRequest.Width,
+                createBedTypesRequest.Length,
+                createBedTypesRequest.MaxInRoom
+            );
+
+        await _bedTypesRepository.CreateBulk(result.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
 
         foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
-        {
-            createCharacteristicRequest.RoomVariantId = result.Id;
-            await _sender.Send(createCharacteristicRequest);
-        }
+            result.CreateCharacteristic(
+                createCharacteristicRequest.Characteristic,
+                createCharacteristicRequest.Price
+            );
 
-        if (request.CreatePhotos.Any())
-            foreach (var photoEntity in request.CreatePhotos.Select(_mapper.Map<FileObjectEntity>))
-                await _fileObjectRepository.Create(photoEntity);
+        await _roomCharacteristicsRepository.CreateBulk(result.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
+
+        foreach (var photoEntity in request.CreatePhotos)
+            result.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+
+        await _fileObjectRepository.CreateBulk(result.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
 
         return result.Id;
     }

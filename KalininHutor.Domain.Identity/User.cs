@@ -2,7 +2,7 @@
 
 namespace KalininHutor.Domain.Identity;
 
-public class User : IUser
+public class User : IUser, IEntityWithAvatar
 {
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
@@ -87,7 +87,7 @@ public class User : IUser
             throw new ArgumentException("Неверный формат номера телефона.");
     }
 
-    public void CreateAvatar(string name, string extension, string body, int sortOrder)
+    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
     {
         Avatar = new FileObject(name, extension, body, sortOrder, Id);
         AvatarId = Avatar.Id;

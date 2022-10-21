@@ -36,7 +36,7 @@ export interface IEntity {
     entityStatus: EntityStatus;
 }
 
-export interface FileObject {
+export interface FileObject extends IEntity {
     readonly id?: string;
     name: string;
     body: string;

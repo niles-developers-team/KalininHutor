@@ -7,30 +7,6 @@ using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Commands;
 
-internal class CreateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeCommands.CreateRequest, Guid>
-{
-    private readonly RoomVariantBedTypeRepository _repository;
-    private readonly IMapper _mapper;
-
-    public CreateRoomVariantBedTypeHandler(RoomVariantBedTypeRepository repository, IMapper mapper)
-    {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-    }
-
-    public async Task<Guid> Handle(RoomVariantBedTypeCommands.CreateRequest request, CancellationToken cancellationToken)
-    {
-        if (!request.RoomVariantId.HasValue)
-        {
-            throw new ApplicationException("Не указан вариант номера");
-        }
-        var roomVariantBedType = new RoomVariantBedType(request.RoomVariantId.Value, request.BedType, request.Width, request.Length, request.MaxInRoom);
-        await _repository.Create(_mapper.Map<RoomVariantBedTypeEntity>(roomVariantBedType));
-
-        return roomVariantBedType.Id;
-    }
-}
-
 ///<summary> Запросы и очереди вариантов кроватей </summary>
 public partial class RoomVariantBedTypeCommands
 {

@@ -12,3 +12,8 @@ public interface IRepository<TResult, TSearchOptions>
 
     Task Delete(IReadOnlyList<Guid> ids);
 }
+
+public interface ICreateBulk<TResult>
+{
+    Task CreateBulk(IList<TResult> entities);
+}

@@ -27,6 +27,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
+            
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
 
         if (request.CreateRoomVariantsRequests != null)
@@ -43,12 +44,13 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeleteRoomVariantsRequest != null)
             await _sender.Send(request.DeleteRoomVariantsRequest);
 
-        if (request.CreatePhotos.Any())
-            foreach (var photoEntity in request.CreatePhotos.Select(_mapper.Map<FileObjectEntity>))
-                await _fileObjectRepository.Create(photoEntity);
-
         if (request.DeletePhotos.Any())
             await _fileObjectRepository.Delete(request.DeletePhotos.Select(o => o.Id).ToList());
+
+        foreach (var photoEntity in request.CreatePhotos)
+            entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+
+        await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
 
         return Unit.Value;
     }

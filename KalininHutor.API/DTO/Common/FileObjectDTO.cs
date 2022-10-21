@@ -19,7 +19,7 @@ public class FileObjectDTO
     public string Body { get; set; } = string.Empty;
 
     ///<summary> Порядок сортировки </summary>
-    public int SortOrder { get; protected set; }
+    public uint SortOrder { get; protected set; }
 
     ///<summary> Идентификатор родителя </summary>
     public Guid ParentId { get; protected set; }

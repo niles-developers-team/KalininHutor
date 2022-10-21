@@ -13,12 +13,22 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
     private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
     private readonly FileObjectRepository _fileObjectRepository;
+    private readonly RoomVariantCharacteristicRepository _roomCharacteristicsRepository;
+    private readonly RoomVariantBedTypeRepository _bedTypesRepository;
     private readonly IMapper _mapper;
 
-    public UpdateRoomVariantHandler(ISender sender, RoomVariantRepository repository, FileObjectRepository fileObjectRepository, IMapper mapper)
+    public UpdateRoomVariantHandler(
+        ISender sender, 
+        RoomVariantRepository repository, 
+        RoomVariantCharacteristicRepository roomCharacteristicsRepository,
+        RoomVariantBedTypeRepository bedTypesRepository,
+        FileObjectRepository fileObjectRepository, 
+        IMapper mapper)
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _roomCharacteristicsRepository = roomCharacteristicsRepository ?? throw new ArgumentNullException(nameof(roomCharacteristicsRepository));
+        _bedTypesRepository = bedTypesRepository ?? throw new ArgumentNullException(nameof(bedTypesRepository));
         _fileObjectRepository = fileObjectRepository ?? throw new ArgumentNullException(nameof(fileObjectRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -33,19 +43,28 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         entity.SetCounts(request.Count, request.FreeCount);
         await _repository.Update(_mapper.Map<RoomVariantEntity>(entity));
 
-        if (request.CreateBedTypesRequests != null)
-        foreach (var req in request.CreateBedTypesRequests)
-        {
-            req.RoomVariantId = entity.Id;
-            await _sender.Send(req);
-        }
+        foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
+            entity.CreateBedType(
+                createBedTypesRequest.BedType,
+                createBedTypesRequest.Width,
+                createBedTypesRequest.Length,
+                createBedTypesRequest.MaxInRoom
+            );
 
-        if (request.CreateCharacteristicsRequests != null)
-        foreach (var req in request.CreateCharacteristicsRequests)
-        {
-            req.RoomVariantId = entity.Id;
-            await _sender.Send(req);
-        }
+        await _bedTypesRepository.CreateBulk(entity.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
+
+        foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
+            entity.CreateCharacteristic(
+                createCharacteristicRequest.Characteristic,
+                createCharacteristicRequest.Price
+            );
+
+        await _roomCharacteristicsRepository.CreateBulk(entity.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
+
+        foreach (var photoEntity in request.CreatePhotos)
+            entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+
+        await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
 
         if (request.UpdateBedTypesRequests != null)
         foreach (var req in request.UpdateBedTypesRequests)

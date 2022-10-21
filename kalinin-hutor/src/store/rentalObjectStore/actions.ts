@@ -188,7 +188,7 @@ export namespace RentalObjectActions {
             if (!draft)
                 return;
 
-                const photos: FileObject[] = [];
+            const photos: FileObject[] = [];
 
             for (let i = 0; i < fileList.length; i++) {
                 const file = fileList[i];
@@ -199,7 +199,8 @@ export namespace RentalObjectActions {
                     body: body,
                     extension: file.type,
                     name: file.name,
-                    order: draft.photos?.reduce((a, b) => Math.max(a, b.order), 0)
+                    order: draft.photos?.reduce((a, b) => Math.max(a, b.order), 0),
+                    entityStatus: EntityStatus.Draft
                 };
 
                 photos.push(photo);
@@ -215,6 +216,9 @@ export namespace RentalObjectActions {
             dispatch(request());
 
             try {
+                if (!roomVariantState.models)
+                    throw new ApplicationError('Невозможно сохранить объект аренды без вариантов номеров');
+
                 const result = await rentalObjectService.create({
                     address: model.address,
                     checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
@@ -222,7 +226,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     landlordId: model.landlord.id,
                     name: model.name,
-                    createRoomVariantsRequests: roomVariantState.models?.map<RoomVariant.CreateRequest>(rv => ({
+                    createRoomVariantsRequests: roomVariantState.models.map<RoomVariant.CreateRequest>(rv => ({
                         count: rv.count,
                         description: rv.description,
                         freeCount: rv.freeCount,
@@ -241,12 +245,12 @@ export namespace RentalObjectActions {
                         })),
                         createCharacteristicsRequests: rv.characteristics
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                characteristic: ch.roomCharacteristic,
                                 roomVariantId: ch.roomVariantId,
                                 price: ch.price
                             })),
-                    }))
-
+                    })),
+                    createPhotos: model.photos
                 });
                 dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
@@ -363,7 +367,9 @@ export namespace RentalObjectActions {
                     deleteRoomVariantsRequest: ({
                         ids: roomVariantState.models?.filter(o => o.entityStatus === EntityStatus.Deleted)
                             .map(rv => rv.id || '') || []
-                    })
+                    }),
+                    createPhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                    deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                 });
                 dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));

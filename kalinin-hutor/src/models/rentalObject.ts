@@ -62,8 +62,8 @@ export namespace RentalObject {
         landlordId?: string;
         checkinTime: string;
         checkoutTime: string;
-        createRoomVariantsRequests?: RoomVariant.CreateRequest[];
-        createPhotos?: FileObject[];
+        createRoomVariantsRequests: RoomVariant.CreateRequest[];
+        createPhotos: FileObject[];
     }
 
     export interface UpdateRequest {

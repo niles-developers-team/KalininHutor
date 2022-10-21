@@ -50,7 +50,10 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.Ge
             result.ForEach(ro => ro.RoomVariants = roomVariants.Where(o => o.RentalObjectId == ro.Id));
         }
 
-        result.ForEach(async ro => ro.Photos = (await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentId = ro.Id })).Select(_mapper.Map<FileObjectDTO>));
+        var photos = await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentsIds = result.Select(o => o.Id).ToList() });
+
+        if (photos != null)
+            result.ForEach(ro => ro.Photos = photos.Where(o => o.ParentId == ro.Id).Select(_mapper.Map<FileObjectDTO>));
 
         return result;
     }

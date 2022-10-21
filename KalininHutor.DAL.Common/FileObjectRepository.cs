@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL;
 
-public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectSearchOptions>
+public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectSearchOptions>, ICreateBulk<FileObjectEntity>
 {
     public FileObjectRepository(string connectionString, ILogger<BaseRepository<FileObjectEntity, FileObjectSearchOptions>> logger) : base(connectionString, logger) { }
 
@@ -24,6 +24,39 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
                 {entity.ParentId}
             );
         ").ExecuteAsync();
+    }
+
+    public async Task CreateBulk(IList<FileObjectEntity> entities)
+    {
+        using var connection = GetConnection();
+
+        var query = connection.QueryBuilder($@"
+            insert into FileObjects (Id, Name, Extension, CompressedBody, CreatedAt, SortOrder, ParentId)
+            values
+        ");
+
+        int index = 0;
+
+        foreach (var entity in entities)
+        {
+            index++;
+            query.AppendLine($@"
+                (
+                    {entity.Id},
+                    {entity.Name},
+                    {entity.Extension},
+                    {entity.CompressedBody},
+                    {entity.CreatedAt},
+                    {entity.SortOrder},
+                    {entity.ParentId}
+                )
+            ");
+
+            if (index < entities.Count)
+                query.Append($",");
+        }
+
+        await query.ExecuteAsync();
     }
 
     public override async Task Delete(IReadOnlyList<Guid> ids)

@@ -35,9 +35,10 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
             await _sender.Send(createRoomVariantsRequest);
         }
 
-        if (request.CreatePhotos.Any())
-            foreach (var photoEntity in request.CreatePhotos.Select(_mapper.Map<FileObjectEntity>))
-                await _fileObjectRepository.Create(photoEntity);
+        foreach (var photoEntity in request.CreatePhotos)
+            rentalObject.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+
+        await _fileObjectRepository.CreateBulk(rentalObject.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
 
         return _mapper.Map<RentalObjectDTO>(rentalObject);
     }
