@@ -1,13 +1,10 @@
-using System.Text.Json.Serialization;
-using KalininHutor.API.Helpers;
-
 namespace KalininHutor.API.DTO;
 
 ///<summary> Модель отображения объекта файла </summary>
 public class FileObjectDTO
 {
     ///<summary> Идентификатор файла </summary>
-    public Guid Id { get; protected set; }
+    public Guid Id { get; set; }
     
     ///<summary> Название </summary>
     public string Name { get; set; } = string.Empty;
@@ -19,8 +16,8 @@ public class FileObjectDTO
     public string Body { get; set; } = string.Empty;
 
     ///<summary> Порядок сортировки </summary>
-    public uint SortOrder { get; protected set; }
+    public uint SortOrder { get; set; }
 
     ///<summary> Идентификатор родителя </summary>
-    public Guid ParentId { get; protected set; }
+    public Guid ParentId { get; set; }
 }

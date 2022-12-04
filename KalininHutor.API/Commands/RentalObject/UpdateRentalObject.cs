@@ -27,7 +27,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
-            
+
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
 
         if (request.CreateRoomVariantsRequests != null)
@@ -50,7 +50,11 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         foreach (var photoEntity in request.CreatePhotos)
             entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
 
-        await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+        if (entity.Photos.Any())
+            await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+
+        foreach (var photoEntity in request.UpdatePhotos.Select(_mapper.Map<FileObjectEntity>))
+            await _fileObjectRepository.Update(photoEntity);
 
         return Unit.Value;
     }
@@ -86,6 +90,8 @@ public partial class RentalObjectCommands
         public RoomVariantCommands.DeleteRequest? DeleteRoomVariantsRequest { get; set; }
         ///<summary> Коллекция фотографий для создания </summary>
         public IReadOnlyList<FileObjectDTO> CreatePhotos { get; set; } = new List<FileObjectDTO>();
+        ///<summary> Коллекция фотографий для создания </summary>
+        public IReadOnlyList<FileObjectDTO> UpdatePhotos { get; set; } = new List<FileObjectDTO>();
         ///<summary> Коллекция фотографий для удаления </summary>
         public IReadOnlyList<FileObjectDTO> DeletePhotos { get; set; } = new List<FileObjectDTO>();
     }

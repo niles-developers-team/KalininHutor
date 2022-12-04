@@ -6,6 +6,7 @@ import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
+import { v4 as guid } from 'uuid';
 
 export enum ActionTypes {
     getRentalObjectsRequest = 'GET_RENTALOBJECTS_REQUEST',
@@ -196,10 +197,11 @@ export namespace RentalObjectActions {
                 const body = await readAsDataURL(file);
 
                 const photo: FileObject = {
+                    id: guid(),
                     body: body,
                     extension: file.type,
                     name: file.name,
-                    order: draft.photos?.reduce((a, b) => Math.max(a, b.order), 0),
+                    sortOrder: draft.photos?.reduce((a, b) => Math.max(a, b.sortOrder), 0),
                     entityStatus: EntityStatus.Draft
                 };
 
@@ -369,6 +371,7 @@ export namespace RentalObjectActions {
                             .map(rv => rv.id || '') || []
                     }),
                     createPhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                    updatePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Updated).map(o => ({ ...o, body: '' })),
                     deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                 });
                 dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
@@ -466,6 +469,44 @@ export namespace RentalObjectActions {
             function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
             function success(ids: string[]): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, ids: ids }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
+        }
+    }
+
+    export function reorderPhotos(sourceIndex: number, destinationIndex: number): AppThunkAction {
+        return (dispatch, getState) => {
+            const { rentalObjectState } = getState();
+
+            const draft = rentalObjectState.model;
+
+            if (!draft) return;
+
+            // a little function to help us with reordering the result            
+            const result = draft.photos;
+            const [removed] = result.splice(sourceIndex, 1);
+            result.splice(destinationIndex, 0, removed);
+
+            for(let i = 0; i < result.length; i++)
+            {
+                result[i].sortOrder = i;
+                if(result[i].entityStatus !== EntityStatus.Deleted)
+                result[i].entityStatus = EntityStatus.Updated;
+            }
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
+        }
+    }
+
+    export function deletePhotoFromDaft(id: string): AppThunkAction {
+        return (dispatch, getState) => {
+            const { rentalObjectState } = getState();
+
+            const draft = rentalObjectState.model;
+
+            if (!draft) return;
+
+            const result = draft.photos.map(o => o.id === id ? { ...o, entityStatus: EntityStatus.Deleted } : o);
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
         }
     }
 }

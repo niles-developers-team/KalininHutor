@@ -61,6 +61,8 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
 
     public override async Task Delete(IReadOnlyList<Guid> ids)
     {
+        if(!ids.Any()) return;
+
         using var connection = GetConnection();
 
         await connection.QueryBuilder($@"
@@ -122,9 +124,6 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
 
         await connection.QueryBuilder($@"
             update FileObjects set 
-                Name = {entity.Name},
-                Extension = {entity.Extension},
-                CompressedBody = {entity.CompressedBody},
                 SortOrder = {entity.SortOrder}
             where Id = {entity.Id}
         ").ExecuteAsync();

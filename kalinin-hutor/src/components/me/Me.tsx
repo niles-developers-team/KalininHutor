@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
 import { MyNotificationsComponent } from "./notifications/MyNotifications";
+import { v4 as guid } from 'uuid';
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -116,10 +117,11 @@ export const MeComponent = function (): JSX.Element {
             const body = reader.result.substring(reader.result.indexOf(',') + 1);
 
             const avatar: FileObject = {
+                id: guid(),
                 body: body,
                 extension: file.type,
                 name: file.name,
-                order: 0,
+                sortOrder: 0,
                 entityStatus: EntityStatus.Draft
             };
             dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
@@ -127,7 +129,7 @@ export const MeComponent = function (): JSX.Element {
     }
 
     function handleAvatarDelete() {
-        dispatch(UserActions.updateCurrentUserDraft({...currentUser, avatar: undefined}));
+        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: undefined }));
     }
 
     if (!userState.currentUser)

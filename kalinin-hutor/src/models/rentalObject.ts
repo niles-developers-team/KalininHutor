@@ -76,6 +76,7 @@ export namespace RentalObject {
         updateRoomVariantsRequests?: RoomVariant.UpdateRequest[];
         deleteRoomVariantsRequest?: RoomVariant.DeleteRequest;
         createPhotos?: FileObject[];
+        updatePhotos?: FileObject[];
         deletePhotos?: FileObject[];
     }
 

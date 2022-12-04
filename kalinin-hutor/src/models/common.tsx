@@ -37,9 +37,9 @@ export interface IEntity {
 }
 
 export interface FileObject extends IEntity {
-    readonly id?: string;
+    readonly id: string;
     name: string;
     body: string;
     extension: string;
-    order: number;
+    sortOrder: number;
 }

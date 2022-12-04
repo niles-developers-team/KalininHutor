@@ -20,6 +20,7 @@ import { createBrowserHistory } from "history";
 
 import './index.css';
 import './themes/bootstrap.scss';
+import './themes/paddings.scss';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -45,19 +46,17 @@ const theme = createTheme(
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <React.StrictMode >
-    <DocumentMeta {...meta}>
-      <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <Provider store={store}>
-            <BrowserRouter>
-              <RoutesSwitch />
-            </BrowserRouter>
-          </Provider>
-        </LocalizationProvider>
-      </ThemeProvider>
-    </DocumentMeta>
-  </React.StrictMode>
+  <DocumentMeta {...meta}>
+    <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <Provider store={store}>
+          <BrowserRouter>
+            <RoutesSwitch />
+          </BrowserRouter>
+        </Provider>
+      </LocalizationProvider>
+    </ThemeProvider>
+  </DocumentMeta>
 );
 
 // If you want to start measuring performance in your app, pass a function

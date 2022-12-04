@@ -82,15 +82,14 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
             await _sender.Send(request.DeleteBedTypesRequests);
 
         if (request.DeleteCharacteristicsRequests != null)
-            await _sender.Send(request.DeleteCharacteristicsRequests);
-            
+            await _sender.Send(request.DeleteCharacteristicsRequests);            
 
         if (request.CreatePhotos.Any())
             foreach (var photoEntity in request.CreatePhotos.Select(_mapper.Map<FileObjectEntity>))
                 await _fileObjectRepository.Create(photoEntity);
 
-        if (request.DeletePhotos.Any())
-            await _fileObjectRepository.Delete(request.DeletePhotos.Select(o => o.Id).ToList());
+        if (request.DeletePhotosIds.Any())
+            await _fileObjectRepository.Delete(request.DeletePhotosIds);
 
         return Unit.Value;
     }
@@ -145,6 +144,6 @@ public partial class RoomVariantCommands
         ///<summary> Коллекция фотографий для создания </summary>
         public IReadOnlyList<FileObjectDTO> CreatePhotos { get; set; } = new List<FileObjectDTO>();
         ///<summary> Коллекция фотографий для удаления </summary>
-        public IReadOnlyList<FileObjectDTO> DeletePhotos { get; set; } = new List<FileObjectDTO>();
+        public IReadOnlyList<Guid> DeletePhotosIds { get; set; } = new List<Guid>();
     }
 }

@@ -14,7 +14,7 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariantCommands.De
 
     public DeleteRoomVariantHandler(ISender sender, RoomVariantRepository repository,
         RoomVariantCharacteristicRepository roomVariantCharacteristicRepository,
-        RoomVariantBedTypeRepository roomVariantBedTypeRepository, 
+        RoomVariantBedTypeRepository roomVariantBedTypeRepository,
         FileObjectRepository fileObjectRepository
     )
     {
@@ -27,6 +27,8 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariantCommands.De
 
     public async Task<Unit> Handle(RoomVariantCommands.DeleteRequest request, CancellationToken cancellationToken)
     {
+        if(!request.Ids.Any()) return Unit.Value;
+
         var characteristics = await _roomVariantCharacteristicRepository.Get(new RoomVariantCharacteristicSearchOptions { RoomsVariantsIds = request.Ids });
         var bedTypes = await _roomVariantBedTypeRepository.Get(new RoomVariantBedTypeSearchOptions { RoomsVariantsIds = request.Ids });
 
@@ -35,7 +37,8 @@ internal class DeleteRoomVariantHandler : IRequestHandler<RoomVariantCommands.De
 
         var fileObjects = await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentsIds = request.Ids.ToList() });
 
-        await _fileObjectRepository.Delete(fileObjects.Select(o => o.Id).ToList());
+        if (fileObjects.Any())
+            await _fileObjectRepository.Delete(fileObjects.Select(o => o.Id).ToList());
 
         await _repository.Delete(request.Ids);
         return Unit.Value;
