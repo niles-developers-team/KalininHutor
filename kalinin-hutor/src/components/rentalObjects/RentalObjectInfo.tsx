@@ -1,5 +1,7 @@
 import { CurrencyRuble, Favorite, FavoriteBorder, FavoriteOutlined } from "@mui/icons-material";
 import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
+import { useState } from "react";
+import Carousel from "react-material-ui-carousel";
 import { RentalObject } from "../../models";
 
 interface Props {
@@ -10,15 +12,34 @@ interface Props {
 export const RentalObjectShortInfoComponent = function (props: Props): JSX.Element {
     const { model, onShowVariants } = props;
 
+    const [sliding, setSliding] = useState<boolean>(false);
+
     if (!model) {
         return (<Typography variant="subtitle1">Ошибка при загрузке базы отдыха или дачи</Typography>)
     }
 
     return (
         <Stack padding={2} spacing={2}>
-            <Paper variant="outlined">
-                <Skeleton variant="rectangular" width="100%" height={120} />
-            </Paper>
+            {model.photos.length ? (
+                <Grid
+                    onMouseEnter={() => setSliding(true)}
+                    onMouseLeave={() => setSliding(false)}>
+                    <Carousel
+                        autoPlay={sliding}
+                        animation="slide"
+                        indicators={false}
+                        stopAutoPlayOnHover={false}
+                        navButtonsAlwaysInvisible={true}
+                        cycleNavigation={true}
+                    >
+                        {model.photos?.map(photo => <img height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                    </Carousel>
+                </Grid>
+            ) : (
+                <Paper variant="outlined">
+                    <Skeleton variant="rectangular" width={200} height={200} />
+                </Paper>
+            )}
             <Typography variant="h6">{model.name}</Typography>
             <Typography variant="caption">{model.address}</Typography>
             <Button onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
@@ -46,9 +67,10 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     }
     return (
         <Stack padding={2} spacing={2} direction="row" width="100%">
-            <Paper variant="outlined">
-                <Skeleton variant="rectangular" width={180} height={180} />
-            </Paper>
+            {model.photos && model.photos.length ?
+                <img height={200} width={200} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                <Skeleton variant="rectangular" width={200} height={200} />
+            }
             <Grid item xs>
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="h6">{model.name}</Typography>

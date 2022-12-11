@@ -1,8 +1,10 @@
 import { AspectRatio, CurrencyRuble, FavoriteBorder, People } from "@mui/icons-material";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
+import { Masonry } from "@mui/lab";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, ImageList, ImageListItem, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
 import moment from "moment";
 import pluralize from "plural-ru";
 import { useEffect, useState } from "react";
+import Carousel from "react-material-ui-carousel";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
@@ -275,22 +277,38 @@ export const RentalObjectComponent = function (): JSX.Element {
                     </Paper>
                     <Button variant="outlined" color="success" size="small" disabled={!booking?.roomVariants?.length} onClick={handleCreateBooking}>Забронировать</Button>
                 </Stack>
-                <Stack>
+                <Stack className="w-100">
                     <Stack direction="row">
                         <Typography variant="h6">{model ? model.name : <Skeleton />}</Typography>
                         <IconButton disabled><FavoriteBorder /></IconButton>
                     </Stack>
                     <Typography color="GrayText">{model ? model.address : <Skeleton />}</Typography>
-                    <Stack direction="row" marginTop="1em" spacing={2}>
-                        <Paper variant="outlined">
-                            <Skeleton variant="rectangular" width={240} height={240} />
-                        </Paper>
-                        <Grid item xs>
-                            <Typography>{model ? model.description : <Skeleton />}</Typography>
-                        </Grid>
+                    <Stack spacing={2}>
+                        {model.photos?.length > 0 ?
+                            <img height={325} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            :
+                            <Paper variant="outlined">
+                                <Skeleton variant="rectangular" height={325} />
+                            </Paper>
+                        }
+                        <Stack direction="row" spacing={2}>
+                            {model.photos?.length ?
+                                model.photos.slice(0, 5).map(photo =>
+                                    <img height={120} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                )
+                                :
+                                [...new Array(5)].map(() =>
+                                    <Skeleton variant="rectangular" width={120} height={120} />
+                                )
+                            }
+                            {model.photos?.length > 5 && <Button variant="outlined" className="h-100">Ещё {model.photos.length - 5} фото</Button>}
+                        </Stack>
                     </Stack>
                 </Stack>
             </Stack>
+            <Grid item xs>
+                <Typography>{model ? model.description : <Skeleton />}</Typography>
+            </Grid>
             <Stack marginTop="1em" spacing={1}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h5">Доступные варианты</Typography>

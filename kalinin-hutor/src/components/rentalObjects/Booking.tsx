@@ -80,9 +80,10 @@ export const BookingComponent = function (): JSX.Element {
                 />
                 <Stack spacing={2}>
                     <Stack direction="row" spacing={2}>
-                        <Paper variant="outlined">
+                        {rentalObject && rentalObject.photos && rentalObject.photos.length > 0 ?
+                            <img height={100} width={100} src={`data:${rentalObject.photos[0].extension};base64,${rentalObject.photos[0].body}`}></img> :
                             <Skeleton variant="rectangular" width={100} height={100} />
-                        </Paper>
+                        }
                         <Stack>
                             <Typography variant="h6"><b>{rentalObject?.name}</b></Typography>
                             <Typography variant="caption">{rentalObject?.address}</Typography>
@@ -124,8 +125,8 @@ export const BookingComponent = function (): JSX.Element {
                     </Stack>
                     {model.roomVariants?.map((brv, index) => {
                         const roomVariant = roomVariants.find(o => o.id === brv.roomVariantId);
-                        if(!roomVariant)
-                        return (<Skeleton></Skeleton>)
+                        if (!roomVariant)
+                            return (<Skeleton></Skeleton>)
 
                         return (<BookingRoomVariantInfo
                             bookingRoomVariant={brv}
