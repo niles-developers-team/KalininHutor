@@ -18,11 +18,11 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
     private readonly IMapper _mapper;
 
     public UpdateRoomVariantHandler(
-        ISender sender, 
-        RoomVariantRepository repository, 
+        ISender sender,
+        RoomVariantRepository repository,
         RoomVariantCharacteristicRepository roomCharacteristicsRepository,
         RoomVariantBedTypeRepository bedTypesRepository,
-        FileObjectRepository fileObjectRepository, 
+        FileObjectRepository fileObjectRepository,
         IMapper mapper)
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
@@ -43,53 +43,60 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         entity.SetCounts(request.Count, request.FreeCount);
         await _repository.Update(_mapper.Map<RoomVariantEntity>(entity));
 
-        foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
-            entity.CreateBedType(
-                createBedTypesRequest.BedType,
-                createBedTypesRequest.Width,
-                createBedTypesRequest.Length,
-                createBedTypesRequest.MaxInRoom
-            );
+        if (request.CreateBedTypesRequests.Any())
+        {
+            foreach (var createBedTypesRequest in request.CreateBedTypesRequests)
+                entity.CreateBedType(
+                    createBedTypesRequest.BedType,
+                    createBedTypesRequest.Width,
+                    createBedTypesRequest.Length,
+                    createBedTypesRequest.MaxInRoom
+                );
 
-        await _bedTypesRepository.CreateBulk(entity.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
+            await _bedTypesRepository.CreateBulk(entity.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
+        }
 
-        foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
-            entity.CreateCharacteristic(
-                createCharacteristicRequest.Characteristic,
-                createCharacteristicRequest.Price
-            );
+        if (request.CreateCharacteristicsRequests.Any())
+        {
+            foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
+                entity.CreateCharacteristic(
+                    createCharacteristicRequest.Characteristic,
+                    createCharacteristicRequest.Price
+                );
 
-        await _roomCharacteristicsRepository.CreateBulk(entity.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
+            await _roomCharacteristicsRepository.CreateBulk(entity.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
+        }
 
         foreach (var photoEntity in request.CreatePhotos)
             entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
 
-        await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+        if (entity.Photos.Any())
+            await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+
+        if (request.UpdatePhotos.Any())
+            foreach (var photoEntity in request.UpdatePhotos.Select(_mapper.Map<FileObjectEntity>))
+                await _fileObjectRepository.Update(photoEntity);
+
+        if (request.DeletePhotos.Any())
+            await _fileObjectRepository.Delete(request.DeletePhotos.Select(o => o.Id).ToList());
 
         if (request.UpdateBedTypesRequests != null)
-        foreach (var req in request.UpdateBedTypesRequests)
-        {
-            await _sender.Send(req);
-        }
+            foreach (var req in request.UpdateBedTypesRequests)
+            {
+                await _sender.Send(req);
+            }
 
         if (request.UpdateCharacteristicsRequests != null)
-        foreach (var req in request.UpdateCharacteristicsRequests)
-        {
-            await _sender.Send(req);
-        }
+            foreach (var req in request.UpdateCharacteristicsRequests)
+            {
+                await _sender.Send(req);
+            }
 
         if (request.DeleteBedTypesRequests != null)
             await _sender.Send(request.DeleteBedTypesRequests);
 
         if (request.DeleteCharacteristicsRequests != null)
-            await _sender.Send(request.DeleteCharacteristicsRequests);            
-
-        if (request.CreatePhotos.Any())
-            foreach (var photoEntity in request.CreatePhotos.Select(_mapper.Map<FileObjectEntity>))
-                await _fileObjectRepository.Create(photoEntity);
-
-        if (request.DeletePhotosIds.Any())
-            await _fileObjectRepository.Delete(request.DeletePhotosIds);
+            await _sender.Send(request.DeleteCharacteristicsRequests);
 
         return Unit.Value;
     }
@@ -140,10 +147,11 @@ public partial class RoomVariantCommands
         public RoomVariantBedTypeCommands.DeleteRequest? DeleteBedTypesRequests { get; set; }
         ///<summary> Коллекция удаления вариантов кроватей </summary>
         public RoomVariantCharacteristicCommands.DeleteRequest? DeleteCharacteristicsRequests { get; set; }
-
         ///<summary> Коллекция фотографий для создания </summary>
         public IReadOnlyList<FileObjectDTO> CreatePhotos { get; set; } = new List<FileObjectDTO>();
+        ///<summary> Коллекция фотографий для создания </summary>
+        public IReadOnlyList<FileObjectDTO> UpdatePhotos { get; set; } = new List<FileObjectDTO>();
         ///<summary> Коллекция фотографий для удаления </summary>
-        public IReadOnlyList<Guid> DeletePhotosIds { get; set; } = new List<Guid>();
+        public IReadOnlyList<FileObjectDTO> DeletePhotos { get; set; } = new List<FileObjectDTO>();
     }
 }

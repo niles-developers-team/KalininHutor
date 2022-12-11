@@ -307,6 +307,7 @@ export namespace RentalObjectActions {
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
+                            createPhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Draft),
                         })),
                     updateRoomVariantsRequests: roomVariantState.models
                         ?.filter(o => o.entityStatus === EntityStatus.Updated)
@@ -364,7 +365,10 @@ export namespace RentalObjectActions {
                                 ids: rv.characteristics
                                     .filter(o => o.entityStatus === EntityStatus.Deleted)
                                     .map(ch => ch.id || '')
-                            })
+                            }),
+                            createPhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                            updatePhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Updated).map(o => ({ ...o, body: '' })),
+                            deletePhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                         })),
                     deleteRoomVariantsRequest: ({
                         ids: roomVariantState.models?.filter(o => o.entityStatus === EntityStatus.Deleted)
@@ -485,11 +489,10 @@ export namespace RentalObjectActions {
             const [removed] = result.splice(sourceIndex, 1);
             result.splice(destinationIndex, 0, removed);
 
-            for(let i = 0; i < result.length; i++)
-            {
+            for (let i = 0; i < result.length; i++) {
                 result[i].sortOrder = i;
-                if(result[i].entityStatus !== EntityStatus.Deleted)
-                result[i].entityStatus = EntityStatus.Updated;
+                if (result[i].entityStatus !== EntityStatus.Deleted)
+                    result[i].entityStatus = EntityStatus.Updated;
             }
 
             dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });

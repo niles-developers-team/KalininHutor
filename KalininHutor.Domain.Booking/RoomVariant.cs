@@ -3,9 +3,9 @@ using KalininHutor.Domain.Booking.Enums;
 namespace KalininHutor.Domain.Booking;
 public class RoomVariant : IEntity<Guid>, IEntityWithPhotos
 {
-    private HashSet<FileObject>? _photos;
-    private HashSet<RoomVariantBedType>? _bedTypes;
-    private HashSet<RoomVariantCharacteristic>? _characteristics;
+    private HashSet<FileObject>? _photos = new HashSet<FileObject>();
+    private HashSet<RoomVariantBedType>? _bedTypes = new HashSet<RoomVariantBedType>();
+    private HashSet<RoomVariantCharacteristic>? _characteristics = new HashSet<RoomVariantCharacteristic>();
 
     public Guid Id { get; protected set; }
     public Guid RentalObjectId { get; protected set; }
