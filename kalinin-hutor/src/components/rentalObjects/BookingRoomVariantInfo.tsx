@@ -1,4 +1,5 @@
-import { Stack, Typography, Skeleton, Divider, Chip } from "@mui/material";
+import { Stack, Typography, Skeleton, Divider, Chip, Grid } from "@mui/material";
+import Carousel from "react-material-ui-carousel";
 import { BedTypes, BookingRoomVariant, CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
 
 interface Props {
@@ -19,7 +20,11 @@ export const BookingRoomVariantInfo = function (props: Props): JSX.Element {
         <Stack>
             <Typography><b>{bookingRoomVariant.roomsCount} X {roomVariant?.name}</b></Typography>
             <Stack paddingY=".5em" direction="row" spacing={2}>
-                <Skeleton variant="rectangular" width={100} height={100} />
+                {
+                    roomVariant.photos.length > 0 ?
+                        <img height={100} width={100} src={`data:${roomVariant.photos[0].extension};base64,${roomVariant.photos[0].body}`}></img> :
+                        <Skeleton variant="rectangular" width={100} height={100} />
+                }
                 <Stack>
                     <Stack direction="row" spacing={2} divider={<Divider orientation="vertical" flexItem />}>
                         <Typography><b>Размер: </b> {roomVariant?.width} X {roomVariant?.length} кв.м.</Typography>
