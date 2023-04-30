@@ -14,7 +14,7 @@ jobs:
         node-version: '15.2'
         
     - name: List directories
-      run: echo Get-ChildItem -Recurse
+      run: echo ${env:PATH}
       shell: powershell
         
     - name: Build app
