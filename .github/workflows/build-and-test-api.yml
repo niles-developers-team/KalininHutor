@@ -10,6 +10,7 @@ jobs:
     steps:
     - name: Setup Node
       run: npm install
+      working-directory: ./kalinin-hutor
       
     - name: Build app
       run: |
