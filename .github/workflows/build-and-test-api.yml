@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-2019
     steps:
     - name: Setup Node
-    - uses: actions/setup-node@v3
+      uses: actions/setup-node@v3
       with:
         node-version: '15.2'
         
