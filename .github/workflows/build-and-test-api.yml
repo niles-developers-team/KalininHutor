@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-2019
     defaults:
       run:
-        working-directory: kalinin-hutor
+        working-directory: '**/kalinin-hutor'
     steps:
     - name: Setup Node
       uses: actions/setup-node@v3
