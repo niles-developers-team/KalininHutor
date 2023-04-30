@@ -56,5 +56,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api
-        path: KalininHutor.API/website/**
+        path: website/**
         if-no-files-found: error
