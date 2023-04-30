@@ -6,6 +6,8 @@ on:
 
 jobs:
   client-build:
+    env: 
+      CI: false
     runs-on: windows-2019
     defaults:
       run:
