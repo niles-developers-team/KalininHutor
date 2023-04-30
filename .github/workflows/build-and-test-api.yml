@@ -27,7 +27,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api
-        path: kalinin-hutor/**
+        path: kalinin-hutor/build/**
         if-no-files-found: error
 
   api-build:
