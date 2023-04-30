@@ -10,13 +10,13 @@ jobs:
     steps:
     - name: Setup Node
       run: npm install
-      working-directory: .\kalinin-hutor
+      working-directory: kalinin-hutor
       
     - name: Build app
       run: |
         npm ci
         npm run build
-      working-directory: .\kalinin-hutor
+      working-directory: kalinin-hutor
 
   api-build:
     runs-on: windows-2019
