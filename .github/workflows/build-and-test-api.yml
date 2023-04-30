@@ -11,7 +11,12 @@ jobs:
     - name: Setup Node
     - uses: actions/setup-node@v3
       with:
-        node-version: '15.2'      
+        node-version: '15.2'
+        
+    - name: Build app
+      run: |
+        npm ci
+        npm run build
 
   api-build:
     runs-on: windows-2019
