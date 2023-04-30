@@ -9,14 +9,14 @@ jobs:
     runs-on: windows-2019
     steps:
     - name: Setup Node
-      run: npm install
-      working-directory: kalinin-hutor
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '15.2'      
       
     - name: Build app
       run: |
         npm ci
         npm run build
-      working-directory: kalinin-hutor
 
   api-build:
     runs-on: windows-2019
