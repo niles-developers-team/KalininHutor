@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
         working-directory: ./kalinin-hutor
-    steps:
+    steps:    
+    - uses: actions/checkout@v3
+     
 #    - name: Setup Node
 #      uses: actions/setup-node@v3
   
