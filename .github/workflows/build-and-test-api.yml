@@ -18,7 +18,6 @@ jobs:
       run: |
         npm ci
         npm run build
-      working-directory: ./kalinin-hutor
 
   api-build:
     runs-on: windows-2019
