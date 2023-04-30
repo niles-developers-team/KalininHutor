@@ -6,7 +6,7 @@ on:
 
 jobs:
   client-build:
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     env:
         working-directory: ./kalinin-hutor
     steps:
