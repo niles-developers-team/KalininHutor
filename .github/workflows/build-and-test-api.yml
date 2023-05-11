@@ -29,6 +29,19 @@ jobs:
         name: client
         path: kalinin-hutor/build/**
         if-no-files-found: error
+        
+  client-deploy:
+    needs: client-build
+    runs-on: prod
+    steps:
+      - name: Deploy to IIS
+        run: |
+          iisreset /stop
+          Copy-Item ./kalinin-hutor/build/* C:/Sites/kalininkhutor -Recurse -Force
+          iisreset /start
+          
+      - name: Curl the website as a smoke test
+        run: curl http://localhost
 
   api-build:
     runs-on: windows-2019
