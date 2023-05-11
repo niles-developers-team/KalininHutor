@@ -71,3 +71,16 @@ jobs:
         name: api
         path: website/**
         if-no-files-found: error
+        
+  api-deploy:
+    needs: api-build
+    runs-on: prod
+    steps:
+      - name: Deploy to IIS
+        run: |
+          iisreset /stop
+          Copy-Item ./website* C:/Sites/KalininHutor.API -Recurse -Force
+          iisreset /start
+          
+      - name: Curl the website as a smoke test
+        run: curl http://localhost
