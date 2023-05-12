@@ -8,7 +8,7 @@ jobs:
   client-build:
     env: 
       CI: false
-    runs-on: prod
+    runs-on: windows-2019
     defaults:
       run:
         working-directory: ./kalinin-hutor
@@ -34,6 +34,13 @@ jobs:
     needs: client-build
     runs-on: prod
     steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: client
+          path: kalinin-hutor/build/**
+          if-no-files-found: error
+    
       - name: Deploy to IIS
         run: |
           iisreset /stop
@@ -44,7 +51,7 @@ jobs:
         run: curl http://localhost
 
   api-build:
-    runs-on: prod
+    runs-on: windows-2019
     steps:
     - uses: actions/checkout@v3
 
@@ -75,7 +82,14 @@ jobs:
   api-deploy:
     needs: api-build
     runs-on: prod
-    steps:
+    steps:      
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: api
+          path: website/**
+          if-no-files-found: error
+    
       - name: Deploy to IIS
         run: |
           iisreset /stop
