@@ -27,7 +27,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: client
-        path: kalinin-hutor/build/**
+        path: kalinin-hutor
         if-no-files-found: error
         
   client-deploy:
@@ -38,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: client
-          path: kalinin-hutor/build/**
+          path: kalinin-hutor
           if-no-files-found: error
     
       - name: Deploy to IIS
@@ -76,7 +76,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api
-        path: website/**
+        path: kalinin-hutor
         if-no-files-found: error
         
   api-deploy:
@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: api
-          path: website/**
+          path: kalinin-hutor
           if-no-files-found: error
     
       - name: Deploy to IIS
