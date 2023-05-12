@@ -5,50 +5,56 @@ on:
     branches: [ "dev", "feature/*", "master" ]
 
 jobs:
-  client-build:
-    env: 
-      CI: false
-    runs-on: windows-2019
-    defaults:
-      run:
-        working-directory: ./kalinin-hutor
-    steps:    
-    - uses: actions/checkout@v3
-     
-    - name: Setup Node
-      uses: actions/setup-node@v3
-  
-    - name: Build app
-      run: |
-        npm ci
-        npm run build
-        
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: client
-        path: kalinin-hutor
-        if-no-files-found: error
-        
-  client-deploy:
-    needs: client-build
-    runs-on: prod
-    steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: client
-          path: C:/Sites/artifacts/kalinin-hutor/client
-          if-no-files-found: error
-    
-      - name: Deploy to IIS
-        run: |
-          Stop-WebAppPool -Name "KalininHutor.Client"
-          Copy-Item C:/Sites/artifacts/kalinin-hutor/client C:/Sites/kalininkhutor -Recurse -Force
-          Start-WebAppPool -Name "KalininHutor.Client"
-          
-      - name: Curl the website as a smoke test
-        run: curl http://localhost:3000
+#  client-build:
+#    env: 
+#      CI: false
+#    runs-on: windows-2019
+#    defaults:
+#      run:
+#        working-directory: ./kalinin-hutor
+#    steps:    
+#    - uses: actions/checkout@v3
+#     
+#    - name: Setup Node
+#      uses: actions/setup-node@v3
+#  
+#    - name: Build app
+#      run: |
+#        npm ci
+#        npm run build
+#        
+#    - name: Upload a Build Artifact
+#      uses: actions/upload-artifact@v3
+#      with:
+#        name: client
+#        path: kalinin-hutor
+#        if-no-files-found: error
+#        
+#  client-deploy:
+#    needs: client-build
+#    runs-on: prod
+#    steps:
+#      - name: Download a Build Artifact
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: client
+#          path: C:/Sites/artifacts/kalinin-hutor/client
+#          if-no-files-found: error
+#          
+#      - name: Stop Client Pool
+#        run: |
+#          Stop-WebAppPool -Name "KalininHutor.Client"
+#    
+#      - name: Deploy to IIS
+#        run: |          
+#          Copy-Item C:/Sites/artifacts/kalinin-hutor/client C:/Sites/kalininkhutor -Recurse -Force
+#        
+#      - name: Start Client Pool
+#        run: |
+#          Start-WebAppPool -Name "KalininHutor.Client"
+#                    
+#      - name: Curl the website as a smoke test
+#        run: curl http://localhost:3000
 
   api-build:
     runs-on: windows-2019
@@ -89,11 +95,17 @@ jobs:
           name: api
           path: C:/Sites/artifacts/kalinin-hutor/api
           if-no-files-found: error
+          
+      - name: Stop API Pool
+        run: |
+          Stop-WebAppPool -Name "KalininHutor.API"
     
       - name: Deploy to IIS
         run: |
-          Stop-WebAppPool -Name "KalininHutor.API"
           Copy-Item C:/Sites/artifacts/kalinin-hutor/api C:/Sites/KalininHutor.API -Recurse -Force
+                  
+      - name: Start API Pool
+        run: |
           Start-WebAppPool -Name "KalininHutor.API"
           
       - name: Curl the website as a smoke test
