@@ -104,6 +104,9 @@ jobs:
         run: |
           Copy-Item C:/Sites/artifacts/kalinin-hutor/api C:/Sites/KalininHutor.API -Recurse -Force
                   
+      - name: Sleep for 30 seconds
+        run: Start-Sleep -s 30
+                  
       - name: Start API Pool
         run: |
           Start-WebAppPool -Name "KalininHutor.API"
