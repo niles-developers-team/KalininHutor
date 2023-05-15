@@ -48,7 +48,7 @@ jobs:
     
       - name: Deploy to IIS
         run: |          
-          Copy-Item C:/Sites/artifacts/kalinin-hutor/client C:/Sites/kalininkhutor -Recurse -Force
+          Copy-Item C:/Sites/artifacts/kalinin-hutor/client/* C:/Sites/kalininkhutor -Recurse -Force
                       
       - name: Sleep for 10 seconds
         run: Start-Sleep -s 10
@@ -106,7 +106,7 @@ jobs:
     
       - name: Deploy to IIS
         run: |
-          Copy-Item C:/Sites/artifacts/kalinin-hutor/api C:/Sites/KalininHutor.API -Recurse -Force
+          Copy-Item C:/Sites/artifacts/kalinin-hutor/api/* C:/Sites/KalininHutor.API -Recurse -Force
                   
       - name: Sleep for 10 seconds
         run: Start-Sleep -s 10
