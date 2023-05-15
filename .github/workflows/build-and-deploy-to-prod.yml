@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: client.${{github.run_number}}
-        path: build/
+        path: /build/
         if-no-files-found: error
         
   client-deploy:
@@ -89,7 +89,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api.${{github.run_number}}
-        path: bin/api/
+        path: /bin/api/
         if-no-files-found: error
         
   api-deploy:
