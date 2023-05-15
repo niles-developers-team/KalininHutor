@@ -83,13 +83,13 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish
-      run: dotnet publish KalininHutor.API.csproj -c Release -o website
+      run: dotnet publish KalininHutor.API.csproj -c Release -o bin/api
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: api.${{github.run_number}}
-        path: bin/Release/publish/
+        path: bin/api/
         if-no-files-found: error
         
   api-deploy:
