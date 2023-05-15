@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: client.${{github.run_number}}
-        path: /build/
+        path: kalinin-hutor/build/
         if-no-files-found: error
         
   client-deploy:
@@ -83,13 +83,13 @@ jobs:
       run: dotnet test --no-build --verbosity normal
       
     - name: Publish
-      run: dotnet publish KalininHutor.API.csproj -c Release -o bin/api
+      run: dotnet publish KalininHutor.API.csproj -c Release -o api
       
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: api.${{github.run_number}}
-        path: /bin/api/
+        path: KalininHutor.API/api/
         if-no-files-found: error
         
   api-deploy:
