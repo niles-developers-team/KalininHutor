@@ -1,8 +1,8 @@
-name: Build project
+name: Build and deploy project ($(date:yyyy-MM-dd))
 
 on:
   push:
-    branches: [ "dev", "feature/*", "master" ]
+    branches: [ "master" ]
 
 jobs:
   client-build:
@@ -28,7 +28,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: client
-        path: kalinin-hutor/build/*
         if-no-files-found: error
         
   client-deploy:
@@ -86,7 +85,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api
-        path: kalinin-hutor
         if-no-files-found: error
         
   api-deploy:
