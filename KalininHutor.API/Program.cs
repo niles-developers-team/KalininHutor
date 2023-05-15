@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 var secret = builder.Configuration.GetValue<string>("Secret");
+var allowedOrigins = builder.Configuration.GetValue<string[]>("AllowedOrigins");
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
 
@@ -135,7 +136,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseCors(configure => configure.SetIsOriginAllowed(origin => true)
+app.UseCors(configure => configure.SetIsOriginAllowed(origin => allowedOrigins.Any(ao => ao == origin))
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
