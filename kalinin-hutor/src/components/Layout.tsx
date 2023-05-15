@@ -6,7 +6,7 @@ import { AppState, SnackbarActions } from "../store";
 import { SnackbarVariant } from "../models";
 import { MessageSnackbar } from "./common";
 
-interface Props extends RouteProps {
+interface Props {
     onSigninDialogOpen: () => void;
 }
 
@@ -35,7 +35,7 @@ function HideOnScroll(props: HideOnScrollProps) {
     );
 }
 
-export const LayoutComponent = function (props: Props): JSX.Element {
+export const LayoutComponent = function (props: Props & RouteProps): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { userState, snackbarState } = useAppSelector((state: AppState) => state);
