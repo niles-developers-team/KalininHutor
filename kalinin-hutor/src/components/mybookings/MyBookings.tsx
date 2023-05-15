@@ -10,7 +10,7 @@ export const MyBookingsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const { bookingState, userState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
-    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); });
+    useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); }, []);
     useEffect(() => { getCurrentUserBookings(); }, [userState.modelLoading]);
 
     function getCurrentUserBookings() {
