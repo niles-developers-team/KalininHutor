@@ -93,7 +93,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     }
     return (
         <Stack width="100%" direction="row" spacing={3}>
-            <RentalObjectsDetailedFilterComponent characteristics={characteristics}/>
+            <RentalObjectsDetailedFilterComponent characteristics={characteristics} onFilterSelected={handleFilterSelected}/>
             <Stack>
                 <Typography variant="h5">Базы отдыха и дачи</Typography>
                 <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={handleFilterChanged} />

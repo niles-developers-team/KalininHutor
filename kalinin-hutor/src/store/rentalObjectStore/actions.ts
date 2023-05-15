@@ -144,7 +144,7 @@ export namespace RentalObjectActions {
             }
 
             const draft = cookiesService.get<RentalObject>('rental-object-draft');
-            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
+            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft || {} });
         }
     }
 
