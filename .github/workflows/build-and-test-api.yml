@@ -44,7 +44,7 @@ jobs:
           
       - name: Stop Client Pool
         run: |
-          Stop-WebAppPool -Name "KalininHutor.Client"
+          Stop-WebAppPool -Name "KalininKhutor.Client"
     
       - name: Deploy to IIS
         run: |          
@@ -55,7 +55,7 @@ jobs:
         
       - name: Start Client Pool
         run: |
-          Start-WebAppPool -Name "KalininHutor.Client"
+          Start-WebAppPool -Name "KalininKhutor.Client"
                     
       - name: Curl the website as a smoke test
         run: curl http://localhost:3000
@@ -102,7 +102,7 @@ jobs:
           
       - name: Stop API Pool
         run: |
-          Stop-WebAppPool -Name "KalininHutor.API"
+          Stop-WebAppPool -Name "KalininKhutor.API"
     
       - name: Deploy to IIS
         run: |
@@ -113,7 +113,7 @@ jobs:
                   
       - name: Start API Pool
         run: |
-          Start-WebAppPool -Name "KalininHutor.API"
+          Start-WebAppPool -Name "KalininKhutor.API"
           
       - name: Curl the website as a smoke test
         run: curl http://localhost:5207
