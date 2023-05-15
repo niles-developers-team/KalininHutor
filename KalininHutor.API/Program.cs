@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 var secret = builder.Configuration.GetValue<string>("Secret");
+var allowedOrigins = builder.Configuration.GetValue<string[]>("AllowedOrigins");
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddSignalR();
@@ -177,6 +178,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.UseRouting();
+app.UseCors(configure => configure.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -186,8 +190,6 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors();
-
 app.MapControllers();
 
 app.MapHub<NotificationsHub>("/hubs/notifications");

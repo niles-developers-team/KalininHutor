@@ -1,5 +1,5 @@
 import { RoomCharacteristicActionTypes, RoomCharacteristicActions } from "./actions";
-import { RoomCharacteristicState, RoomCharacteristicDeleteState, RoomCharacteristicModelsState, RoomCharacteristicModelState } from "./state";
+import { RoomCharacteristicState, RoomCharacteristicModelsState, RoomCharacteristicModelState } from "./state";
 
 const initialState: RoomCharacteristicState = {
     modelsLoading: true,

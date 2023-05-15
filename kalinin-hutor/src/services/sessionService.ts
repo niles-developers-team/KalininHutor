@@ -6,6 +6,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signal
 class SessionService {
     private originalFetch: typeof fetch = fetch.bind(window);
 
+    private readonly apiUrl = process.env.REACT_APP_API_URL;
     private readonly storageKey: string = 'kalinin_hutor_auth';
     private readonly noInit = {};
 
@@ -90,7 +91,7 @@ class SessionService {
 
                 if (matches && matches.length > 0) {
                     delete init["credentials"]; // we cant put this header because of CROS limitations
-                    input = `https://localhost:7294/${input}`;
+                    input = `${this.apiUrl}${input}`;
                 }
             }
 

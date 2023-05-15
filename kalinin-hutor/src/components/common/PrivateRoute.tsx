@@ -2,9 +2,7 @@ import { Navigate, RouteProps, useNavigate } from "react-router-dom";
 
 import { sessionService } from "../../services";
 
-interface Props extends RouteProps { }
-
-export const PrivateRoute = (props: Props) => {
+export const PrivateRoute = (props: RouteProps) => {
     const isUserAuthenticated = sessionService.isUserAuthenticated();
     const navigate = useNavigate();
 
@@ -14,4 +12,4 @@ export const PrivateRoute = (props: Props) => {
     }
 
     return (<>{props.children}</>);
-};
+}

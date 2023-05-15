@@ -9,7 +9,7 @@ import { HubConnection } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import { sessionService } from "../services";
 
-interface Props extends RouteProps {
+interface Props {
     onSigninDialogOpen: () => void;
 }
 
@@ -38,7 +38,7 @@ function HideOnScroll(props: HideOnScrollProps) {
     );
 }
 
-export const LayoutComponent = function (props: Props): JSX.Element {
+export const LayoutComponent = function (props: Props & RouteProps): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { userState, notificationState } = useAppSelector((state: AppState) => state);

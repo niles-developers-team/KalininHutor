@@ -1,33 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@Cheweee 
-dotnet
-/
-core
-Public
-Code
-Issues
-377
-Pull requests
-4
-Actions
-Projects
-Security
-Insights
-core/.gitignore
-@pavinthan
-pavinthan Add jetbrains folder to .gitignore (#2320)
-Latest commit 718ec99 on 27 Feb 2019
- History
- 5 contributors
-@richlander@geek@Petermarcu@pavinthan@terrajobst
-37 lines (32 sloc)  341 Bytes
-   
 *.swp
 *.*~
 project.lock.json

@@ -1,0 +1,126 @@
+name: Build and deploy project
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  client-build:
+    env: 
+      CI: false
+    runs-on: windows-2019
+    defaults:
+      run:
+        working-directory: ./kalinin-hutor
+    steps:    
+    - uses: actions/checkout@v3
+     
+    - name: Setup Node
+      uses: actions/setup-node@v3
+  
+    - name: Install dependencies
+      run: npm ci
+  
+    - name: Build app
+      run: npm run build:prod
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: client.${{github.run_number}}
+        path: kalinin-hutor/build/
+        if-no-files-found: error
+        
+  client-deploy:
+    needs: client-build
+    runs-on: prod
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: client.${{github.run_number}}
+          path: C:/Sites/artifacts/kalinin-hutor/client
+          
+      - name: Stop Client Pool
+        run: |
+          Stop-WebAppPool -Name "KalininKhutor.Client"
+    
+      - name: Sleep for 10 seconds
+        run: Start-Sleep -s 10
+            
+      - name: Deploy to IIS
+        run: |          
+          Copy-Item C:/Sites/artifacts/kalinin-hutor/client/* C:/Sites/kalininkhutor -Recurse -Force
+                      
+      - name: Sleep for 10 seconds
+        run: Start-Sleep -s 10
+        
+      - name: Start Client Pool
+        run: |
+          Start-WebAppPool -Name "KalininKhutor.Client"
+                    
+      - name: Curl the website as a smoke test
+        run: curl http://localhost:3000
+
+  api-build:
+    runs-on: windows-2019
+    defaults:
+      run:
+        working-directory: ./KalininHutor.API
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with: 
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+      
+    - name: Publish
+      run: dotnet publish KalininHutor.API.csproj -c Release -o api
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: api.${{github.run_number}}
+        path: KalininHutor.API/api/
+        if-no-files-found: error
+        
+  api-deploy:
+    needs: api-build
+    runs-on: prod
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: api.${{github.run_number}}
+          path: C:/Sites/artifacts/kalinin-hutor/api
+          
+      - name: Stop API Pool
+        run: |
+          Stop-WebAppPool -Name "KalininKhutor.API"
+    
+      - name: Sleep for 10 seconds
+        run: Start-Sleep -s 10
+        
+      - name: Deploy to IIS
+        run: |
+          Copy-Item C:/Sites/artifacts/kalinin-hutor/api/* C:/Sites/KalininHutor.API -Recurse -Force
+                  
+      - name: Sleep for 10 seconds
+        run: Start-Sleep -s 10
+                  
+      - name: Start API Pool
+        run: |
+          Start-WebAppPool -Name "KalininKhutor.API"
+          
+      - name: Curl the website as a smoke test
+        run: curl http://localhost:5207

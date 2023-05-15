@@ -15,9 +15,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { ruRU } from "@mui/x-data-grid";
 
-import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
-import { createBrowserHistory } from "history";
-
 import './index.css';
 import './themes/bootstrap.scss';
 import './themes/paddings.scss';
