@@ -136,10 +136,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseCors(configure => configure.SetIsOriginAllowed(origin => allowedOrigins.Any(ao => ao == origin))
+app.UseCors(configure => configure.AllowAnyOrigin()
         .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
+        .AllowAnyHeader());
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
