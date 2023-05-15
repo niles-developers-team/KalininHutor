@@ -1,6 +1,5 @@
 import { Gite } from "@mui/icons-material";
-import { Stack, TextField, Tooltip, Checkbox, Grid, Card, Button, CardContent, Paper } from "@mui/material";
-import { Box } from "@mui/system";
+import { Stack, TextField, Tooltip, Checkbox, Button, Paper } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { RoomVariant } from "../../../models";
 

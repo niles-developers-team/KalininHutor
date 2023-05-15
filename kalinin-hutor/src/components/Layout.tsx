@@ -59,7 +59,6 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
 
     let variant: SnackbarVariant = SnackbarVariant.info;
     let message: string = '';
-    const open = snackbarState.show;
     if (snackbarState.show) {
         variant = snackbarState.variant;
         message = snackbarState.message;

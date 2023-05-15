@@ -1,4 +1,4 @@
-import { CurrencyRuble, Favorite, FavoriteBorder, FavoriteOutlined } from "@mui/icons-material";
+import { CurrencyRuble, FavoriteBorder } from "@mui/icons-material";
 import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
 import { RentalObject } from "../../models";
 

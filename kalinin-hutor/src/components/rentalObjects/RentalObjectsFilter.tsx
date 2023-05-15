@@ -182,12 +182,11 @@ function CategoryItemFilters(props: CategoryItemFiltersProps) {
 
 interface DetailedProps {
     characteristics: RoomCharacteristicFilter[];
-    loading: boolean;
     onFilterSelected: (id: string, selected: boolean) => void;
 }
 
 export const RentalObjectsDetailedFilterComponent = function (props: DetailedProps): JSX.Element {
-    const { characteristics, loading } = props;
+    const { characteristics } = props;
 
     const groupedCharacteristics = !characteristics.length ? undefined : characteristics.reduce(function (r: Array<{ key: CharacteristicTypes, values: RoomCharacteristicFilter[] }>, a) {
         const keyValue = r.find(o => o.key === a.type);

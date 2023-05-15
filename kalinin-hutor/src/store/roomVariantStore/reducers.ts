@@ -40,7 +40,7 @@ export function roomVariantReducer(prevState: RoomVariantState = initialState, a
 
         case RoomVariantActionTypes.deleteRequest: return { ...prevState, deleting: true };
         case RoomVariantActionTypes.deleteSuccess: {
-            const updatedModels = prevState.models?.filter((model) => action.ids.some(o => o == model.id)) || [];
+            const updatedModels = prevState.models?.filter((model) => action.ids.some(o => o === model.id)) || [];
             return { ...prevState, deleting: false, modelsLoading: false, models: updatedModels };
         }
         case RoomVariantActionTypes.deleteFailure: return { ...prevState, deleting: false };

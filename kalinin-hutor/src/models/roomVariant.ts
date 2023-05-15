@@ -1,4 +1,4 @@
-import { EntityStatus, IEntity } from "./common";
+import { IEntity } from "./common";
 import { RoomVariantBedType } from "./roomVariantBedType";
 import { RoomVariantCharacteristic } from "./roomVariantCharacteristic";
 
