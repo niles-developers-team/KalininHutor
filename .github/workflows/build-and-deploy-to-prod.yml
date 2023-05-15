@@ -40,7 +40,6 @@ jobs:
         with:
           name: client.${{github.run_number}}
           path: C:/Sites/artifacts/kalinin-hutor/client
-          if-no-files-found: error
           
       - name: Stop Client Pool
         run: |
@@ -104,7 +103,6 @@ jobs:
         with:
           name: api.${{github.run_number}}
           path: C:/Sites/artifacts/kalinin-hutor/api
-          if-no-files-found: error
           
       - name: Stop API Pool
         run: |
