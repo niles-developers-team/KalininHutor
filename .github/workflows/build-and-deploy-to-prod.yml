@@ -30,6 +30,7 @@ jobs:
         name: client.${{github.run_number}}
         path: kalinin-hutor/build/
         if-no-files-found: error
+        retention-days: 1
         
   client-deploy:
     needs: client-build
@@ -93,6 +94,7 @@ jobs:
         name: api.${{github.run_number}}
         path: KalininHutor.API/api/
         if-no-files-found: error
+        retention-days: 1
         
   api-deploy:
     needs: api-build
