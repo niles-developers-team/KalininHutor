@@ -172,27 +172,6 @@ export namespace BookingActions {
         }
     }
 
-    export function updateBooking(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
-        return async (dispatch) => {
-            dispatch(request(updateRequest));
-
-            try {
-                const result = await bookingService.update(updateRequest);
-                dispatch(NotificationActions.showSnackbar('Бронь успешно сохранена', NotificationVariant.success));
-                return dispatch(success(result));
-            }
-            catch (error: any) {
-                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
-
-                return dispatch(failure(error));
-            }
-
-            function request(updateRequest: Booking.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
-            function success(booking: Booking): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: booking }; }
-            function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
-        }
-    }
-
     export function approveBooking(model: Booking): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
             dispatch(request());

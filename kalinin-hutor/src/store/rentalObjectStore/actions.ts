@@ -275,7 +275,7 @@ export namespace RentalObjectActions {
             dispatch(request());
 
             try {
-                const result = await rentalObjectService.update({
+                await rentalObjectService.update({
                     id: model.id,
                     checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
                     checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
@@ -379,7 +379,7 @@ export namespace RentalObjectActions {
                     deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                 });
                 dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
-                return dispatch(success(result));
+                return dispatch(success(model));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));

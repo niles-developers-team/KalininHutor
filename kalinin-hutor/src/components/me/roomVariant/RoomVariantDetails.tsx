@@ -9,7 +9,6 @@ interface Props {
 }
 
 export const RoomVariantDetailsComponent = function (props: Props): JSX.Element {
-    const [freeCancelationPeriodEnabled, setFreeCancelationPeriodEnabled] = useState<boolean>(props.model?.freeCancellationPeriod !== undefined);
 
     return (
         <Stack spacing={2}>
@@ -30,10 +29,7 @@ export const RoomVariantDetailsComponent = function (props: Props): JSX.Element 
                 </Stack>
             </Stack>
             <Stack spacing={2} direction="row" alignItems="center">
-                <Tooltip title="Период бесплатной отмены доступен?">
-                    <Checkbox disabled={props.loading} checked={freeCancelationPeriodEnabled} onChange={(event, checked) => setFreeCancelationPeriodEnabled(checked)} />
-                </Tooltip>
-                <TextField disabled={props.loading && !freeCancelationPeriodEnabled} label="Период бесплатной отмены (дн.)" value={props.model.freeCancellationPeriod || ''} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCancellationPeriod: parseInt(event.target.value) }); }} />
+                <TextField disabled={props.loading} label="Период бесплатной отмены (дн.)" value={props.model.freeCancellationPeriod || ''} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCancellationPeriod: parseInt(event.target.value) }); }} />
             </Stack>
         </Stack>
     );

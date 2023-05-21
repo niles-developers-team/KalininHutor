@@ -51,8 +51,6 @@ export const BookingComponent = function (): JSX.Element {
 
         if (model.entityStatus === EntityStatus.Draft) {
             await dispatch(BookingActions.createBooking(model));
-        } else if (model.entityStatus === EntityStatus.Updated) {
-            //await dispatch(BookingActions.updateBooking(model));
         }
 
         dispatch(BookingActions.clearEditionState());
