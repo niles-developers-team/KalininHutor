@@ -1,6 +1,6 @@
 import { CurrencyRuble, FavoriteBorder } from "@mui/icons-material";
 import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useState, CSSProperties } from "react";
 import Carousel from "react-material-ui-carousel";
 import { RentalObject } from "../../models";
 
@@ -8,6 +8,10 @@ interface Props {
     model: RentalObject;
     onShowVariants: (id: string) => void;
 }
+
+const imageStyle: CSSProperties = {
+    objectFit: "contain"
+};
 
 export const RentalObjectShortInfoComponent = function (props: Props): JSX.Element {
     const { model, onShowVariants } = props;
@@ -51,7 +55,7 @@ export const RentalObjectShortInfoSkeleton = function (): JSX.Element {
     return (
         <Stack padding={2} spacing={2}>
             <Paper variant="outlined">
-                <Skeleton variant="rectangular" width="100%" height={120} />
+                <Skeleton variant="rectangular" width="100%" height={200} />
             </Paper>
             <Typography variant="h6"><Skeleton /></Typography>
             <Skeleton width="60%" />
@@ -65,10 +69,11 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     if (!model || !model.id) {
         return (<Typography variant="subtitle1">Ошибка при загрузке базы отдыха или дачи</Typography>)
     }
+
     return (
         <Stack padding={2} spacing={2} direction="row" width="100%">
             {model.photos && model.photos.length ?
-                <img height={200} width={200} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                <img height={200} width={200} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
                 <Skeleton variant="rectangular" width={200} height={200} />
             }
             <Grid item xs>

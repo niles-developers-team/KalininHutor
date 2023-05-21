@@ -1,10 +1,8 @@
 import { AspectRatio, CurrencyRuble, FavoriteBorder, People } from "@mui/icons-material";
-import { Masonry } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, ImageList, ImageListItem, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
 import moment from "moment";
 import pluralize from "plural-ru";
-import { useEffect, useState } from "react";
-import Carousel from "react-material-ui-carousel";
+import { CSSProperties, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
@@ -14,6 +12,12 @@ import { RoomVariantActions } from "../../store/roomVariantStore";
 import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
+import { Masonry } from "@mui/lab";
+
+
+const imageStyle: CSSProperties = {
+    objectFit: "contain"
+};
 
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, roomVariantState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
@@ -25,6 +29,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     const [specifyBedsOpen, setSpecifyBedsOpen] = useState<boolean>(false);
     const [specifyBedsRoomVariant, setSpecifyBedsRoomVariant] = useState<RoomVariant>();
     const [specifiedBedType, setSpecifiedBetType] = useState<RoomVariantBedType>();
+    const [allPhotoOpen, setAllPhotoOpen] = useState<boolean>(false);
 
     const [personsAnchorEl, setPersonsAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [datesAnchorEl, setDatesAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -182,7 +187,6 @@ export const RentalObjectComponent = function (): JSX.Element {
         }));
     }
 
-
     if (!rentalObjectState.model) {
         return (<Typography>Возникла ошибка при загрузке объекта аренды</Typography>);
     }
@@ -285,7 +289,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Typography color="GrayText">{model ? model.address : <Skeleton />}</Typography>
                     <Stack spacing={2}>
                         {model.photos?.length > 0 ?
-                            <img height={325} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            <img height={325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
                             :
                             <Paper variant="outlined">
                                 <Skeleton variant="rectangular" height={325} />
@@ -294,14 +298,14 @@ export const RentalObjectComponent = function (): JSX.Element {
                         <Stack direction="row" spacing={2}>
                             {model.photos?.length ?
                                 model.photos.slice(0, 5).map(photo =>
-                                    <img height={120} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                    <img style={imageStyle} width={120} height={120} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                 )
                                 :
                                 [...new Array(5)].map(() =>
                                     <Skeleton variant="rectangular" width={120} height={120} />
                                 )
                             }
-                            {model.photos?.length > 5 && <Button variant="outlined" className="h-100">Ещё {model.photos.length - 5} фото</Button>}
+                            {model.photos?.length > 5 && <Button onClick={() => setAllPhotoOpen(true)} variant="outlined" className="h-100">Ещё {model.photos.length - 5} фото</Button>}
                         </Stack>
                     </Stack>
                 </Stack>
@@ -318,6 +322,30 @@ export const RentalObjectComponent = function (): JSX.Element {
                 </Stack>
                 {formatRoomVariants()}
             </Stack>
+
+            <Dialog open={allPhotoOpen} fullWidth={true} maxWidth="md" onClose={() => setAllPhotoOpen(false)}>
+                <DialogContent>
+                    <Grid container>
+                        <Masonry columns={4} spacing={2}>
+                            {model.photos.map((photo, index) => (
+                                <div key={index}>
+                                    <img
+                                        src={`data:${photo.extension};base64,${photo.body}`}
+                                        width={200}
+                                        alt={photo.name}
+                                        style={{
+                                            borderBottomLeftRadius: 4,
+                                            borderBottomRightRadius: 4,
+                                            borderTopLeftRadius: 4,
+                                            borderTopRightRadius: 4,
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </Masonry>
+                    </Grid>
+                </DialogContent>
+            </Dialog>
 
             <Dialog open={specifyBedsOpen} maxWidth="xs" onClose={discardSpecifyBeds}>
                 <DialogTitle>Уточните кровати</DialogTitle>
