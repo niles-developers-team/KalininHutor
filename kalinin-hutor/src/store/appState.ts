@@ -4,7 +4,7 @@ import { BookingState } from "./bookingStore";
 import { RentalObjectState } from "./rentalObjectStore";
 import { RoomCharacteristicState } from "./roomCharacteristicStore";
 import { RoomVariantState } from "./roomVariantStore";
-import { SnackbarState } from "./snackbarStore";
+import { NotificationState } from "./notificationStore";
 import { UserState } from "./userStore";
 
 export type AppThunkAction<ReturnType = void> = ThunkAction<ReturnType, AppState, void, Action>;
@@ -14,7 +14,7 @@ export type AppState = {
     userState: UserState,
     bookingState: BookingState,
     rentalObjectState: RentalObjectState,
-    snackbarState: SnackbarState,
+    notificationState: NotificationState,
     roomCharacteristicState: RoomCharacteristicState,
     roomVariantState: RoomVariantState
 }

@@ -69,7 +69,7 @@ public class UserRepository : BaseRepository<UserEntity, UserSearchOptions>
                 Name, 
                 Lastname, 
                 Email, 
-                BirthDay as BirthDayDateTime 
+                BirthDay as BirthDayDateTime
             from Users
             where Id = {id}
         ").QuerySingleAsync<UserEntity>();

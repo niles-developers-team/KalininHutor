@@ -1,9 +1,9 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, RentalObject } from "../../models";
-import { AppState, BookingActions, RoomCharacteristicActions } from "../../store";
-import { Face } from '@mui/icons-material';
+import { Booking, EntityStatus, FileObject, RentalObject } from "../../models";
+import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
+import { Face, RedeemRounded } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
 import { UserDetailsComponent } from "./UserDetails";
@@ -12,6 +12,8 @@ import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
+import { MyNotificationsComponent } from "./notifications/MyNotifications";
+import { v4 as guid } from 'uuid';
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -20,7 +22,8 @@ export const MeComponent = function (): JSX.Element {
         userState,
         rentalObjectState,
         bookingState,
-        roomCharacteristicState
+        roomCharacteristicState,
+        notificationState
     } = useAppSelector((state: AppState) => state);
 
     const [bookingInfoDialogOpen, setBookingInfoDialogOpen] = useState<boolean>(false);
@@ -97,6 +100,38 @@ export const MeComponent = function (): JSX.Element {
         setSelectedBooking(undefined);
     }
 
+    function handleMarkNotifyAsRead(id: string) {
+        dispatch(NotificationActions.markAsRead(id));
+    }
+
+    async function handleAvatarChanged(file: File) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        if (!reader)
+            return;
+        reader.onload = () => {
+            if (!reader.result || typeof reader.result !== 'string')
+                return;
+
+            const body = reader.result.substring(reader.result.indexOf(',') + 1);
+
+            const avatar: FileObject = {
+                id: guid(),
+                body: body,
+                extension: file.type,
+                name: file.name,
+                sortOrder: 0,
+                entityStatus: EntityStatus.Draft
+            };
+            dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: avatar }));
+        };
+    }
+
+    function handleAvatarDelete() {
+        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: undefined }));
+    }
+
     if (!userState.currentUser)
         return (<Typography>Ошибка авторизации</Typography>);
 
@@ -107,24 +142,24 @@ export const MeComponent = function (): JSX.Element {
 
     return (
         <Stack spacing={3}>
-            <Stack direction="row" spacing={3}>
-                <Stack>
-                    <Face color="primary" sx={{ fontSize: 200 }} />
-                    <Button>Выбрать фото</Button>
-                </Stack>
-                <UserDetailsComponent
-                    loading={userState.modelLoading}
-                    user={currentUser}
-                    onBirthdayAccepted={handleBirthdayAccepted}
-                    onBirthdayChanged={handleBirthdayChanged}
-                    onEmailChanged={handleEmailChanged}
-                    onLastnameChanged={handleLastnameChanged}
-                    onNameChanged={handleNameChanged}
-                    onPhoneNumberChanged={handlePhoneNumberChanged}
-                    onUpdateConfirm={handleUpdateUserDetailsConfirm}
-                    onUpdateCancel={handleUpdateUserDetailsCancel}
-                />
-            </Stack>
+            <UserDetailsComponent
+                loading={userState.modelLoading}
+                user={currentUser}
+                onBirthdayAccepted={handleBirthdayAccepted}
+                onBirthdayChanged={handleBirthdayChanged}
+                onEmailChanged={handleEmailChanged}
+                onLastnameChanged={handleLastnameChanged}
+                onNameChanged={handleNameChanged}
+                onPhoneNumberChanged={handlePhoneNumberChanged}
+                onAvatarChanged={handleAvatarChanged}
+                onAvatarDelete={handleAvatarDelete}
+                onUpdateConfirm={handleUpdateUserDetailsConfirm}
+                onUpdateCancel={handleUpdateUserDetailsCancel}
+            />
+            <MyNotificationsComponent
+                notifications={notificationState.models}
+                markAsRead={handleMarkNotifyAsRead}
+            />
             <MyRentalObjectsBookingsComponent
                 bookings={bookings}
                 loading={bookingState.modelsLoading}

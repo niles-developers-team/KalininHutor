@@ -1,9 +1,10 @@
-import { Edit, Delete, ArrowBack } from "@mui/icons-material";
-import { Button, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Edit, Delete, ArrowBack, OpenWith } from "@mui/icons-material";
+import { Button, Grid, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, createRef, useEffect } from "react";
+import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { EntityStatus, RoomVariant } from "../../models";
@@ -20,8 +21,19 @@ function NoRoomVariants(): JSX.Element {
     );
 }
 
+
+const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: 'none',
+    cursor: isDragging ? 'grabbing' : 'grab',
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+});
+
 export const MyRentalObjectComponent = function (): JSX.Element {
     const { rentalObjectState, userState, roomVariantState } = useAppSelector((state: AppState) => state);
+    const fileInput = createRef<HTMLInputElement>();
 
     const columns: GridColDef[] = [
         { field: 'name', headerName: 'Название', flex: 1 },
@@ -84,6 +96,33 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         navigate(`/me`)
     }
 
+    function handleAddPhoto() {
+        fileInput.current?.click();
+    }
+
+    async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
+        event.preventDefault();
+        if (!event?.target?.files?.length) return;
+
+        await dispatch(RentalObjectActions.appendPhotoToDraft(event?.target?.files));
+
+        if (event?.target)
+            event.target.value = '';
+    }
+
+    function photosReorder(result: DropResult, provided: ResponderProvided) {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+
+        dispatch(RentalObjectActions.reorderPhotos(result.source.index, result.destination.index));
+    }
+
+    function handleImageDelete(id: string) {
+        dispatch(RentalObjectActions.deletePhotoFromDaft(id));
+    }
+
     const loading = rentalObjectState.modelLoading;
 
     if (!rentalObjectState.model)
@@ -125,6 +164,49 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         renderInput={(params) => <TextField {...params} />}
                     />
                 </Stack>
+            </Stack>
+            <Stack spacing={2}>
+                <Stack direction="row" spacing={2}>
+                    <Typography color="GrayText" variant="h6">Фотографии объекта</Typography>
+                    <Button onClick={handleAddPhoto}>Добавить</Button>
+                    <input accept=".png,.jpeg,.jpg" hidden multiple type="file" ref={fileInput} onChange={(event) => handlePhotoChange(event)} />
+                </Stack>
+                <DragDropContext onDragEnd={photosReorder}>
+                    <Droppable droppableId="droppable" direction="horizontal">
+                        {(provided, snapshot) => (
+                            <Stack spacing={2} direction="row" ref={provided.innerRef} {...provided.droppableProps}>
+                                {model.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).map((photo, index) => (
+                                    <Draggable                                    
+                                        key={`item-${index}`}
+                                        draggableId={`item-${index}`}
+                                        index={index}
+                                    >
+                                        {(provided, snapshot) => (
+                                            <Paper
+                                                className="editable-image"
+                                                variant="outlined"
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemStyle(
+                                                    snapshot.isDragging,
+                                                    provided.draggableProps.style
+                                                )} 
+                                            >
+                                                <Grid className="alternate-actions" direction="row" alignItems="start" justifyContent="space-between">
+                                                    <OpenWith className="padding-1"/>
+                                                    <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete/></IconButton>
+                                                </Grid>
+                                                <img className="image" height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                            </Paper>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </Stack>
+                        )}
+                    </Droppable>
+                </DragDropContext>
             </Stack>
             <Stack style={{ height: 400 }}>
                 <Stack direction="row">

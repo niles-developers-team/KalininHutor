@@ -30,6 +30,15 @@ public class RoomVariantEntity
 
     public List<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
     public List<RoomVariantCharacteristicEntity> Characteristics { get; protected set; } = new List<RoomVariantCharacteristicEntity>();
+    public List<RoomVariantFileObjectEntity> FileObjects { get; protected set; } = new List<RoomVariantFileObjectEntity>();
+}
+
+public class RoomVariantFileObjectEntity : IEntity<Guid>
+{
+    public Guid Id { get; protected set; }
+    public Guid RoomVariantId { get; protected set; }
+    public Guid FileObjectId { get; protected set; }
+    public int SortOrder { get; protected set; }
 }
 
 public class RoomVariantSearchOptions

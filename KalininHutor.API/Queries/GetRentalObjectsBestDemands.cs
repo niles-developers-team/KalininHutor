@@ -3,7 +3,7 @@ using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Requests;
+namespace KalininHutor.API.Commands;
 
 internal class GetRentalObjectsBestDemandsHandler : IRequestHandler<RentalObjectCommands.GetRentalObjectsBestDemandsQuery, IEnumerable<RentalObjectBestDemandDTO>>
 {

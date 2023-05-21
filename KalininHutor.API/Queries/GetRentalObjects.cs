@@ -1,19 +1,22 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
+using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Requests;
+namespace KalininHutor.API.Commands;
 
 internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.GetQuery, IEnumerable<RentalObjectDTO>>
 {
     private readonly RentalObjectRepository _repository;
+    private readonly FileObjectRepository _fileObjectRepository;
     private readonly ISender _sender;
     private readonly IMapper _mapper;
 
-    public GetRentalObjectsHandler(RentalObjectRepository repository, ISender sender, IMapper mapper)
+    public GetRentalObjectsHandler(RentalObjectRepository repository, FileObjectRepository fileObjectRepository, ISender sender, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _fileObjectRepository = fileObjectRepository ?? throw new ArgumentNullException(nameof(fileObjectRepository));
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -46,6 +49,11 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.Ge
             var roomVariants = await _sender.Send(new RoomVariantCommands.GetQuery { RentalObjectsIds = result.Select(o => o.Id) });
             result.ForEach(ro => ro.RoomVariants = roomVariants.Where(o => o.RentalObjectId == ro.Id));
         }
+
+        var photos = await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentsIds = result.Select(o => o.Id).ToList() });
+
+        if (photos != null)
+            result.ForEach(ro => ro.Photos = photos.Where(o => o.ParentId == ro.Id).Select(_mapper.Map<FileObjectDTO>));
 
         return result;
     }

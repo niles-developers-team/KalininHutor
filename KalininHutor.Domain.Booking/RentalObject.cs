@@ -1,9 +1,9 @@
 using KalininHutor.Domain.Booking.Enums;
 
 namespace KalininHutor.Domain.Booking;
-public class RentalObject : IEntity<Guid>
+public class RentalObject : IEntity<Guid>, IEntityWithPhotos
 {
-    private HashSet<FileObject>? _photos;
+    private HashSet<FileObject> _photos = new HashSet<FileObject>();
     private HashSet<RoomVariant> _roomVariants = new HashSet<RoomVariant>();
     private HashSet<Booking> _bookings = new HashSet<Booking>();
 
@@ -21,7 +21,7 @@ public class RentalObject : IEntity<Guid>
 
     public TimeOnly? CheckoutTime { get; protected set; }
 
-    public IEnumerable<FileObject>? Photos { get => _photos?.ToList(); protected set => _photos = value?.ToHashSet(); }
+    public IReadOnlyList<FileObject> Photos { get => _photos?.ToList() ?? throw new NullReferenceException(nameof(Photos)); protected set => _photos = value?.ToHashSet(); }
 
     public IEnumerable<RoomVariant> RoomVariants { get => _roomVariants; protected set => _roomVariants = value.ToHashSet(); }
 
@@ -50,6 +50,8 @@ public class RentalObject : IEntity<Guid>
         CheckoutTime = checkoutTime;
         LandlordId = ownerId;
     }
+
+    public void SetPhotos(ICollection<FileObject> photos) => _photos = photos.ToHashSet();
 
     public void SetRoomVariants(IReadOnlyList<RoomVariant> variants)
     {
@@ -89,15 +91,10 @@ public class RentalObject : IEntity<Guid>
         CheckoutTime = checkoutTime;
     }
 
-    public void AddPhoto(FileObject photo)
-    {
-        if (_photos == null)
-            throw new MissingFieldException("Фотографии объекта аренды не были загружены");
+    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+    => _photos.Add(new FileObject(name, extension, body, sortOrder, Id));
 
-        _photos.Add(photo);
-    }
-
-    public RoomVariant CreateRoomVariant(string name, string description, decimal price, 
+    public RoomVariant CreateRoomVariant(string name, string description, decimal price,
                                         int maxPersonsCount, double width, double length,
                                         int? freeCancelationPeriod, PaymentOptions paymentOption, int amount, int freeAmount)
     {
@@ -139,7 +136,7 @@ public class RentalObject : IEntity<Guid>
         if (_bookings == null)
             throw new MissingFieldException("Брони объекта аренды не были загружены");
 
-        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId== o.Id));
+        var selectedRoomVariants = _roomVariants.Where(o => bookingRoomVariants.Any(brv => brv.RoomVariantId == o.Id));
 
         var visitorsSum = adultCount + childsCount;
         if (visitorsSum > selectedRoomVariants.Sum(o => o.MaxPersonsCount))

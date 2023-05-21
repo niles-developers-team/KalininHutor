@@ -1,10 +1,3 @@
-export enum SnackbarVariant {
-    success = 'success',
-    error = 'error',
-    warning = 'warning',
-    info = 'info'
-}
-
 export class UnauthorizedError extends Error { }
 
 export class ApplicationError extends Error {
@@ -41,4 +34,12 @@ export enum EntityStatus {
 
 export interface IEntity {
     entityStatus: EntityStatus;
+}
+
+export interface FileObject extends IEntity {
+    readonly id: string;
+    name: string;
+    body: string;
+    extension: string;
+    sortOrder: number;
 }

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace KalininHutor.DAL.Booking;
 
-public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEntity, RoomVariantBedTypeSearchOptions>
+public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEntity, RoomVariantBedTypeSearchOptions>, ICreateBulk<RoomVariantBedTypeEntity>
 {
     public RoomVariantBedTypeRepository(string connectionString, ILogger<RoomVariantBedTypeRepository> logger) : base(connectionString, logger) { }
 
@@ -22,6 +22,37 @@ public class RoomVariantBedTypeRepository : BaseRepository<RoomVariantBedTypeEnt
                 {entity.Length}
             )
         ").ExecuteAsync();
+    }
+
+    public async Task CreateBulk(IList<RoomVariantBedTypeEntity> entities)
+    {
+        using var connection = GetConnection();
+
+        var query = connection.QueryBuilder($@"
+            insert into RoomVariantBedTypes (Id, RoomVariantId, BedType, Width, Length)
+            values
+        ");
+
+        int index = 0;
+
+        foreach (var entity in entities)
+        {
+            index++;
+            query.AppendLine($@"
+                (
+                {entity.Id},
+                {entity.RoomVariantId},
+                {entity.BedType},
+                {entity.Width},
+                {entity.Length}
+                )
+            ");
+
+            if (index < entities.Count)
+                query.Append($",");
+        }
+
+        await query.ExecuteAsync();
     }
 
     public override async Task Delete(IReadOnlyList<Guid> ids)

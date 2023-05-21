@@ -50,14 +50,14 @@ class UserService {
             .then(handleJsonResponse as ResponseHandler<User[]>);
     }
 
-    public async getCurrentUser(): Promise<User> {
+    public async getCurrentUser(): Promise<AuthenticatedUser> {
         let url = `api/user/me`;
 
         return fetch(url, {
             credentials: 'include',
             method: 'GET',
         })
-            .then(handleJsonResponse as ResponseHandler<User>);
+            .then(handleJsonResponse as ResponseHandler<AuthenticatedUser>);
     }
 
     public async getDetails(id: string): Promise<User> {

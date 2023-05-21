@@ -8,3 +8,4 @@ export * from './roomVariant';
 export * from './roomVariantBedType';
 export * from './roomVariantCharacteristic';
 export * from './user';
+export * from './notification';

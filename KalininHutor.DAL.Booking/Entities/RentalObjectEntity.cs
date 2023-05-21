@@ -14,6 +14,16 @@ public class RentalObjectEntity
     internal TimeSpan CheckoutTimeSpan { get => _checkoutTimeSpan; private set => _checkoutTimeSpan = value; }
     public TimeOnly CheckinTime { get => TimeOnly.FromTimeSpan(_checkinTimeSpan); protected set => _checkinTimeSpan = value.ToTimeSpan(); }
     public TimeOnly CheckoutTime { get => TimeOnly.FromTimeSpan(_checkoutTimeSpan); protected set => _checkoutTimeSpan = value.ToTimeSpan(); }
+
+    public List<RentalObjectFileObjectEntity> FileObjects { get; protected set; } = new List<RentalObjectFileObjectEntity>();
+}
+
+public class RentalObjectFileObjectEntity : IEntity<Guid>
+{
+    public Guid Id { get; protected set; }
+    public Guid RentalObjectId { get; protected set; }
+    public Guid FileObjectId { get; protected set; }
+    public int SortOrder { get; protected set; }
 }
 
 public class RentalObjectSearchOptions

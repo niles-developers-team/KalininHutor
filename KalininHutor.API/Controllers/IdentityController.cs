@@ -1,8 +1,8 @@
-using KalininHutor.API.Queries;
-using KalininHutor.API.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using KalininHutor.API.Commands;
 
 namespace KalininHutor.API.Controllers;
 
@@ -26,7 +26,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            return base.Ok(await _sender.Send(new Queries.UserCommands.GetCurrentUserDetailsQuery()));
+            return base.Ok(await _sender.Send(new UserCommands.GetCurrentUserDetailsQuery()));
         }
         catch (ApplicationException)
         {
@@ -37,20 +37,20 @@ public class UserController : ControllerBase
     ///<summary> Метод авторизации </summary>
     [HttpPost("sign-in")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signin([FromBody] Requests.UserCommands.SigninRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signin([FromBody] UserCommands.SigninRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод регистрации </summary>
     [HttpPost("sign-up")]
     [AllowAnonymous]
-    public async Task<IActionResult> Signup([FromBody] Requests.UserCommands.SignupRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Signup([FromBody] UserCommands.SignupRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод изменения пользователя </summary>
     [HttpPatch("update")]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] Requests.UserCommands.UpdateRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Update([FromBody] UserCommands.UpdateRequest request) => Ok(await _sender.Send(request));
 
     ///<summary> Метод удаления пользователя </summary>
     [HttpDelete()]
     [Authorize]
-    public async Task<IActionResult> Delete([FromBody] Requests.UserCommands.DeleteRequest request) => Ok(await _sender.Send(request));
+    public async Task<IActionResult> Delete([FromBody] UserCommands.DeleteRequest request) => Ok(await _sender.Send(request));
 }
