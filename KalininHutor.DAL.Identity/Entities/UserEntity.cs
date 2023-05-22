@@ -11,6 +11,7 @@ public class UserEntity
     public string? Email { get; protected set; }
     public DateOnly? BirthDay { get => _birthday.HasValue ? DateOnly.FromDateTime(_birthday.Value) : null; protected set => _birthday = value.HasValue ? value.Value.ToDateTime(new TimeOnly()) : null; }
     public DateTime? BirthDayDateTime { get => _birthday; private set => _birthday = value; }
+    public Guid? AvatarId { get; protected set; }
 }
 
 public class UserSearchOptions

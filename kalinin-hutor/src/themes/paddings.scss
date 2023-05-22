@@ -1,0 +1,9 @@
+$padding-unit: .5em;
+
+.padding-1 {
+    padding: $padding-unit !important;
+}
+
+.padding-2 {
+    padding: $padding-unit * 2;
+}

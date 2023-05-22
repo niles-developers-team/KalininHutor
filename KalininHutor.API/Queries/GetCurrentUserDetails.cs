@@ -1,10 +1,8 @@
-using AutoMapper;
 using KalininHutor.API.DTO;
-using KalininHutor.API.Helpers;
 using KalininHutor.DAL.Identity;
 using MediatR;
 
-namespace KalininHutor.API.Queries;
+namespace KalininHutor.API.Commands;
 
 internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCurrentUserDetailsQuery, UserDetailsDTO>
 {
@@ -23,7 +21,7 @@ internal class GetCurrentUserDetailsHandler : IRequestHandler<UserCommands.GetCu
     {
         var claim = _context.User.FindFirst("id");
         if (claim == null || claim.Value == null)
-            throw new ApplicationException();
+            throw new UnauthorizedAccessException();
 
         var id = Guid.Parse(claim.Value);
 

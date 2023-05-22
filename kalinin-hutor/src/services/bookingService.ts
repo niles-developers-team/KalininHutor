@@ -12,14 +12,14 @@ class BookingService {
             .then(handleJsonResponse as ResponseHandler<Booking>);
     }
 
-    public async update(request: Booking.UpdateRequest): Promise<Booking> {
+    public async update(request: Booking.UpdateRequest): Promise<void> {
         return fetch('api/booking', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
         })
-            .then(handleJsonResponse as ResponseHandler<Booking>);
+            .then(handleJsonResponse as ResponseHandler<void>);
     }
 
     public async approveBooking(id: string): Promise<void> {

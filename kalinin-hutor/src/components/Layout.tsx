@@ -1,10 +1,13 @@
-import { AppBar, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { AppState, SnackbarActions } from "../store";
-import { SnackbarVariant } from "../models";
+import { AppState, NotificationActions } from "../store";
+import { NotificationVariant, Notification } from "../models";
 import { MessageSnackbar } from "./common";
+import { HubConnection } from "@microsoft/signalr";
+import { useEffect, useState } from "react";
+import { sessionService } from "../services";
 
 interface Props {
     onSigninDialogOpen: () => void;
@@ -38,7 +41,29 @@ function HideOnScroll(props: HideOnScrollProps) {
 export const LayoutComponent = function (props: Props & RouteProps): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { userState, snackbarState } = useAppSelector((state: AppState) => state);
+    const { userState, notificationState } = useAppSelector((state: AppState) => state);
+
+    useEffect(() => {
+        const connection = sessionService.initSignalR();
+
+        if (connection) {
+            connection
+                .start()
+                .then(() => {
+                    connection.on('ReceiveNotification', (result: Notification) => {
+                        dispatch(NotificationActions.pushNotification(result))
+                    });
+                })
+                .catch((error) => console.log(error));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!userState.currentUser)
+            return;
+
+        dispatch(NotificationActions.getCurrentUserNotifications({}));
+    }, [userState.currentUser]);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
         if (!userState.authenticating && !userState.authenticated) {
@@ -57,12 +82,14 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
             profilePageText = 'Личный кабинет';
     }
 
-    let variant: SnackbarVariant = SnackbarVariant.info;
+    let variant: NotificationVariant = NotificationVariant.info;
     let message: string = '';
-    if (snackbarState.show) {
-        variant = snackbarState.variant;
-        message = snackbarState.message;
+    if (notificationState.show) {
+        variant = notificationState.variant;
+        message = notificationState.message;
     }
+
+    const notificationsCount = notificationState.models.filter(o => !o.read)?.length ?? 0;
 
     return (
         <Grid container direction="row">
@@ -78,7 +105,10 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                             <Button variant="contained"><Search /></Button>
                             <Button size="small" href="/me" onClick={handleAccountClick}>
                                 <Grid container direction="column" alignItems="center">
-                                    <Face />
+                                    {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
+                                        <Face />
+                                    </Badge>) : (<Face />)}
+
                                     <span>{profilePageText}</span>
                                 </Grid>
                             </Button>
@@ -117,9 +147,9 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
             </Toolbar>
             <MessageSnackbar
                 variant={variant}
-                open={snackbarState.show}
+                open={notificationState.show}
                 message={message}
-                onClose={() => { dispatch(SnackbarActions.hideSnackbar()); }}
+                onClose={() => { dispatch(NotificationActions.hideSnackbar()); }}
             />
         </Grid>
     )

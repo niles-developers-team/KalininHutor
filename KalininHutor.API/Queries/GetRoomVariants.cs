@@ -1,24 +1,27 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
+using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
 using MediatR;
 
-namespace KalininHutor.API.Requests;
+namespace KalininHutor.API.Commands;
 
 internal class GetRoomVariantHandler : IRequestHandler<RoomVariantCommands.GetQuery, IEnumerable<RoomVariantDTO>>
 {
     private readonly RoomVariantRepository _repository;
     private readonly RoomVariantBedTypeRepository _roomVariantBedTypeRepository;
     private readonly RoomVariantCharacteristicRepository _roomVariantCharacteristicRepository;
+    private readonly FileObjectRepository _fileObjectRepository;
     private readonly IMapper _mapper;
 
     public GetRoomVariantHandler(RoomVariantRepository repository, RoomVariantBedTypeRepository roomVariantBedTypeRepository,
-    RoomVariantCharacteristicRepository roomVariantCharacteristicRepository,
+    RoomVariantCharacteristicRepository roomVariantCharacteristicRepository, FileObjectRepository fileObjectRepository,
      IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _roomVariantBedTypeRepository = roomVariantBedTypeRepository ?? throw new ArgumentNullException(nameof(roomVariantBedTypeRepository));
         _roomVariantCharacteristicRepository = roomVariantCharacteristicRepository ?? throw new ArgumentNullException(nameof(roomVariantCharacteristicRepository));
+        _fileObjectRepository = fileObjectRepository ?? throw new ArgumentNullException(nameof(fileObjectRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -33,10 +36,11 @@ internal class GetRoomVariantHandler : IRequestHandler<RoomVariantCommands.GetQu
 
         var dtos = entities.Select(_mapper.Map<RoomVariantDTO>).ToList();
 
-        dtos.ForEach(r =>
+        dtos.ForEach(async r =>
         {
-            r.BedTypes = bedTypes.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantBedTypeDTO>).ToList();
-            r.Characteristics = characteristics.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantCharacteristicDTO>).ToList();
+            r.BedTypes = bedTypes.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantBedTypeDTO>);
+            r.Characteristics = characteristics.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantCharacteristicDTO>);
+            r.Photos = (await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentId = r.Id })).Select(_mapper.Map<FileObjectDTO>);
         });
         return dtos;
     }

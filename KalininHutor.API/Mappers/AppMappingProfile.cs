@@ -1,8 +1,11 @@
 using AutoMapper;
 using KalininHutor.API.DTO;
-using KalininHutor.API.Requests;
+using KalininHutor.API.Helpers;
+using KalininHutor.API.Commands;
+using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
 using KalininHutor.DAL.Identity;
+using KalininHutor.Domain;
 using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Identity;
 
@@ -48,6 +51,7 @@ public class AppMappingProfile : Profile
         CreateMap<User, UserDetailsDTO>().ReverseMap();
         CreateMap<UserEntity, UserDetailsDTO>().ReverseMap();
         CreateMap<User, AuthenticatedUserDetailsDTO>().ReverseMap();
+        CreateMap<UserDTO, Tenant>().ReverseMap();
         CreateMap<UserDetailsDTO, Tenant>().ReverseMap();
 
         CreateMap<RoomCharacteristic, RoomCharacteristicDTO>().ReverseMap();
@@ -72,5 +76,22 @@ public class AppMappingProfile : Profile
         CreateMap<BookingRoomVariantEntity, BookingRoomVariant>().ReverseMap();
         CreateMap<BookingRoomVariantEntity, BookingRoomVariantDTO>().ReverseMap();
         CreateMap<BookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
+        
+        CreateMap<NotificationCommands.Create, Notification>().ReverseMap();
+        CreateMap<NotificationCommands.Get, NotificationSearchOptions>().ReverseMap();
+        CreateMap<NotificationEntity, Notification>().ReverseMap();
+        CreateMap<NotificationEntity, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => Enum.Parse<NotifyVariant>(s.Variant).ToString().ToLower())).ReverseMap();
+        CreateMap<Notification, NotificationDTO>().ForMember(o => o.Variant, o => o.MapFrom(s => s.Variant.ToString().ToLower())).ReverseMap();
+
+        CreateMap<FileObjectEntity, FileObject>()
+            .ForMember(o => o.Body, o => o.MapFrom(s => GZIP.UnzipToStringBase64(s.CompressedBody)))
+            .ReverseMap()
+            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
+        CreateMap<FileObjectEntity, FileObjectDTO>()
+            .ForMember(o => o.Body, o => o.MapFrom(s => GZIP.UnzipToStringBase64(s.CompressedBody)))
+            .ReverseMap()
+            .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
+        CreateMap<FileObject, FileObjectDTO>()
+            .ReverseMap();
     }
 }

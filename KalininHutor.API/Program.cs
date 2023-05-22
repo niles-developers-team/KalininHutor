@@ -12,14 +12,24 @@ using KalininHutor.DAL.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using KalininHutor.API.Hubs;
+using KalininHutor.DAL;
+using KalininHutor.API.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 var secret = builder.Configuration.GetValue<string>("Secret");
-var allowedOrigins = builder.Configuration.GetValue<string[]>("AllowedOrigins");
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
+builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy => policy.WithOrigins(allowedOrigins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials())
+);
 
 builder.Services.AddControllers();
 builder.Services.AddRouting();
@@ -47,9 +57,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ValidateIssuer = false,
                 ValidateAudience = false,
             };
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    // If the request is for our hub...
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                    {
+                        // Read the token out of the query string
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
+
+builder.Services.AddScoped<JwtUserProvider>();
+builder.Services.AddSingleton<INotificationInformer, NotificationInformer>();
 builder.Services.AddAuthorization();
-builder.Services.AddCors();
 
 builder.Services.AddFluentMigratorCore()
        .ConfigureRunner(config =>
@@ -74,6 +102,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<JWTHelper>();
 
 {
+    builder.Services.AddScoped<NotificationRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<NotificationRepository>>();
+        return new NotificationRepository(connectionString, logger);
+    });
     builder.Services.AddScoped<BookingRepository>(provider =>
     {
         var logger = provider.GetRequiredService<ILogger<BookingRepository>>();
@@ -114,6 +147,11 @@ builder.Services.AddScoped<JWTHelper>();
         var logger = provider.GetRequiredService<ILogger<UserRepository>>();
         return new UserRepository(connectionString, logger);
     });
+    builder.Services.AddScoped<FileObjectRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<FileObjectRepository>>();
+        return new FileObjectRepository(connectionString, logger);
+    });
 }
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -135,10 +173,9 @@ using (var scope = app.Services.CreateScope())
         logger.LogError($"Ошибка миграций: {exc.Message}");
     }
 }
-
-app.UseCors(configure => configure.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+app.UseRouting();
+app.UseCors(
+);
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -146,8 +183,10 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = string.Empty;
 });
 app.UseHttpsRedirection();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<NotificationsHub>("/hubs/notifications");
+
 app.Run();

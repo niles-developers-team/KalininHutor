@@ -28,7 +28,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
             const modelState: RentalObjectModelState = { modelLoading: false, model: action.model };
             return { ...prevState, ...modelsState, ...modelState };
         }
-        case ActionTypes.createFailure: return { ...prevState, modelLoading: true };
+        case ActionTypes.createFailure: return { ...prevState, };
 
         case ActionTypes.updateRequest: return { ...prevState, modelLoading: true };
         case ActionTypes.updateSuccess: {
@@ -40,7 +40,7 @@ export function rentalObjectReducer(prevState: RentalObjectState = initialState,
 
         case ActionTypes.deleteRequest: return { ...prevState, deleting: true };
         case ActionTypes.deleteSuccess: {
-            const updatedModels = prevState.models?.filter((model) => action.ids.some(o => o === model.id)) || [];
+            const updatedModels = prevState.models?.filter((model) => action.ids.some(o => o !== model.id)) || [];
             return { ...prevState, deleting: false, modelsLoading: false, models: updatedModels };
         }
         case ActionTypes.deleteFailure: return { ...prevState, deleting: false };

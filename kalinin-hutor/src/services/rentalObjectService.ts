@@ -12,14 +12,14 @@ class RentalObjectService {
             .then(handleJsonResponse as ResponseHandler<RentalObject>);
     }
 
-    public async update(request: RentalObject.UpdateRequest): Promise<RentalObject> {
+    public async update(request: RentalObject.UpdateRequest): Promise<void> {
         return fetch('api/rentalobject', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
         })
-            .then(handleJsonResponse as ResponseHandler<RentalObject>);
+            .then(handleJsonResponse as ResponseHandler<void>);
     }
 
     public async get(query?: RentalObject.GetQuery): Promise<RentalObject[]> {
@@ -45,6 +45,8 @@ class RentalObjectService {
 
             if (query.getBestDemands !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}getBestDemands=${query.getBestDemands}`;
+            if (query.getRoomVariants !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}getRoomVariants=${query.getRoomVariants}`;
 
             if (query.selectedCharacteristicsIds !== undefined)
                 for (let id of query.selectedCharacteristicsIds)

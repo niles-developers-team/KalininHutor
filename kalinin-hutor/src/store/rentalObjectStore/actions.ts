@@ -1,10 +1,12 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, SnackbarVariant } from "../../models";
+import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
 import { cookiesService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
+import { readAsDataURL } from "../../helpers/fileHelpers";
+import { v4 as guid } from 'uuid';
 
 export enum ActionTypes {
     getRentalObjectsRequest = 'GET_RENTALOBJECTS_REQUEST',
@@ -179,12 +181,46 @@ export namespace RentalObjectActions {
         }
     }
 
+    export function appendPhotoToDraft(fileList: FileList): AppThunkAction {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+            const draft = rentalObjectState.model;
+
+            if (!draft)
+                return;
+
+            const photos: FileObject[] = [];
+
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
+
+                const body = await readAsDataURL(file);
+
+                const photo: FileObject = {
+                    id: guid(),
+                    body: body,
+                    extension: file.type,
+                    name: file.name,
+                    sortOrder: draft.photos?.reduce((a, b) => Math.max(a, b.sortOrder), 0),
+                    entityStatus: EntityStatus.Draft
+                };
+
+                photos.push(photo);
+            }
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...draft.photos, ...photos] } });
+        }
+    }
+
     export function createRentalObject(model: RentalObject): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { roomVariantState } = getState();
             dispatch(request());
 
             try {
+                if (!roomVariantState.models)
+                    throw new ApplicationError('Невозможно сохранить объект аренды без вариантов номеров');
+
                 const result = await rentalObjectService.create({
                     address: model.address,
                     checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
@@ -192,7 +228,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     landlordId: model.landlord.id,
                     name: model.name,
-                    createRoomVariantsRequests: roomVariantState.models?.map<RoomVariant.CreateRequest>(rv => ({
+                    createRoomVariantsRequests: roomVariantState.models.map<RoomVariant.CreateRequest>(rv => ({
                         count: rv.count,
                         description: rv.description,
                         freeCount: rv.freeCount,
@@ -211,18 +247,18 @@ export namespace RentalObjectActions {
                         })),
                         createCharacteristicsRequests: rv.characteristics
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                characteristic: ch.roomCharacteristic,
                                 roomVariantId: ch.roomVariantId,
                                 price: ch.price
                             })),
-                    }))
-
+                    })),
+                    createPhotos: model.photos
                 });
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -239,7 +275,7 @@ export namespace RentalObjectActions {
             dispatch(request());
 
             try {
-                const result = await rentalObjectService.update({
+                await rentalObjectService.update({
                     id: model.id,
                     checkinTime: moment(model.checkinTime, 'hh:mm:ss').format('hh:mm:ss'),
                     checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
@@ -271,6 +307,7 @@ export namespace RentalObjectActions {
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
+                            createPhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Draft),
                         })),
                     updateRoomVariantsRequests: roomVariantState.models
                         ?.filter(o => o.entityStatus === EntityStatus.Updated)
@@ -328,18 +365,24 @@ export namespace RentalObjectActions {
                                 ids: rv.characteristics
                                     .filter(o => o.entityStatus === EntityStatus.Deleted)
                                     .map(ch => ch.id || '')
-                            })
+                            }),
+                            createPhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                            updatePhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Updated).map(o => ({ ...o, body: '' })),
+                            deletePhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                         })),
                     deleteRoomVariantsRequest: ({
                         ids: roomVariantState.models?.filter(o => o.entityStatus === EntityStatus.Deleted)
                             .map(rv => rv.id || '') || []
-                    })
+                    }),
+                    createPhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                    updatePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Updated).map(o => ({ ...o, body: '' })),
+                    deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                 });
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно сохранен', SnackbarVariant.success));
-                return dispatch(success(result));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
+                return dispatch(success(model));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -363,7 +406,7 @@ export namespace RentalObjectActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -401,7 +444,7 @@ export namespace RentalObjectActions {
                 return result;
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -418,18 +461,55 @@ export namespace RentalObjectActions {
 
             try {
                 await rentalObjectService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Объект аренды успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Объект аренды успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.ids));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 
             function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
             function success(ids: string[]): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, ids: ids }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
+        }
+    }
+
+    export function reorderPhotos(sourceIndex: number, destinationIndex: number): AppThunkAction {
+        return (dispatch, getState) => {
+            const { rentalObjectState } = getState();
+
+            const draft = rentalObjectState.model;
+
+            if (!draft) return;
+
+            // a little function to help us with reordering the result            
+            const result = draft.photos;
+            const [removed] = result.splice(sourceIndex, 1);
+            result.splice(destinationIndex, 0, removed);
+
+            for (let i = 0; i < result.length; i++) {
+                result[i].sortOrder = i;
+                if (result[i].entityStatus !== EntityStatus.Deleted)
+                    result[i].entityStatus = EntityStatus.Updated;
+            }
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
+        }
+    }
+
+    export function deletePhotoFromDaft(id: string): AppThunkAction {
+        return (dispatch, getState) => {
+            const { rentalObjectState } = getState();
+
+            const draft = rentalObjectState.model;
+
+            if (!draft) return;
+
+            const result = draft.photos.map(o => o.id === id ? { ...o, entityStatus: EntityStatus.Deleted } : o);
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
         }
     }
 }

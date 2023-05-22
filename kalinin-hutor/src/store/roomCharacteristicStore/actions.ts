@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ApplicationError, RoomCharacteristic, SnackbarVariant } from "../../models";
+import { ApplicationError, RoomCharacteristic, NotificationVariant } from "../../models";
 import { roomCharacteristicService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 
 export enum RoomCharacteristicActionTypes {
     getRoomCharacteristicsRequest = 'GET_ROOMCHARACTERISTICS_REQUEST',
@@ -127,11 +127,11 @@ export namespace RoomCharacteristicActions {
 
             try {
                 const result = await roomCharacteristicService.create(createRequest);
-                dispatch(SnackbarActions.showSnackbar('Бронь успешно сохранена', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Бронь успешно сохранена', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -148,11 +148,11 @@ export namespace RoomCharacteristicActions {
 
             try {
                 const result = await roomCharacteristicService.update(updateRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -176,7 +176,7 @@ export namespace RoomCharacteristicActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -212,7 +212,7 @@ export namespace RoomCharacteristicActions {
                 return dispatch(success(model));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -229,12 +229,12 @@ export namespace RoomCharacteristicActions {
 
             try {
                 await roomCharacteristicService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 

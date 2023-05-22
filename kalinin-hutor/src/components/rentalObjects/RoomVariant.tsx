@@ -1,6 +1,7 @@
 import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
 import { Button, Chip, Divider, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import pluralize from "plural-ru";
+import Carousel from "react-material-ui-carousel";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
 
 interface Props {
@@ -34,8 +35,12 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
                 <Typography>Цена за {nightsCount} ночей {model.price * nightsCount}</Typography>
                 <CurrencyRuble fontSize="small" />
             </Stack>
-            <Stack paddingY=".5em" direction="row" spacing={2}>
-                <Skeleton variant="rectangular" width={100} height={100} />
+            <Stack direction="row" spacing={2}>
+                {
+                    model.photos.length > 0 ?
+                        <img height={100} width={100} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                        <Skeleton variant="rectangular" width={100} height={100} />
+                }
                 <Stack spacing={1}>
                     <Stack direction="row" spacing={2} alignItems="center" divider={<Divider orientation="vertical" flexItem />}>
                         <Typography><b>Размер: </b> {model.width} X {model.length} кв.м.</Typography>

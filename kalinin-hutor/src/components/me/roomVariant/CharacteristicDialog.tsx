@@ -19,7 +19,7 @@ export const CharacteristicDialog = function(props: CharacteristicDialogProps): 
     const [roomCharacteristic, setRoomCharacteristic] = useState<RoomCharacteristic>({ ...RoomCharacteristic.initial });
 
     useEffect(() => {
-        setModel({ ...props.model });
+        setModel({ ...props.model, roomCharacteristic: props.characteristics.find(o => o.id === props.model.roomCharacteristicId) });
         setSelectOrAddCharacteristic(true);
         setRoomCharacteristic({ ...RoomCharacteristic.initial });
     }, [props.model, props.open]);

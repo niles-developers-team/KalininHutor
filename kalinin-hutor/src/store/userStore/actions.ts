@@ -1,9 +1,9 @@
 import { Action } from "redux";
-import { AuthenticatedUser, ApplicationError, User, SnackbarVariant } from "../../models";
+import { AuthenticatedUser, ApplicationError, User, NotificationVariant, Notification } from "../../models";
 import { sessionService } from "../../services";
 import { userService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 
 export enum ActionTypes {
     signinRequest = 'SIGN_IN_REQUEST',
@@ -86,7 +86,7 @@ export namespace UserActions {
     export interface GetCurrentUserSuccessAction extends Action<ActionTypes> {
         type: ActionTypes.getCurrentUserSuccess;
         currentUserLoading?: boolean;
-        user: User;
+        user: AuthenticatedUser;
     }
 
     export interface GetCurrentUserFailureAction extends Action<ActionTypes> {
@@ -168,7 +168,7 @@ export namespace UserActions {
 
     interface UpdateCurrentUserDraftAction extends Action<ActionTypes> {
         type: ActionTypes.updateCurrentUserDraft;
-        draft: User;
+        draft: AuthenticatedUser;
     }
 
     type Signin = SigninRequestAction | SigninSuccessAction | SigninFailureAction;
@@ -176,7 +176,7 @@ export namespace UserActions {
     type GetCurrentUser = GetCurrentUserRequestAction | GetCurrentUserSuccessAction | GetCurrentUserFailureAction;
     type GetUsers = GetUsersRequestAction | GetUsersSuccessAction | GetUsersFailureAction;
     type GetUser = GetRequestAction | GetSuccessAction | GetFailureAction
-    type DraftUser  = CreateDraftAction | UpdateDraftAction | UpdateCurrentUserDraftAction;
+    type DraftUser = CreateDraftAction | UpdateDraftAction | UpdateCurrentUserDraftAction;
     type UpdateUser = UpdateRequestAction | UpdateSuccessAction | UpdateFailureAction;
     type DeleteUser = DeleteRequestAction | DeleteSuccessAction | DeleteFailureAction;
 
@@ -204,7 +204,7 @@ export namespace UserActions {
                 }
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -228,7 +228,7 @@ export namespace UserActions {
                 }
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -249,8 +249,7 @@ export namespace UserActions {
             dispatch(request());
 
             try {
-                let user: User | undefined = undefined;
-                user = await userService.getCurrentUser();
+                const user = await userService.getCurrentUser();
                 if (!user) {
                     throw new ApplicationError('Не удалось найти пользователя');
                 }
@@ -258,13 +257,13 @@ export namespace UserActions {
                 return dispatch(success(user));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
 
             function request(): GetCurrentUserRequestAction { return { type: ActionTypes.getCurrentUserRequest, currentUserLoading: true }; }
-            function success(user: User): GetCurrentUserSuccessAction { return { type: ActionTypes.getCurrentUserSuccess, currentUserLoading: false, user: user }; }
+            function success(user: AuthenticatedUser): GetCurrentUserSuccessAction { return { type: ActionTypes.getCurrentUserSuccess, currentUserLoading: false, user: user }; }
             function failure(error: ApplicationError): GetCurrentUserFailureAction { return { type: ActionTypes.getCurrentUserFailure, error: error }; }
         }
     }
@@ -273,7 +272,7 @@ export namespace UserActions {
         return { type: ActionTypes.updateDraft, draft: user };
     }
 
-    export function updateCurrentUserDraft(user: User): UpdateCurrentUserDraftAction {
+    export function updateCurrentUserDraft(user: AuthenticatedUser): UpdateCurrentUserDraftAction {
         return { type: ActionTypes.updateCurrentUserDraft, draft: user };
     }
 
@@ -288,13 +287,14 @@ export namespace UserActions {
                     birthday: user.birthday || undefined,
                     email: user.email,
                     lastname: user.lastname,
-                    name: user.name
+                    name: user.name,
+                    newAvatar: user.avatar
                 });
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно сохранен', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -318,7 +318,7 @@ export namespace UserActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -352,7 +352,7 @@ export namespace UserActions {
                 return dispatch(success(user));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -365,20 +365,19 @@ export namespace UserActions {
 
     export function deleteUsers(deleteRequest: User.DeleteRequest): AppThunkAction<Promise<DeleteSuccessAction | DeleteFailureAction>> {
         return async (dispatch) => {
-            dispatch(request());
+            dispatch((): DeleteRequestAction => { return { type: ActionTypes.deleteRequest }; });
 
             try {
                 await userService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 
-            function request(): DeleteRequestAction { return { type: ActionTypes.deleteRequest }; }
             function success(id: string): DeleteSuccessAction { return { type: ActionTypes.deleteSuccess, id: id }; }
             function failure(error: ApplicationError): DeleteFailureAction { return { type: ActionTypes.deleteFailure, error: error }; }
         }

@@ -2,15 +2,18 @@
 
 namespace KalininHutor.Domain.Identity;
 
-public class User : IUser
+public class User : IUser, IEntityWithAvatar
 {
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
-    public  string Name { get; protected set; } = string.Empty;
+    public string Name { get; protected set; } = string.Empty;
     public string Lastname { get; protected set; } = string.Empty;
     public string Email { get; protected set; } = string.Empty;
     public DateOnly? BirthDay { get; protected set; }
-    
+
+    public Guid? AvatarId { get; protected set; }
+    public FileObject? Avatar { get; protected set; }
+
     public string Password { get; protected set; } = string.Empty;
 
     protected User() { }
@@ -82,5 +85,11 @@ public class User : IUser
 
         if (Regex.IsMatch(phoneNumber, @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/g"))
             throw new ArgumentException("Неверный формат номера телефона.");
+    }
+
+    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+    {
+        Avatar = new FileObject(name, extension, body, sortOrder, Id);
+        AvatarId = Avatar.Id;
     }
 }

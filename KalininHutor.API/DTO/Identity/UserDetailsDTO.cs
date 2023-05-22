@@ -22,6 +22,21 @@ public class UserDetailsDTO : UserDTO
     public new Guid Id { get; set; }
     ///<summary> Дата рождения </summary>
     public DateOnly? Birthday { get; set; }
+
+    ///<summary> Аватар пользователя </summary>
+    public FileObjectDTO? Avatar { get; set; }
+
+    ///<summary> Уведомления пользователя </summary>
+    public IEnumerable<NotificationDTO>? Notifications { get; set; }
+}
+
+///<summary> Пользователь подключенный к хабу </summary>
+public class HubUser
+{
+    ///<summary> Идентфикатор пользователя </summary>
+    public Guid Id { get; set; }
+    ///<summary> Идентификаторы подключений пользователя </summary>
+    public HashSet<string>? ConnectionIds { get; set; }
 }
 
 ///<summary> Модель чтения аутентифицированного пользователя </summary>

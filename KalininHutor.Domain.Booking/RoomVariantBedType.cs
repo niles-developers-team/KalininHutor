@@ -11,7 +11,7 @@ public class RoomVariantBedType : IEntity<Guid>
 
     protected RoomVariantBedType() { }
 
-    public RoomVariantBedType(Guid roomVariantId, BedTypes bedType, double? width, double? length, int maxInRoom)
+    internal RoomVariantBedType(Guid roomVariantId, BedTypes bedType, double? width, double? length, int maxInRoom)
     {
         Id = Guid.NewGuid();
 

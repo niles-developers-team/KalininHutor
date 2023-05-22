@@ -4,7 +4,7 @@ import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mu
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
 
-import { Booking, EntityStatus, RentalObject, RoomCharacteristic } from "../../models";
+import { Booking, EntityStatus, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { BookingDetailsComponent } from "./BookingDetails";
@@ -14,7 +14,7 @@ export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id, rentalObjectId } = useParams();
-    const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
+    const { bookingState, rentalObjectState, roomVariantState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         if (!id)
@@ -51,8 +51,6 @@ export const BookingComponent = function (): JSX.Element {
 
         if (model.entityStatus === EntityStatus.Draft) {
             await dispatch(BookingActions.createBooking(model));
-        } else if (model.entityStatus === EntityStatus.Updated) {
-            //await dispatch(BookingActions.updateBooking(model));
         }
 
         dispatch(BookingActions.clearEditionState());
@@ -64,6 +62,7 @@ export const BookingComponent = function (): JSX.Element {
 
     const model: Booking = bookingState.model;
     const rentalObject: RentalObject | undefined = rentalObjectState.model;
+    const roomVariants: RoomVariant[] = roomVariantState.models || [];
     const characteristics: RoomCharacteristic[] = roomCharacteristicState.models || [];
 
     const nightsCount = moment(model.checkoutDate).dayOfYear() - moment(model.checkinDate).dayOfYear();
@@ -74,14 +73,15 @@ export const BookingComponent = function (): JSX.Element {
                 <BookingDetailsComponent
                     model={model}
                     nightsCount={nightsCount}
-                    rentalObjectRoomVariants={rentalObject?.roomVariants || []}
+                    rentalObjectRoomVariants={roomVariants}
                     onConfirmBooking={handleConfirmBooking}
                 />
                 <Stack spacing={2}>
                     <Stack direction="row" spacing={2}>
-                        <Paper variant="outlined">
+                        {rentalObject && rentalObject.photos && rentalObject.photos.length > 0 ?
+                            <img height={100} width={100} src={`data:${rentalObject.photos[0].extension};base64,${rentalObject.photos[0].body}`}></img> :
                             <Skeleton variant="rectangular" width={100} height={100} />
-                        </Paper>
+                        }
                         <Stack>
                             <Typography variant="h6"><b>{rentalObject?.name}</b></Typography>
                             <Typography variant="caption">{rentalObject?.address}</Typography>
@@ -122,9 +122,9 @@ export const BookingComponent = function (): JSX.Element {
                         <Button onClick={handleChangeBooking}>Уточнить варианты</Button>
                     </Stack>
                     {model.roomVariants?.map((brv, index) => {
-                        const roomVariant = rentalObject?.roomVariants?.find(o => o.id === brv.roomVariantId);
-                        if(!roomVariant)
-                        return (<Skeleton></Skeleton>)
+                        const roomVariant = roomVariants.find(o => o.id === brv.roomVariantId);
+                        if (!roomVariant)
+                            return (<Skeleton></Skeleton>)
 
                         return (<BookingRoomVariantInfo
                             bookingRoomVariant={brv}

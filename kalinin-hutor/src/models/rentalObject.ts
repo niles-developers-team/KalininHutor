@@ -1,4 +1,4 @@
-import { IEntity } from "./common";
+import { FileObject, IEntity } from "./common";
 import { RoomVariant } from "./roomVariant";
 import { User } from "./user";
 
@@ -19,6 +19,7 @@ export interface RentalObject extends IEntity {
 
     bestDemand?: RentalObjectBestDemand;
     roomVariants: RoomVariant[];
+    photos: FileObject[];
 }
 
 export interface RentalObjectBestDemand {
@@ -49,6 +50,7 @@ export namespace RentalObject {
         roomsCount?: number;
 
         getBestDemands?: boolean;
+        getRoomVariants?: boolean;
 
         selectedCharacteristicsIds?: (string | undefined)[];
     }
@@ -60,7 +62,8 @@ export namespace RentalObject {
         landlordId?: string;
         checkinTime: string;
         checkoutTime: string;
-        createRoomVariantsRequests?: RoomVariant.CreateRequest[];
+        createRoomVariantsRequests: RoomVariant.CreateRequest[];
+        createPhotos: FileObject[];
     }
 
     export interface UpdateRequest {
@@ -72,6 +75,9 @@ export namespace RentalObject {
         createRoomVariantsRequests?: RoomVariant.CreateRequest[];
         updateRoomVariantsRequests?: RoomVariant.UpdateRequest[];
         deleteRoomVariantsRequest?: RoomVariant.DeleteRequest;
+        createPhotos?: FileObject[];
+        updatePhotos?: FileObject[];
+        deletePhotos?: FileObject[];
     }
 
     export interface DeleteRequest {

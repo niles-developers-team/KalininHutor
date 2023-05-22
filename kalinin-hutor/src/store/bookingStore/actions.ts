@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, EntityStatus, SnackbarVariant } from "../../models";
+import { ApplicationError, Booking, EntityStatus, NotificationVariant } from "../../models";
 import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
-import { SnackbarActions } from "../snackbarStore/actions";
+import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import { cookiesService } from "../../services";
 import { createSearchParams } from "react-router-dom";
@@ -157,11 +157,11 @@ export namespace BookingActions {
 
                 result.entityStatus = EntityStatus.NotChanged;
 
-                dispatch(SnackbarActions.showSnackbar('Бронь успешно создана.', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Бронь успешно создана.', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -172,38 +172,17 @@ export namespace BookingActions {
         }
     }
 
-    export function updateBooking(updateRequest: Booking.UpdateRequest): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
-        return async (dispatch) => {
-            dispatch(request(updateRequest));
-
-            try {
-                const result = await bookingService.update(updateRequest);
-                dispatch(SnackbarActions.showSnackbar('Бронь успешно сохранена', SnackbarVariant.success));
-                return dispatch(success(result));
-            }
-            catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
-
-                return dispatch(failure(error));
-            }
-
-            function request(updateRequest: Booking.UpdateRequest): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
-            function success(booking: Booking): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: booking }; }
-            function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
-        }
-    }
-
     export function approveBooking(model: Booking): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch) => {
             dispatch(request());
 
             try {
                 await bookingService.approveBooking(model.id || '');
-                dispatch(SnackbarActions.showSnackbar('Бронь подтверждена', SnackbarVariant.success));
+                dispatch(NotificationActions.showSnackbar('Бронь подтверждена', NotificationVariant.success));
                 return dispatch(success(model));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -273,7 +252,7 @@ export namespace BookingActions {
             dispatch(request());
 
             if (userState.authenticating === false && !userState.currentUser) {
-                dispatch(SnackbarActions.showSnackbar('Невозоможно загрузить бронирования неизвестного арендодателя'));
+                dispatch(NotificationActions.showSnackbar('Невозоможно загрузить бронирования неизвестного арендодателя'));
                 return dispatch(failure(new ApplicationError('Невозоможно загрузить бронирования неизвестного арендодателя')));
             }
 
@@ -282,7 +261,7 @@ export namespace BookingActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -302,7 +281,7 @@ export namespace BookingActions {
                 return dispatch(success(result));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -355,7 +334,7 @@ export namespace BookingActions {
                 return dispatch(success(model));
             }
             catch (error: any) {
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
 
                 return dispatch(failure(error));
             }
@@ -372,12 +351,12 @@ export namespace BookingActions {
 
             try {
                 await bookingService.delete(deleteRequest);
-                dispatch(SnackbarActions.showSnackbar('Пользователь успешно удален.', SnackbarVariant.info));
+                dispatch(NotificationActions.showSnackbar('Пользователь успешно удален.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
 
-                dispatch(SnackbarActions.showSnackbar(error.message, SnackbarVariant.error));
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
                 return dispatch(failure(error));
             }
 

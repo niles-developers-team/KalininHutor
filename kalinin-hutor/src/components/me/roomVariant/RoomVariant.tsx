@@ -1,5 +1,5 @@
-import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, Grid, IconButton, Paper, Stack, Typography } from "@mui/material";
+import { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useDebounce } from "../../../hooks";
 import { EntityStatus, PaymentOptions, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
@@ -11,12 +11,26 @@ import { RoomVariantBedTypesComponent } from "./RoomVariantBedTypes";
 import { RoomVariantCharacteristicsComponent } from "./RoomVariantCharacteristics";
 import { RoomVariantDetailsComponent } from "./RoomVariantDetails";
 import { v4 as uuidv4 } from 'uuid';
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Delete, OpenWith } from "@mui/icons-material";
 import { RoomVariantActions } from "../../../store/roomVariantStore";
+import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
+
+
+
+const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: 'none',
+    cursor: isDragging ? 'grabbing' : 'grab',
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+});
+
 
 export const RoomVariantComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const fileInput = createRef<HTMLInputElement>();
     const { id, rentalObjectId } = useParams();
     const { roomCharacteristicState, roomVariantState } = useAppSelector((state: AppState) => state);
     const [characteristicSearch, setCharacteristicSearch] = useState<string>();
@@ -45,7 +59,8 @@ export const RoomVariantComponent = function (): JSX.Element {
                 paymentOption: PaymentOptions.ByCardOrCashOnTheSpot,
                 price: 0,
                 width: 0,
-                rentalObjectId: rentalObjectId
+                rentalObjectId: rentalObjectId,
+                photos: []
             }));
         } else {
             await dispatch(RoomVariantActions.getRoomVariant(id));
@@ -117,6 +132,33 @@ export const RoomVariantComponent = function (): JSX.Element {
         navigate(`/me/rental-objects/${rentalObjectId}`);
     }
 
+    function handleAddPhoto() {
+        fileInput.current?.click();
+    }
+
+    async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
+        event.preventDefault();
+        if (!event?.target?.files?.length) return;
+
+        await dispatch(RoomVariantActions.appendPhotoToDraft(event?.target?.files));
+
+        if (event?.target)
+            event.target.value = '';
+    }
+
+    async function photosReorder(result: DropResult, provided: ResponderProvided) {
+        // dropped outside the list
+        if (!result.destination) {
+            return;
+        }
+
+        await dispatch(RoomVariantActions.reorderPhotos(result.source.index, result.destination.index));
+    }
+
+    async function handleImageDelete(id: string) {
+        await dispatch(RoomVariantActions.deletePhotoFromDaft(id));
+    }
+
     const loading = roomVariantState.modelLoading;
 
     if (!roomVariantState.model)
@@ -135,6 +177,49 @@ export const RoomVariantComponent = function (): JSX.Element {
                 loading={loading}
                 onDetailsChanged={(model: RoomVariant) => dispatch(RoomVariantActions.updateDraft({ ...model }))}
             />
+            <Stack spacing={2}>
+                <Stack direction="row" spacing={2}>
+                    <Typography color="GrayText" variant="h6">Фотографии варианта номера</Typography>
+                    <Button onClick={handleAddPhoto}>Добавить</Button>
+                    <input accept=".png,.jpeg,.jpg" hidden multiple type="file" ref={fileInput} onChange={(event) => handlePhotoChange(event)} />
+                </Stack>
+                <DragDropContext onDragEnd={photosReorder}>
+                    <Droppable droppableId="droppable" direction="horizontal">
+                        {(provided, snapshot) => (
+                            <Stack spacing={2} direction="row" ref={provided.innerRef} {...provided.droppableProps}>
+                                {roomVariant.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).map((photo, index) => (
+                                    <Draggable
+                                        key={`item-${index}`}
+                                        draggableId={`item-${index}`}
+                                        index={index}
+                                    >
+                                        {(provided, snapshot) => (
+                                            <Paper
+                                                className="editable-image"
+                                                variant="outlined"
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemStyle(
+                                                    snapshot.isDragging,
+                                                    provided.draggableProps.style
+                                                )}
+                                            >
+                                                <Grid className="alternate-actions" direction="row" alignItems="start" justifyContent="space-between">
+                                                    <OpenWith className="padding-1" />
+                                                    <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
+                                                </Grid>
+                                                <img className="image" height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                            </Paper>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </Stack>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </Stack>
             <RoomVariantCharacteristicsComponent
                 loading={loading}
                 models={roomVariant.characteristics?.filter(o => o.entityStatus !== EntityStatus.Deleted)}

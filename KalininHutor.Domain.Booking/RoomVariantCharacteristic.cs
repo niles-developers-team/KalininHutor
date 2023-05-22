@@ -8,7 +8,7 @@ public class RoomVariantCharacteristic : IEntity<Guid>
 
     protected RoomVariantCharacteristic() { }
 
-    public RoomVariantCharacteristic(Guid roomVariantId, Guid roomCharacteristicId, decimal? price)
+    internal RoomVariantCharacteristic(Guid roomVariantId, Guid roomCharacteristicId, decimal? price)
     {
         Id = Guid.NewGuid();
 
