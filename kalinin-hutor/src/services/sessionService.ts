@@ -21,7 +21,7 @@ class SessionService {
             return undefined;
 
         return new HubConnectionBuilder()
-            .withUrl("https://localhost:7294/hubs/notifications", { accessTokenFactory: () => storageItem.token })
+            .withUrl(`${this.apiUrl}/hubs/notifications`, { accessTokenFactory: () => storageItem.token })
             .withAutomaticReconnect()
             .configureLogging(LogLevel.Information)
             .build();
@@ -91,7 +91,7 @@ class SessionService {
 
                 if (matches && matches.length > 0) {
                     delete init["credentials"]; // we cant put this header because of CROS limitations
-                    input = `${this.apiUrl}${input}`;
+                    input = `${this.apiUrl}/${input}`;
                 }
             }
 

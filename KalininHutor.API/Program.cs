@@ -20,10 +20,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 var secret = builder.Configuration.GetValue<string>("Secret");
-var allowedOrigins = builder.Configuration.GetValue<string[]>("AllowedOrigins");
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
 builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy => policy.WithOrigins(allowedOrigins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials())
+);
 
 builder.Services.AddControllers();
 builder.Services.AddRouting();
@@ -72,16 +78,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<JwtUserProvider>();
 builder.Services.AddSingleton<INotificationInformer, NotificationInformer>();
 builder.Services.AddAuthorization();
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
 
 builder.Services.AddFluentMigratorCore()
        .ConfigureRunner(config =>
@@ -178,9 +174,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.UseRouting();
-app.UseCors(configure => configure.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+app.UseCors(
+);
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
