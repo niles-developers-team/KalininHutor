@@ -12,14 +12,14 @@ class RentalObjectService {
             .then(handleJsonResponse as ResponseHandler<RentalObject>);
     }
 
-    public async update(request: RentalObject.UpdateRequest): Promise<void> {
+    public async update(request: RentalObject.UpdateRequest): Promise<RentalObject> {
         return fetch('api/rentalobject', {
             credentials: 'include',
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(request)
         })
-            .then(handleJsonResponse as ResponseHandler<void>);
+            .then(handleJsonResponse as ResponseHandler<RentalObject>);
     }
 
     public async get(query?: RentalObject.GetQuery): Promise<RentalObject[]> {

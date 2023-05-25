@@ -7,7 +7,7 @@ using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.UpdateRequest, Unit>
+internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.UpdateRequest, RentalObjectDTO>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -22,7 +22,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<RentalObjectDTO> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.Address);
@@ -57,7 +57,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeletePhotos.Any())
             await _fileObjectRepository.Delete(request.DeletePhotos.Select(o => o.Id).ToList());
 
-        return Unit.Value;
+        return _mapper.Map<RentalObjectDTO>(entity);
     }
 }
 
@@ -65,7 +65,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
 public partial class RentalObjectCommands
 {
     ///<summary> Запрос обновления объекта аренды </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<RentalObjectDTO>
     {
         ///<summary> Идентификатор объекта аренды </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>

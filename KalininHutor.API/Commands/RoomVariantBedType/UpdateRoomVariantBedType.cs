@@ -1,11 +1,12 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeCommands.UpdateRequest, Unit>
+internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedTypeCommands.UpdateRequest, RoomVariantBedTypeDTO>
 {
     private readonly RoomVariantBedTypeRepository _repository;
     private readonly IMapper _mapper;
@@ -16,12 +17,12 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RoomVariantBedTypeCommands.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<RoomVariantBedTypeDTO> Handle(RoomVariantBedTypeCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RoomVariantBedType>(await _repository.Get(request.Id));
         entity.SetSize(request.Width, request.Length);
         await _repository.Update(_mapper.Map<RoomVariantBedTypeEntity>(entity));
-        return Unit.Value;
+        return _mapper.Map<RoomVariantBedTypeDTO>(entity);
     }
 }
 
@@ -29,7 +30,7 @@ internal class UpdateRoomVariantBedTypeHandler : IRequestHandler<RoomVariantBedT
 public partial class RoomVariantBedTypeCommands
 {
     ///<summary> Запрос обновления варианта кровати </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<RoomVariantBedTypeDTO>
     {
         ///<summary> Идентификатор варианта кровати </summary>
         public Guid Id { get; protected set; }

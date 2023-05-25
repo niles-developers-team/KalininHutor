@@ -1,4 +1,5 @@
 using AutoMapper;
+using KalininHutor.API.DTO;
 using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Booking.Enums;
@@ -6,7 +7,7 @@ using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class UpdateBookingHandler : IRequestHandler<BookingCommands.UpdateRequest, Unit>
+internal class UpdateBookingHandler : IRequestHandler<BookingCommands.UpdateRequest, BookingDTO>
 {
     private readonly BookingRepository _repository;
     private readonly IMapper _mapper;
@@ -17,13 +18,13 @@ internal class UpdateBookingHandler : IRequestHandler<BookingCommands.UpdateRequ
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(BookingCommands.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<BookingDTO> Handle(BookingCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<Booking>(await _repository.Get(request.Id));
         entity.SetVisitorsCount(request.AdultCount, request.ChildsCount);
         entity.SetBookingDates(request.CheckinDate, request.CheckoutDate);
         await _repository.Update(_mapper.Map<BookingEntity>(entity));
-        return Unit.Value;
+        return _mapper.Map<BookingDTO>(entity);
     }
 }
 
@@ -31,7 +32,7 @@ internal class UpdateBookingHandler : IRequestHandler<BookingCommands.UpdateRequ
 public partial class BookingCommands
 {
     ///<summary> Запрос обновления объекта аренды </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<BookingDTO>
     {
         ///<summary> Идентификатор объекта аренды </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>

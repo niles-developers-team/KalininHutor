@@ -100,6 +100,7 @@ export namespace RoomVariantActions {
 
     interface UpdateFailureAction extends Action<ActionTypes> {
         type: ActionTypes.updateFailure;
+        error: ApplicationError;
     }
 
     interface ClearEditionStateAction extends Action<ActionTypes> {
@@ -265,16 +266,78 @@ export namespace RoomVariantActions {
         }
     }
 
-    export function update(model: RoomVariant): AppThunkAction<UpdateSuccessAction | UpdateFailureAction> {
-        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+    export function update(model: RoomVariant): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            dispatch(request());
+
             const { rentalObjectState } = getState();
             if (!rentalObjectState.model) {
-                dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
-                return dispatch({ type: ActionTypes.updateFailure });
+                const error: ApplicationError = { message: 'Не найден объект аренды', name: 'Ошибка при сохранение варианта номера' };
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
+                return dispatch(failure(error));
             }
 
-            return dispatch({ type: ActionTypes.updateSuccess, model: { ...model, entityStatus: model.entityStatus === EntityStatus.Draft ? model.entityStatus : EntityStatus.Updated } });
-        };
+            try {
+                if (model.entityStatus === EntityStatus.Updated) {
+                    const result = await roomVariantService.update({
+                        count: model.count,
+                        createBedTypesRequests: model.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
+                            bedType: bt.bedType,
+                            roomVariantId: bt.roomVariantId || '',
+                            length: bt.length,
+                            width: bt.width
+                        })),
+                        createCharacteristicsRequests: model.characteristics
+                            .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
+                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                roomVariantId: ch.roomVariantId,
+                                price: ch.price
+                            })),
+                        createPhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Draft),
+                        deleteBedTypesRequests: ({ ids: model.bedTypes.filter(o => o.entityStatus === EntityStatus.Deleted).map(o => o.id || '') }),
+                        deleteCharacteristicsRequests: ({ ids: model.characteristics.filter(o => o.entityStatus === EntityStatus.Deleted).map(o => o.id || '', []) }),
+                        description: model.description,
+                        freeCount: model.freeCount,
+                        id: model.id,
+                        length: model.length,
+                        maxPersonsCount: model.maxPersonsCount,
+                        name: model.name,
+                        paymentOption: model.paymentOption,
+                        price: model.price,
+                        updateBedTypesRequests: model.bedTypes
+                            .filter(o => o.entityStatus === EntityStatus.Updated)
+                            .map<RoomVariantBedType.UpdateRequest>(bt => ({
+                                id: bt.id || '',
+                                bedType: bt.bedType,
+                                roomVariantId: bt.roomVariantId,
+                                length: bt.length,
+                                width: bt.width
+                            })),
+                        updateCharacteristicsRequests: model.characteristics
+                            .filter(o => o.entityStatus === EntityStatus.Updated)
+                            .map<RoomVariantCharacteristic.UpdateRequest>(ch => ({
+                                id: ch.id || '',
+                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                roomVariantId: ch.roomVariantId,
+                                price: ch.price
+                            })),
+                        width: model.width,
+                        deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
+                    })
+                    return dispatch(success({ ...result, entityStatus: EntityStatus.NotChanged }));
+                }
+            }
+            catch (error: any) {
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
+
+                return dispatch(failure(error));
+            }
+            return dispatch(success(model));
+        }
+
+        function request(): UpdateRequestAction { return { type: ActionTypes.updateRequest }; }
+        function success(rentalobject: RoomVariant): UpdateSuccessAction { return { type: ActionTypes.updateSuccess, model: rentalobject }; }
+        function failure(error: ApplicationError): UpdateFailureAction { return { type: ActionTypes.updateFailure, error: error }; }
     }
 
     export function deleteRoomVariant(id: string): AppThunkAction<DeleteSuccessAction | DeleteFailureAction> {
