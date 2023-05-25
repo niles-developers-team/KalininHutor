@@ -1,4 +1,4 @@
-name: Build and deploy project
+name: Build and deploy project to prod
 
 on:
   push:
