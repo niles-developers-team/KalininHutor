@@ -25,7 +25,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
     public async Task<Unit> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
-        entity.SetInfo(request.Name, request.Description);
+        entity.SetInfo(request.Name, request.Description, request.Address);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
 
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
@@ -73,6 +73,8 @@ public partial class RentalObjectCommands
 
         ///<summary> Название объекта аренды </summary>
         public string Name { get; set; } = string.Empty;
+
+        public string Address { get; set; }
 
         ///<summary> Идентификатор объекта аренды </summary>
         public string Description { get; set; } = string.Empty;

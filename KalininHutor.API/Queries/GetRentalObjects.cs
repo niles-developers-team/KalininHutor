@@ -78,11 +78,11 @@ public partial class RentalObjectCommands
         ///<summary> Время отъезда </summary>
         public DateTime? CheckoutDate { get; set; }
         ///<summary> Количество взрослых </summary>
-        public int AdultsCount { get; set; }
+        public int? AdultsCount { get; set; }
         ///<summary> Количество детей </summary>
-        public int ChildsCount { get; set; }
+        public int? ChildsCount { get; set; }
         ///<summary> Количество комнат </summary>
-        public int RoomsCount { get; set; }
+        public int? RoomsCount { get; set; }
 
         ///<summary> Нужно ли получать лучшие предложения </summary>
         public bool GetBestDemands { get; set; }

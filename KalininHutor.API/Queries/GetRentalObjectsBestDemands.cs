@@ -47,9 +47,9 @@ public partial class RentalObjectCommands
         ///<summary> Коллекция идентификаторов объектов аренды</summary>
         public IReadOnlyList<Guid> RentalObjectsIds { get; set; } = new List<Guid>();
         ///<summary> Количество взрослых </summary>
-        public int AdultsCount { get; set; }
+        public int? AdultsCount { get; set; }
         ///<summary> Количество детей </summary>
-        public int ChildsCount { get; set; }
+        public int? ChildsCount { get; set; }
         ///<summary> Количество ночей </summary>
         public int NightsCount { get; set; }
     }

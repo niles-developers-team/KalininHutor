@@ -146,7 +146,7 @@ export namespace RentalObjectActions {
             }
 
             const draft = cookiesService.get<RentalObject>('rental-object-draft');
-            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft || {} });
+            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft || { entityStatus: EntityStatus.Draft } });
         }
     }
 
@@ -281,6 +281,7 @@ export namespace RentalObjectActions {
                     checkoutTime: moment(model.checkoutTime, 'hh:mm:ss').format('hh:mm:ss'),
                     description: model.description,
                     name: model.name,
+                    address: model.address,
                     createRoomVariantsRequests: roomVariantState.models
                         ?.filter(o => o.entityStatus === EntityStatus.Draft)
                         .map<RoomVariant.CreateRequest>(rv => ({

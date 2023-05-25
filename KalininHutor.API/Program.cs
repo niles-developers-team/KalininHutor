@@ -174,8 +174,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.UseRouting();
-app.UseCors(
-);
+app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
