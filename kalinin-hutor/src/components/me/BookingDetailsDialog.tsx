@@ -15,7 +15,13 @@ export const BookingDetailsDialog = function (props: Props): JSX.Element {
     const { booking, open, characteristics, onApprove, onClose } = props;
 
     if (!booking)
-        return (<Typography> Неизвестная бронь </Typography>)
+        return (
+            <Dialog open={open} onClose={onClose}>
+                <DialogContent>
+                    return (<Typography> Неизвестная бронь </Typography>)
+                </DialogContent>
+            </Dialog>
+        );
 
     return (
         <Dialog open={open} onClose={onClose}>

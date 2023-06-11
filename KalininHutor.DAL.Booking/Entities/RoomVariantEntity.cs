@@ -27,6 +27,8 @@ public class RoomVariantEntity
     public int Count { get; protected set; }
     ///<symmary> Всего номеров свободно </summary>
     public int FreeCount { get; protected set; }
+    ///<summary> Вариант номера скрыт или нет? </summary>
+    public bool IsHidden { get; protected set; }
 
     public List<RoomVariantBedTypeEntity> BedTypes { get; protected set; } = new List<RoomVariantBedTypeEntity>();
     public List<RoomVariantCharacteristicEntity> Characteristics { get; protected set; } = new List<RoomVariantCharacteristicEntity>();
@@ -45,4 +47,5 @@ public class RoomVariantSearchOptions
 {
     public Guid? RentalObjectId { get; set; }
     public IReadOnlyList<Guid>? RentalObjectsIds { get; set; }
+    public bool ShowHidden {get;set;}
 }

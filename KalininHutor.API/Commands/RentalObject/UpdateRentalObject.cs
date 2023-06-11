@@ -44,11 +44,14 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeleteRoomVariantsRequest != null)
             await _sender.Send(request.DeleteRoomVariantsRequest);
 
-        foreach (var photoEntity in request.CreatePhotos)
-            entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
 
-        if (entity.Photos.Any())
+        if (request.CreatePhotos.Any())
+        {
+            foreach (var photoEntity in request.CreatePhotos)
+                entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+                
             await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+        }
 
         if (request.UpdatePhotos.Any())
             foreach (var photoEntity in request.UpdatePhotos.Select(_mapper.Map<FileObjectEntity>))

@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
-import { cookiesService, rentalObjectService } from "../../services";
+import { localStorageService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
@@ -145,8 +145,8 @@ export namespace RentalObjectActions {
                 return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalObjectState.model });
             }
 
-            const draft = cookiesService.get<RentalObject>('rental-object-draft');
-            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft || { entityStatus: EntityStatus.Draft } });
+            const draft = localStorageService.get<RentalObject>('rental-object-draft');
+            return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
         }
     }
 
@@ -163,7 +163,7 @@ export namespace RentalObjectActions {
                 draft.landlord = userState.currentUser;
             }
 
-            cookiesService.set('rental-object-draft', draft);
+            localStorageService.set('rental-object-draft', draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -176,49 +176,17 @@ export namespace RentalObjectActions {
                 draft.landlord = userState.currentUser;
             }
 
-            cookiesService.set('rental-object-draft', draft);
+            localStorageService.set('rental-object-draft', draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
-        }
-    }
-
-    export function appendPhotoToDraft(fileList: FileList): AppThunkAction {
-        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-            const draft = rentalObjectState.model;
-
-            if (!draft)
-                return;
-
-            const photos: FileObject[] = [];
-
-            for (let i = 0; i < fileList.length; i++) {
-                const file = fileList[i];
-
-                const body = await readAsDataURL(file);
-
-                const photo: FileObject = {
-                    id: guid(),
-                    body: body,
-                    extension: file.type,
-                    name: file.name,
-                    sortOrder: draft.photos?.reduce((a, b) => Math.max(a, b.sortOrder), 0),
-                    entityStatus: EntityStatus.Draft
-                };
-
-                photos.push(photo);
-            }
-
-            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...draft.photos, ...photos] } });
         }
     }
 
     export function createRentalObject(model: RentalObject): AppThunkAction<Promise<CreateSuccessAction | CreateFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { roomVariantState } = getState();
             dispatch(request());
 
             try {
-                if (!roomVariantState.models)
+                if (!model.roomVariants)
                     throw new ApplicationError('Невозможно сохранить объект аренды без вариантов номеров');
 
                 const result = await rentalObjectService.create({
@@ -228,7 +196,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     landlordId: model.landlord.id,
                     name: model.name,
-                    createRoomVariantsRequests: roomVariantState.models.map<RoomVariant.CreateRequest>(rv => ({
+                    createRoomVariantsRequests: model.roomVariants.map<RoomVariant.CreateRequest>(rv => ({
                         count: rv.count,
                         description: rv.description,
                         freeCount: rv.freeCount,
@@ -247,7 +215,7 @@ export namespace RentalObjectActions {
                         })),
                         createCharacteristicsRequests: rv.characteristics
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                characteristic: ch.roomCharacteristic,
+                                roomCharacteristicId: ch.roomCharacteristicId,
                                 roomVariantId: ch.roomVariantId,
                                 price: ch.price
                             })),
@@ -271,7 +239,6 @@ export namespace RentalObjectActions {
 
     export function updateRentalObject(model: RentalObject): AppThunkAction<Promise<UpdateSuccessAction | UpdateFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { roomVariantState } = getState();
             dispatch(request());
 
             try {
@@ -282,7 +249,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     name: model.name,
                     address: model.address,
-                    createRoomVariantsRequests: roomVariantState.models
+                    createRoomVariantsRequests: model.roomVariants
                         ?.filter(o => o.entityStatus === EntityStatus.Draft)
                         .map<RoomVariant.CreateRequest>(rv => ({
                             count: rv.count,
@@ -304,13 +271,13 @@ export namespace RentalObjectActions {
                             })),
                             createCharacteristicsRequests: rv.characteristics
                                 .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                    roomCharacteristicId: ch.roomCharacteristicId || '',
+                                    roomCharacteristicId: ch.roomCharacteristicId,
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
                             createPhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Draft),
                         })),
-                    updateRoomVariantsRequests: roomVariantState.models
+                    updateRoomVariantsRequests: model.roomVariants
                         ?.filter(o => o.entityStatus === EntityStatus.Updated)
                         .map<RoomVariant.UpdateRequest>(rv => ({
                             id: rv.id || '',
@@ -336,7 +303,7 @@ export namespace RentalObjectActions {
                             createCharacteristicsRequests: rv.characteristics
                                 .filter(o => o.entityStatus === EntityStatus.Draft)
                                 .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                    roomCharacteristicId: ch.roomCharacteristicId || '',
+                                    roomCharacteristicId: ch.roomCharacteristicId,
                                     roomVariantId: ch.roomVariantId,
                                     price: ch.price
                                 })),
@@ -372,7 +339,7 @@ export namespace RentalObjectActions {
                             deletePhotos: rv.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                         })),
                     deleteRoomVariantsRequest: ({
-                        ids: roomVariantState.models?.filter(o => o.entityStatus === EntityStatus.Deleted)
+                        ids: model.roomVariants.filter(o => o.entityStatus === EntityStatus.Deleted)
                             .map(rv => rv.id || '') || []
                     }),
                     createPhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Draft),
@@ -395,6 +362,7 @@ export namespace RentalObjectActions {
     }
 
     export function clearEditionState(): ClearEditionStateAction {
+        localStorageService.set('rental-object-draft', undefined);
         return { type: ActionTypes.clearEditionState };
     }
 
@@ -427,8 +395,12 @@ export namespace RentalObjectActions {
             let models: RentalObject[] = [];
 
             try {
+                const draft = localStorageService.get<RentalObject>('rental-object-draft');
+                if (draft)
+                    return dispatch(success(draft));
+
                 if (rentalObjectState.modelsLoading) {
-                    models = await rentalObjectService.get({ id });
+                    models = await rentalObjectService.get({ id, getRoomVariants: true });
                 }
                 else {
                     models = rentalObjectState.models;
@@ -440,9 +412,7 @@ export namespace RentalObjectActions {
                     throw new ApplicationError('Не удалось найти объект аренды');
                 }
 
-                var result = dispatch(success(model));
-
-                return result;
+                return dispatch(success(model));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
@@ -450,7 +420,7 @@ export namespace RentalObjectActions {
                 return dispatch(failure(error));
             }
 
-            function request(id: string | undefined): GetRequestAction { return { type: ActionTypes.getRentalObjectRequest, id: id }; }
+            function request(id: string): GetRequestAction { return { type: ActionTypes.getRentalObjectRequest, id: id }; }
             function success(rentalobject: RentalObject): GetSuccessAction { return { type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalobject }; }
             function failure(error: ApplicationError): GetFailureAction { return { type: ActionTypes.getRentalObjectFailure, error: error }; }
         }
@@ -477,6 +447,39 @@ export namespace RentalObjectActions {
         }
     }
 
+    export function appendPhotoToDraft(fileList: FileList): AppThunkAction {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+            const draft = rentalObjectState.model;
+
+            if (!draft)
+                return;
+
+            const photos: FileObject[] = [];
+
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
+
+                const body = await readAsDataURL(file);
+
+                const photo: FileObject = {
+                    id: guid(),
+                    body: body,
+                    extension: file.type,
+                    name: file.name,
+                    sortOrder: photos.reduce((a, b) => Math.max(a, b.sortOrder) + 1, 0),
+                    entityStatus: EntityStatus.Draft
+                };
+
+                photos.push(photo);
+            }
+
+            updateDraft(draft);
+
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...draft.photos, ...photos] } });
+        }
+    }
+
     export function reorderPhotos(sourceIndex: number, destinationIndex: number): AppThunkAction {
         return (dispatch, getState) => {
             const { rentalObjectState } = getState();
@@ -491,11 +494,13 @@ export namespace RentalObjectActions {
             result.splice(destinationIndex, 0, removed);
 
             for (let i = 0; i < result.length; i++) {
-                result[i].sortOrder = i;
-                if (result[i].entityStatus !== EntityStatus.Deleted)
-                    result[i].entityStatus = EntityStatus.Updated;
+                const photo = result[i];
+                photo.sortOrder = i;
+                if (photo.entityStatus !== EntityStatus.Deleted)
+                    photo.entityStatus = EntityStatus.Updated;                
             }
 
+            localStorageService.set('rental-object-draft',  { ...draft, photos: [...result] });
             dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
         }
     }

@@ -1,6 +1,6 @@
 namespace KalininHutor.DAL.Booking;
 
-public class RentalObjectEntity
+public class RentalObjectEntity : IHideableEntity
 {
     private TimeSpan _checkinTimeSpan;
     private TimeSpan _checkoutTimeSpan;
@@ -14,6 +14,8 @@ public class RentalObjectEntity
     internal TimeSpan CheckoutTimeSpan { get => _checkoutTimeSpan; private set => _checkoutTimeSpan = value; }
     public TimeOnly CheckinTime { get => TimeOnly.FromTimeSpan(_checkinTimeSpan); protected set => _checkinTimeSpan = value.ToTimeSpan(); }
     public TimeOnly CheckoutTime { get => TimeOnly.FromTimeSpan(_checkoutTimeSpan); protected set => _checkoutTimeSpan = value.ToTimeSpan(); }
+    ///<summary> Объект аренды скрыт или нет? </summary>
+    public bool IsHidden { get; protected set; }
 
     public List<RentalObjectFileObjectEntity> FileObjects { get; protected set; } = new List<RentalObjectFileObjectEntity>();
 }
@@ -41,6 +43,8 @@ public class RentalObjectSearchOptions
     public int? ChildsCount { get; set; }
     ///<summary> Количество комнат </summary>
     public int? RoomsCount { get; set; }
+
+    public bool ShowHidden {get;set;}
 
     public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
     public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();

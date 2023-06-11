@@ -60,7 +60,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         {
             foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
                 entity.CreateCharacteristic(
-                    createCharacteristicRequest.Characteristic,
+                    createCharacteristicRequest.RoomCharacteristicId,
                     createCharacteristicRequest.Price
                 );
 

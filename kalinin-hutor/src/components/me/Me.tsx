@@ -31,7 +31,7 @@ export const MeComponent = function (): JSX.Element {
 
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
-            dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id }));
+            dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id, getRoomVariants: true }));
             dispatch(BookingActions.getLandlordBookings(true));
         }
     }, [userState.modelLoading]);

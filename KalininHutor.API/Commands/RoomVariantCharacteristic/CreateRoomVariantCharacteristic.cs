@@ -1,6 +1,4 @@
 using MediatR;
-using AutoMapper;
-using KalininHutor.DAL.Booking;
 using KalininHutor.Domain.Booking;
 
 namespace KalininHutor.API.Commands;
@@ -14,7 +12,7 @@ public partial class RoomVariantCharacteristicCommands
         ///<summary> Идентификатор номера </summary>
         public Guid? RoomVariantId { get; set; }
         ///<summary> Идентификатор характеристики </summary>
-        public RoomCharacteristic Characteristic { get; set; }
+        public Guid RoomCharacteristicId { get; set; }
         ///<summary> Цена за услугу или удобство </summary>
         public decimal? Price { get; set; }
     }

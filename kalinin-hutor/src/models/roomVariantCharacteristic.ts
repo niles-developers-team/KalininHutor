@@ -7,12 +7,12 @@ export interface RoomVariantCharacteristic extends IEntity {
     // Идентификатор номера
     roomVariantId: string;
     // Идентификатор характеристики
-    roomCharacteristicId: string | null;
+    roomCharacteristicId: string;
     roomCharacteristicName: string;
     // Цена за услугу или удобство
     price?: number;
 
-    roomCharacteristic?: RoomCharacteristic;
+    roomCharacteristic: RoomCharacteristic;
 }
 
 export namespace RoomVariantCharacteristic {
@@ -27,9 +27,9 @@ export namespace RoomVariantCharacteristic {
     // Создает объект аренды, результатом выполнения является GUID
     export interface CreateRequest {
         // Идентификатор номера
-        roomVariantId: string | null;
+        roomVariantId: string;
         // Идентификатор характеристики
-        characteristic?: RoomCharacteristic;
+        roomCharacteristicId: string;
         // Цена за услугу или удобство
         price?: number;
     }
@@ -48,10 +48,11 @@ export namespace RoomVariantCharacteristic {
 
     export const initial: RoomVariantCharacteristic = {
         id: null,
-        roomCharacteristicId: null,
+        roomCharacteristicId: '',
         roomCharacteristicName: '',
         roomVariantId: '',
 
+        roomCharacteristic: RoomCharacteristic.initial,
         entityStatus: EntityStatus.NotChanged
     }
 }

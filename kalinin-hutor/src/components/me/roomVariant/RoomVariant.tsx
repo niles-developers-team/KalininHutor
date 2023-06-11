@@ -39,10 +39,11 @@ export const RoomVariantComponent = function (): JSX.Element {
     useEffect(() => { init() }, [rentalObjectId]);
 
     async function init() {
-        if (!rentalObjectId)
-            return;
-
-        await dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
+        if (rentalObjectId === 'create' || !rentalObjectId) {
+            dispatch(RentalObjectActions.getDraft());
+        } else {
+            dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
+        }
 
         if (!id || id === 'create') {
             dispatch(RoomVariantActions.createDraft({
@@ -59,7 +60,7 @@ export const RoomVariantComponent = function (): JSX.Element {
                 paymentOption: PaymentOptions.ByCardOrCashOnTheSpot,
                 price: 0,
                 width: 0,
-                rentalObjectId: rentalObjectId,
+                rentalObjectId: rentalObjectId || '',
                 photos: []
             }));
         } else {
@@ -187,7 +188,7 @@ export const RoomVariantComponent = function (): JSX.Element {
                     <Droppable droppableId="droppable" direction="horizontal">
                         {(provided, snapshot) => (
                             <Stack spacing={2} direction="row" ref={provided.innerRef} {...provided.droppableProps}>
-                                {roomVariant.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).map((photo, index) => (
+                                {roomVariant.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).sort((curr, next) => curr.sortOrder - next.sortOrder).map((photo, index) => (
                                     <Draggable
                                         key={`item-${index}`}
                                         draggableId={`item-${index}`}

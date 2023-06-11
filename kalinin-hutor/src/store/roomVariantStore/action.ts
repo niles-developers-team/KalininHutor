@@ -1,12 +1,13 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
-import { cookiesService, roomVariantService } from "../../services";
+import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject, RentalObject } from "../../models";
+import { localStorageService, roomVariantService } from "../../services";
 import { AppState, AppThunkAction, AppThunkDispatch } from "../appState";
 import { NotificationActions } from "../notificationStore";
 import { v4 as uuidv4 } from 'uuid';
 import { RoomCharacteristicActions, RoomCharacteristicActionTypes } from "../roomCharacteristicStore";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
+import { RentalObjectActions } from "../rentalObjectStore";
 
 export enum ActionTypes {
     getRoomVariantsRequest = 'GET_ROOMVARIANTS_REQUEST',
@@ -212,7 +213,7 @@ export namespace RoomVariantActions {
                 return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: roomVariantState.model });
             }
 
-            const draft = cookiesService.get<RoomVariant>('room-variant-draft');
+            const draft = localStorageService.get<RoomVariant>('room-variant-draft');
             return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: draft });
         }
     }
@@ -233,7 +234,7 @@ export namespace RoomVariantActions {
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            cookiesService.set('room-variant-draft', draft);
+            localStorageService.set('room-variant-draft', draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -249,7 +250,7 @@ export namespace RoomVariantActions {
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            cookiesService.set('room-variant-draft', draft);
+            localStorageService.set('room-variant-draft', draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
     }
@@ -262,6 +263,7 @@ export namespace RoomVariantActions {
                 return dispatch({ type: ActionTypes.createFailure });
             }
 
+            dispatch(RentalObjectActions.updateDraft({ ...rentalObjectState.model, roomVariants: [...rentalObjectState.model.roomVariants || [], model] }));
             return dispatch({ type: ActionTypes.createSuccess, model: { ...model } });
         }
     }
@@ -289,7 +291,7 @@ export namespace RoomVariantActions {
                         })),
                         createCharacteristicsRequests: model.characteristics
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
-                                roomCharacteristicId: ch.roomCharacteristicId || '',
+                                roomCharacteristicId: ch.roomCharacteristicId,
                                 roomVariantId: ch.roomVariantId,
                                 price: ch.price
                             })),
@@ -342,16 +344,19 @@ export namespace RoomVariantActions {
 
     export function deleteRoomVariant(id: string): AppThunkAction<DeleteSuccessAction | DeleteFailureAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState, roomVariantState } = getState();
+            const { rentalObjectState } = getState();
             if (!rentalObjectState.model) {
                 dispatch(NotificationActions.showSnackbar('Не найден объект аренды', NotificationVariant.error));
                 return dispatch({ type: ActionTypes.deleteFailure });
             }
 
-            const model = roomVariantState.models?.find(o => o.id === id);
-            if (model && model.entityStatus !== EntityStatus.Draft) {
-                model.entityStatus = EntityStatus.Deleted;
-            }
+            const model: RoomVariant | undefined = rentalObjectState.model.roomVariants.find(o => o.id === id);
+            if (model)
+                if (model.entityStatus as EntityStatus !== EntityStatus.Draft) {
+                    dispatch(RentalObjectActions.updateDraft({ ...rentalObjectState.model, roomVariants: [...rentalObjectState.model.roomVariants.map(o => o.id === id ? { ...model, entityStatus: EntityStatus.Deleted } : o)] }));
+                } else {
+                    dispatch(RentalObjectActions.updateDraft({ ...rentalObjectState.model, roomVariants: [...rentalObjectState.model.roomVariants.filter(o => o.id !== id)] }));
+                }
 
             return dispatch({ type: ActionTypes.deleteSuccess, ids: [id] });
         }
@@ -496,18 +501,11 @@ export namespace RoomVariantActions {
 
             if (!draft) return;
 
-            // a little function to help us with reordering the result            
-            const result = draft.photos;
-            const [removed] = result.splice(sourceIndex, 1);
-            result.splice(destinationIndex, 0, removed);
+            let photos = draft.photos.map((o, index) => index === sourceIndex ? { ...o, sortOrder: destinationIndex } : o);
+            photos = photos.map((o, index) => index === destinationIndex ? { ...o, sortOrder: sourceIndex } : o);
 
-            for (let i = 0; i < result.length; i++) {
-                result[i].sortOrder = i;
-                if (result[i].entityStatus !== EntityStatus.Deleted)
-                    result[i].entityStatus = EntityStatus.Updated;
-            }
-
-            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
+            localStorageService.set('room-variant-draft', draft);
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...photos] } });
         }
     }
 
