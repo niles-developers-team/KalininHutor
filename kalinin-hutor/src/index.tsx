@@ -3,8 +3,6 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
 
-import DocumentMeta from 'react-document-meta';
-
 import reportWebVitals from './reportWebVitals';
 
 import configureStore from './store/createStore';
@@ -30,7 +28,6 @@ sessionService.init();
 
 const store = configureStore();
 
-const meta = { title: 'Хутор Калинин' }
 const theme = createTheme(
   {
     palette: {
@@ -43,7 +40,6 @@ const theme = createTheme(
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <DocumentMeta {...meta}>
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <Provider store={store}>
@@ -53,7 +49,6 @@ root.render(
         </Provider>
       </LocalizationProvider>
     </ThemeProvider>
-  </DocumentMeta>
 );
 
 // If you want to start measuring performance in your app, pass a function

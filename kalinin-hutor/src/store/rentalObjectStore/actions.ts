@@ -8,6 +8,8 @@ import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
 
+const draftName = 'rental-object-draft';
+
 export enum ActionTypes {
     getRentalObjectsRequest = 'GET_RENTALOBJECTS_REQUEST',
     getRentalObjectsSuccess = 'GET_RENTALOBJECTS_SUCCESS',
@@ -145,7 +147,7 @@ export namespace RentalObjectActions {
                 return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalObjectState.model });
             }
 
-            const draft = localStorageService.get<RentalObject>('rental-object-draft');
+            const draft = localStorageService.get<RentalObject>(draftName);
             return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
         }
     }
@@ -163,7 +165,7 @@ export namespace RentalObjectActions {
                 draft.landlord = userState.currentUser;
             }
 
-            localStorageService.set('rental-object-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -176,7 +178,7 @@ export namespace RentalObjectActions {
                 draft.landlord = userState.currentUser;
             }
 
-            localStorageService.set('rental-object-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
     }
@@ -362,7 +364,7 @@ export namespace RentalObjectActions {
     }
 
     export function clearEditionState(): ClearEditionStateAction {
-        localStorageService.set('rental-object-draft', undefined);
+        localStorageService.set(draftName, undefined);
         return { type: ActionTypes.clearEditionState };
     }
 
@@ -395,7 +397,7 @@ export namespace RentalObjectActions {
             let models: RentalObject[] = [];
 
             try {
-                const draft = localStorageService.get<RentalObject>('rental-object-draft');
+                const draft = localStorageService.get<RentalObject>(draftName);
                 if (draft)
                     return dispatch(success(draft));
 
@@ -484,24 +486,22 @@ export namespace RentalObjectActions {
         return (dispatch, getState) => {
             const { rentalObjectState } = getState();
 
-            const draft = rentalObjectState.model;
-
-            if (!draft) return;
+            if (rentalObjectState.modelLoading === true) return;
 
             // a little function to help us with reordering the result            
-            const result = draft.photos;
+            const result = [...rentalObjectState.model.photos];
             const [removed] = result.splice(sourceIndex, 1);
             result.splice(destinationIndex, 0, removed);
 
-            for (let i = 0; i < result.length; i++) {
-                const photo = result[i];
-                photo.sortOrder = i;
-                if (photo.entityStatus !== EntityStatus.Deleted)
-                    photo.entityStatus = EntityStatus.Updated;                
-            }
+            for (let i = 0; i < result.length; i++)
+                result[i] = {
+                    ...result[i],
+                    sortOrder: i,
+                    entityStatus: result[i].entityStatus !== EntityStatus.Deleted || result[i].entityStatus !== EntityStatus.Draft ? EntityStatus.Updated : result[i].entityStatus
+                };
 
-            localStorageService.set('rental-object-draft',  { ...draft, photos: [...result] });
-            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
+            localStorageService.set(draftName, { ...rentalObjectState.model, photos: result });
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...rentalObjectState.model, photos: result } });
         }
     }
 

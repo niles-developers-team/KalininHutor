@@ -9,6 +9,8 @@ import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
 import { RentalObjectActions } from "../rentalObjectStore";
 
+const draftName = 'room-variant-draft';
+
 export enum ActionTypes {
     getRoomVariantsRequest = 'GET_ROOMVARIANTS_REQUEST',
     getRoomVariantsSuccess = 'GET_ROOMVARIANTS_SUCCESS',
@@ -213,7 +215,7 @@ export namespace RoomVariantActions {
                 return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: roomVariantState.model });
             }
 
-            const draft = localStorageService.get<RoomVariant>('room-variant-draft');
+            const draft = localStorageService.get<RoomVariant>(draftName);
             return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: draft });
         }
     }
@@ -234,7 +236,7 @@ export namespace RoomVariantActions {
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            localStorageService.set('room-variant-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -250,7 +252,7 @@ export namespace RoomVariantActions {
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
-            localStorageService.set('room-variant-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
     }
@@ -497,15 +499,22 @@ export namespace RoomVariantActions {
         return (dispatch, getState) => {
             const { roomVariantState } = getState();
 
-            const draft = roomVariantState.model;
+            if (roomVariantState.modelLoading === true) return;
 
-            if (!draft) return;
+            // a little function to help us with reordering the result            
+            const result = [...roomVariantState.model.photos];
+            const [removed] = result.splice(sourceIndex, 1);
+            result.splice(destinationIndex, 0, removed);
 
-            let photos = draft.photos.map((o, index) => index === sourceIndex ? { ...o, sortOrder: destinationIndex } : o);
-            photos = photos.map((o, index) => index === destinationIndex ? { ...o, sortOrder: sourceIndex } : o);
+            for (let i = 0; i < result.length; i++)
+                result[i] = {
+                    ...result[i],
+                    sortOrder: i,
+                    entityStatus: result[i].entityStatus !== EntityStatus.Deleted || result[i].entityStatus !== EntityStatus.Draft ? EntityStatus.Updated : result[i].entityStatus
+                };
 
-            localStorageService.set('room-variant-draft', draft);
-            dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...photos] } });
+            localStorageService.set(draftName, { ...roomVariantState.model, photos: result });
+            dispatch({ type: ActionTypes.updateDraft, draft: { ...roomVariantState.model, photos: result } });
         }
     }
 

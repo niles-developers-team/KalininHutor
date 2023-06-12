@@ -199,7 +199,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     provided.draggableProps.style
                                                 )}
                                             >
-                                                <Grid className="alternate-actions" direction="row" alignItems="start" justifyContent="space-between">
+                                                <Grid className="alternate-actions" container direction="row" alignItems="start" justifyContent="space-between">
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>

@@ -25,6 +25,6 @@ class LocalStorageService {
         }
         localStorage.setItem(name, JSON.stringify(value));
     }
-    public delete(name: string): void { localStorage.remove(name); }
+    public delete(name: string): void { localStorage.removeItem(name); }
 }
 export const localStorageService = new LocalStorageService();
