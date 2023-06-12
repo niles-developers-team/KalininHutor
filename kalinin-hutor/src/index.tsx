@@ -23,7 +23,6 @@ import '@fontsource/roboto/700.css';
 import "moment/locale/ru";
 import { createTheme, ThemeProvider } from '@mui/material';
 
-
 sessionService.init();
 
 const store = configureStore();
@@ -36,6 +35,8 @@ const theme = createTheme(
   },
   ruRU,
 );
+
+export const appName = 'Калини Хутор';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

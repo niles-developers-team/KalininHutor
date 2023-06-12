@@ -13,6 +13,7 @@ import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
+import { appName } from "../..";
 
 
 const imageStyle: CSSProperties = {
@@ -205,6 +206,8 @@ export const RentalObjectComponent = function (): JSX.Element {
     const checkinDate = moment(booking ? booking.checkinDate : moment().format('YYYY-MM-DD'));
     const checkoutDate = moment(booking ? booking.checkoutDate : moment().add(10, 'days').format('YYYY-MM-DD'));
     const nightsCount = checkoutDate.dayOfYear() - checkinDate.dayOfYear();
+
+    document.title = `${appName} / ${model.name}`;
 
     return (
         <Stack>
