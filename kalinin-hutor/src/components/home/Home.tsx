@@ -8,6 +8,7 @@ import moment from "moment";
 import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "../rentalObjects/RentalObjectInfo";
 import { RentalObjectsBaseFilterComponent } from "../rentalObjects/RentalObjectsFilter";
 import { useQuery } from "../../hooks/useQuery";
+import { appName } from "../..";
 
 
 export const HomeComponent = function (): JSX.Element {
@@ -54,6 +55,8 @@ export const HomeComponent = function (): JSX.Element {
     else {
         top10RentalObjects = Array.from(new Array(10));
     }
+
+    document.title = appName;
 
     return (
         <Stack width="100%">
