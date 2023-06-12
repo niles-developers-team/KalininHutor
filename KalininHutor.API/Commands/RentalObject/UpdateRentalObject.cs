@@ -7,7 +7,7 @@ using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.UpdateRequest, Unit>
+internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.UpdateRequest, RentalObjectDTO>
 {
     private readonly ISender _sender;
     private readonly RentalObjectRepository _repository;
@@ -22,10 +22,10 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<RentalObjectDTO> Handle(RentalObjectCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
-        entity.SetInfo(request.Name, request.Description);
+        entity.SetInfo(request.Name, request.Description, request.Address);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
 
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
@@ -44,11 +44,14 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeleteRoomVariantsRequest != null)
             await _sender.Send(request.DeleteRoomVariantsRequest);
 
-        foreach (var photoEntity in request.CreatePhotos)
-            entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
 
-        if (entity.Photos.Any())
+        if (request.CreatePhotos.Any())
+        {
+            foreach (var photoEntity in request.CreatePhotos)
+                entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+                
             await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+        }
 
         if (request.UpdatePhotos.Any())
             foreach (var photoEntity in request.UpdatePhotos.Select(_mapper.Map<FileObjectEntity>))
@@ -57,7 +60,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeletePhotos.Any())
             await _fileObjectRepository.Delete(request.DeletePhotos.Select(o => o.Id).ToList());
 
-        return Unit.Value;
+        return _mapper.Map<RentalObjectDTO>(entity);
     }
 }
 
@@ -65,7 +68,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
 public partial class RentalObjectCommands
 {
     ///<summary> Запрос обновления объекта аренды </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<RentalObjectDTO>
     {
         ///<summary> Идентификатор объекта аренды </summary>
         ///<remarks> Не изменяется, нужен только для поиска </remarks>
@@ -73,6 +76,8 @@ public partial class RentalObjectCommands
 
         ///<summary> Название объекта аренды </summary>
         public string Name { get; set; } = string.Empty;
+
+        public string Address { get; set; }
 
         ///<summary> Идентификатор объекта аренды </summary>
         public string Description { get; set; } = string.Empty;

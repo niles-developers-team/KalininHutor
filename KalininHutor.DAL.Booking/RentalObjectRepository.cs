@@ -48,6 +48,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         await connection.QueryBuilder($@"
             update RentalObjects
             set Name = {entity.Name}, 
+                Address = {entity.Address},
                 Description = {entity.Description}, 
                 CheckinTime = {entity.CheckinTimeSpan}, 
                 CheckoutTime = {entity.CheckoutTimeSpan}

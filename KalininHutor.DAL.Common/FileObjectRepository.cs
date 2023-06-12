@@ -39,7 +39,6 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
 
         foreach (var entity in entities)
         {
-            index++;
             query.AppendLine($@"
                 (
                     {entity.Id},
@@ -47,10 +46,11 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
                     {entity.Extension},
                     {entity.CompressedBody},
                     {entity.CreatedAt},
-                    {entity.SortOrder},
+                    {index},
                     {entity.ParentId}
                 )
             ");
+            index++;
 
             if (index < entities.Count)
                 query.Append($",");

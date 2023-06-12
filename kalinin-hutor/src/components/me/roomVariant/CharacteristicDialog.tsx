@@ -13,19 +13,20 @@ interface CharacteristicDialogProps {
     onConfirm: (result: RoomVariantCharacteristic) => void;
 }
 
-export const CharacteristicDialog = function(props: CharacteristicDialogProps): JSX.Element {
+export const CharacteristicDialog = function (props: CharacteristicDialogProps): JSX.Element {
     const [model, setModel] = useState<RoomVariantCharacteristic>({ ...RoomVariantCharacteristic.initial });
     const [selectOrAddCharacteristic, setSelectOrAddCharacteristic] = useState<boolean>(true);
     const [roomCharacteristic, setRoomCharacteristic] = useState<RoomCharacteristic>({ ...RoomCharacteristic.initial });
 
     useEffect(() => {
-        setModel({ ...props.model, roomCharacteristic: props.characteristics.find(o => o.id === props.model.roomCharacteristicId) });
+        setModel({ ...props.model });
         setSelectOrAddCharacteristic(true);
         setRoomCharacteristic({ ...RoomCharacteristic.initial });
     }, [props.model, props.open]);
 
     function handleCharacteristicChanged(event: React.SyntheticEvent<Element, Event>, value: RoomCharacteristic | null) {
-        setModel({ ...model, roomCharacteristic: value || undefined, roomCharacteristicId: value?.id || null })
+        if (value !== null)
+            setModel({ ...model, roomCharacteristic: value, roomCharacteristicId: value.id })
     }
 
     function handlePriceChanged(event: ChangeEvent<HTMLInputElement>) {
@@ -78,7 +79,7 @@ export const CharacteristicDialog = function(props: CharacteristicDialogProps): 
                         (
                             <Autocomplete<RoomCharacteristic>
                                 loading={props.searching}
-                                defaultValue={null}
+                                defaultValue={model.roomCharacteristic}
                                 loadingText="Поиск услуг или сервисов"
                                 noOptionsText={NotFoundCharacteristic}
                                 value={model.roomCharacteristic}

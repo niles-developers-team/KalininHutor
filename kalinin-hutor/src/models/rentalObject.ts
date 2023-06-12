@@ -69,6 +69,7 @@ export namespace RentalObject {
     export interface UpdateRequest {
         id: string;
         name: string;
+        address: string;
         description: string;
         checkinTime: string;
         checkoutTime: string;

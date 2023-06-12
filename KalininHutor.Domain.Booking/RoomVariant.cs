@@ -107,12 +107,12 @@ public class RoomVariant : IEntity<Guid>, IEntityWithPhotos
         FreeCancellationPeriod = freeCancellationPeriod;
     }
 
-    public RoomVariantCharacteristic CreateCharacteristic(RoomCharacteristic characteristic, decimal? price)
+    public RoomVariantCharacteristic CreateCharacteristic(Guid characteristicId, decimal? price)
     {
-        if (_characteristics.Any(o => o.RoomCharacteristicId == characteristic.Id))
-            throw new ApplicationException($"Для варианта номера уже добавлена услуга {characteristic.Name}");
+        if ((_characteristics.FirstOrDefault(o => o.RoomCharacteristicId == characteristicId)) is var characteristic && characteristic != null)
+            throw new ApplicationException($"Для варианта номера уже добавлена услуга {characteristic.RoomCharacteristicName}");
 
-        var roomCharacteristic = new RoomVariantCharacteristic(Id, characteristic.Id, price);
+        var roomCharacteristic = new RoomVariantCharacteristic(Id, characteristicId, price);
 
         _characteristics.Add(roomCharacteristic);
 

@@ -22,12 +22,12 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Cr
     private readonly IMapper _mapper;
 
     public CreateRoomVariantHandler(
-        ISender sender, 
+        ISender sender,
         RoomVariantRepository repository,
-        RentalObjectRepository rentalObjectRepository, 
+        RentalObjectRepository rentalObjectRepository,
         RoomVariantCharacteristicRepository roomCharacteristicsRepository,
         RoomVariantBedTypeRepository bedTypesRepository,
-        FileObjectRepository fileObjectRepository, 
+        FileObjectRepository fileObjectRepository,
         IMapper mapper
     )
     {
@@ -69,20 +69,25 @@ internal class CreateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Cr
                 createBedTypesRequest.MaxInRoom
             );
 
-        await _bedTypesRepository.CreateBulk(result.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
+        if (result.BedTypes.Any())
+            await _bedTypesRepository.CreateBulk(result.BedTypes.Select(_mapper.Map<RoomVariantBedTypeEntity>).ToList());
 
         foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
             result.CreateCharacteristic(
-                createCharacteristicRequest.Characteristic,
+                createCharacteristicRequest.RoomCharacteristicId,
                 createCharacteristicRequest.Price
             );
 
-        await _roomCharacteristicsRepository.CreateBulk(result.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
+        if (result.Characteristics.Any())
+            await _roomCharacteristicsRepository.CreateBulk(result.Characteristics.Select(_mapper.Map<RoomVariantCharacteristicEntity>).ToList());
 
-        foreach (var photoEntity in request.CreatePhotos)
-            result.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
+        if (request.CreatePhotos.Any())
+        {
+            foreach (var photoEntity in request.CreatePhotos)
+                result.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
 
-        await _fileObjectRepository.CreateBulk(result.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+            await _fileObjectRepository.CreateBulk(result.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
+        }
 
         return result.Id;
     }

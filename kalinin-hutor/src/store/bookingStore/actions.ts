@@ -4,9 +4,12 @@ import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
-import { cookiesService } from "../../services";
+import { localStorageService } from "../../services";
 import { createSearchParams } from "react-router-dom";
 import moment from "moment";
+
+const draftName = 'booking-draft';
+
 export enum ActionTypes {
     getBookingsRequest = 'GET_BOOKINGS_REQUEST',
     getBookingsSuccess = 'GET_BOOKINGS_SUCCESS',
@@ -206,7 +209,7 @@ export namespace BookingActions {
                 draft.tenant = userState.currentUser;
             }
 
-            cookiesService.set('booking-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
@@ -236,13 +239,13 @@ export namespace BookingActions {
             const roomVariants = draft.roomVariants.map(o => ({ ...o, amount: o.price * o.roomsCount * nightsCount }));
             const total = roomVariants.reduce((sum, curr) => sum += curr.amount, 0);
 
-            cookiesService.set('booking-draft', draft);
+            localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, total: total, roomVariants: roomVariants } });
         }
     }
 
     export function clearEditionState(): ClearEditionStateAction {
-        cookiesService.delete('booking-draft');
+        localStorageService.delete(draftName);
         return { type: ActionTypes.clearEditionState };
     }
 
@@ -300,7 +303,7 @@ export namespace BookingActions {
                 return dispatch({ type: ActionTypes.getBookingSuccess, booking: bookingState.model });
             }
 
-            const draft = cookiesService.get<Booking>('booking-draft');
+            const draft = localStorageService.get<Booking>(draftName);
             return dispatch({ type: ActionTypes.getBookingSuccess, booking: draft });
         }
     }
@@ -313,7 +316,7 @@ export namespace BookingActions {
 
             if (bookingState.modelLoading === false)
                 return dispatch(success(bookingState.model));
-            const draft = cookiesService.get<Booking>('booking-draft');
+            const draft = localStorageService.get<Booking>(draftName);
             if (draft && draft.id === id)
                 return dispatch(success(draft));
 

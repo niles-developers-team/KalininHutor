@@ -8,7 +8,7 @@ using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.UpdateRequest, Unit>
+internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.UpdateRequest, RoomVariantDTO>
 {
     private readonly ISender _sender;
     private readonly RoomVariantRepository _repository;
@@ -33,7 +33,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<Unit> Handle(RoomVariantCommands.UpdateRequest request, CancellationToken cancellationToken)
+    public async Task<RoomVariantDTO> Handle(RoomVariantCommands.UpdateRequest request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<RoomVariant>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.PaymentOption);
@@ -60,7 +60,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         {
             foreach (var createCharacteristicRequest in request.CreateCharacteristicsRequests)
                 entity.CreateCharacteristic(
-                    createCharacteristicRequest.Characteristic,
+                    createCharacteristicRequest.RoomCharacteristicId,
                     createCharacteristicRequest.Price
                 );
 
@@ -98,7 +98,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
         if (request.DeleteCharacteristicsRequests != null)
             await _sender.Send(request.DeleteCharacteristicsRequests);
 
-        return Unit.Value;
+        return _mapper.Map<RoomVariantDTO>(entity);
     }
 }
 
@@ -106,7 +106,7 @@ internal class UpdateRoomVariantHandler : IRequestHandler<RoomVariantCommands.Up
 public partial class RoomVariantCommands
 {
     ///<summary> Запрос обновления варинта номера </summary>
-    public class UpdateRequest : IRequest<Unit>
+    public class UpdateRequest : IRequest<RoomVariantDTO>
     {
         ///<summary> Идентификатор варинта номера объекта аренды </summary>
         public Guid Id { get; set; }

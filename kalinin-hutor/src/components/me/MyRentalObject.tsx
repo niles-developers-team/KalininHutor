@@ -7,7 +7,7 @@ import { ChangeEvent, createRef, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { EntityStatus, RoomVariant } from "../../models";
+import { EntityStatus, RentalObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { RoomVariantActions } from "../../store/roomVariantStore";
@@ -65,6 +65,10 @@ export const MyRentalObjectComponent = function (): JSX.Element {
     }
 
     function handleRoomVariantCreate() {
+        if (model.entityStatus === EntityStatus.Draft) {
+            navigate(`/me/rental-objects/create/room-variants/create`);
+            return;
+        }
         navigate(`/me/rental-objects/${id}/room-variants/create`);
     }
 
@@ -77,6 +81,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
     }
 
     async function handleDiscard() {
+        if (model.entityStatus === EntityStatus.Draft)
+            navigate(`/me/rental-objects/${id}`);
         dispatch(RentalObjectActions.clearEditionState());
         dispatch(RentalObjectActions.getRentalObject(model.id));
     }
@@ -128,8 +134,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
     if (!rentalObjectState.model)
         return (<Typography>Не найден объект аренды</Typography>);
 
-    const model = rentalObjectState.model;
-    const roomVariants = roomVariantState.models || [];
+    const model: RentalObject = rentalObjectState.model;
+    const roomVariants = model.roomVariants.filter(o => o.entityStatus !== EntityStatus.Deleted) || [];
 
     return (
         <Stack spacing={2}>
@@ -175,8 +181,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                     <Droppable droppableId="droppable" direction="horizontal">
                         {(provided, snapshot) => (
                             <Stack spacing={2} direction="row" ref={provided.innerRef} {...provided.droppableProps}>
-                                {model.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).map((photo, index) => (
-                                    <Draggable                                    
+                                {model.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).sort((curr, next) => curr.sortOrder - next.sortOrder).map((photo, index) => (
+                                    <Draggable
                                         key={`item-${index}`}
                                         draggableId={`item-${index}`}
                                         index={index}
@@ -191,11 +197,11 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                 style={getItemStyle(
                                                     snapshot.isDragging,
                                                     provided.draggableProps.style
-                                                )} 
+                                                )}
                                             >
-                                                <Grid className="alternate-actions" direction="row" alignItems="start" justifyContent="space-between">
-                                                    <OpenWith className="padding-1"/>
-                                                    <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete/></IconButton>
+                                                <Grid className="alternate-actions" container direction="row" alignItems="start" justifyContent="space-between">
+                                                    <OpenWith className="padding-1" />
+                                                    <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
                                                 <img className="image" height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                             </Paper>

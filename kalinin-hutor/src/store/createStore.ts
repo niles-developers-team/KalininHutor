@@ -11,6 +11,12 @@ import { notificationReducer } from "./notificationStore";
 import { roomCharacteristicReducer } from "./roomCharacteristicStore";
 import { roomVariantReducer } from "./roomVariantStore";
 
+// export default configureStore({
+//     reducer: {
+//         rentalObjectsState: rentalObjectReducer
+//     }
+// });
+
 
 export default function configureAppStore(): Store<AppState> {
     const middlewares = [thunkMiddleware];

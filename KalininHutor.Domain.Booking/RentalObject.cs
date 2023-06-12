@@ -78,11 +78,12 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
             throw new ApplicationException("Не указано описание.");
     }
 
-    public void SetInfo(string name, string description)
+    public void SetInfo(string name, string description, string address)
     {
         CheckInfo(name, description);
         Name = name;
         Description = description;
+        Address = address;
     }
 
     public void SetCheckTime(TimeOnly checkinTime, TimeOnly checkoutTime)

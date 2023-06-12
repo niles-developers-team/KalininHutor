@@ -32,16 +32,16 @@ public class RentalObjectBestDemandDTO
     ///<summary> Индентификатор объекта аренды </summary>
     public Guid RentalObjectId { get; set; }
     ///<summary> Количество взрослых </summary>
-    public int AdultsCount { get; protected set; }
+    public int? AdultsCount { get; protected set; }
     ///<summary> Количество детей </summary>
-    public int ChildsCount { get; protected set; }
+    public int? ChildsCount { get; protected set; }
     ///<summary> Количество ночей </summary>
     public int NightsCount { get; protected set; }
     ///<summary> Цена за предложение </summary>
     public decimal Price { get; protected set; }
 
     ///<summary> Конструктор </summary>
-    public RentalObjectBestDemandDTO(Guid rentalObjectId, int adultsCount, int childsCount, int nightsCount, decimal price)
+    public RentalObjectBestDemandDTO(Guid rentalObjectId, int? adultsCount, int? childsCount, int nightsCount, decimal price)
     {
         RentalObjectId = rentalObjectId;
         AdultsCount = adultsCount;
