@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks"
 import { BookingStatuses } from "../../models";
 import { AppState, BookingActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { BookingRoomVariantInfo } from "../rentalObjects/BookingRoomVariantInfo";
+import { appName } from "../..";
 
 export const MyBookingsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -20,6 +21,8 @@ export const MyBookingsComponent = function (): JSX.Element {
 
     const bookings = bookingState.models || [];
     const characteristics = roomCharacteristicState.models || [];
+
+    document.title = `${appName} / Мои бронирования`;
 
     return (
         <Stack>

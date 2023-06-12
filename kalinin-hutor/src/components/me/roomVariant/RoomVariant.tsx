@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ArrowBack, Delete, OpenWith } from "@mui/icons-material";
 import { RoomVariantActions } from "../../../store/roomVariantStore";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
+import { appName } from "../../..";
 
 
 
@@ -32,7 +33,7 @@ export const RoomVariantComponent = function (): JSX.Element {
     const navigate = useNavigate();
     const fileInput = createRef<HTMLInputElement>();
     const { id, rentalObjectId } = useParams();
-    const { roomCharacteristicState, roomVariantState } = useAppSelector((state: AppState) => state);
+    const { roomCharacteristicState, roomVariantState, rentalObjectState } = useAppSelector((state: AppState) => state);
     const [characteristicSearch, setCharacteristicSearch] = useState<string>();
     const debouncedSearch = useDebounce(characteristicSearch, 500);
 
@@ -166,6 +167,8 @@ export const RoomVariantComponent = function (): JSX.Element {
         return (<Typography></Typography>);
 
     const roomVariant = roomVariantState.model;
+
+    document.title = `${appName} / Личный Кабинет / ${rentalObjectState.model?.name || 'Новый объект аренды'} / ${roomVariant.name}`;
 
     return (
         <Stack spacing={2}>
