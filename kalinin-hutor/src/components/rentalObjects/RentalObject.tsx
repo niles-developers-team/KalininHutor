@@ -186,6 +186,8 @@ export const RentalObjectComponent = function (): JSX.Element {
             checkinDate: startDate,
             checkoutDate: endDate
         }));
+        
+        setDatesAnchorEl(null);
     }
 
     if (!rentalObjectState.model) {
@@ -268,7 +270,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             onClose={() => setDatesAnchorEl(null)}
                             startDate={booking?.checkinDate}
                             endDate={booking?.checkoutDate}
-                            onDatesChanged={handleDatesChanged}
+                            onConfirm={handleDatesChanged}
+                            onDiscard={() => setDatesAnchorEl(null)}
                         />
                         <VisitorsPopoverComponent
                             id={personsPopoverId}
