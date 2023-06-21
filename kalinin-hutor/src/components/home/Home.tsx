@@ -8,6 +8,7 @@ import moment from "moment";
 import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from "../rentalObjects/RentalObjectInfo";
 import { RentalObjectsBaseFilterComponent } from "../rentalObjects/RentalObjectsFilter";
 import { useQuery } from "../../hooks/useQuery";
+import { appName } from "../..";
 
 
 export const HomeComponent = function (): JSX.Element {
@@ -55,9 +56,11 @@ export const HomeComponent = function (): JSX.Element {
         top10RentalObjects = Array.from(new Array(10));
     }
 
+    document.title = appName;
+
     return (
         <Stack width="100%">
-            <Typography variant="h4">Найдите жилье для вашего отдыха</Typography>
+            <Typography variant="h5">Найдите жилье для вашего отдыха</Typography>
             <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={setFilter} />
             <Grid item xs container spacing={{ xs: 2 }} columns={{ xs: 10 }} alignItems="center">
                 {top10RentalObjects.map((ro, index) =>

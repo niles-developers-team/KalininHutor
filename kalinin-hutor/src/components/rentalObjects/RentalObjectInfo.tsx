@@ -23,7 +23,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
     }
 
     return (
-        <Stack padding={2} spacing={2}>
+        <Paper>
             {model.photos.length ? (
                 <Grid
                     onMouseEnter={() => setSliding(true)}
@@ -36,7 +36,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img style={{ width: '100%', objectFit: 'contain' }}src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                     </Carousel>
                 </Grid>
             ) : (
@@ -44,10 +44,12 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                     <Skeleton variant="rectangular" width={200} height={200} />
                 </Paper>
             )}
-            <Typography variant="h6">{model.name}</Typography>
-            <Typography variant="caption">{model.address}</Typography>
-            <Button onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
-        </Stack>
+            <Stack paddingX={2} paddingBottom={1} spacing={2}>
+                <Typography variant="h6">{model.name}</Typography>
+                <Typography variant="caption">{model.address}</Typography>
+                <Button onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
+            </Stack>
+        </Paper>
     );
 }
 

@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions } from "../../store";
 import { BookingDetailsComponent } from "./BookingDetails";
 import { BookingRoomVariantInfo } from "./BookingRoomVariantInfo";
+import { appName } from "../..";
 
 export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -60,12 +61,17 @@ export const BookingComponent = function (): JSX.Element {
     if (!bookingState.model)
         return (<Typography>Ошибка при бронировании</Typography>);
 
+    if (rentalObjectState.modelLoading === true)
+        return (<Typography>Не найден объект аренды</Typography>);
+
     const model: Booking = bookingState.model;
-    const rentalObject: RentalObject | undefined = rentalObjectState.model;
+    const rentalObject: RentalObject = rentalObjectState.model;
     const roomVariants: RoomVariant[] = roomVariantState.models || [];
     const characteristics: RoomCharacteristic[] = roomCharacteristicState.models || [];
 
     const nightsCount = moment(model.checkoutDate).dayOfYear() - moment(model.checkinDate).dayOfYear();
+
+    document.title = `${appName} / ${rentalObject.name} / Подтверждение бронирования`;
 
     return (
         <Stack>

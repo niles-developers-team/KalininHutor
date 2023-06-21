@@ -11,6 +11,7 @@ import { EntityStatus, RentalObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { RoomVariantActions } from "../../store/roomVariantStore";
+import { appName } from "../..";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -136,6 +137,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
 
     const model: RentalObject = rentalObjectState.model;
     const roomVariants = model.roomVariants.filter(o => o.entityStatus !== EntityStatus.Deleted) || [];
+
+    document.title = `${appName} / Личный Кабинет / ${model.name || 'Новый объект аренды'}`;
 
     return (
         <Stack spacing={2}>

@@ -14,6 +14,7 @@ import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
 import { BookingDetailsDialog } from "./BookingDetailsDialog";
 import { MyNotificationsComponent } from "./notifications/MyNotifications";
 import { v4 as guid } from 'uuid';
+import { appName } from "../..";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ export const MeComponent = function (): JSX.Element {
     useEffect(() => {
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
         dispatch(UserActions.getCurrentUser());
+        document.title = `${appName} / Личный кабинет`;
     }, []);
 
     function handlePhoneNumberChanged(event: React.ChangeEvent<HTMLInputElement>) {
