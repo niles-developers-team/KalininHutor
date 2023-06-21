@@ -8,7 +8,7 @@ jobs:
   client-build:
     env: 
       CI: false
-    runs-on: windows-2019
+    runs-on: prod
     defaults:
       run:
         working-directory: ./kalinin-hutor
@@ -64,7 +64,7 @@ jobs:
         run: curl http://localhost:3000
 
   api-build:
-    runs-on: windows-2019
+    runs-on: prod
     defaults:
       run:
         working-directory: ./KalininHutor.API
