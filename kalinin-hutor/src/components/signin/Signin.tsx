@@ -67,16 +67,15 @@ export const SigninDialog = function (props: DialogProps) {
 
     return (
         <Dialog open={props.isOpen} maxWidth="xs" onClose={props.onClose}>
-            <DialogTitle>KALININ HUTOR</DialogTitle>
             <DialogContent>
+            <Typography variant="h5">Добро пожаловать!</Typography>
                 <Grid container direction="column">
-                    <Typography>Введите свой номер телефона и пароль, чтобы войти</Typography>
                     <TextField
                         value={phoneNumber}
                         onChange={handlePhoneNumberChange}
-                        margin="normal"
-                        variant="outlined"
-                        placeholder="Телефон"
+                        margin="normal" variant="standard"
+                        label="Введите телефон"
+                        InputLabelProps={{ shrink: true, }}
                         InputProps={{
                             startAdornment: <InputAdornment position="start">+7</InputAdornment>,
                             inputComponent: PhoneMaskCustom as any
@@ -85,16 +84,16 @@ export const SigninDialog = function (props: DialogProps) {
                     <TextField
                         value={password}
                         onChange={handlePasswordChange}
-                        margin="normal"
-                        variant="outlined"
-                        placeholder="Пароль"
+                        margin="normal" variant="standard"
+                        label="Введите пароль"
+                        placeholder="*****"
                         type="password"
-                        InputProps={{
-                            inputComponent: PasswordMaskCustom as any
-                        }}
+                        InputLabelProps={{ shrink: true, }}
+                        InputProps={{ inputComponent: PasswordMaskCustom as any }}
                     />
                     <LoadingButton
-                        onClick={handleSignin}
+                        onClick={handleSignin}    
+                        className="margin-top-1"                  
                         variant="contained"
                         color="primary">Войти</LoadingButton >
                 </Grid>

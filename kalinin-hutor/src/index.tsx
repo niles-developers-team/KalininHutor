@@ -16,6 +16,7 @@ import { ruRU } from "@mui/x-data-grid";
 import './index.css';
 import './themes/bootstrap.scss';
 import './themes/paddings.scss';
+import './themes/margins.scss';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -31,6 +32,9 @@ const theme = createTheme(
   {
     palette: {
       primary: { main: '#1976d2' },
+      background: {
+        default: '#e3e3e3'
+      }
     },
   },
   ruRU,
@@ -41,15 +45,15 @@ export const appName = 'Калини Хутор';
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-    <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <Provider store={store}>
-          <BrowserRouter>
-            <RoutesSwitch />
-          </BrowserRouter>
-        </Provider>
-      </LocalizationProvider>
-    </ThemeProvider>
+  <ThemeProvider theme={theme}>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <RoutesSwitch />
+        </BrowserRouter>
+      </Provider>
+    </LocalizationProvider>
+  </ThemeProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

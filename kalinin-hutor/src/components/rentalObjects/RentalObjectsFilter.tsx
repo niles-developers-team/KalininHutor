@@ -77,10 +77,12 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
             checkinDate: startDate,
             checkoutDate: endDate
         });
+        
+        setDatesAnchorEl(null);
     }
 
     return (
-        <Grid>
+        <Grid margin={1}>
             <Stack direction="row" spacing={2} divider={<Divider orientation="vertical" flexItem />} alignItems="center">
                 <Grid xs item>
                     <Stack direction="row" alignItems="center" spacing={1}>
@@ -111,7 +113,8 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
                 onClose={() => setDatesAnchorEl(null)}
                 startDate={filter.checkinDate}
                 endDate={filter.checkoutDate}
-                onDatesChanged={handleDatesChanged}
+                onConfirm={handleDatesChanged}
+                onDiscard={() => setDatesAnchorEl(null)}
             />
             <VisitorsPopoverComponent
                 id={personsPopoverId}
