@@ -5,10 +5,33 @@ on:
     branches: [ "master" ]
 
 jobs:
+  clear-artifacts:    
+    runs-on: windows-2019
+    steps:    
+    - name: Delete Old Artifacts
+      uses: actions/github-script@v6
+      id: artifact
+      with:
+        script: |
+          const res = await github.rest.actions.listArtifactsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+
+          res.data.artifacts
+            .forEach(({ id }) => {
+              github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: id,
+              })
+            })
+  
   client-build:
+    needs: clear-artifacts
     env: 
       CI: false
-    runs-on: prod
+    runs-on: windows-2019
     defaults:
       run:
         working-directory: ./kalinin-hutor
@@ -64,7 +87,8 @@ jobs:
         run: curl http://localhost:3000
 
   api-build:
-    runs-on: prod
+    needs: clear-artifacts
+    runs-on: windows-2019
     defaults:
       run:
         working-directory: ./KalininHutor.API
