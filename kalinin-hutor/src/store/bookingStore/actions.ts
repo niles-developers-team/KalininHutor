@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, EntityStatus, NotificationVariant } from "../../models";
+import { ApplicationError, Booking, BookingStatuses, EntityStatus, NotificationVariant } from "../../models";
 import { bookingService } from "../../services/bookingService";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
@@ -196,25 +196,42 @@ export namespace BookingActions {
         }
     }
 
-    export function createDraft(draft: Booking): AppThunkAction<CreateDraftAction> {
+    export function createDraft(): AppThunkAction<CreateDraftAction | ClearEditionStateAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { userState } = getState();
+            const { userState, rentalObjectState } = getState();
 
-            if (!draft.id) {
-                draft.id = uuidv4();
-                draft.entityStatus = EntityStatus.Draft;
+
+            if (userState.currentUser === undefined) {
+                dispatch(NotificationActions.showSnackbar("Попытка создать бронь неавторизованным пользователем", NotificationVariant.error));
+                return { type: ActionTypes.clearEditionState };
             }
 
-            if (userState.authenticating === false && userState.currentUser) {
-                draft.tenant = userState.currentUser;
+            if(!rentalObjectState.model){
+                dispatch(NotificationActions.showSnackbar("Попытка создать бронь в неизвестном объекте аренды", NotificationVariant.error));
+                return { type: ActionTypes.clearEditionState };
             }
+
+            const draft: Booking = {
+                id: uuidv4(),
+                entityStatus: EntityStatus.Draft,
+                tenant: userState.currentUser,
+                adultCount: 1,
+                checkinDate: moment().format('YYYY-MM-DD'),
+                checkoutDate: moment().add(10, 'days').format('YYYY-MM-DD'),
+                childCount: 0,
+                number: 0,
+                rentalObject: rentalObjectState.model,
+                roomVariants: [],
+                status: BookingStatuses.Draft,
+                total: 0
+            };
 
             localStorageService.set(draftName, draft);
-            return dispatch({ type: ActionTypes.createDraft, draft: draft });
+            return dispatch({ type: ActionTypes.createDraft, draft });
         }
     }
 
-    export function updateDraft(draft: Booking): AppThunkAction<UpdateDraftAction> {
+    export function saveDraft(draft: Booking): AppThunkAction<UpdateDraftAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
             const search = createSearchParams();
@@ -295,7 +312,7 @@ export namespace BookingActions {
         }
     }
 
-    export function getDraft(): AppThunkAction<GetSuccessAction> {
+    export function getDraft(): AppThunkAction<GetSuccessAction | CreateDraftAction | ClearEditionStateAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { bookingState } = getState();
 
@@ -304,6 +321,9 @@ export namespace BookingActions {
             }
 
             const draft = localStorageService.get<Booking>(draftName);
+            if(!draft)
+                return dispatch(createDraft());
+
             return dispatch({ type: ActionTypes.getBookingSuccess, booking: draft });
         }
     }
