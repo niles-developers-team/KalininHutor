@@ -54,7 +54,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
 
     const { id } = useParams();
 
-    useEffect(() => { init(); }, [id]);
+    useEffect(() => { init(); }, [id, userState.currentUser !== undefined]);
 
     async function init() {
         if (id === 'create' || !id) {
@@ -82,8 +82,6 @@ export const MyRentalObjectComponent = function (): JSX.Element {
     }
 
     async function handleDiscard() {
-        if (model.entityStatus === EntityStatus.Draft)
-            navigate(`/me/rental-objects/${id}`);
         dispatch(RentalObjectActions.clearEditionState());
         dispatch(RentalObjectActions.getRentalObject(model.id));
     }
@@ -148,10 +146,10 @@ export const MyRentalObjectComponent = function (): JSX.Element {
             </Stack>
             <Stack direction="row" spacing={2}>
                 <Stack spacing={3}>
-                    <TextField disabled={loading} label="Название" value={model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.updateDraft({ ...model, name: event.target.value }))} />
-                    <TextField disabled={loading} label="Адрес" value={model.address} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.updateDraft({ ...model, address: event.target.value }))} />
+                    <TextField disabled={loading} label="Название" value={model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, name: event.target.value }))} />
+                    <TextField disabled={loading} label="Адрес" value={model.address} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, address: event.target.value }))} />
                 </Stack>
-                <TextField disabled={loading} label="Описание" value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.updateDraft({ ...model, description: event.target.value }))}
+                <TextField disabled={loading} label="Описание" value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, description: event.target.value }))}
                     multiline
                     rows={5} />
             </Stack>
@@ -162,14 +160,14 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         disabled={loading}
                         label="Время заезда"
                         value={moment(model.checkinTime, 'hh:mm:ss')}
-                        onChange={(value: string | null) => { dispatch(RentalObjectActions.updateDraft({ ...model, checkinTime: value || '12:00' })) }}
+                        onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkinTime: value || '12:00' })) }}
                         renderInput={(params) => <TextField {...params} />}
                     />
                     <TimePicker
                         disabled={loading}
                         label="Время отъезда"
                         value={moment(model.checkoutTime, 'hh:mm:ss')}
-                        onChange={(value: string | null) => { dispatch(RentalObjectActions.updateDraft({ ...model, checkoutTime: value || '12:00' })) }}
+                        onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkoutTime: value || '12:00' })) }}
                         renderInput={(params) => <TextField {...params} />}
                     />
                 </Stack>

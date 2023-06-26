@@ -52,28 +52,11 @@ export const RentalObjectComponent = function (): JSX.Element {
         if (rentalObjectState.modelLoading)
             return;
         var result = dispatch(BookingActions.getDraft());
-        if (result.booking)
-            return;
 
         const adultsCount = parseInt(query.get('adultsCount') || '') || 1;
         const childsCount = parseInt(query.get('childsCount') || '') || 0;
         const checkinDate = query.get('checkinDate') || undefined;
         const checkoutDate = query.get('checkoutDate') || undefined;
-
-        dispatch(BookingActions.createDraft({
-            rentalObject: model,
-            adultCount: adultsCount,
-            checkinDate: checkinDate || moment().format('YYYY-MM-DD'),
-            checkoutDate: checkoutDate || moment().add(10, 'days').format('YYYY-MM-DD'),
-            childCount: childsCount,
-            entityStatus: EntityStatus.Draft,
-            total: 0,
-            number: 0,
-            status: BookingStatuses.Draft,
-            tenant: User.initial,
-            roomVariants: []
-        }));
-
     }, [rentalObjectState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
@@ -109,7 +92,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             bookingRoomVariants = bookingRoomVariants.filter(o => o.roomVariantId !== roomVariantId);
         }
 
-        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants }));
+        dispatch(BookingActions.saveDraft({ ...booking, roomVariants: bookingRoomVariants }));
     }
 
     function formatRoomVariants() {
@@ -163,7 +146,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         setSpecifyBedsRoomVariant(undefined);
         setSpecifyBedsOpen(false);
-        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants }));
+        dispatch(BookingActions.saveDraft({ ...booking, roomVariants: bookingRoomVariants }));
     }
 
     function handleCreateBooking() {
@@ -181,7 +164,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             return;
         }
 
-        dispatch(BookingActions.updateDraft({
+        dispatch(BookingActions.saveDraft({
             ...booking,
             checkinDate: startDate,
             checkoutDate: endDate
@@ -281,8 +264,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             onClose={() => setPersonsAnchorEl(null)}
                             adultsCount={booking?.adultCount || 0}
                             childsCount={booking?.childCount || 0}
-                            onAdultsCountChanged={(adultsCount: number) => dispatch(BookingActions.updateDraft({ ...booking, adultCount: adultsCount }))}
-                            onChildsCountChanged={(childsCount: number) => dispatch(BookingActions.updateDraft({ ...booking, childCount: childsCount }))}
+                            onAdultsCountChanged={(adultsCount: number) => dispatch(BookingActions.saveDraft({ ...booking, adultCount: adultsCount }))}
+                            onChildsCountChanged={(childsCount: number) => dispatch(BookingActions.saveDraft({ ...booking, childCount: childsCount }))}
                         />
                     </Paper>
                     <Button variant="outlined" color="success" size="small" disabled={!booking?.roomVariants?.length} onClick={handleCreateBooking}>Забронировать</Button>
