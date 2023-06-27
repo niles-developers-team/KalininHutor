@@ -397,9 +397,12 @@ export namespace RoomVariantActions {
                     description: model.roomCharacteristic.description,
                     name: model.roomCharacteristic.name,
                     type: model.roomCharacteristic.type
-                }))
-                if (result.type === RoomCharacteristicActionTypes.createSuccess)
+                }));
+
+                if (result.type !== RoomCharacteristicActionTypes.createFailure) {
+                    console.log('получилось');
                     model.roomCharacteristic = result.model;
+                }
             }
 
             model.roomVariantId = roomVariant.id;

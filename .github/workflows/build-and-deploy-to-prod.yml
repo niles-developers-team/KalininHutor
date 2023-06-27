@@ -61,7 +61,7 @@ jobs:
           Start-WebAppPool -Name "KalininKhutor.Client"
                     
       - name: Curl the website as a smoke test
-        run: curl http://localhost:3000
+        run: curl https://localhost
 
   api-build:
     runs-on: windows-2019
@@ -125,4 +125,4 @@ jobs:
           Start-WebAppPool -Name "KalininKhutor.API"
           
       - name: Curl the website as a smoke test
-        run: curl http://localhost:5207
+        run: curl https://localhost:7294
