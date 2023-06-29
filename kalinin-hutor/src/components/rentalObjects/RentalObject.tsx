@@ -45,7 +45,6 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         dispatch(RentalObjectActions.getRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
-        dispatch(RoomVariantActions.getRoomVariants(id));
     }, []);
 
     useEffect(() => {

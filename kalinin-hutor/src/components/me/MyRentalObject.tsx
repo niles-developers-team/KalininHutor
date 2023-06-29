@@ -61,7 +61,6 @@ export const MyRentalObjectComponent = function (): JSX.Element {
             dispatch(RentalObjectActions.getDraft());
         } else {
             await dispatch(RentalObjectActions.getRentalObject(id));
-            await dispatch(RoomVariantActions.getRoomVariants(id));
         }
     }
 
@@ -226,6 +225,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                     rows={roomVariants}
                     columns={columns}
                     pageSize={5}
+                    rowsPerPageOptions={[5]}
                     loading={loading}
                     disableSelectionOnClick
                     disableColumnFilter
