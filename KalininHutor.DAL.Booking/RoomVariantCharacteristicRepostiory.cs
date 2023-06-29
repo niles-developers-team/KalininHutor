@@ -1,3 +1,4 @@
+using Dapper;
 using DapperQueryBuilder;
 using KalininHutor.DAL.Common;
 using Microsoft.Extensions.Logging;
@@ -66,11 +67,8 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
 
         var query = connection.QueryBuilder($@"
             select 
-                rvch.Id, 
-                rvch.RoomVariantId, 
-                rvch.RoomCharacteristicId, 
-                ch.Name as RoomCharacteristicName,
-                rvch.Price
+                rvch.*,
+                ch.*
             from RoomVariantCharacteristics rvch
             inner join RoomCharacteristics ch on rvch.RoomCharacteristicId = ch.Id
             /**where**/
@@ -82,7 +80,18 @@ public class RoomVariantCharacteristicRepository : BaseRepository<RoomVariantCha
         if (options.RoomsVariantsIds != null)
             query.Where($"RoomVariantId = any({options.RoomsVariantsIds})");
 
-        return await query.QueryAsync<RoomVariantCharacteristicEntity>();
+        return await connection.QueryAsync<RoomVariantCharacteristicEntity, RoomCharacteristicEntity, RoomVariantCharacteristicEntity>(
+            query.Sql, 
+            (rvch, ch) => {
+                return new RoomVariantCharacteristicEntity{
+                    Id = rvch.Id,
+                    Price = rvch.Price,
+                    RoomVariantId = rvch.RoomVariantId,
+                    RoomCharacteristic = ch,
+                    RoomCharacteristicId = ch.Id,
+                    RoomCharacteristicName = ch.Name
+                };
+        }, param: query.Parameters);
     }
 
     public override async Task<RoomVariantCharacteristicEntity> Get(Guid id)

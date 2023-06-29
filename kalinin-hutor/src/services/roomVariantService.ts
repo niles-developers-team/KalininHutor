@@ -28,6 +28,8 @@ class RoomVariantService {
         if (query) {
             if (query.rentalObjectId)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}rentalObjectId=${query.rentalObjectId}`;
+            if(query.id)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}id=${query.id}`;
         }
 
         return fetch(url, {

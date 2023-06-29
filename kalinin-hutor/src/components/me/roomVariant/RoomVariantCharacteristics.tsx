@@ -25,8 +25,7 @@ export const RoomVariantCharacteristicsComponent = function (props: Props) {
         {
             field: 'type', sortable: false, type: "string", headerName: 'Тип', flex: 1, valueGetter: (o) => {
                 const value = (o.row as RoomVariantCharacteristic);
-                const characteristic = props.characteristics.find(o => o.id === value.roomCharacteristicId);
-                return CharacteristicTypes.getDescription(characteristic?.type);
+                return CharacteristicTypes.getDescription(value.roomCharacteristic.type);
             }
         },
         { field: 'name', sortable: false, type: "string", headerName: 'Название', flex: 1, valueGetter: (o) => (o.row as RoomVariantCharacteristic).roomCharacteristic?.name },

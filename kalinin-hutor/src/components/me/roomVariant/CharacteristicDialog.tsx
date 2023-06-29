@@ -7,6 +7,7 @@ interface CharacteristicDialogProps {
     open: boolean;
     model: RoomVariantCharacteristic;
     characteristics: RoomCharacteristic[];
+    search: string;
     searching: boolean;
     onSearch: (searchText: string) => void;
     onDiscard: () => void;
@@ -21,7 +22,7 @@ export const CharacteristicDialog = function (props: CharacteristicDialogProps):
     useEffect(() => {
         setModel({ ...props.model });
         setSelectOrAddCharacteristic(true);
-        setRoomCharacteristic({ ...RoomCharacteristic.initial });
+        setRoomCharacteristic(props.model?.roomCharacteristic ? { ...props.model.roomCharacteristic } : { ...RoomCharacteristic.initial });
     }, [props.model, props.open]);
 
     function handleCharacteristicChanged(event: React.SyntheticEvent<Element, Event>, value: RoomCharacteristic | null) {
@@ -61,9 +62,14 @@ export const CharacteristicDialog = function (props: CharacteristicDialogProps):
         props.onSearch(value);
     }
 
+    function handleCreateRoomCharacteristic() {
+        setSelectOrAddCharacteristic(false);
+        setRoomCharacteristic({ ...roomCharacteristic, name: props.search })
+    }
+
     const NotFoundCharacteristic = (
         <Stack direction="row" spacing={2}>
-            <Typography>Не найдено услуг или сервисов, <Button onClick={() => setSelectOrAddCharacteristic(false)}>добавить</Button>?</Typography>
+            <Typography>Не найдено услуг или сервисов, <Button onClick={handleCreateRoomCharacteristic}>добавить</Button>?</Typography>
         </Stack>
     );
 
@@ -84,7 +90,7 @@ export const CharacteristicDialog = function (props: CharacteristicDialogProps):
                                 noOptionsText={NotFoundCharacteristic}
                                 value={model.roomCharacteristic}
                                 options={props.characteristics}
-                                isOptionEqualToValue={(option, value) => (option === null || value === null) ? false : option.name.includes(value.name)}
+                                isOptionEqualToValue={(option, value) => (!option?.name || !value?.name) ? false : option.name.includes(value.name)}
                                 onChange={handleCharacteristicChanged}
                                 onInputChange={handleSearch}
                                 groupBy={(option) => CharacteristicTypes.getDescription(option.type)}

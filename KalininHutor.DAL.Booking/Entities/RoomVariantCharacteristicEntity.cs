@@ -2,11 +2,13 @@ namespace KalininHutor.DAL.Booking;
 
 public class RoomVariantCharacteristicEntity
 {
-    public Guid Id { get; protected set; }
-    public Guid RoomVariantId { get; protected set; }
-    public Guid RoomCharacteristicId { get; protected set; }
-    public string RoomCharacteristicName { get; protected set; } = string.Empty;
-    public decimal Price { get; protected set; }
+    public Guid Id { get; set; }
+    public Guid RoomVariantId { get; set; }
+    public Guid RoomCharacteristicId { get; set; }
+    public string RoomCharacteristicName { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+
+    public RoomCharacteristicEntity RoomCharacteristic { get; set; }
 }
 
 public class RoomVariantCharacteristicSearchOptions
