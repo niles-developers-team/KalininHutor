@@ -57,6 +57,7 @@ export const RoomVariantCharacteristicsComponent = function (props: Props) {
                 rows={props.models}
                 columns={columns}
                 pageSize={10}
+                rowsPerPageOptions={[10]}
                 loading={props.loading}
                 checkboxSelection={false}
                 disableSelectionOnClick
