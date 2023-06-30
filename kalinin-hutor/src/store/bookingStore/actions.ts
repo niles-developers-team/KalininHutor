@@ -256,7 +256,7 @@ export namespace BookingActions {
             const roomVariants = draft.roomVariants.map(o => ({ ...o, amount: o.price * o.roomsCount * nightsCount }));
             const total = roomVariants.reduce((sum, curr) => sum += curr.amount, 0);
 
-            localStorageService.set(draftName, draft);
+            localStorageService.set(draftName, { ...draft, total: total, roomVariants: roomVariants });
             return dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, total: total, roomVariants: roomVariants } });
         }
     }

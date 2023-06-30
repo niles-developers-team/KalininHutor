@@ -45,18 +45,9 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         dispatch(RentalObjectActions.getRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+
+        dispatch(BookingActions.getDraft())
     }, []);
-
-    useEffect(() => {
-        if (rentalObjectState.modelLoading)
-            return;
-        var result = dispatch(BookingActions.getDraft());
-
-        const adultsCount = parseInt(query.get('adultsCount') || '') || 1;
-        const childsCount = parseInt(query.get('childsCount') || '') || 0;
-        const checkinDate = query.get('checkinDate') || undefined;
-        const checkoutDate = query.get('checkoutDate') || undefined;
-    }, [rentalObjectState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)
@@ -183,7 +174,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     const booking: Booking = bookingState.model;
-    const roomVariants: RoomVariant[] = roomVariantState.models || [];
+    const roomVariants: RoomVariant[] = model.roomVariants || [];
 
     const roomCharacteristics = roomCharacteristicState.models || [];
 
@@ -216,7 +207,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                                     </Stack>
                                 </Stack>
                             </Button>
-                            <Typography variant="subtitle1"><b>Длительность проживания:</b></Typography>
+                            <Typography variant="body2"><b>Длительность проживания:</b></Typography>
                             <Typography> {nightsCount} {pluralize(nightsCount, 'ночь', 'ночи', 'ночей')}</Typography>
                             <Divider flexItem />
                             <Button
@@ -225,8 +216,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             >
                                 <Stack direction="row" alignItems="center" spacing={1}>
                                     <People color="disabled" />
-                                    <Typography>Взрослых: {booking?.adultCount}</Typography>
-                                    <Typography>Детей: {booking?.childCount}</Typography>
+                                    <Typography variant="body2">Взрослых: {booking?.adultCount}</Typography>
+                                    <Typography variant="body2">Детей: {booking?.childCount}</Typography>
                                 </Stack>
                             </Button>
                             <Divider flexItem />
