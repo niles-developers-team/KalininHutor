@@ -51,6 +51,7 @@ export const RoomVariantBedTypesComponent = function (props: Props) {
                 rows={props.models}
                 columns={columns}
                 pageSize={5}
+                rowsPerPageOptions={[5]}
                 loading={props.loading}
                 checkboxSelection={false}
                 disableSelectionOnClick

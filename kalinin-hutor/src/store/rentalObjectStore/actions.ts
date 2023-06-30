@@ -148,7 +148,7 @@ export namespace RentalObjectActions {
             }
 
             const draft = localStorageService.get<RentalObject>(draftName);
-            if(!draft)
+            if (!draft)
                 return dispatch(createDraft());
 
             return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
@@ -189,7 +189,8 @@ export namespace RentalObjectActions {
             if (!draft.id) {
                 draft.id = uuidv4();
                 draft.entityStatus = EntityStatus.Draft;
-            }
+            } else
+                draft.entityStatus = EntityStatus.Updated;
 
             if (userState.authenticating === false && userState.currentUser) {
                 draft.landlord = userState.currentUser;

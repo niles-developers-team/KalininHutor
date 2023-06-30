@@ -93,7 +93,7 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
                 <Button aria-describedby={personsPopoverId} onClick={(event) => setPersonsAnchorEl(personsAnchorEl ? null : event.currentTarget)}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <People color="disabled" />
-                        <Typography>Взрослых: {filter.adultsCount}</Typography>
+                        <Typography variant="body2">Взрослых: {filter.adultsCount}</Typography>
                         <Typography>Детей: {filter.childsCount}</Typography>
                     </Stack>
                 </Button>

@@ -47,6 +47,7 @@ export const MyNotificationsComponent = function (props: Props): JSX.Element {
                 rows={props.notifications}
                 columns={columns}
                 pageSize={5}
+                rowsPerPageOptions={[5]}
                 disableSelectionOnClick
                 disableColumnFilter
                 disableColumnMenu
