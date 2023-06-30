@@ -40,14 +40,19 @@ export const RentalObjectComponent = function (): JSX.Element {
     const datesPopoverId = datesPopoverOpen ? 'dates-popover' : undefined;
 
     useEffect(() => {
-        if (!id)
+        if (!id || !userState.currentUser)
             return;
 
         dispatch(RentalObjectActions.getRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
-
-        dispatch(BookingActions.getDraft())
     }, [userState.currentUser !== undefined]);
+
+    useEffect(() => {
+        if(!rentalObjectState.model)
+        return;
+
+        dispatch(BookingActions.getDraft());
+    }, [rentalObjectState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)

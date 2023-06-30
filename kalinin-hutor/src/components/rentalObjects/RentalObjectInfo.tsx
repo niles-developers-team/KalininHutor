@@ -42,7 +42,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                 </Grid>
             ) : (
                 <Paper variant="outlined">
-                    <Skeleton variant="rectangular" width={200} height={200} />
+                    <Skeleton variant="rectangular" width='100%' height={200} />
                 </Paper>
             )}
             <Stack paddingX={2} paddingBottom={1} spacing={2}>
