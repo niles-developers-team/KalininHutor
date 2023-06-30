@@ -21,7 +21,7 @@ const imageStyle: CSSProperties = {
 };
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const { roomCharacteristicState, roomVariantState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
+    const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     const query = useQuery();
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
 
         dispatch(BookingActions.getDraft())
-    }, []);
+    }, [userState.currentUser !== undefined]);
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)

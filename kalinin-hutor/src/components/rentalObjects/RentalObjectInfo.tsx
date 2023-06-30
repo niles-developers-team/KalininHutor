@@ -26,6 +26,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
         <Paper>
             {model.photos.length ? (
                 <Grid
+                style={{height: '200px', maxHeight: '200px'}}
                     onMouseEnter={() => setSliding(true)}
                     onMouseLeave={() => setSliding(false)}>
                     <Carousel
@@ -36,7 +37,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img style={{ width: '100%', objectFit: 'contain' }}src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img style={{ width: '100%', objectFit: 'contain', maxHeight: '200px' }}src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                     </Carousel>
                 </Grid>
             ) : (
