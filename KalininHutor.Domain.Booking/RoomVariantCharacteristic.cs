@@ -26,7 +26,7 @@ public class RoomVariantCharacteristic : IEntity<Guid>
 
     public void SetPrice(decimal? price)
     {
-        if (price.HasValue && price.Value <= 0)
+        if (price.HasValue && price.Value < 0)
             throw new ArgumentOutOfRangeException("Цена за услугу должна быть больше 0.");
 
         Price = price;

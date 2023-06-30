@@ -165,7 +165,7 @@ export namespace RoomVariantActions {
 
     export function getRoomVariant(id: string | undefined): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { roomVariantState } = getState();
+            const { roomVariantState, rentalObjectState } = getState();
 
             dispatch(request(id));
 
@@ -176,11 +176,11 @@ export namespace RoomVariantActions {
                 if (draft)
                     return dispatch(success(draft));
 
-                if (roomVariantState.modelsLoading) {
+                if (rentalObjectState.modelLoading) {
                     models = await roomVariantService.get({ id });
                 }
                 else {
-                    models = roomVariantState.models;
+                    models = rentalObjectState.model.roomVariants;
                 }
 
                 let model = models.find(o => o.id === id);
@@ -265,7 +265,8 @@ export namespace RoomVariantActions {
             if (!draft.id) {
                 draft.id = uuidv4();
                 draft.entityStatus = EntityStatus.Draft;
-            }
+            } else
+                draft.entityStatus = EntityStatus.Updated;
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
@@ -302,13 +303,14 @@ export namespace RoomVariantActions {
                 if (model.entityStatus === EntityStatus.Updated) {
                     const result = await roomVariantService.update({
                         count: model.count,
-                        createBedTypesRequests: model.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
+                        createBedTypesRequests: model.bedTypes.filter(o=> o.entityStatus === EntityStatus.Draft)
+                        .map<RoomVariantBedType.CreateRequest>(bt => ({
                             bedType: bt.bedType,
                             roomVariantId: bt.roomVariantId || '',
                             length: bt.length,
                             width: bt.width
                         })),
-                        createCharacteristicsRequests: model.characteristics
+                        createCharacteristicsRequests: model.characteristics.filter(o=> o.entityStatus === EntityStatus.Draft)
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
                                 roomCharacteristicId: ch.roomCharacteristicId,
                                 roomVariantId: ch.roomVariantId,
@@ -400,11 +402,11 @@ export namespace RoomVariantActions {
                 }));
 
                 if (result.type !== RoomCharacteristicActionTypes.createFailure) {
-                    console.log('получилось');
                     model.roomCharacteristic = result.model;
                 }
             }
 
+            model.roomCharacteristicId = model.roomCharacteristic.id;
             model.roomVariantId = roomVariant.id;
 
             if (!model.id) {

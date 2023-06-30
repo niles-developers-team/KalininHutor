@@ -90,7 +90,7 @@ export const CharacteristicDialog = function (props: CharacteristicDialogProps):
                                 noOptionsText={NotFoundCharacteristic}
                                 value={model.roomCharacteristic}
                                 options={props.characteristics}
-                                isOptionEqualToValue={(option, value) => (!option?.name || !value?.name) ? false : option.name.includes(value.name)}
+                                isOptionEqualToValue={(option, value) => (option?.name && value?.name) ? option.name.includes(value.name) : false}
                                 onChange={handleCharacteristicChanged}
                                 onInputChange={handleSearch}
                                 groupBy={(option) => CharacteristicTypes.getDescription(option.type)}
