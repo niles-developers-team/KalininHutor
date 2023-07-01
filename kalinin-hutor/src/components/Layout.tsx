@@ -1,4 +1,4 @@
-import { AppBar, Badge, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, alpha, styled, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, Tooltip, alpha, styled, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -141,7 +141,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                         <Toolbar disableGutters>
                             <Stack width='100%' direction="row" spacing={2}>
                                 <Button onClick={() => navigate('/')}>КХ</Button>
-                                <Button onClick={() => navigate('/catalog')}>Каталог</Button>
+                                <Button disabled onClick={() => navigate('/catalog')}>Каталог</Button>
                                 <Search>
                                     <SearchIconWrapper>
                                         <SearchIcon />
@@ -152,33 +152,33 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                                     />
                                 </Search>
                                 <Grid xs />
-                                <IconButton size="small" href="/me" onClick={handleAccountClick}>
-                                    <Grid container direction="column" alignItems="center">
+                                <Tooltip title={profilePageText}>
+                                    <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
                                         {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
                                             <Face />
                                         </Badge>) : (<Face />)}
-                                    </Grid>
-                                </IconButton>
-                                <IconButton size="small" href="/favorite">
-                                    <Grid container direction="column" alignItems="center">
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Избранное'>
+                                    <IconButton disabled size="small" href="/favorite">
                                         <Favorite />
-                                    </Grid>
-                                </IconButton>
-                                <IconButton size="small" href="/my-orders">
-                                    <Grid container direction="column" alignItems="center">
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Заказы'>
+                                    <IconButton disabled size="small" href="/my-orders">
                                         <ShoppingBag />
-                                    </Grid>
-                                </IconButton>
-                                <IconButton size="small" href="/my-bookings">
-                                    <Grid container direction="column" alignItems="center">
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Бронирования'>
+                                    <IconButton color="primary" size="small" href="/my-bookings">
                                         <Gite />
-                                    </Grid>
-                                </IconButton>
-                                <IconButton size="small" href="/cart">
-                                    <Grid container direction="column" alignItems="center">
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Корзина'>
+                                    <IconButton disabled size="small" href="/cart">
                                         <ShoppingCart />
-                                    </Grid>
-                                </IconButton>
+                                    </IconButton>
+                                </Tooltip>
                             </Stack>
                         </Toolbar>
                     </Container>
