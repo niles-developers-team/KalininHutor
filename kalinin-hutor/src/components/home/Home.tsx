@@ -59,7 +59,7 @@ export const HomeComponent = function (): JSX.Element {
     document.title = appName;
 
     return (
-        <Stack width="100%">
+        <Stack width="100%" spacing={1}>
             <Typography variant="h5">Найдите жилье для вашего отдыха</Typography>
             <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={setFilter} />
             <Grid item xs container spacing={{ xs: 2 }} columns={{ xs: 10 }} alignItems="center">
