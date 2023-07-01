@@ -1,5 +1,5 @@
 import { Edit, Delete, ArrowBack, OpenWith } from "@mui/icons-material";
-import { Button, Grid, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Grid, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
@@ -214,23 +214,26 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                     </Droppable>
                 </DragDropContext>
             </Stack>
-            <Stack style={{ height: 400 }}>
+            <Stack>
                 <Stack direction="row">
                     <Typography color="GrayText" variant="h6">Варианты номеров</Typography>
                     <Grid item xs></Grid>
                     <Button disabled={loading} onClick={handleRoomVariantCreate} >Добавить</Button>
                 </Stack>
-                <DataGrid style={{ height: 400 }}
-                    components={{ NoRowsOverlay: NoRoomVariants }}
-                    rows={roomVariants}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    loading={loading}
-                    disableSelectionOnClick
-                    disableColumnFilter
-                    disableColumnMenu
-                />
+                <Card>
+                    <DataGrid
+                        autoHeight
+                        components={{ NoRowsOverlay: NoRoomVariants }}
+                        rows={roomVariants}
+                        columns={columns}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        loading={loading}
+                        disableSelectionOnClick
+                        disableColumnFilter
+                        disableColumnMenu
+                    />
+                </Card>
             </Stack>
             <Stack direction="row">
                 <Grid item xs></Grid>

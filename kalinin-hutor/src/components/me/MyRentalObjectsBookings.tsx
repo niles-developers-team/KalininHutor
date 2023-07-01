@@ -1,5 +1,5 @@
 import { CurrencyRuble, Info } from "@mui/icons-material";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { Button, Card, IconButton, Stack, Typography } from "@mui/material";
 import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Booking } from "../../models";
 
@@ -31,7 +31,7 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
             field: 'tenant', sortable: false, headerName: 'Гость', flex: 1, renderCell: ({ row: o }) => (
                 <Stack>
                     <Typography>{o.tenant.name} {o.tenant.lastname}</Typography>
-                    <Typography>{o.tenant.phoneNumber}</Typography>
+                    <Typography color="GrayText" variant="caption">{o.tenant.phoneNumber}</Typography>
                 </Stack>
             )
         },
@@ -56,19 +56,21 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
     return (
         <Stack spacing={2}>
             <Typography color="GrayText" variant="h6">Не подтвержденные бронирования</Typography>
-            <DataGrid
-                autoHeight
-                components={{
-                    NoRowsOverlay: NoBookings
-                }}
-                rows={bookings}
-                columns={columns}
-                rowsPerPageOptions={[10, 25]}
-                loading={props.loading}
-                disableSelectionOnClick
-                disableColumnFilter
-                disableColumnMenu
-            />
+            <Card style={{ height: '100%' }}>
+                <DataGrid
+                    autoHeight
+                    components={{
+                        NoRowsOverlay: NoBookings
+                    }}
+                    rows={bookings}
+                    columns={columns}
+                    rowsPerPageOptions={[10, 25]}
+                    loading={props.loading}
+                    disableSelectionOnClick
+                    disableColumnFilter
+                    disableColumnMenu
+                />
+            </Card>
         </Stack>
     );
 }

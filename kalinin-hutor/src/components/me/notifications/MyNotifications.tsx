@@ -1,5 +1,5 @@
 import { Circle, MarkEmailRead } from "@mui/icons-material";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { Card, IconButton, Stack, Typography } from "@mui/material";
 import { GridColDef, DataGrid, GridOverlay } from "@mui/x-data-grid";
 import moment from "moment";
 import { Notification } from "../../../models"
@@ -7,6 +7,7 @@ import { Notification } from "../../../models"
 interface Props {
     notifications: Notification[];
     markAsRead: (id: string) => void;
+    loading: boolean;
 }
 
 function NoBookings(): JSX.Element {
@@ -36,22 +37,24 @@ export const MyNotificationsComponent = function (props: Props): JSX.Element {
     ];
 
     return (
-        <Stack spacing={2} style={{ height: 400 }}>
-            <Stack direction="row">
-                <Typography color="GrayText" variant="h6">Уведомления</Typography>
-            </Stack>
-            <DataGrid
-                components={{
-                    NoRowsOverlay: NoBookings
-                }}
-                rows={props.notifications}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-                disableColumnFilter
-                disableColumnMenu
-            />
+        <Stack spacing={2}>
+            <Typography color="GrayText" variant="h6">Уведомления</Typography>
+            <Card style={{ height: '100%' }}>
+                <DataGrid
+                    autoHeight
+                    components={{
+                        NoRowsOverlay: NoBookings
+                    }}
+                    rows={props.notifications}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    loading={props.loading}
+                    disableSelectionOnClick
+                    disableColumnFilter
+                    disableColumnMenu
+                />
+            </Card>
         </Stack>
     );
 }

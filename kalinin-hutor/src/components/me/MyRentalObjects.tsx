@@ -1,7 +1,7 @@
-import { Button, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { RentalObject } from "../../models";
-import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
+import { Button, Card, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
+import { RentalObject } from "../../models";
 
 interface Props {
     models: RentalObject[];
@@ -36,25 +36,28 @@ export const MyRentalObjectsComponent = function (props: Props): JSX.Element {
     ];
 
     return (
-        <Stack spacing={2} style={{ height: 400 }}>
+        <Stack spacing={2}>
             <Stack direction="row">
                 <Typography color="GrayText" variant="h6">Мои объекты аренды</Typography>
                 <Grid item xs></Grid>
                 <Button disabled={props.loading} onClick={props.onCreate} >Добавить</Button>
             </Stack>
-            <DataGrid
-                components={{
-                    NoRowsOverlay: NoRentalObjects
-                }}
-                rows={props.models}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                loading={props.loading}
-                disableSelectionOnClick
-                disableColumnFilter
-                disableColumnMenu
-            />
+            <Card style={{ height: '100%' }}>
+                <DataGrid
+                    autoHeight
+                    components={{
+                        NoRowsOverlay: NoRentalObjects
+                    }}
+                    rows={props.models}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    loading={props.loading}
+                    disableSelectionOnClick
+                    disableColumnFilter
+                    disableColumnMenu
+                />
+            </Card>
         </Stack>
     );
 }
