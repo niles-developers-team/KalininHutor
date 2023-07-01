@@ -1,9 +1,8 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { createRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { Booking, EntityStatus, FileObject, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
-import { Face, RedeemRounded } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
 import { UserDetailsComponent } from "./UserDetails";
@@ -71,8 +70,6 @@ export const MeComponent = function (): JSX.Element {
         dispatch(UserActions.updateUser(currentUser));
     }
 
-    function handleUpdateUserDetailsCancel() { dispatch(UserActions.getCurrentUser()); }
-
     function handleCreateRentalObject() { navigate(`/me/rental-objects/create`); }
 
     function handleEditRentalObject(model: RentalObject) { navigate(`/me/rental-objects/${model.id}`); }
@@ -129,10 +126,6 @@ export const MeComponent = function (): JSX.Element {
         };
     }
 
-    function handleAvatarDelete() {
-        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: undefined }));
-    }
-
     if (!userState.currentUser)
         return (<Typography>Ошибка авторизации</Typography>);
 
@@ -153,12 +146,11 @@ export const MeComponent = function (): JSX.Element {
                 onNameChanged={handleNameChanged}
                 onPhoneNumberChanged={handlePhoneNumberChanged}
                 onAvatarChanged={handleAvatarChanged}
-                onAvatarDelete={handleAvatarDelete}
                 onUpdateConfirm={handleUpdateUserDetailsConfirm}
-                onUpdateCancel={handleUpdateUserDetailsCancel}
             />
             <MyNotificationsComponent
                 notifications={notificationState.models}
+                loading={notificationState.modelsLoading}
                 markAsRead={handleMarkNotifyAsRead}
             />
             <MyRentalObjectsBookingsComponent

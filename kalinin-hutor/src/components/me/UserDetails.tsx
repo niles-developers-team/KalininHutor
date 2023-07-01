@@ -1,7 +1,7 @@
-import { Close, Delete, Edit, Face, Save } from "@mui/icons-material";
-import { Button, CircularProgress, Grid, IconButton, Stack, TextField, Typography } from "@mui/material"
+import { Face } from "@mui/icons-material";
+import { Button, Card, CircularProgress, Grid, Stack, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
-import { createRef, useState } from "react";
+import { createRef } from "react";
 import { User } from "../../models"
 
 export interface UserDetailsProps {
@@ -14,24 +14,11 @@ export interface UserDetailsProps {
     onBirthdayChanged: (value: string | null | undefined, keyboardInputValue: string | undefined) => void;
     onBirthdayAccepted: (value: string | null | undefined) => void;
     onAvatarChanged: (file: File) => void;
-    onAvatarDelete: () => void;
     onUpdateConfirm: () => void;
-    onUpdateCancel: () => void;
 }
 
 export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Element {
-    const [editMode, setEditMode] = useState<boolean>(false);
     const fileInput = createRef<HTMLInputElement>();
-
-    function handleUpdateUserDetailsConfirm() {
-        setEditMode(false);
-        props.onUpdateConfirm();
-    }
-
-    function handleUpdateUserDetailsCancel() {
-        setEditMode(false);
-        props.onUpdateCancel();
-    }
 
     function handleFileChangeClick() {
         fileInput.current?.click();
@@ -49,50 +36,61 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
     }
 
     return (
-        <Stack direction="row" spacing={3}>
-            <Stack spacing={1}>
-                {props.user.avatar ? (
-                    <img height={200} width={200} style={{objectFit: "cover"}} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
-                ) : (
-                    <Face color="primary" sx={{ fontSize: 200 }} />
-                )}
-                <Stack direction="row" spacing={1}>
-                    <Button fullWidth onClick={handleFileChangeClick} type="submit" disabled={!editMode}>Выбрать фото</Button>
-                    {props.user.avatar ? (<IconButton disabled={!editMode} onClick={props.onAvatarDelete}><Delete /></IconButton>) : null}
-                </Stack>
-                <input accept=".png,.jpeg,.jpg" hidden type="file" ref={fileInput} onChange={(event) => handleAvatarChange(event)} />
+        <Stack spacing={2}>
+            <Stack direction="row">
+                <Typography color="GrayText" variant="h6">Личные данные</Typography>
+                <Grid item xs></Grid>
+                {props.loading
+                    ? <CircularProgress size={36} /> : <></>}
             </Stack>
-            <Stack spacing={2}>
-                <Stack direction="row">
-                    <Typography color="GrayText" variant="h6">Учетные данные</Typography>
-                    <Grid item xs></Grid>
-                    {props.loading
-                        ? <CircularProgress size={36} />
-                        : (!editMode
-                            ? <IconButton onClick={() => setEditMode(true)}><Edit /></IconButton>
-                            : (<>
-                                <IconButton color="primary" onClick={handleUpdateUserDetailsConfirm}><Save /></IconButton>
-                                <IconButton onClick={handleUpdateUserDetailsCancel}><Close /></IconButton>
-                            </>)
-                        )}
+            <Stack direction="row" spacing={3}>
+                <Stack spacing={1}>
+                    {props.user.avatar ? (
+                        <img height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
+                    ) : (
+                        <Face color="primary" sx={{ fontSize: 200 }} />
+                    )}
+                    <Button fullWidth onClick={handleFileChangeClick} type="submit">Выбрать фото</Button>
+                    <input accept=".png,.jpeg,.jpg" hidden type="file" ref={fileInput} onChange={(event) => handleAvatarChange(event)} />
                 </Stack>
-                <Stack direction="row" spacing={3}>
-                    <TextField InputProps={{ readOnly: !editMode }} label="Номер телефона" type="tel" value={props.user.phoneNumber || ''} onChange={props.onPhoneNumberChanged} />
-                    <TextField InputProps={{ readOnly: !editMode }} label="E-mail" type="email" value={props.user.email || ''} onChange={props.onEmailChanged} />
-                </Stack>
-                <Stack direction="row" spacing={3}>
-                    <TextField InputProps={{ readOnly: !editMode }} label="Имя" value={props.user.name || ''} onChange={props.onNameChanged} />
-                    <TextField InputProps={{ readOnly: !editMode }} label="Фамилия" value={props.user.lastname || ''} onChange={props.onLastnameChanged} />
-                </Stack>
-                <DatePicker
-                    value={props.user.birthday || null}
-                    label="Дата рождения"
-                    onAccept={props.onBirthdayAccepted}
-                    onChange={props.onBirthdayChanged}
-                    readOnly={!editMode}
-                    renderInput={(params) => <TextField type="date" {...params} />}
-                />
-            </Stack>
+                <Card >
+                    <Stack spacing={2} margin={2}>
+                        <Stack direction="row" spacing={3}>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Номер телефона</Typography>
+                                <TextField size="small" type="tel" value={props.user.phoneNumber || ''} onChange={props.onPhoneNumberChanged} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">E-mail</Typography>
+                                <TextField size="small" type="email" value={props.user.email || ''} onChange={props.onEmailChanged} />
+                            </Stack>
+                        </Stack>
+                        <Stack direction="row" spacing={3}>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Имя</Typography>
+                                <TextField size="small" value={props.user.name || ''} onChange={props.onNameChanged} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Фамилия</Typography>
+                                <TextField size="small" value={props.user.lastname || ''} onChange={props.onLastnameChanged} />
+                            </Stack>
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Дата рождения</Typography>
+                            <Stack direction="row" spacing={3}>
+                                <DatePicker
+                                    value={props.user.birthday || null}
+                                    onAccept={props.onBirthdayAccepted}
+                                    onChange={props.onBirthdayChanged}
+                                    renderInput={(params) => <TextField size="small" type="date" {...params} />}
+                                />
+                                <Grid xs />
+                                <Button onClick={props.onUpdateConfirm}>Сохранить</Button>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                </Card>
+            </Stack >
         </Stack >
     )
 }
