@@ -142,38 +142,52 @@ export const MyRentalObjectComponent = function (): JSX.Element {
             <Stack direction="row" alignItems="center" spacing={2}>
                 <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Информация об объекте аренды</Typography>
+                <Grid item xs></Grid>
+                <Button color="inherit" disabled={loading} onClick={handleDiscard}>Отмена</Button>
+                <Button color="primary" disabled={loading} onClick={handleConfirm}>Сохранить</Button>
             </Stack>
-            <Stack direction="row" spacing={2}>
-                <Stack spacing={3}>
-                    <TextField disabled={loading} label="Название" value={model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, name: event.target.value }))} />
-                    <TextField disabled={loading} label="Адрес" value={model.address} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, address: event.target.value }))} />
+            <Card>
+                <Stack spacing={2} margin={2}>
+                    <Stack direction="row" spacing={3}>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Название</Typography>
+                            <TextField size="small" disabled={loading} value={model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, name: event.target.value }))} />
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Адрес</Typography>
+                            <TextField size="small" disabled={loading} value={model.address} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, address: event.target.value }))} />
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Время заезда</Typography>
+                            <TimePicker
+                                disabled={loading}
+                                value={moment(model.checkinTime, 'hh:mm:ss')}
+                                onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkinTime: value || '12:00' })) }}
+                                renderInput={(params) => <TextField size="small" {...params} />}
+                            />
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Время отъезда</Typography>
+                            <TimePicker
+                                disabled={loading}
+                                value={moment(model.checkoutTime, 'hh:mm:ss')}
+                                onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkoutTime: value || '12:00' })) }}
+                                renderInput={(params) => <TextField size="small" {...params} />}
+                            />
+                        </Stack>
+                    </Stack>
+                    <Stack>
+                        <Typography variant="body2" color="GrayText">Описание</Typography>
+                        <TextField disabled={loading} value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, description: event.target.value }))}
+                            multiline
+                            rows={5} />
+                    </Stack>
                 </Stack>
-                <TextField disabled={loading} label="Описание" value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, description: event.target.value }))}
-                    multiline
-                    rows={5} />
-            </Stack>
-            <Stack spacing={2}>
-                <Typography color="GrayText" variant="h6">Порядок проживания</Typography>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <TimePicker
-                        disabled={loading}
-                        label="Время заезда"
-                        value={moment(model.checkinTime, 'hh:mm:ss')}
-                        onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkinTime: value || '12:00' })) }}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                    <TimePicker
-                        disabled={loading}
-                        label="Время отъезда"
-                        value={moment(model.checkoutTime, 'hh:mm:ss')}
-                        onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkoutTime: value || '12:00' })) }}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                </Stack>
-            </Stack>
+            </Card>
             <Stack spacing={2}>
                 <Stack direction="row" spacing={2}>
                     <Typography color="GrayText" variant="h6">Фотографии объекта</Typography>
+                    <Grid item xs></Grid>
                     <Button onClick={handleAddPhoto}>Добавить</Button>
                     <input accept=".png,.jpeg,.jpg" hidden multiple type="file" ref={fileInput} onChange={(event) => handlePhotoChange(event)} />
                 </Stack>
@@ -214,7 +228,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                     </Droppable>
                 </DragDropContext>
             </Stack>
-            <Stack>
+            <Stack spacing={2}>
                 <Stack direction="row">
                     <Typography color="GrayText" variant="h6">Варианты номеров</Typography>
                     <Grid item xs></Grid>
@@ -234,15 +248,6 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         disableColumnMenu
                     />
                 </Card>
-            </Stack>
-            <Stack direction="row">
-                <Grid item xs></Grid>
-                <Button color="inherit"
-                    disabled={loading}
-                    onClick={handleDiscard}>Отмена</Button>
-                <Button color="primary"
-                    disabled={loading}
-                    onClick={handleConfirm}>Сохранить</Button>
             </Stack>
         </Stack>
     );

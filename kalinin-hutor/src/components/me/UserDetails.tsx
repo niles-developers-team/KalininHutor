@@ -37,12 +37,7 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
 
     return (
         <Stack spacing={2}>
-            <Stack direction="row">
-                <Typography color="GrayText" variant="h6">Личные данные</Typography>
-                <Grid item xs></Grid>
-                {props.loading
-                    ? <CircularProgress size={36} /> : <></>}
-            </Stack>
+            <Typography color="GrayText" variant="h6">Личные данные</Typography>
             <Stack direction="row" spacing={3}>
                 <Stack spacing={1}>
                     {props.user.avatar ? (
@@ -84,7 +79,7 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
                                     onChange={props.onBirthdayChanged}
                                     renderInput={(params) => <TextField size="small" type="date" {...params} />}
                                 />
-                                <Grid xs />
+                                <Grid item xs />
                                 <Button onClick={props.onUpdateConfirm}>Сохранить</Button>
                             </Stack>
                         </Stack>

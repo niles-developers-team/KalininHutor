@@ -51,7 +51,7 @@ export const RoomVariantComponent = function (): JSX.Element {
         } else {
             await dispatch(RoomVariantActions.getRoomVariant(id));
         }
-        
+
         setBedType({ ...RoomVariantBedType.initial });
         setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
     }
@@ -172,6 +172,9 @@ export const RoomVariantComponent = function (): JSX.Element {
             <Stack direction="row" alignItems="center" spacing={2}>
                 <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Вариант номера</Typography>
+                <Grid item xs></Grid>
+                <Button color="inherit" onClick={handleDiscard}>Отмена</Button>
+                <Button color="primary" onClick={handleConfirm}>Сохранить</Button>
             </Stack>
             <RoomVariantDetailsComponent
                 model={roomVariant}
@@ -236,11 +239,6 @@ export const RoomVariantComponent = function (): JSX.Element {
                 onEdit={handleBedTypeEdit}
                 onDelete={handleBedTypeDelete}
             />
-            <Stack direction="row">
-                <Grid item xs></Grid>
-                <Button color="inherit" onClick={handleDiscard}>Отмена</Button>
-                <Button color="primary" onClick={handleConfirm}>Сохранить</Button>
-            </Stack>
             <CharacteristicDialog
                 model={roomCharacteristic}
                 characteristics={roomCharacteristicState.models || []}

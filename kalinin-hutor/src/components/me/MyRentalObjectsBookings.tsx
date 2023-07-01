@@ -64,7 +64,8 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
                     }}
                     rows={bookings}
                     columns={columns}
-                    rowsPerPageOptions={[10, 25]}
+                    pageSize={10}
+                    rowsPerPageOptions={[10]}
                     loading={props.loading}
                     disableSelectionOnClick
                     disableColumnFilter

@@ -153,7 +153,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                                         inputProps={{ 'aria-label': 'Поиск' }}
                                     />
                                 </Search>
-                                <Grid xs />
+                                <Grid xs item/>
                                 <Tooltip title={profilePageText}>
                                     <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
                                         {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">

@@ -1,5 +1,5 @@
-import { Stack, TextField, Tooltip, Checkbox } from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { Stack, TextField, Card, CardContent, Typography, InputAdornment } from "@mui/material";
+import { ChangeEvent } from "react";
 import { RoomVariant } from "../../../models";
 
 interface Props {
@@ -11,26 +11,55 @@ interface Props {
 export const RoomVariantDetailsComponent = function (props: Props): JSX.Element {
 
     return (
-        <Stack spacing={2}>
-            <Stack className="w-100" direction="row" spacing={3}>
-                <Stack className="w-100" spacing={1}>
-                    <TextField disabled={props.loading} label="Название" value={props.model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, name: event.target.value }); }} />
-                    <TextField disabled={props.loading} label="Описание" multiline rows={4} value={props.model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, description: event.target.value }); }} />
+        <Card>
+            <CardContent>
+                <Stack spacing={2}>
+                    <Stack className="w-100" spacing={2}>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Название</Typography>
+                            <TextField size="small" disabled={props.loading} value={props.model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, name: event.target.value }); }} />
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Описание</Typography>
+                            <TextField size="small" disabled={props.loading} multiline rows={4} value={props.model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, description: event.target.value }); }} />
+                        </Stack>
+                        <Typography variant="body1" color="GrayText">Прайс</Typography>
+                        <Stack spacing={1} direction="row">
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Цена</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.price} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, price: parseInt(event.target.value) }); }} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Всего номеров</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.count} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, count: parseInt(event.target.value) }); }} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Свободно в данный момент</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.freeCount} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCount: parseInt(event.target.value) }); }} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Период бесплатной отмены</Typography>
+                                <TextField size="small" disabled={props.loading} InputProps={{ endAdornment: <InputAdornment position="end">дн.</InputAdornment> }} value={props.model.freeCancellationPeriod || ''} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCancellationPeriod: parseInt(event.target.value) }); }} />
+                            </Stack>
+                        </Stack>
+                        <Typography variant="body1" color="GrayText">Вместимость</Typography>
+                        <Stack spacing={1} direction="row">
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Ширина</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.width} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, width: parseInt(event.target.value) }); }} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Длина</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.length} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, length: parseInt(event.target.value) }); }} />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Максимально гостей</Typography>
+                                <TextField size="small" disabled={props.loading} value={props.model.maxPersonsCount} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, maxPersonsCount: parseInt(event.target.value) }); }} />
+                            </Stack>
+                        </Stack>
+                    </Stack>
                 </Stack>
-                <Stack spacing={1} direction="column">
-                    <TextField disabled={props.loading} label="Цена" value={props.model.price} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, price: parseInt(event.target.value) }); }} />
-                    <TextField disabled={props.loading} label="Всего номеров" value={props.model.count} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, count: parseInt(event.target.value) }); }} />
-                    <TextField disabled={props.loading} label="Всего номеров свободно в данный момент" value={props.model.freeCount} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCount: parseInt(event.target.value) }); }} />
-                </Stack>
-                <Stack spacing={1} direction="column">
-                    <TextField disabled={props.loading} label="Ширина" value={props.model.width} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, width: parseInt(event.target.value) }); }} />
-                    <TextField disabled={props.loading} label="Длина" value={props.model.length} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, length: parseInt(event.target.value) }); }} />
-                    <TextField disabled={props.loading} label="Максимально гостей в номере" value={props.model.maxPersonsCount} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, maxPersonsCount: parseInt(event.target.value) }); }} />
-                </Stack>
-            </Stack>
-            <Stack spacing={2} direction="row" alignItems="center">
-                <TextField disabled={props.loading} label="Период бесплатной отмены (дн.)" value={props.model.freeCancellationPeriod || ''} onChange={(event: ChangeEvent<HTMLInputElement>) => { props.onDetailsChanged({ ...props.model, freeCancellationPeriod: parseInt(event.target.value) }); }} />
-            </Stack>
-        </Stack>
+            </CardContent>
+        </Card>
     );
 }
