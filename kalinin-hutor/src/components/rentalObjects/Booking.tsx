@@ -25,7 +25,7 @@ export const BookingComponent = function (): JSX.Element {
             return;
 
         dispatch(BookingActions.getBooking(id));
-        dispatch(RentalObjectActions.getRentalObject(rentalObjectId));
+        dispatch(RentalObjectActions.loadRentalObject(rentalObjectId));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, [id, rentalObjectId]);
 
