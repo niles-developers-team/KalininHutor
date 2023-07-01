@@ -165,7 +165,7 @@ export namespace RoomVariantActions {
 
     export function getRoomVariant(id: string | undefined): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { roomVariantState, rentalObjectState } = getState();
+            const { rentalObjectState } = getState();
 
             dispatch(request(id));
 
@@ -214,7 +214,7 @@ export namespace RoomVariantActions {
             }
 
             const draft = localStorageService.get<RoomVariant>(draftName);
-            if(!draft)
+            if (!draft)
                 return dispatch(createDraft());
 
             return dispatch({ type: ActionTypes.getRoomVariantSuccess, roomvariant: draft });
@@ -231,7 +231,7 @@ export namespace RoomVariantActions {
             }
 
             const draft: RoomVariant = {
-                bedTypes:[],
+                bedTypes: [],
                 characteristics: [],
                 count: 0,
                 description: '',
@@ -244,7 +244,7 @@ export namespace RoomVariantActions {
                 paymentOption: 0,
                 photos: [],
                 price: 0,
-                rentalObjectId:rentalObjectState.model.id,
+                rentalObjectId: rentalObjectState.model.id,
                 width: 0
             };
 
@@ -262,11 +262,9 @@ export namespace RoomVariantActions {
                 return dispatch({ type: ActionTypes.clearEditionState });
             }
 
-            if (!draft.id) {
-                draft.id = uuidv4();
-                draft.entityStatus = EntityStatus.Draft;
-            } else
+            if (draft.entityStatus !== EntityStatus.Draft) {
                 draft.entityStatus = EntityStatus.Updated;
+            }
 
             draft.rentalObjectId = rentalObjectState.model.id;
 
@@ -303,14 +301,14 @@ export namespace RoomVariantActions {
                 if (model.entityStatus === EntityStatus.Updated) {
                     const result = await roomVariantService.update({
                         count: model.count,
-                        createBedTypesRequests: model.bedTypes.filter(o=> o.entityStatus === EntityStatus.Draft)
-                        .map<RoomVariantBedType.CreateRequest>(bt => ({
-                            bedType: bt.bedType,
-                            roomVariantId: bt.roomVariantId || '',
-                            length: bt.length,
-                            width: bt.width
-                        })),
-                        createCharacteristicsRequests: model.characteristics.filter(o=> o.entityStatus === EntityStatus.Draft)
+                        createBedTypesRequests: model.bedTypes.filter(o => o.entityStatus === EntityStatus.Draft)
+                            .map<RoomVariantBedType.CreateRequest>(bt => ({
+                                bedType: bt.bedType,
+                                roomVariantId: bt.roomVariantId || '',
+                                length: bt.length,
+                                width: bt.width
+                            })),
+                        createCharacteristicsRequests: model.characteristics.filter(o => o.entityStatus === EntityStatus.Draft)
                             .map<RoomVariantCharacteristic.CreateRequest>(ch => ({
                                 roomCharacteristicId: ch.roomCharacteristicId,
                                 roomVariantId: ch.roomVariantId,
@@ -348,6 +346,9 @@ export namespace RoomVariantActions {
                         deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                     })
                     return dispatch(success({ ...result, entityStatus: EntityStatus.NotChanged }));
+                }
+                else {
+                    dispatch(RentalObjectActions.saveDraft({ ...rentalObjectState.model, roomVariants: rentalObjectState.model.roomVariants.map(o => o.id === model.id ? { ...model } : o) }));
                 }
             }
             catch (error: any) {

@@ -186,11 +186,9 @@ export namespace RentalObjectActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
 
-            if (!draft.id) {
-                draft.id = uuidv4();
-                draft.entityStatus = EntityStatus.Draft;
-            } else
+            if (draft.entityStatus !== EntityStatus.Draft) {
                 draft.entityStatus = EntityStatus.Updated;
+            }
 
             if (userState.authenticating === false && userState.currentUser) {
                 draft.landlord = userState.currentUser;

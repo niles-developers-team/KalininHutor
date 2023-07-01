@@ -120,7 +120,8 @@ export const RoomVariantComponent = function (): JSX.Element {
     }
 
     async function handleConfirm() {
-        if (roomVariant.entityStatus === EntityStatus.Draft) {
+        const rentalObject = rentalObjectState.model;
+        if (roomVariant.entityStatus === EntityStatus.Draft && !rentalObject?.roomVariants.find(o => o.id === roomVariant.id)) {
             await dispatch(RoomVariantActions.create(roomVariant));
         } else {
             await dispatch(RoomVariantActions.update(roomVariant));
