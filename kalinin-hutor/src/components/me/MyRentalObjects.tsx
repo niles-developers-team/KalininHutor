@@ -49,6 +49,7 @@ export const MyRentalObjectsComponent = function (props: Props): JSX.Element {
                 rows={props.models}
                 columns={columns}
                 pageSize={5}
+                rowsPerPageOptions={[5]}
                 loading={props.loading}
                 disableSelectionOnClick
                 disableColumnFilter

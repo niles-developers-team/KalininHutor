@@ -32,14 +32,14 @@ internal class GetRoomVariantHandler : IRequestHandler<RoomVariantCommands.GetQu
         var roomVariantsIds = entities.Select(o => o.Id).ToList();
 
         var bedTypes = await _roomVariantBedTypeRepository.Get(new RoomVariantBedTypeSearchOptions { RoomsVariantsIds = roomVariantsIds });
-        var characteristics = await _roomVariantCharacteristicRepository.Get(new RoomVariantCharacteristicSearchOptions { RoomsVariantsIds = roomVariantsIds });
+        var roomcharacteristics = await _roomVariantCharacteristicRepository.Get(new RoomVariantCharacteristicSearchOptions { RoomsVariantsIds = roomVariantsIds });
 
         var dtos = entities.Select(_mapper.Map<RoomVariantDTO>).ToList();
 
         dtos.ForEach(async r =>
         {
             r.BedTypes = bedTypes.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantBedTypeDTO>);
-            r.Characteristics = characteristics.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantCharacteristicDTO>);
+            r.Characteristics = roomcharacteristics.Where(o => o.RoomVariantId == r.Id).Select(_mapper.Map<RoomVariantCharacteristicDTO>);
             r.Photos = (await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentId = r.Id })).Select(_mapper.Map<FileObjectDTO>);
         });
         return dtos;

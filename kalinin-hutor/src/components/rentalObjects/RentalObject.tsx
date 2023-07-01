@@ -21,7 +21,7 @@ const imageStyle: CSSProperties = {
 };
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const { roomCharacteristicState, roomVariantState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
+    const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
     const query = useQuery();
     const navigate = useNavigate();
@@ -40,40 +40,18 @@ export const RentalObjectComponent = function (): JSX.Element {
     const datesPopoverId = datesPopoverOpen ? 'dates-popover' : undefined;
 
     useEffect(() => {
-        if (!id)
+        if (!id || !userState.currentUser)
             return;
 
         dispatch(RentalObjectActions.getRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
-        dispatch(RoomVariantActions.getRoomVariants(id));
-    }, []);
+    }, [userState.currentUser !== undefined]);
 
     useEffect(() => {
-        if (rentalObjectState.modelLoading)
-            return;
-        var result = dispatch(BookingActions.getDraft());
-        if (result.booking)
-            return;
+        if(!rentalObjectState.model)
+        return;
 
-        const adultsCount = parseInt(query.get('adultsCount') || '') || 1;
-        const childsCount = parseInt(query.get('childsCount') || '') || 0;
-        const checkinDate = query.get('checkinDate') || undefined;
-        const checkoutDate = query.get('checkoutDate') || undefined;
-
-        dispatch(BookingActions.createDraft({
-            rentalObject: model,
-            adultCount: adultsCount,
-            checkinDate: checkinDate || moment().format('YYYY-MM-DD'),
-            checkoutDate: checkoutDate || moment().add(10, 'days').format('YYYY-MM-DD'),
-            childCount: childsCount,
-            entityStatus: EntityStatus.Draft,
-            total: 0,
-            number: 0,
-            status: BookingStatuses.Draft,
-            tenant: User.initial,
-            roomVariants: []
-        }));
-
+        dispatch(BookingActions.getDraft());
     }, [rentalObjectState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
@@ -109,7 +87,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             bookingRoomVariants = bookingRoomVariants.filter(o => o.roomVariantId !== roomVariantId);
         }
 
-        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants }));
+        dispatch(BookingActions.saveDraft({ ...booking, roomVariants: bookingRoomVariants }));
     }
 
     function formatRoomVariants() {
@@ -163,7 +141,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         setSpecifyBedsRoomVariant(undefined);
         setSpecifyBedsOpen(false);
-        dispatch(BookingActions.updateDraft({ ...booking, roomVariants: bookingRoomVariants }));
+        dispatch(BookingActions.saveDraft({ ...booking, roomVariants: bookingRoomVariants }));
     }
 
     function handleCreateBooking() {
@@ -181,7 +159,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             return;
         }
 
-        dispatch(BookingActions.updateDraft({
+        dispatch(BookingActions.saveDraft({
             ...booking,
             checkinDate: startDate,
             checkoutDate: endDate
@@ -201,7 +179,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     const booking: Booking = bookingState.model;
-    const roomVariants: RoomVariant[] = roomVariantState.models || [];
+    const roomVariants: RoomVariant[] = model.roomVariants || [];
 
     const roomCharacteristics = roomCharacteristicState.models || [];
 
@@ -234,7 +212,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                                     </Stack>
                                 </Stack>
                             </Button>
-                            <Typography variant="subtitle1"><b>Длительность проживания:</b></Typography>
+                            <Typography variant="body2"><b>Длительность проживания:</b></Typography>
                             <Typography> {nightsCount} {pluralize(nightsCount, 'ночь', 'ночи', 'ночей')}</Typography>
                             <Divider flexItem />
                             <Button
@@ -243,8 +221,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             >
                                 <Stack direction="row" alignItems="center" spacing={1}>
                                     <People color="disabled" />
-                                    <Typography>Взрослых: {booking?.adultCount}</Typography>
-                                    <Typography>Детей: {booking?.childCount}</Typography>
+                                    <Typography variant="body2">Взрослых: {booking?.adultCount}</Typography>
+                                    <Typography variant="body2">Детей: {booking?.childCount}</Typography>
                                 </Stack>
                             </Button>
                             <Divider flexItem />
@@ -281,8 +259,8 @@ export const RentalObjectComponent = function (): JSX.Element {
                             onClose={() => setPersonsAnchorEl(null)}
                             adultsCount={booking?.adultCount || 0}
                             childsCount={booking?.childCount || 0}
-                            onAdultsCountChanged={(adultsCount: number) => dispatch(BookingActions.updateDraft({ ...booking, adultCount: adultsCount }))}
-                            onChildsCountChanged={(childsCount: number) => dispatch(BookingActions.updateDraft({ ...booking, childCount: childsCount }))}
+                            onAdultsCountChanged={(adultsCount: number) => dispatch(BookingActions.saveDraft({ ...booking, adultCount: adultsCount }))}
+                            onChildsCountChanged={(childsCount: number) => dispatch(BookingActions.saveDraft({ ...booking, childCount: childsCount }))}
                         />
                     </Paper>
                     <Button variant="outlined" color="success" size="small" disabled={!booking?.roomVariants?.length} onClick={handleCreateBooking}>Забронировать</Button>

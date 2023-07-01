@@ -76,6 +76,9 @@ public class RoomVariantRepository : BaseRepository<RoomVariantEntity, RoomVaria
             order by Price desc, Name asc
         ");
 
+        if(options.Id.HasValue)
+            query.Where($"Id = {options.Id}");
+
         if (options.RentalObjectId.HasValue)
             query.Where($"RentalObjectId = {options.RentalObjectId}");
 

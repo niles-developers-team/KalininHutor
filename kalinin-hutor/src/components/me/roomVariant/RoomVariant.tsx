@@ -47,26 +47,13 @@ export const RoomVariantComponent = function (): JSX.Element {
         }
 
         if (!id || id === 'create') {
-            dispatch(RoomVariantActions.createDraft({
-                id: uuidv4(),
-                bedTypes: [],
-                characteristics: [],
-                count: 0,
-                description: '',
-                entityStatus: EntityStatus.Draft,
-                freeCount: 0,
-                length: 0,
-                maxPersonsCount: 0,
-                name: '',
-                paymentOption: PaymentOptions.ByCardOrCashOnTheSpot,
-                price: 0,
-                width: 0,
-                rentalObjectId: rentalObjectId || '',
-                photos: []
-            }));
+            dispatch(RoomVariantActions.getDraft());
         } else {
             await dispatch(RoomVariantActions.getRoomVariant(id));
         }
+        
+        setBedType({ ...RoomVariantBedType.initial });
+        setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
     }
 
     useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics({ searchText: debouncedSearch, take: 10 })); }, [debouncedSearch]);
@@ -118,9 +105,18 @@ export const RoomVariantComponent = function (): JSX.Element {
     }
 
     async function handleDiscard() {
+        dispatch(RoomVariantActions.clearEditionState());
+
+        if (roomVariant.entityStatus === EntityStatus.Draft) {
+            navigate(`/me/rental-objects/${rentalObjectId}`);
+            return;
+        }
         await init();
-        setBedType({ ...RoomVariantBedType.initial });
-        setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
+    }
+
+    function handleGoBack() {
+        dispatch(RoomVariantActions.clearEditionState());
+        navigate(`/me/rental-objects/${rentalObjectId}`);
     }
 
     async function handleConfirm() {
@@ -173,13 +169,13 @@ export const RoomVariantComponent = function (): JSX.Element {
     return (
         <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
-                <IconButton onClick={() => navigate(`/me/rental-objects/${rentalObjectId}`)}><ArrowBack /></IconButton>
+                <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Вариант номера</Typography>
             </Stack>
             <RoomVariantDetailsComponent
                 model={roomVariant}
                 loading={loading}
-                onDetailsChanged={(model: RoomVariant) => dispatch(RoomVariantActions.updateDraft({ ...model }))}
+                onDetailsChanged={(model: RoomVariant) => dispatch(RoomVariantActions.saveDraft({ ...model }))}
             />
             <Stack spacing={2}>
                 <Stack direction="row" spacing={2}>
@@ -209,7 +205,7 @@ export const RoomVariantComponent = function (): JSX.Element {
                                                     provided.draggableProps.style
                                                 )}
                                             >
-                                                <Grid className="alternate-actions" direction="row" alignItems="start" justifyContent="space-between">
+                                                <Grid className="alternate-actions" container direction="row" alignItems="start" justifyContent="space-between">
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
@@ -248,6 +244,7 @@ export const RoomVariantComponent = function (): JSX.Element {
                 model={roomCharacteristic}
                 characteristics={roomCharacteristicState.models || []}
                 searching={roomCharacteristicState.modelsLoading}
+                search={characteristicSearch || ''}
                 onSearch={(searchText) => setCharacteristicSearch(searchText)}
                 onDiscard={() => setCharacteristicDialogOpen(false)}
                 onConfirm={handleCharacteristicDialogConfirm}

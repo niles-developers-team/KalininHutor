@@ -49,7 +49,6 @@ export const MeComponent = function (): JSX.Element {
 
     function handleEmailChanged(event: React.ChangeEvent<HTMLInputElement>) {
         dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, email: event.currentTarget && event.currentTarget.value }));
-
     }
 
     function handleNameChanged(event: React.ChangeEvent<HTMLInputElement>) {

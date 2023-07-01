@@ -45,7 +45,8 @@ public class RoomVariantFileObjectEntity : IEntity<Guid>
 
 public class RoomVariantSearchOptions
 {
+    public Guid? Id { get; set; }
     public Guid? RentalObjectId { get; set; }
     public IReadOnlyList<Guid>? RentalObjectsIds { get; set; }
-    public bool ShowHidden {get;set;}
+    public bool ShowHidden { get; set; }
 }

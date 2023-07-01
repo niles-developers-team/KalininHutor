@@ -139,7 +139,7 @@ export namespace RentalObjectActions {
         | UpdateRentalObject
         | DeleteRentalObject;
 
-    export function getDraft(): AppThunkAction<GetSuccessAction> {
+    export function getDraft(): AppThunkAction<GetSuccessAction | CreateDraftAction | ClearEditionStateAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState } = getState();
 
@@ -148,31 +148,49 @@ export namespace RentalObjectActions {
             }
 
             const draft = localStorageService.get<RentalObject>(draftName);
+            if (!draft)
+                return dispatch(createDraft());
+
             return dispatch({ type: ActionTypes.getRentalObjectSuccess, rentalobject: draft });
         }
     }
 
-    export function createDraft(draft: RentalObject): AppThunkAction<CreateDraftAction> {
+    export function createDraft(): AppThunkAction<CreateDraftAction | ClearEditionStateAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
 
-            if (!draft.id) {
-                draft.id = uuidv4();
-                draft.entityStatus = EntityStatus.Draft;
+            if (userState.currentUser === undefined) {
+                dispatch(NotificationActions.showSnackbar("Попытка создать объект аренды неавторизованным пользователем", NotificationVariant.error));
+                return { type: ActionTypes.clearEditionState };
             }
 
-            if (userState.authenticating === false && userState.currentUser) {
-                draft.landlord = userState.currentUser;
-            }
+            const draft: RentalObject = {
+                address: '',
+                id: uuidv4(),
+                checkinTime: '12:00:00',
+                checkoutTime: '13:00:00',
+                description: '',
+                entityStatus: EntityStatus.Draft,
+                landlord: userState.currentUser,
+                name: '',
+                photos: [],
+                roomVariants: []
+            };
 
             localStorageService.set(draftName, draft);
             return dispatch({ type: ActionTypes.createDraft, draft: draft });
         }
     }
 
-    export function updateDraft(draft: RentalObject): AppThunkAction<UpdateDraftAction> {
+    export function saveDraft(draft: RentalObject): AppThunkAction<UpdateDraftAction> {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
+
+            if (!draft.id) {
+                draft.id = uuidv4();
+                draft.entityStatus = EntityStatus.Draft;
+            } else
+                draft.entityStatus = EntityStatus.Updated;
 
             if (userState.authenticating === false && userState.currentUser) {
                 draft.landlord = userState.currentUser;
@@ -476,7 +494,7 @@ export namespace RentalObjectActions {
                 photos.push(photo);
             }
 
-            updateDraft(draft);
+            saveDraft(draft);
 
             dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...draft.photos, ...photos] } });
         }

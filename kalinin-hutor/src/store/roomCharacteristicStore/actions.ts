@@ -127,7 +127,7 @@ export namespace RoomCharacteristicActions {
 
             try {
                 const result = await roomCharacteristicService.create(createRequest);
-                dispatch(NotificationActions.showSnackbar('Бронь успешно сохранена', NotificationVariant.success));
+                dispatch(NotificationActions.showSnackbar('Характеристика успешно сохранена', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -148,7 +148,7 @@ export namespace RoomCharacteristicActions {
 
             try {
                 const result = await roomCharacteristicService.update(updateRequest);
-                dispatch(NotificationActions.showSnackbar('Пользователь успешно сохранен', NotificationVariant.success));
+                dispatch(NotificationActions.showSnackbar('Характеристика успешно сохранен', NotificationVariant.success));
                 return dispatch(success(result));
             }
             catch (error: any) {
@@ -206,7 +206,7 @@ export namespace RoomCharacteristicActions {
                 let model = models.find(o => o.id === id);
 
                 if (!model) {
-                    throw new ApplicationError('Не удалось найти пользователя');
+                    throw new ApplicationError('Не удалось найти характеристику');
                 }
 
                 return dispatch(success(model));
@@ -229,7 +229,7 @@ export namespace RoomCharacteristicActions {
 
             try {
                 await roomCharacteristicService.delete(deleteRequest);
-                dispatch(NotificationActions.showSnackbar('Пользователь успешно удален.', NotificationVariant.info));
+                dispatch(NotificationActions.showSnackbar('Характеристика успешно удалена.', NotificationVariant.info));
                 return dispatch(success(deleteRequest.id));
             }
             catch (error: any) {
