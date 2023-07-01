@@ -124,6 +124,8 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
             profilePageText = 'Личный кабинет';
     }
 
+    const user = userState.currentUser;
+
     let variant: NotificationVariant = NotificationVariant.info;
     let message: string = '';
     if (notificationState.show) {
@@ -155,7 +157,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                                 <Tooltip title={profilePageText}>
                                     <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
                                         {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
-                                            <Face />
+                                            {user?.avatar ? <img height={24} width={24} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${user.avatar.extension};base64,${user.avatar.body}`}></img> : <Face />}
                                         </Badge>) : (<Face />)}
                                     </IconButton>
                                 </Tooltip>
