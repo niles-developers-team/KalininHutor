@@ -1,9 +1,8 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { createRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, EntityStatus, FileObject, RentalObject } from "../../models";
+import { Booking, EntityStatus, FileObject, NotificationStatus, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
-import { Face, RedeemRounded } from '@mui/icons-material';
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
 import { UserDetailsComponent } from "./UserDetails";
@@ -11,7 +10,6 @@ import { MyRentalObjectsComponent } from "./MyRentalObjects";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
-import { BookingDetailsDialog } from "./BookingDetailsDialog";
 import { MyNotificationsComponent } from "./notifications/MyNotifications";
 import { v4 as guid } from 'uuid';
 import { appName } from "../..";
@@ -23,17 +21,14 @@ export const MeComponent = function (): JSX.Element {
         userState,
         rentalObjectState,
         bookingState,
-        roomCharacteristicState,
         notificationState
     } = useAppSelector((state: AppState) => state);
-
-    const [bookingInfoDialogOpen, setBookingInfoDialogOpen] = useState<boolean>(false);
-    const [selectedBooking, setSelectedBooking] = useState<Booking>();
 
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
             dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id, getRoomVariants: true }));
             dispatch(BookingActions.getLandlordBookings(true));
+            dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
         }
     }, [userState.modelLoading]);
 
@@ -71,8 +66,6 @@ export const MeComponent = function (): JSX.Element {
         dispatch(UserActions.updateUser(currentUser));
     }
 
-    function handleUpdateUserDetailsCancel() { dispatch(UserActions.getCurrentUser()); }
-
     function handleCreateRentalObject() { navigate(`/me/rental-objects/create`); }
 
     function handleEditRentalObject(model: RentalObject) { navigate(`/me/rental-objects/${model.id}`); }
@@ -92,17 +85,12 @@ export const MeComponent = function (): JSX.Element {
     }
 
     function handleShowBookingInfo(booking: Booking) {
-        setBookingInfoDialogOpen(true);
-        setSelectedBooking(booking);
-    }
-
-    function handleCloseBookingInfo() {
-        setBookingInfoDialogOpen(false);
-        setSelectedBooking(undefined);
+        navigate(`bookings/${booking.id}`)
     }
 
     function handleMarkNotifyAsRead(id: string) {
         dispatch(NotificationActions.markAsRead(id));
+        dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
     }
 
     async function handleAvatarChanged(file: File) {
@@ -129,17 +117,12 @@ export const MeComponent = function (): JSX.Element {
         };
     }
 
-    function handleAvatarDelete() {
-        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, avatar: undefined }));
-    }
-
     if (!userState.currentUser)
         return (<Typography>Ошибка авторизации</Typography>);
 
     const currentUser = userState.currentUser;
     const rentalObjects: RentalObject[] = rentalObjectState.models || [];
     const bookings: Booking[] = bookingState.models || [];
-    const characteristics = roomCharacteristicState.models || [];
 
     return (
         <Stack spacing={3}>
@@ -153,12 +136,11 @@ export const MeComponent = function (): JSX.Element {
                 onNameChanged={handleNameChanged}
                 onPhoneNumberChanged={handlePhoneNumberChanged}
                 onAvatarChanged={handleAvatarChanged}
-                onAvatarDelete={handleAvatarDelete}
                 onUpdateConfirm={handleUpdateUserDetailsConfirm}
-                onUpdateCancel={handleUpdateUserDetailsCancel}
             />
             <MyNotificationsComponent
                 notifications={notificationState.models}
+                loading={notificationState.modelsLoading}
                 markAsRead={handleMarkNotifyAsRead}
             />
             <MyRentalObjectsBookingsComponent
@@ -177,13 +159,6 @@ export const MeComponent = function (): JSX.Element {
                 <Grid item xs />
                 <Button color="error" onClick={handleSignout}>Выйти из аккаунта</Button>
             </Stack>
-            <BookingDetailsDialog
-                open={bookingInfoDialogOpen}
-                booking={selectedBooking}
-                characteristics={characteristics}
-                onApprove={handleBookingApprove}
-                onClose={handleCloseBookingInfo}
-            />
         </Stack>
     );
 }

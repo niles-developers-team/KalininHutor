@@ -56,8 +56,8 @@ public class NotificationRepository : BaseRepository<NotificationEntity, Notific
         if (options.Status.HasValue)
             switch (options.Status)
             {
-                case NotificationStatus.OnlyRead: query.Where($"Read = 1"); break;
-                case NotificationStatus.OnlyUnread: query.Where($"Read = 0"); break;
+                case NotificationStatus.OnlyRead: query.Where($"Read = {true}"); break;
+                case NotificationStatus.OnlyUnread: query.Where($"Read = {false}"); break;
             }
 
         if (options.Type.HasValue)

@@ -51,7 +51,7 @@ export const RoomVariantComponent = function (): JSX.Element {
         } else {
             await dispatch(RoomVariantActions.getRoomVariant(id));
         }
-        
+
         setBedType({ ...RoomVariantBedType.initial });
         setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
     }
@@ -120,7 +120,8 @@ export const RoomVariantComponent = function (): JSX.Element {
     }
 
     async function handleConfirm() {
-        if (roomVariant.entityStatus === EntityStatus.Draft) {
+        const rentalObject = rentalObjectState.model;
+        if (roomVariant.entityStatus === EntityStatus.Draft && !rentalObject?.roomVariants.find(o => o.id === roomVariant.id)) {
             await dispatch(RoomVariantActions.create(roomVariant));
         } else {
             await dispatch(RoomVariantActions.update(roomVariant));
@@ -171,6 +172,9 @@ export const RoomVariantComponent = function (): JSX.Element {
             <Stack direction="row" alignItems="center" spacing={2}>
                 <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
                 <Typography color="GrayText" variant="h6">Вариант номера</Typography>
+                <Grid item xs></Grid>
+                <Button color="inherit" onClick={handleDiscard}>Отмена</Button>
+                <Button color="primary" onClick={handleConfirm}>Сохранить</Button>
             </Stack>
             <RoomVariantDetailsComponent
                 model={roomVariant}
@@ -235,11 +239,6 @@ export const RoomVariantComponent = function (): JSX.Element {
                 onEdit={handleBedTypeEdit}
                 onDelete={handleBedTypeDelete}
             />
-            <Stack direction="row">
-                <Grid item xs></Grid>
-                <Button color="inherit" onClick={handleDiscard}>Отмена</Button>
-                <Button color="primary" onClick={handleConfirm}>Сохранить</Button>
-            </Stack>
             <CharacteristicDialog
                 model={roomCharacteristic}
                 characteristics={roomCharacteristicState.models || []}

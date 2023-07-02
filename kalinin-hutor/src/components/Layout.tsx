@@ -1,17 +1,59 @@
-import { AppBar, Badge, Button, Container, Grid, Slide, TextField, Toolbar, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, Tooltip, alpha, styled, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
-import { Search, Face, Favorite, ShoppingBag, ShoppingCart, Gite } from '@mui/icons-material';
+import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState, NotificationActions } from "../store";
-import { NotificationVariant, Notification } from "../models";
+import { NotificationVariant, Notification, NotificationStatus } from "../models";
 import { MessageSnackbar } from "./common";
-import { HubConnection } from "@microsoft/signalr";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { sessionService } from "../services";
 
 interface Props {
     onSigninDialogOpen: () => void;
 }
+
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '12ch',
+            '&:focus': {
+                width: '20ch',
+            },
+        },
+    },
+}));
 
 interface HideOnScrollProps {
     /**
@@ -62,7 +104,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
         if (!userState.currentUser)
             return;
 
-        dispatch(NotificationActions.getCurrentUserNotifications({}));
+        dispatch(NotificationActions.getCurrentUserNotifications({status: NotificationStatus.OnlyUnread}));
     }, [userState.currentUser]);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
@@ -82,6 +124,8 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
             profilePageText = 'Личный кабинет';
     }
 
+    const user = userState.currentUser;
+
     let variant: NotificationVariant = NotificationVariant.info;
     let message: string = '';
     if (notificationState.show) {
@@ -95,56 +139,56 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
         <Grid container direction="row">
             <HideOnScroll {...props}>
                 <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Toolbar>
-                        <Grid container className="container" alignItems="center">
-                            <Button onClick={() => navigate('/')}>КХ</Button>
-                            <Button onClick={() => navigate('/catalog')}>Каталог</Button>
-                            <Grid item xs>
-                                <TextField size="small" fullWidth variant="outlined" placeholder="Поиск" />
-                            </Grid>
-                            <Button variant="contained"><Search /></Button>
-                            <Button size="small" href="/me" onClick={handleAccountClick}>
-                                <Grid container direction="column" alignItems="center">
-                                    {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
-                                        <Face />
-                                    </Badge>) : (<Face />)}
-
-                                    <span>{profilePageText}</span>
-                                </Grid>
-                            </Button>
-                            <Button size="small" href="/favorite">
-                                <Grid container direction="column" alignItems="center">
-                                    <Favorite />
-                                    <span>Избранное</span>
-                                </Grid>
-                            </Button>
-                            <Button size="small" href="/my-orders">
-                                <Grid container direction="column" alignItems="center">
-                                    <ShoppingBag />
-                                    <span>Заказы</span>
-                                </Grid>
-                            </Button>
-                            <Button size="small" href="/my-bookings">
-                                <Grid container direction="column" alignItems="center">
-                                    <Gite />
-                                    <span>Брони</span>
-                                </Grid>
-                            </Button>
-                            <Button size="small" href="/cart">
-                                <Grid container direction="column" alignItems="center">
-                                    <ShoppingCart />
-                                    <span>Корзина</span>
-                                </Grid>
-                            </Button>
-                        </Grid>
-                    </Toolbar>
+                    <Container maxWidth="xl">
+                        <Toolbar disableGutters>
+                            <Stack width='100%' direction="row" spacing={2}>
+                                <Button onClick={() => navigate('/')}>КХ</Button>
+                                <Button disabled onClick={() => navigate('/catalog')}>Каталог</Button>
+                                <Search>
+                                    <SearchIconWrapper>
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        placeholder="Поиск…"
+                                        inputProps={{ 'aria-label': 'Поиск' }}
+                                    />
+                                </Search>
+                                <Grid xs item/>
+                                <Tooltip title={profilePageText}>
+                                    <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
+                                        {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
+                                            {user?.avatar ? <img height={24} width={24} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${user.avatar.extension};base64,${user.avatar.body}`}></img> : <Face />}
+                                        </Badge>) : (<Face />)}
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Избранное'>
+                                    <IconButton disabled size="small" href="/favorite">
+                                        <Favorite />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Заказы'>
+                                    <IconButton disabled size="small" href="/my-orders">
+                                        <ShoppingBag />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Бронирования'>
+                                    <IconButton color="primary" size="small" href="/my-bookings">
+                                        <Gite />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Корзина'>
+                                    <IconButton disabled size="small" href="/cart">
+                                        <ShoppingCart />
+                                    </IconButton>
+                                </Tooltip>
+                            </Stack>
+                        </Toolbar>
+                    </Container>
                 </AppBar>
             </HideOnScroll>
             <Container component="main" sx={{ marginTop: "40px" }}>
                 {props.children}
             </Container>
-            <Toolbar color="primary">
-            </Toolbar>
             <MessageSnackbar
                 variant={variant}
                 open={notificationState.show}
