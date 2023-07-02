@@ -33,7 +33,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
 });
 
 export const MyRentalObjectComponent = function (): JSX.Element {
-    const { rentalObjectState, userState, roomVariantState } = useAppSelector((state: AppState) => state);
+    const { rentalObjectState, userState } = useAppSelector((state: AppState) => state);
     const fileInput = createRef<HTMLInputElement>();
 
     const columns: GridColDef[] = [

@@ -1,7 +1,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, EntityStatus, FileObject, RentalObject } from "../../models";
+import { Booking, EntityStatus, FileObject, NotificationStatus, RentalObject } from "../../models";
 import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
 import { UserActions } from "../../store/userStore";
 import moment from "moment";
@@ -10,7 +10,6 @@ import { MyRentalObjectsComponent } from "./MyRentalObjects";
 import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
 import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
-import { BookingDetailsDialog } from "./BookingDetailsDialog";
 import { MyNotificationsComponent } from "./notifications/MyNotifications";
 import { v4 as guid } from 'uuid';
 import { appName } from "../..";
@@ -22,17 +21,14 @@ export const MeComponent = function (): JSX.Element {
         userState,
         rentalObjectState,
         bookingState,
-        roomCharacteristicState,
         notificationState
     } = useAppSelector((state: AppState) => state);
-
-    const [bookingInfoDialogOpen, setBookingInfoDialogOpen] = useState<boolean>(false);
-    const [selectedBooking, setSelectedBooking] = useState<Booking>();
 
     useEffect(() => {
         if (userState.authenticating === false && userState.authenticated === true) {
             dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id, getRoomVariants: true }));
             dispatch(BookingActions.getLandlordBookings(true));
+            dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
         }
     }, [userState.modelLoading]);
 
@@ -89,17 +85,12 @@ export const MeComponent = function (): JSX.Element {
     }
 
     function handleShowBookingInfo(booking: Booking) {
-        setBookingInfoDialogOpen(true);
-        setSelectedBooking(booking);
-    }
-
-    function handleCloseBookingInfo() {
-        setBookingInfoDialogOpen(false);
-        setSelectedBooking(undefined);
+        navigate(`bookings/${booking.id}`)
     }
 
     function handleMarkNotifyAsRead(id: string) {
         dispatch(NotificationActions.markAsRead(id));
+        dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
     }
 
     async function handleAvatarChanged(file: File) {
@@ -132,7 +123,6 @@ export const MeComponent = function (): JSX.Element {
     const currentUser = userState.currentUser;
     const rentalObjects: RentalObject[] = rentalObjectState.models || [];
     const bookings: Booking[] = bookingState.models || [];
-    const characteristics = roomCharacteristicState.models || [];
 
     return (
         <Stack spacing={3}>
@@ -169,13 +159,6 @@ export const MeComponent = function (): JSX.Element {
                 <Grid item xs />
                 <Button color="error" onClick={handleSignout}>Выйти из аккаунта</Button>
             </Stack>
-            <BookingDetailsDialog
-                open={bookingInfoDialogOpen}
-                booking={selectedBooking}
-                characteristics={characteristics}
-                onApprove={handleBookingApprove}
-                onClose={handleCloseBookingInfo}
-            />
         </Stack>
     );
 }

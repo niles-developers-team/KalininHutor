@@ -3,7 +3,7 @@ import { RouteProps, useNavigate } from "react-router-dom";
 import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState, NotificationActions } from "../store";
-import { NotificationVariant, Notification } from "../models";
+import { NotificationVariant, Notification, NotificationStatus } from "../models";
 import { MessageSnackbar } from "./common";
 import { useEffect } from "react";
 import { sessionService } from "../services";
@@ -104,7 +104,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
         if (!userState.currentUser)
             return;
 
-        dispatch(NotificationActions.getCurrentUserNotifications({}));
+        dispatch(NotificationActions.getCurrentUserNotifications({status: NotificationStatus.OnlyUnread}));
     }, [userState.currentUser]);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {

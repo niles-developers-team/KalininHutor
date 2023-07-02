@@ -1,31 +1,54 @@
-import { CurrencyRuble, Email, Phone } from "@mui/icons-material";
-import { Dialog, DialogTitle, DialogContent, Typography, Grid, Button, DialogActions, Stack } from "@mui/material";
-import { Booking, RoomCharacteristic } from "../../models";
+import { ArrowBack, CurrencyRuble, Email, Phone } from "@mui/icons-material";
+import { DialogContent, Typography, Grid, Button, DialogActions, Stack, IconButton } from "@mui/material";
 import { BookingRoomVariantInfo } from "../rentalObjects/BookingRoomVariantInfo";
+import { useNavigate, useParams } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { AppState, BookingActions, RoomCharacteristicActions } from "../../store";
+import { useEffect } from "react";
 
-interface Props {
-    booking: Booking | undefined;
-    open: boolean;
-    characteristics: RoomCharacteristic[];
-    onApprove: (booking: Booking) => void;
-    onClose: () => void;
-}
+export const BookingDetailsComponent = function (): JSX.Element {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { bookingState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
-export const BookingDetailsDialog = function (props: Props): JSX.Element {
-    const { booking, open, characteristics, onApprove, onClose } = props;
+    const { id } = useParams();
 
-    if (!booking)
-        return (
-            <Dialog open={open} onClose={onClose}>
-                <DialogContent>
-                    return (<Typography> Неизвестная бронь </Typography>)
-                </DialogContent>
-            </Dialog>
-        );
+    useEffect(() => {
+        if (!id)
+            return;
+
+        dispatch(BookingActions.getBooking(id));
+        dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+    }, [id]);
+
+    function handleGoBack() {
+        navigate(`/me`);
+    }
+
+    async function handleApprove() {
+        await dispatch(BookingActions.approveBooking(booking));
+        navigate(`/me`);
+    }
+
+    if (!bookingState.model)
+        return (<Typography>Не найден объект аренды</Typography>);
+
+
+    if (!roomCharacteristicState.models)
+        return (<Typography>Не найден объект аренды</Typography>);
+
+
+    const booking = bookingState.model;
+    const characteristics = roomCharacteristicState.models;
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle> Детали брони #{booking.number} </DialogTitle>
+        <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={2}>
+                <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
+                <Typography color="GrayText" variant="h6">Детали брони #{booking.number}</Typography>
+                <Grid item xs></Grid>
+                <Button onClick={handleApprove}>Подтвердить бронь</Button>
+            </Stack>
             <DialogContent>
                 <Stack>
                     <Grid container direction="row" spacing={2} marginBottom=".5em">
@@ -91,11 +114,7 @@ export const BookingDetailsDialog = function (props: Props): JSX.Element {
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
-                    onApprove(booking);
-                    onClose();
-                }}>Подтвердить бронь</Button>
             </DialogActions>
-        </Dialog >
+        </Stack>
     );
 }
