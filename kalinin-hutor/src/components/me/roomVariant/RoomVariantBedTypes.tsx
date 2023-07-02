@@ -1,5 +1,5 @@
 import { Edit, Delete } from "@mui/icons-material";
-import { Typography, Stack, Grid, CircularProgress, Button, IconButton } from "@mui/material";
+import { Typography, Stack, Grid, CircularProgress, Button, IconButton, CardContent, Card } from "@mui/material";
 import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
 import { BedTypes, RoomVariantBedType } from "../../../models";
 
@@ -37,7 +37,7 @@ export const RoomVariantBedTypesComponent = function (props: Props) {
 
     return (
 
-        <Stack spacing={2} style={{ minHeight: 500 }}>
+        <Stack spacing={2}>
             <Stack direction="row">
                 <Typography color="GrayText" variant="h6">Варианты кроватей</Typography>
                 <Grid item xs></Grid>
@@ -46,18 +46,21 @@ export const RoomVariantBedTypesComponent = function (props: Props) {
                     : <Button onClick={props.onCreate} >Добавить</Button>
                 }
             </Stack>
-            <DataGrid
-                components={{ NoRowsOverlay: NoBedTypes }}
-                rows={props.models}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                loading={props.loading}
-                checkboxSelection={false}
-                disableSelectionOnClick
-                disableColumnFilter
-                disableColumnMenu
-            />
+            <Card>
+                    <DataGrid
+                        autoHeight
+                        components={{ NoRowsOverlay: NoBedTypes }}
+                        rows={props.models}
+                        columns={columns}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        loading={props.loading}
+                        checkboxSelection={false}
+                        disableSelectionOnClick
+                        disableColumnFilter
+                        disableColumnMenu
+                    />
+            </Card>
         </Stack>
     );
 }

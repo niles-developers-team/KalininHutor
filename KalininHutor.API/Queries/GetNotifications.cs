@@ -43,5 +43,7 @@ public partial class NotificationCommands
         public Guid? RoomVariantId { get; set; }
         ///<summary> Идентфикатор пользователя </summary>
         public Guid UserId { get; set; }
+        ///<summary> Статус уведомления </summary>
+        public NotificationStatus Status { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 import { Edit, Delete } from "@mui/icons-material";
-import { Stack, Typography, Grid, CircularProgress, Button, IconButton } from "@mui/material";
+import { Stack, Typography, Grid, CircularProgress, Button, IconButton, CardContent, Card } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariantCharacteristic } from "../../../models";
 
@@ -42,7 +42,7 @@ export const RoomVariantCharacteristicsComponent = function (props: Props) {
     ];
 
     return (
-        <Stack spacing={2} style={{ minHeight: 500 }}>
+        <Stack spacing={2}>
             <Stack direction="row">
                 <Typography color="GrayText" variant="h6">Услуги и сервисы</Typography>
                 <Grid item xs></Grid>
@@ -51,18 +51,21 @@ export const RoomVariantCharacteristicsComponent = function (props: Props) {
                     : <Button onClick={props.onCreate}>Добавить</Button>
                 }
             </Stack>
-            <DataGrid
-                components={{ NoRowsOverlay: NoCharacteristics }}
-                rows={props.models}
-                columns={columns}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
-                loading={props.loading}
-                checkboxSelection={false}
-                disableSelectionOnClick
-                disableColumnSelector
-                disableColumnFilter
-                disableColumnMenu
-            />
+            <Card>
+                    <DataGrid
+                        autoHeight
+                        components={{ NoRowsOverlay: NoCharacteristics }}
+                        rows={props.models}
+                        columns={columns}
+                        pageSize={10}
+                        rowsPerPageOptions={[10]}
+                        loading={props.loading}
+                        checkboxSelection={false}
+                        disableSelectionOnClick
+                        disableColumnSelector
+                        disableColumnFilter
+                        disableColumnMenu
+                    />
+            </Card>
         </Stack>);
 }

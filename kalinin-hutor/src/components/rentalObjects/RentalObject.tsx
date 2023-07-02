@@ -43,7 +43,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         if (!id || !userState.currentUser)
             return;
 
-        dispatch(RentalObjectActions.getRentalObject(id));
+        dispatch(RentalObjectActions.loadRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, [userState.currentUser !== undefined]);
 

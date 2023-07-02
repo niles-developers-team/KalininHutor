@@ -1,5 +1,5 @@
 import { People, CalendarMonth, Remove, Add } from "@mui/icons-material"
-import { Stack, Divider, Grid, Input, Button, Typography, Popover, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Checkbox, ListSubheader, PopoverProps } from "@mui/material"
+import { Stack, Divider, Grid, Input, Button, Typography, Popover, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Checkbox, ListSubheader, PopoverProps, InputBase } from "@mui/material"
 import moment from "moment"
 import { Search } from "@mui/icons-material"
 import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../../models"
@@ -87,7 +87,7 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
                 <Grid xs item>
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <Search color="disabled" />
-                        <Input fullWidth placeholder="Поиск по названию или месту" value={filter.searchText} onChange={(event) => onFilterUpdate({ ...filter, searchText: event.target.value })} />
+                        <InputBase fullWidth placeholder="Поиск по названию или месту" value={filter.searchText} onChange={(event) => onFilterUpdate({ ...filter, searchText: event.target.value })} />
                     </Stack>
                 </Grid>
                 <Button aria-describedby={personsPopoverId} onClick={(event) => setPersonsAnchorEl(personsAnchorEl ? null : event.currentTarget)}>

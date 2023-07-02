@@ -186,11 +186,9 @@ export namespace RentalObjectActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState } = getState();
 
-            if (!draft.id) {
-                draft.id = uuidv4();
-                draft.entityStatus = EntityStatus.Draft;
-            } else
+            if (draft.entityStatus !== EntityStatus.Draft) {
                 draft.entityStatus = EntityStatus.Updated;
+            }
 
             if (userState.authenticating === false && userState.currentUser) {
                 draft.landlord = userState.currentUser;
@@ -406,7 +404,7 @@ export namespace RentalObjectActions {
         }
     }
 
-    export function getRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
+    export function loadRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { rentalObjectState } = getState();
 
@@ -415,10 +413,6 @@ export namespace RentalObjectActions {
             let models: RentalObject[] = [];
 
             try {
-                const draft = localStorageService.get<RentalObject>(draftName);
-                if (draft)
-                    return dispatch(success(draft));
-
                 if (rentalObjectState.modelsLoading) {
                     models = await rentalObjectService.get({ id, getRoomVariants: true });
                 }
@@ -433,6 +427,29 @@ export namespace RentalObjectActions {
                 }
 
                 return dispatch(success(model));
+            }
+            catch (error: any) {
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
+
+                return dispatch(failure(error));
+            }
+
+            function request(id: string): GetRequestAction { return { type: ActionTypes.getRentalObjectRequest, id: id }; }
+            function success(rentalobject: RentalObject): GetSuccessAction { return { type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalobject }; }
+            function failure(error: ApplicationError): GetFailureAction { return { type: ActionTypes.getRentalObjectFailure, error: error }; }
+        }
+    }
+
+    export function getRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            dispatch(request(id));
+
+            try {
+                const draft = localStorageService.get<RentalObject>(draftName);
+                if (draft)
+                    return dispatch(success(draft));
+
+                return dispatch(loadRentalObject(id));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
