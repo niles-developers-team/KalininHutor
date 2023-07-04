@@ -20,7 +20,9 @@ export const HomeComponent = function (): JSX.Element {
         adultsCount: 1,
         childsCount: 0,
         roomsCount: 1,
-        searchText: ''
+        searchText: '',
+        checkinDate: moment().format('YYYY-MM-DD'),
+        checkoutDate: moment().add(14, 'days').format('YYYY-MM-DD')
     });
     const { rentalObjectState } = useAppSelector((state: AppState) => state);
 
