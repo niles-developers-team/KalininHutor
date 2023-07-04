@@ -71,7 +71,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
         else query.delete('checkoutDate');
 
         setSearchParams(query.toString());
-        setFilter(filter);
+        setFilter({ ...filter });
     }
 
     function handleSearch() {
@@ -81,7 +81,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     function handleFilterSelected(id: string, selected: boolean) {
         const filter = characteristics.find(o => o.id === id);
         if (filter) {
-            setCharacteristics([...characteristics.map(o => o.id === id ? { ...o, selected: selected } : o)]);
+            setCharacteristics(characteristics.map(o => o.id === id ? { ...o, selected: selected } : o));
         }
     }
 
@@ -107,7 +107,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
                     (
                         rentalObjectState.modelsLoading
                             ? <RentalObjectDetailedInfoSkeleton />
-                            : <RentalObjectDetailedInfoComponent model={ro} onShowVariants={handleShowVariants} />
+                            : <RentalObjectDetailedInfoComponent key={ro.id} model={ro} onShowVariants={handleShowVariants} />
                     ))}
                 </Stack>
             </Stack>

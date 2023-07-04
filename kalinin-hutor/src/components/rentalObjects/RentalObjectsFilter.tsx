@@ -154,7 +154,7 @@ function CategoryItemFilters(props: CategoryItemFiltersProps) {
                     <ListItemIcon>
                         <Checkbox
                             edge="start"
-                            checked={item.selected}
+                            checked={item.selected || false}
                             tabIndex={-1}
                             disableRipple
                             onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => onFilterSelected(item.id || '', checked)}
@@ -215,7 +215,7 @@ export const RentalObjectsDetailedFilterComponent = function (props: DetailedPro
                     }}
                     subheader={<li />}>
                     {!groupedCharacteristics ? null : groupedCharacteristics.map((keyValue: { key: CharacteristicTypes, values: RoomCharacteristicFilter[] }) => (
-                        <CategoryItemFilters category={keyValue.key} items={keyValue.values} onFilterSelected={props.onFilterSelected} />
+                        <CategoryItemFilters key={keyValue.key} category={keyValue.key} items={keyValue.values} onFilterSelected={props.onFilterSelected} />
                     ))}
                 </List>
             </Paper>
