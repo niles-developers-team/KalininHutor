@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
+import { roomVariantService } from "../../services";
 
 const draftName = 'rental-object-draft';
 
@@ -427,6 +428,33 @@ export namespace RentalObjectActions {
                 }
 
                 return dispatch(success(model));
+            }
+            catch (error: any) {
+                dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
+
+                return dispatch(failure(error));
+            }
+
+            function request(id: string): GetRequestAction { return { type: ActionTypes.getRentalObjectRequest, id: id }; }
+            function success(rentalobject: RentalObject): GetSuccessAction { return { type: ActionTypes.getRentalObjectSuccess, rentalobject: rentalobject }; }
+            function failure(error: ApplicationError): GetFailureAction { return { type: ActionTypes.getRentalObjectFailure, error: error }; }
+        }
+    }
+
+    export function loadRentalObjectRoomVariants(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
+        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { rentalObjectState } = getState();
+
+            dispatch(request(id));
+
+            try {
+                if (!rentalObjectState.model) {
+                    throw new ApplicationError('Не удалось найти объект аренды');
+                }
+                
+                const roomVariants = await roomVariantService.get({rentalObjectId: id})
+
+                return dispatch(success({...rentalObjectState.model, roomVariants: roomVariants}));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));

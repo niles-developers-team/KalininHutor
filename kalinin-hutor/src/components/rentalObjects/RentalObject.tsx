@@ -48,11 +48,24 @@ export const RentalObjectComponent = function (): JSX.Element {
     }, [userState.currentUser !== undefined]);
 
     useEffect(() => {
-        if(!rentalObjectState.model)
-        return;
+        if (!rentalObjectState.model)
+            return;
+
+        if (!!rentalObjectState.model.roomVariants && !!id) {
+            dispatch(RentalObjectActions.loadRentalObjectRoomVariants(id));
+        }
 
         dispatch(BookingActions.getDraft());
     }, [rentalObjectState.model])
+
+    useEffect(() => {
+        if(!bookingState.model)
+            return;
+
+        if(bookingState.model.rentalObject?.id !== id) {
+            dispatch(BookingActions.clearEditionState());
+        }
+    }, [bookingState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)
@@ -164,7 +177,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             checkinDate: startDate,
             checkoutDate: endDate
         }));
-        
+
         setDatesAnchorEl(null);
     }
 
