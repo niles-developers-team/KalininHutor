@@ -94,13 +94,13 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <People color="disabled" />
                         <Typography variant="body2">Взрослых: {filter.adultsCount}</Typography>
-                        <Typography>Детей: {filter.childsCount}</Typography>
+                        <Typography variant="body2">Детей: {filter.childsCount}</Typography>
                     </Stack>
                 </Button>
                 <Button aria-describedby={datesPopoverId} onClick={(event) => setDatesAnchorEl(datesAnchorEl ? null : event.currentTarget)}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <CalendarMonth color="disabled" />
-                        <Typography>{filter.checkinDate ? moment(filter.checkinDate).format('DD.MM.YYYY') : 'Заезд'} - {filter.checkoutDate ? moment(filter.checkoutDate).format('DD.MM.YYYY') : 'Отъезд'}</Typography>
+                        <Typography variant="body2">{filter.checkinDate ? moment(filter.checkinDate).format('DD.MM.YYYY') : 'Заезд'} - {filter.checkoutDate ? moment(filter.checkoutDate).format('DD.MM.YYYY') : 'Отъезд'}</Typography>
                     </Stack>
                 </Button>
                 <Button disabled={searchDisabled} onClick={onSearch}>Искать</Button>
@@ -154,7 +154,7 @@ function CategoryItemFilters(props: CategoryItemFiltersProps) {
                     <ListItemIcon>
                         <Checkbox
                             edge="start"
-                            checked={item.selected}
+                            checked={item.selected || false}
                             tabIndex={-1}
                             disableRipple
                             onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => onFilterSelected(item.id || '', checked)}
@@ -215,7 +215,7 @@ export const RentalObjectsDetailedFilterComponent = function (props: DetailedPro
                     }}
                     subheader={<li />}>
                     {!groupedCharacteristics ? null : groupedCharacteristics.map((keyValue: { key: CharacteristicTypes, values: RoomCharacteristicFilter[] }) => (
-                        <CategoryItemFilters category={keyValue.key} items={keyValue.values} onFilterSelected={props.onFilterSelected} />
+                        <CategoryItemFilters key={keyValue.key} category={keyValue.key} items={keyValue.values} onFilterSelected={props.onFilterSelected} />
                     ))}
                 </List>
             </Paper>

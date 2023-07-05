@@ -21,7 +21,9 @@ export const RentalObjectsComponent = function (): JSX.Element {
         childsCount: 0,
         roomsCount: 1,
         searchText: '',
-        getBestDemands: true
+        getBestDemands: true,
+        checkinDate: moment().format('YYYY-MM-DD'),
+        checkoutDate: moment().add(14, 'days').format('YYYY-MM-DD')
     });
     const [characteristics, setCharacteristics] = useState<RoomCharacteristicFilter[]>([]);
 
@@ -35,9 +37,12 @@ export const RentalObjectsComponent = function (): JSX.Element {
             checkoutDate: query.get('checkoutDate') || undefined,
             getBestDemands: true
         };
-        setFilter(filterFromUrl);
 
-        dispatch(RentalObjectActions.getRentalObjects(filterFromUrl));
+        const extendedFilter = { ...filterFromUrl, ...filter };
+
+        setFilter(extendedFilter);
+
+        dispatch(RentalObjectActions.getRentalObjects(extendedFilter));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
     }, []);
 
@@ -66,7 +71,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
         else query.delete('checkoutDate');
 
         setSearchParams(query.toString());
-        setFilter(filter);
+        setFilter({ ...filter });
     }
 
     function handleSearch() {
@@ -76,7 +81,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     function handleFilterSelected(id: string, selected: boolean) {
         const filter = characteristics.find(o => o.id === id);
         if (filter) {
-            setCharacteristics([...characteristics.map(o => o.id === id ? { ...o, selected: selected } : o)]);
+            setCharacteristics(characteristics.map(o => o.id === id ? { ...o, selected: selected } : o));
         }
     }
 
@@ -93,7 +98,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
     }
     return (
         <Stack width="100%" direction="row" spacing={3}>
-            <RentalObjectsDetailedFilterComponent characteristics={characteristics} onFilterSelected={handleFilterSelected}/>
+            <RentalObjectsDetailedFilterComponent characteristics={characteristics} onFilterSelected={handleFilterSelected} />
             <Stack>
                 <Typography variant="h5">Базы отдыха и дачи</Typography>
                 <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={handleFilterChanged} />
@@ -102,7 +107,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
                     (
                         rentalObjectState.modelsLoading
                             ? <RentalObjectDetailedInfoSkeleton />
-                            : <RentalObjectDetailedInfoComponent model={ro} onShowVariants={handleShowVariants} />
+                            : <RentalObjectDetailedInfoComponent key={ro.id} model={ro} onShowVariants={handleShowVariants} />
                     ))}
                 </Stack>
             </Stack>

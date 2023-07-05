@@ -48,11 +48,24 @@ export const RentalObjectComponent = function (): JSX.Element {
     }, [userState.currentUser !== undefined]);
 
     useEffect(() => {
-        if(!rentalObjectState.model)
-        return;
+        if (!rentalObjectState.model)
+            return;
+
+        if (!!rentalObjectState.model.roomVariants && !!id) {
+            dispatch(RentalObjectActions.loadRentalObjectRoomVariants(id));
+        }
 
         dispatch(BookingActions.getDraft());
     }, [rentalObjectState.model])
+
+    useEffect(() => {
+        if(!bookingState.model)
+            return;
+
+        if(bookingState.model.rentalObject?.id !== id) {
+            dispatch(BookingActions.clearEditionState());
+        }
+    }, [bookingState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)
@@ -164,7 +177,7 @@ export const RentalObjectComponent = function (): JSX.Element {
             checkinDate: startDate,
             checkoutDate: endDate
         }));
-        
+
         setDatesAnchorEl(null);
     }
 
@@ -202,18 +215,18 @@ export const RentalObjectComponent = function (): JSX.Element {
                             >
                                 <Stack direction="row" spacing={2}>
                                     <Stack>
-                                        <Typography variant="subtitle1"><b>Заезд</b></Typography>
-                                        <Typography>{checkinDate.format('DD.MM.YYYY')}</Typography>
+                                        <Typography variant="body2"><b>Заезд</b></Typography>
+                                        <Typography variant="body2">{checkinDate.format('DD.MM.YYYY')}</Typography>
                                     </Stack>
                                     <Divider orientation="vertical" flexItem />
                                     <Stack>
-                                        <Typography variant="subtitle1"><b>Отъезд</b></Typography>
-                                        <Typography>{checkoutDate.format('DD.MM.YYYY')}</Typography>
+                                        <Typography variant="body2"><b>Отъезд</b></Typography>
+                                        <Typography variant="body2">{checkoutDate.format('DD.MM.YYYY')}</Typography>
                                     </Stack>
                                 </Stack>
                             </Button>
                             <Typography variant="body2"><b>Длительность проживания:</b></Typography>
-                            <Typography> {nightsCount} {pluralize(nightsCount, 'ночь', 'ночи', 'ночей')}</Typography>
+                            <Typography variant="body2"> {nightsCount} {pluralize(nightsCount, 'ночь', 'ночи', 'ночей')}</Typography>
                             <Divider flexItem />
                             <Button
                                 aria-describedby={personsPopoverId}
@@ -226,7 +239,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                                 </Stack>
                             </Button>
                             <Divider flexItem />
-                            <Typography variant="subtitle1"><b>Вы выбрали:</b></Typography>
+                            <Typography variant="body2"><b>Вы выбрали:</b></Typography>
                             {booking?.roomVariants?.map(brv => {
                                 const roomVariant = roomVariants.find(o => o.id === brv.roomVariantId)
                                 return <Typography key={roomVariant?.id}>{brv.roomsCount} x {roomVariant?.name}</Typography>
