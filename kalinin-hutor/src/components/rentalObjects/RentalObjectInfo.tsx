@@ -26,7 +26,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
         <Paper key={model.id}>
             {model.photos.length ? (
                 <Grid
-                style={{height: '200px', maxHeight: '200px'}}
+                    style={{ height: '200px', maxHeight: '200px' }}
                     onMouseEnter={() => setSliding(true)}
                     onMouseLeave={() => setSliding(false)}>
                     <Carousel
@@ -37,7 +37,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', objectFit: 'contain', maxHeight: '200px' }}src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', objectFit: 'contain', maxHeight: '200px' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                     </Carousel>
                 </Grid>
             ) : (
@@ -48,7 +48,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
             <Stack paddingX={2} paddingBottom={1} spacing={2}>
                 <Typography variant="h6">{model.name}</Typography>
                 <Typography variant="caption">{model.address}</Typography>
-                <Button onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
+                <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
             </Stack>
         </Paper>
     );
@@ -56,12 +56,15 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
 
 export const RentalObjectShortInfoSkeleton = function (): JSX.Element {
     return (
-        <Stack padding={2} spacing={2}>
-            <Paper variant="outlined">
+        <Stack width="100%">
+            <Paper>
                 <Skeleton variant="rectangular" width="100%" height={200} />
+                <Stack paddingX={2} paddingBottom={1} spacing={2}>
+                    <Typography variant="h6"><Skeleton width='100%' /></Typography>
+                    <Typography variant="caption"><Skeleton width='100%' /></Typography>
+                    <Skeleton width='100%' variant="rounded"><Button fullWidth size="small"></Button></Skeleton>
+                </Stack>
             </Paper>
-            <Typography variant="h6"><Skeleton /></Typography>
-            <Skeleton width="60%" />
         </Stack>
     );
 }

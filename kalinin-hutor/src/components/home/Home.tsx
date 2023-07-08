@@ -66,10 +66,10 @@ export const HomeComponent = function (): JSX.Element {
             <RentalObjectsBaseFilterComponent filter={filter} onSearch={handleSearch} onFilterUpdate={setFilter} />
             <Grid item xs container spacing={{ xs: 2 }} columns={{ xs: 10 }} alignItems="center">
                 {top10RentalObjects.map((ro, index) =>
-                (<Grid item key={index}>
+                (<Grid xs item key={index}>
                     {rentalObjectState.modelsLoading
-                        ? <RentalObjectShortInfoSkeleton />
-                        : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => handleGoToRentalObject(ro.id || '')} />
+                    ? <RentalObjectShortInfoSkeleton />
+                    : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => handleGoToRentalObject(ro.id || '')} />
                     }
                 </Grid>)
                 )}
