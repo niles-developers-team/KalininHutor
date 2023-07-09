@@ -136,7 +136,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
     const notificationsCount = notificationState.models.filter(o => !o.read)?.length ?? 0;
 
     return (
-        <Grid container direction="row">
+        <Grid container>
             <HideOnScroll {...props}>
                 <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Container maxWidth="xl">

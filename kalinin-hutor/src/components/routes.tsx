@@ -21,7 +21,8 @@ import { SigninDialog } from "./signin/Signin";
 import { RentalObjectComponent } from "./rentalObjects/RentalObject";
 import { BookingComponent } from "./rentalObjects/Booking";
 import { BookingDetailsComponent } from "./me/BookingDetailsDialog";
-
+import { BrowserView, MobileView } from 'react-device-detect';
+import { MobileLayoutComponent, HomeComponent as MobileHomeComponent } from "../mobile";
 
 export function RoutesSwitch() {
     const { userState } = useAppSelector((state: AppState) => state);
@@ -55,33 +56,42 @@ export function RoutesSwitch() {
     }, [userState.authenticating]);
 
 
-    return (
-        <LayoutComponent onSigninDialogOpen={handleSigninOpen}>
-            <Routes>
-                <Route index element={<HomeComponent />} />
-                <Route path="/me" element={<PrivateRoute><MeComponent /></PrivateRoute>} />
-                <Route path="/favorite" element={<PrivateRoute><FavoriteComponent /></PrivateRoute>} />
-                <Route path="/my-orders" element={<MyOrdersComponent />} />
-                <Route path="/my-bookings" element={<MyBookingsComponent />} />
-                <Route path="/cart" element={<CartComponent />} />
-                <Route path="/catalog" element={<CatalogComponent />} />
-                <Route path="/rental-objects" element={<RentalObjectsComponent />} />
-                <Route path="/rental-objects/:id" element={<RentalObjectComponent />} />
-                <Route path="/rental-objects/:rentalObjectId/booking/:id" element={<BookingComponent />} />
-                <Route path="/me/bookings/:id" element={<BookingDetailsComponent />} />
-                <Route path="/me/rental-objects/:id" element={<MyRentalObjectComponent />} />
-                <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
+    return <>
+        <BrowserView>
+            <LayoutComponent onSigninDialogOpen={handleSigninOpen}>
+                <Routes>
+                    <Route index element={<HomeComponent />} />
+                    <Route path="/me" element={<PrivateRoute><MeComponent /></PrivateRoute>} />
+                    <Route path="/favorite" element={<PrivateRoute><FavoriteComponent /></PrivateRoute>} />
+                    <Route path="/my-orders" element={<MyOrdersComponent />} />
+                    <Route path="/my-bookings" element={<MyBookingsComponent />} />
+                    <Route path="/cart" element={<CartComponent />} />
+                    <Route path="/catalog" element={<CatalogComponent />} />
+                    <Route path="/rental-objects" element={<RentalObjectsComponent />} />
+                    <Route path="/rental-objects/:id" element={<RentalObjectComponent />} />
+                    <Route path="/rental-objects/:rentalObjectId/booking/:id" element={<BookingComponent />} />
+                    <Route path="/me/bookings/:id" element={<BookingDetailsComponent />} />
+                    <Route path="/me/rental-objects/:id" element={<MyRentalObjectComponent />} />
+                    <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
 
 
-                <Route path='401' element={<NotAuthorizedComponent onSigninClick={handleSigninOpen} />} />
-                <Route path='*' element={<NotFound />} />
-            </Routes>
-            <SigninDialog
-                isOpen={open}
-                authenticating={userState.authenticating}
-                onSignin={handleSignin}
-                onClose={() => setOpen(false)}
-            />
-        </LayoutComponent>
-    );
+                    <Route path='401' element={<NotAuthorizedComponent onSigninClick={handleSigninOpen} />} />
+                    <Route path='*' element={<NotFound />} />
+                </Routes>
+                <SigninDialog
+                    isOpen={open}
+                    authenticating={userState.authenticating}
+                    onSignin={handleSignin}
+                    onClose={() => setOpen(false)}
+                />
+            </LayoutComponent>
+        </BrowserView>
+        <MobileView>
+            <MobileLayoutComponent onSigninDialogOpen={handleSigninOpen}>
+                <Routes>
+                    <Route index element={<MobileHomeComponent />} />
+                </Routes>
+            </MobileLayoutComponent>
+        </MobileView>
+    </>
 }
