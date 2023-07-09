@@ -137,21 +137,21 @@ export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Elem
     }
 
     return (
-        <Paper key={model.id}>
+        <Paper key={model.id} onClick={() => onShowVariants(model.id || '')}>
             {model.photos.length ? (
                 <Grid
-                    style={{ height: '200px', maxHeight: '200px' }}
                     onMouseEnter={() => setSliding(true)}
                     onMouseLeave={() => setSliding(false)}>
                     <Carousel
-                        autoPlay={sliding}
+                        height="55.55vw"
+                        autoPlay={false}
                         animation="slide"
-                        indicators={false}
-                        stopAutoPlayOnHover={false}
+                        indicators={true}
+                        stopAutoPlayOnHover={true}
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', objectFit: 'contain', maxHeight: '200px' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                     </Carousel>
                 </Grid>
             ) : (
@@ -160,17 +160,16 @@ export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Elem
                 </Paper>
             )}
             <Stack paddingX={2} paddingBottom={1}>
-                <Typography variant="h6">{model.name}</Typography>
-                <Stack direction="row">
-                    <LocationOn color="primary" fontSize="small" />
-                    <Typography alignContent="center" variant="caption">{model.address}</Typography>
-                </Stack>
                 <Stack direction="row" alignItems="center">
+                    <Typography variant="h6">{model.name}</Typography>
+                    <Grid item xs />
                     <Typography>От: {Math.min(...(model.roomVariants.map(o => o.price)) || 0)}</Typography>
                     <CurrencyRuble fontSize="small" />
                     <Typography> за ночь</Typography>
-                    <Grid item xs />
-                    <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
+                </Stack>
+                <Stack direction="row">
+                    <LocationOn color="primary" fontSize="small" />
+                    <Typography alignContent="center" variant="caption">{model.address}</Typography>
                 </Stack>
             </Stack>
         </Paper>
