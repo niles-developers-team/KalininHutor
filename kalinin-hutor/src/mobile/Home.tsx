@@ -1,4 +1,4 @@
-import { AppBar, Box, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Paper, Skeleton, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
+import { AppBar, Box, Button, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Paper, Skeleton, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useEffect, useState } from "react";
 import { MobileRentalObjectInfoComponent, RentalObjectShortInfoSkeleton } from "../components/rentalObjects/RentalObjectInfo";
@@ -108,8 +108,8 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                 sx={{
                     ".MuiDrawer-paper ": {
                         height: `calc(100% - ${drawerBleeding}px)`,
-                        top: 64,
-                        overflow: 'visible'
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
                     }
                 }}
                 allowSwipeInChildren={true}
@@ -117,26 +117,25 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                 <Stack padding={2}
                     sx={{
                         bgcolor: 'white',
-                        position: 'absolute',
-                        top: `-${drawerBleeding}px`,
                         visibility: 'visible',
                         right: 0,
-                        left: 0,
-                        borderTopLeftRadius: 8,
-                        borderTopRightRadius: 8,
+                        left: 0
                     }}>
                     <Puller />
-                    <Typography variant="h6">Фильтры</Typography>
+                    <Stack direction="row" alignItems="center">
+                        <Typography sx={{ flexGrow: 1 }} variant="h6">Фильтры</Typography>
+                        <Button size="small">Сбросить</Button>
+                    </Stack>
                 </Stack>
-                <Stack paddingY={2} spacing={2} height='100%' overflow='auto'>
+                <Stack spacing={2} height='100%' overflow='auto'>
                     <Typography paddingX={2} variant="body1">Цена за 1 ночь</Typography>
                     <Stack paddingX={2} direction="row" spacing={3}>
-                        <TextField size="small"
+                        <TextField type="number" size="small"
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">от</InputAdornment>,
                                 endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
                             }} />
-                        <TextField size="small"
+                        <TextField type="number" size="small"
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">до</InputAdornment>,
                                 endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
@@ -148,7 +147,6 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                         sx={{
                             width: '100%',
                             position: 'relative',
-                            overflow: 'auto',
                             '& ul': { padding: 0 },
                         }}
                         subheader={<li />}>
@@ -159,6 +157,9 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                             </>
                         ))}
                     </List>
+                </Stack>
+                <Stack padding={2}>
+                    <Button> Показать варианты </Button>
                 </Stack>
             </SwipeableDrawer>
         </Stack>
