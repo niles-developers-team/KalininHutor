@@ -138,8 +138,7 @@ interface CategoryItemFiltersProps {
     items: RoomCharacteristicFilter[];
     onFilterSelected: (id: string, selected: boolean) => void;
 }
-
-function CategoryItemFilters(props: CategoryItemFiltersProps) {
+export function CategoryItemFilters(props: CategoryItemFiltersProps) {
     const [collapsed, setCollapsed] = useState<boolean>(true);
     const { category, items, onFilterSelected } = props;
     if (!items)

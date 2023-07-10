@@ -163,9 +163,9 @@ export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Elem
                 <Stack direction="row" alignItems="center">
                     <Typography variant="h6">{model.name}</Typography>
                     <Grid item xs />
-                    <Typography>От: {Math.min(...(model.roomVariants.map(o => o.price)) || 0)}</Typography>
-                    <CurrencyRuble fontSize="small" />
-                    <Typography> за ночь</Typography>
+                    <Typography variant="body2">От: {Math.min(...(model.roomVariants.map(o => o.price)) || 0)}</Typography>
+                    <Typography variant="body2"><CurrencyRuble fontSize="small" /></Typography>
+                    <Typography variant="body2"> за ночь</Typography>
                 </Stack>
                 <Stack direction="row">
                     <LocationOn color="primary" fontSize="small" />

@@ -1,21 +1,38 @@
-import { AppBar, Container, IconButton, Stack, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Paper, Skeleton, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MobileRentalObjectInfoComponent, RentalObjectShortInfoSkeleton } from "../components/rentalObjects/RentalObjectInfo";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
 import { RouteProps, useNavigate } from "react-router-dom";
-import { RentalObject } from "../models";
+import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../models";
 import { HideOnScroll } from "../components/common";
-import { Favorite, Menu, Tune } from "@mui/icons-material";
+import { CurrencyRuble, Favorite, Menu, Satellite, Tune } from "@mui/icons-material";
+import { grey } from "@mui/material/colors";
+import { Global } from "@emotion/react";
+import { CategoryItemFilters } from "../components/rentalObjects/RentalObjectsFilter";
 
+const drawerBleeding = 56;
 interface Props {
 
 }
 
+const Puller = styled(Box)(({ theme }) => ({
+    width: 30,
+    height: 6,
+    backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
+    borderRadius: 3,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+}));
+
 export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { rentalObjectState } = useAppSelector((state: AppState) => state);
+    const { rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
+
+    const [state, setState] = useState({
+        filterOpened: false
+    });
 
     useEffect(() => {
 
@@ -35,16 +52,34 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
         navigate(`/rental-objects/${id}`);
     }
 
+    function handleFilterSelected(id: string, selected: boolean) {
+    }
+
+    const characteristics = roomCharacteristicState.models || [];
+
+    const container = window !== undefined ? () => window.document.body : undefined;
+
+    const groupedCharacteristics = !characteristics.length ? undefined : characteristics.reduce(function (r: Array<{ key: CharacteristicTypes, values: RoomCharacteristicFilter[] }>, a) {
+        const keyValue = r.find(o => o.key === a.type);
+        if (keyValue) {
+            keyValue.values.push(a);
+        } else {
+            r.push({ key: a.type, values: [a] });
+        }
+        return r;
+    }, []);
+
     return (
         <Stack>
+            <CssBaseline />
             <HideOnScroll>
-                <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <AppBar position="sticky" color="default">
                     <Container maxWidth="xl">
                         <Toolbar disableGutters>
                             <Stack width="100%" spacing={2} direction="row" alignItems="center">
-                                <IconButton><Tune /></IconButton>
-                                <Typography sx={{flexGrow: 1}}>Калинин Хутор</Typography>
-                                <IconButton><Favorite /></IconButton>
+                                <IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>
+                                <Typography sx={{ flexGrow: 1 }}>Калинин Хутор</Typography>
+                                <IconButton disabled><Favorite /></IconButton>
                                 <IconButton><Menu /></IconButton>
                             </Stack>
                         </Toolbar>
@@ -59,6 +94,73 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                         : <MobileRentalObjectInfoComponent key={ro.id} model={ro} onShowVariants={handleShowVariants} />
                 ))}
             </Stack>
+            <SwipeableDrawer
+                container={container}
+                anchor="bottom"
+                open={state.filterOpened}
+                onClose={() => setState({ ...state, filterOpened: false })}
+                onOpen={() => setState({ ...state, filterOpened: true })}
+                swipeAreaWidth={drawerBleeding}
+                disableSwipeToOpen={false}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    ".MuiDrawer-paper ": {
+                        height: `calc(100% - ${drawerBleeding}px)`,
+                        top: 64,
+                        overflow: 'visible'
+                    }
+                }}
+                allowSwipeInChildren={true}
+            >
+                <Stack padding={2}
+                    sx={{
+                        bgcolor: 'white',
+                        position: 'absolute',
+                        top: `-${drawerBleeding}px`,
+                        visibility: 'visible',
+                        right: 0,
+                        left: 0,
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                    }}>
+                    <Puller />
+                    <Typography variant="h6">Фильтры</Typography>
+                </Stack>
+                <Stack paddingY={2} spacing={2} height='100%' overflow='auto'>
+                    <Typography paddingX={2} variant="body1">Цена за 1 ночь</Typography>
+                    <Stack paddingX={2} direction="row" spacing={3}>
+                        <TextField size="small"
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">от</InputAdornment>,
+                                endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
+                            }} />
+                        <TextField size="small"
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">до</InputAdornment>,
+                                endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
+                            }} />
+                    </Stack>
+                    <Divider />
+                    <List
+                        dense
+                        sx={{
+                            width: '100%',
+                            position: 'relative',
+                            overflow: 'auto',
+                            '& ul': { padding: 0 },
+                        }}
+                        subheader={<li />}>
+                        {!groupedCharacteristics ? null : groupedCharacteristics.map((keyValue: { key: CharacteristicTypes, values: RoomCharacteristicFilter[] }) => (
+                            <>
+                                <CategoryItemFilters key={keyValue.key} category={keyValue.key} items={keyValue.values} onFilterSelected={handleFilterSelected} />
+                                <Divider />
+                            </>
+                        ))}
+                    </List>
+                </Stack>
+            </SwipeableDrawer>
         </Stack>
     )
 }
