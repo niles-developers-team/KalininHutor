@@ -9,6 +9,7 @@ import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
 import { HideOnScroll } from "../../commonComponents";
+import { RoomVariantComponent } from "./roomVariant";
 
 const drawerBleeding = 56;
 
@@ -110,38 +111,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 {roCharacteristics.length > 5 && <Button size="small" onClick={() => setState({ ...state, allServicesOpened: true })}>Все услуги</Button>}
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Варианты размещения</Typography>
-                    {model.roomVariants.map(rv => (
-                        <Paper key={rv.id}>
-                            {rv.photos.length ? (
-                                <Carousel
-                                    height="55.55vw"
-                                    autoPlay={false}
-                                    animation="slide"
-                                    indicators={true}
-                                    stopAutoPlayOnHover={true}
-                                    navButtonsAlwaysInvisible={true}
-                                    cycleNavigation={true}
-                                >
-                                    {rv.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
-                                </Carousel>
-                            ) : (
-                                <Paper variant="outlined">
-                                    <Skeleton variant="rectangular" width='100%' height="55.55vw" />
-                                </Paper>
-                            )}
-                            <Stack paddingX={2} spacing={1} paddingBottom={1}>
-                                <Stack direction="row" alignItems="center">
-                                    <Typography sx={{ flexGrow: 1 }} variant="h6">{rv.name}</Typography>
-                                    <Typography >{rv.price}</Typography>
-                                    <CurrencyRuble fontSize="small" />
-                                </Stack>
-                                <Button size="small" onClick={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })}>Подробнее</Button>
-                                <Grid container direction="row" spacing={1} rowSpacing={2}>
-                                    {rv.characteristics.map(o => o.roomCharacteristic).map(rc => (<Stack direction="row" marginX={1}>{CharacteristicTypes.getIcon(rc.type)}<Typography>{rc.name}</Typography></Stack>))}
-                                </Grid>
-                            </Stack>
-                        </Paper>
-                    ))}
+                    {model.roomVariants.map(rv => (<RoomVariantComponent roomVariant={rv} onShowDetails={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })}/>))}
                 </Stack>
             </Stack>
             <SwipeableDrawer
@@ -254,7 +224,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     }}>
                     <Puller />
                     <Typography>Описание</Typography>
-                    <Typography>{model.description}</Typography>
+                    <Typography component="p">{model.description}</Typography>
                 </Stack>
             </SwipeableDrawer>
         </Stack>
