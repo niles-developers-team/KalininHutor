@@ -22,7 +22,7 @@ export const VisitorsPopoverComponent = function (props: VisitorsPopoverProps): 
         roomsCount,
         onAdultsCountChanged,
         onChildsCountChanged,
-        onRoomsCountChanged,        
+        onRoomsCountChanged,
         ...rest
     } = props;
     return (
@@ -45,7 +45,7 @@ export const VisitorsPopoverComponent = function (props: VisitorsPopoverProps): 
                         <Typography width="100%">Комнат</Typography>
                         <IconButton onClick={() => onRoomsCountChanged && onRoomsCountChanged(roomsCount - 1)} disabled={roomsCount === 1}><Remove /></IconButton>
                         <Typography>{roomsCount}</Typography>
-                        <IconButton onClick={() => onRoomsCountChanged &&onRoomsCountChanged(roomsCount + 1)}><Add /></IconButton>
+                        <IconButton onClick={() => onRoomsCountChanged && onRoomsCountChanged(roomsCount + 1)}><Add /></IconButton>
                     </Stack>
                 }
             </Stack>
@@ -77,7 +77,7 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
             checkinDate: startDate,
             checkoutDate: endDate
         });
-        
+
         setDatesAnchorEl(null);
     }
 
@@ -150,16 +150,14 @@ export function CategoryItemFilters(props: CategoryItemFiltersProps) {
         listItems.push(
             (
                 <ListItem key={`item-${category}-${item.id}`}>
-                    <ListItemIcon>
+                    <ListItemButton onClick={() => onFilterSelected(item.id || '', !item.selected)}>
                         <Checkbox
                             edge="start"
                             checked={item.selected || false}
                             tabIndex={-1}
-                            disableRipple
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => onFilterSelected(item.id || '', checked)}
                         />
-                    </ListItemIcon>
-                    <ListItemText primary={item.name} />
+                        <ListItemText primary={item.name} />
+                    </ListItemButton>
                 </ListItem>
             )
         );

@@ -22,7 +22,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "moment/locale/ru";
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 sessionService.init();
 
@@ -46,6 +46,7 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <ThemeProvider theme={theme}>
+    <CssBaseline />
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Provider store={store}>
         <BrowserRouter>

@@ -156,7 +156,7 @@ export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Elem
                 </Grid>
             ) : (
                 <Paper variant="outlined">
-                    <Skeleton variant="rectangular" width='100%' height={200} />
+                    <Skeleton variant="rectangular" width='100%' height="55.55vw" />
                 </Paper>
             )}
             <Stack paddingX={2} paddingBottom={1}>
@@ -164,7 +164,7 @@ export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Elem
                     <Typography variant="h6">{model.name}</Typography>
                     <Grid item xs />
                     <Typography variant="body2">От: {Math.min(...(model.roomVariants.map(o => o.price)) || 0)}</Typography>
-                    <Typography variant="body2"><CurrencyRuble fontSize="small" /></Typography>
+                    <CurrencyRuble fontSize="small" />
                     <Typography variant="body2"> за ночь</Typography>
                 </Stack>
                 <Stack direction="row">

@@ -23,6 +23,7 @@ import { BookingComponent } from "./rentalObjects/Booking";
 import { BookingDetailsComponent } from "./me/BookingDetailsDialog";
 import { BrowserView, MobileView } from 'react-device-detect';
 import { MobileLayoutComponent, HomeComponent as MobileHomeComponent } from "../mobile";
+import { RentalObjectComponent as MobileRentalObjectComponent} from '../mobile/rentalObjects';
 
 export function RoutesSwitch() {
     const { userState } = useAppSelector((state: AppState) => state);
@@ -73,8 +74,7 @@ export function RoutesSwitch() {
                     <Route path="/me/bookings/:id" element={<BookingDetailsComponent />} />
                     <Route path="/me/rental-objects/:id" element={<MyRentalObjectComponent />} />
                     <Route path="/me/rental-objects/:rentalObjectId/room-variants/:id" element={<RoomVariantComponent />} />
-
-
+                    
                     <Route path='401' element={<NotAuthorizedComponent onSigninClick={handleSigninOpen} />} />
                     <Route path='*' element={<NotFound />} />
                 </Routes>
@@ -90,6 +90,7 @@ export function RoutesSwitch() {
             <MobileLayoutComponent onSigninDialogOpen={handleSigninOpen}>
                 <Routes>
                     <Route index element={<MobileHomeComponent />} />
+                    <Route path="/rental-objects/:id" element={<MobileRentalObjectComponent />} />
                 </Routes>
             </MobileLayoutComponent>
         </MobileView>
