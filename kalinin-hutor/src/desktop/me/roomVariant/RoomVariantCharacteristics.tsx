@@ -1,5 +1,5 @@
 import { Edit, Delete } from "@mui/icons-material";
-import { Stack, Typography, Grid, CircularProgress, Button, IconButton, CardContent, Card } from "@mui/material";
+import { Stack, Typography, Grid, CircularProgress, Button, IconButton, Card } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { CharacteristicTypes, RoomCharacteristic, RoomVariantCharacteristic } from "../../../models";
 

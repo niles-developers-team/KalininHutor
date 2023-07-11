@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { Notification, NotificationCommands, NotificationVariant } from "../../models";
-import { notificationService } from "../../services/notificationService";
+import { notificationService } from "../../services";
 import { AppThunkAction, AppThunkDispatch } from "../appState";
 
 export enum ActionTypes {

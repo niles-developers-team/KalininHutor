@@ -187,6 +187,25 @@ export namespace RoomCharacteristicActions {
         }
     }
 
+    export function selectRoomCharacteristic(id: string, selected: boolean): AppThunkAction<GetRoomCharacteristicsSuccessAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomCharacteristicState } = getState();
+
+            return dispatch({ type: RoomCharacteristicActionTypes.getRoomCharacteristicsSuccess, roomcharacteristics: roomCharacteristicState.models?.map(o => o.id === id ? { ...o, selected: selected } : o) || [] });
+        }
+    }
+
+    export function unselectAllRoomCharacteristics(): AppThunkAction<GetRoomCharacteristicsSuccessAction> {
+        return (dispatch: AppThunkDispatch, getState: () => AppState) => {
+            const { roomCharacteristicState } = getState();
+
+            return dispatch({
+                type: RoomCharacteristicActionTypes.getRoomCharacteristicsSuccess,
+                roomcharacteristics: roomCharacteristicState.models?.map(o => ({ ...o, selected: false })) || []
+            });
+        }
+    }
+
     export function getRoomCharacteristic(id: string | undefined): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
         return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
             dispatch(request(id));

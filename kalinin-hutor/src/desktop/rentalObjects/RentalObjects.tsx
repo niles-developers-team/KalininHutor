@@ -2,12 +2,12 @@ import { Stack, Typography } from "@mui/material"
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { RentalObjectsBaseFilterComponent, RentalObjectsDetailedFilterComponent } from "./RentalObjectsFilter";
+import { RentalObjectDetailedInfoComponent, RentalObjectDetailedInfoSkeleton } from "./RentalObjectInfo";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
 import { RentalObject, RoomCharacteristicFilter } from "../../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../../store";
-import { RentalObjectsBaseFilterComponent, RentalObjectsDetailedFilterComponent } from "./RentalObjectsFilter";
-import { RentalObjectDetailedInfoComponent, RentalObjectDetailedInfoSkeleton } from "./RentalObjectInfo";
 
 export const RentalObjectsComponent = function (): JSX.Element {
     const navigate = useNavigate();

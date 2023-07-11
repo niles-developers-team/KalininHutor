@@ -1,4 +1,4 @@
-import { CurrencyRuble, FavoriteBorder } from "@mui/icons-material";
+import { CurrencyRuble, FavoriteBorder, LocationCityOutlined, LocationOn } from "@mui/icons-material";
 import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
 import { useState, CSSProperties } from "react";
 import Carousel from "react-material-ui-carousel";
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const imageStyle: CSSProperties = {
-    objectFit: "contain"
+    objectFit: "cover"
 };
 
 export const RentalObjectShortInfoComponent = function (props: Props): JSX.Element {

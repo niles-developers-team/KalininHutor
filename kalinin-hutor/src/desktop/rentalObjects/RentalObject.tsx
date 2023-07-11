@@ -4,11 +4,9 @@ import moment from "moment";
 import pluralize from "plural-ru";
 import { CSSProperties, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { useQuery } from "../../hooks/useQuery";
-import { BedTypes, Booking, BookingStatuses, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, User } from "../../models"
+import { useAppDispatch, useAppSelector, useQuery } from "../../hooks";
+import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant } from "../../models"
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, NotificationActions } from "../../store";
-import { RoomVariantActions } from "../../store/roomVariantStore";
 import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";

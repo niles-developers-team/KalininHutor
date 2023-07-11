@@ -108,6 +108,7 @@ export interface RoomCharacteristic {
     description: string;
     // Тип (Зона) харакетистики
     type: CharacteristicTypes;
+    selected?: boolean;
 }
 
 export interface RoomCharacteristicFilter extends RoomCharacteristic {

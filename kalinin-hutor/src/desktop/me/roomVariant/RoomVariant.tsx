@@ -2,17 +2,14 @@ import { Button, Grid, IconButton, Paper, Stack, Typography } from "@mui/materia
 import { createRef, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useDebounce } from "../../../hooks";
-import { EntityStatus, PaymentOptions, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
-import { AppState, RentalObjectActions } from "../../../store";
-import { RoomCharacteristicActions } from "../../../store/roomCharacteristicStore";
+import { EntityStatus,  RoomVariant, RoomVariantBedType, RoomVariantCharacteristic } from "../../../models";
+import { AppState, RentalObjectActions, RoomCharacteristicActions, RoomVariantActions } from "../../../store";
 import { BedVariantDialog } from "./BedVariantDialog";
 import { CharacteristicDialog } from "./CharacteristicDialog";
 import { RoomVariantBedTypesComponent } from "./RoomVariantBedTypes";
 import { RoomVariantCharacteristicsComponent } from "./RoomVariantCharacteristics";
 import { RoomVariantDetailsComponent } from "./RoomVariantDetails";
-import { v4 as uuidv4 } from 'uuid';
 import { ArrowBack, Delete, OpenWith } from "@mui/icons-material";
-import { RoomVariantActions } from "../../../store/roomVariantStore";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { appName } from "../../..";
 

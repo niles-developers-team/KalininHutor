@@ -8,7 +8,6 @@ import reportWebVitals from './reportWebVitals';
 import configureStore from './store/createStore';
 
 import { sessionService } from './services';
-import { RoutesSwitch } from './components';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { ruRU } from "@mui/x-data-grid";
@@ -22,7 +21,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "moment/locale/ru";
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { RoutesSwitch } from './routes';
 
 sessionService.init();
 
@@ -46,6 +46,7 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <ThemeProvider theme={theme}>
+    <CssBaseline />
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Provider store={store}>
         <BrowserRouter>

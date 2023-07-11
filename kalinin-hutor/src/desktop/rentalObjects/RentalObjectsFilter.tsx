@@ -1,10 +1,11 @@
 import { People, CalendarMonth, Remove, Add } from "@mui/icons-material"
-import { Stack, Divider, Grid, Input, Button, Typography, Popover, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Checkbox, ListSubheader, PopoverProps, InputBase } from "@mui/material"
+import { Stack, Divider, Grid, Button, Typography, Popover, IconButton, List, Paper, PopoverProps, InputBase } from "@mui/material"
 import moment from "moment"
 import { Search } from "@mui/icons-material"
-import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../../models"
-import React, { useState } from "react"
+import { useState } from "react"
 import { RangeCalendarPopoverComponent } from "../common"
+import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../../models"
+import { CategoryItemFilters } from "../../commonComponents"
 
 interface VisitorsPopoverProps extends PopoverProps {
     adultsCount: number;
@@ -22,7 +23,7 @@ export const VisitorsPopoverComponent = function (props: VisitorsPopoverProps): 
         roomsCount,
         onAdultsCountChanged,
         onChildsCountChanged,
-        onRoomsCountChanged,        
+        onRoomsCountChanged,
         ...rest
     } = props;
     return (
@@ -45,7 +46,7 @@ export const VisitorsPopoverComponent = function (props: VisitorsPopoverProps): 
                         <Typography width="100%">Комнат</Typography>
                         <IconButton onClick={() => onRoomsCountChanged && onRoomsCountChanged(roomsCount - 1)} disabled={roomsCount === 1}><Remove /></IconButton>
                         <Typography>{roomsCount}</Typography>
-                        <IconButton onClick={() => onRoomsCountChanged &&onRoomsCountChanged(roomsCount + 1)}><Add /></IconButton>
+                        <IconButton onClick={() => onRoomsCountChanged && onRoomsCountChanged(roomsCount + 1)}><Add /></IconButton>
                     </Stack>
                 }
             </Stack>
@@ -77,7 +78,7 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
             checkinDate: startDate,
             checkoutDate: endDate
         });
-        
+
         setDatesAnchorEl(null);
     }
 
@@ -131,56 +132,6 @@ export const RentalObjectsBaseFilterComponent = function (props: Props): JSX.Ele
             />
         </Grid>
     )
-}
-
-interface CategoryItemFiltersProps {
-    category: CharacteristicTypes;
-    items: RoomCharacteristicFilter[];
-    onFilterSelected: (id: string, selected: boolean) => void;
-}
-
-function CategoryItemFilters(props: CategoryItemFiltersProps) {
-    const [collapsed, setCollapsed] = useState<boolean>(true);
-    const { category, items, onFilterSelected } = props;
-    if (!items)
-        return <Typography>Нет фильтров</Typography>;
-
-    const listItems = [];
-    for (let i = 0; i < (collapsed && items.length > 5 ? 5 : items.length); i++) {
-        const item = items[i];
-        listItems.push(
-            (
-                <ListItem key={`item-${category}-${item.id}`}>
-                    <ListItemIcon>
-                        <Checkbox
-                            edge="start"
-                            checked={item.selected || false}
-                            tabIndex={-1}
-                            disableRipple
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => onFilterSelected(item.id || '', checked)}
-                        />
-                    </ListItemIcon>
-                    <ListItemText primary={item.name} />
-                </ListItem>
-            )
-        );
-    }
-
-    if (collapsed && items.length > 5) {
-        listItems.push((<ListItemButton role={undefined} onClick={() => setCollapsed(false)} dense>Показать все {items.length} фильтров</ListItemButton>))
-    }
-    if (!collapsed) {
-        listItems.push((<ListItemButton role={undefined} onClick={() => setCollapsed(true)} dense>Показать меньше</ListItemButton>))
-    }
-
-    return (
-        <li key={`section-${category}`}>
-            <ul>
-                <ListSubheader>{CharacteristicTypes.getDescription(category)}</ListSubheader>
-                {listItems}
-            </ul>
-        </li>
-    );
 }
 
 interface DetailedProps {

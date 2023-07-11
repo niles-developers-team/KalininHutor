@@ -1,4 +1,4 @@
-import { AppBar, Badge, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, Tooltip, alpha, styled, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Box, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, Tooltip, alpha, styled, useScrollTrigger } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -7,11 +7,11 @@ import { NotificationVariant, Notification, NotificationStatus } from "../models
 import { MessageSnackbar } from "./common";
 import { useEffect } from "react";
 import { sessionService } from "../services";
+import { HideOnScroll } from "../commonComponents";
 
 interface Props {
     onSigninDialogOpen: () => void;
 }
-
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -49,36 +49,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         [theme.breakpoints.up('sm')]: {
             width: '12ch',
             '&:focus': {
-                width: '20ch',
+                width: '25ch',
             },
         },
     },
 }));
-
-interface HideOnScrollProps {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window?: () => Window;
-    children: React.ReactElement;
-}
-
-function HideOnScroll(props: HideOnScrollProps) {
-    const { children, window } = props;
-    // Note that you normally won't need to set the window ref as useScrollTrigger
-    // will default to window.
-    // This is only being set here because the demo is in an iframe.
-    const trigger = useScrollTrigger({
-        target: window ? window() : undefined,
-    });
-
-    return (
-        <Slide appear={false} direction="down" in={!trigger}>
-            {children}
-        </Slide>
-    );
-}
 
 export const LayoutComponent = function (props: Props & RouteProps): JSX.Element {
     const dispatch = useAppDispatch();
@@ -104,7 +79,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
         if (!userState.currentUser)
             return;
 
-        dispatch(NotificationActions.getCurrentUserNotifications({status: NotificationStatus.OnlyUnread}));
+        dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
     }, [userState.currentUser]);
 
     function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
@@ -136,12 +111,12 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
     const notificationsCount = notificationState.models.filter(o => !o.read)?.length ?? 0;
 
     return (
-        <Grid container direction="row">
+        <Grid container>
             <HideOnScroll {...props}>
-                <AppBar position="sticky" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Container maxWidth="xl">
-                        <Toolbar disableGutters>
-                            <Stack width='100%' direction="row" spacing={2}>
+                <AppBar position="sticky" color="default">
+                    <Container>
+                        <Toolbar>
+                            <Stack width='100%' spacing={2} direction="row">
                                 <Button onClick={() => navigate('/')}>КХ</Button>
                                 <Button disabled onClick={() => navigate('/catalog')}>Каталог</Button>
                                 <Search>
@@ -153,7 +128,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                                         inputProps={{ 'aria-label': 'Поиск' }}
                                     />
                                 </Search>
-                                <Grid xs item/>
+                                <Grid item xs/>
                                 <Tooltip title={profilePageText}>
                                     <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
                                         {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">

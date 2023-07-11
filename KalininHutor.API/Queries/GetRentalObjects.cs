@@ -83,7 +83,10 @@ public partial class RentalObjectCommands
         public int? ChildsCount { get; set; }
         ///<summary> Количество комнат </summary>
         public int? RoomsCount { get; set; }
-
+        ///<summary> Минимальная цена </summary>
+        public decimal? MinPrice { get; set; }
+        ///<summary> Максимальная цена </summary>
+        public decimal? MaxPrice { get; set; }
         ///<summary> Нужно ли получать лучшие предложения </summary>
         public bool GetBestDemands { get; set; }
 

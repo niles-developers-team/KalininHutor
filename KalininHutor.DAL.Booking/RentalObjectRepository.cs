@@ -102,6 +102,12 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 )
             ");
 
+        if(options.MinPrice.HasValue && options.MinPrice > 0)
+            query.Where($@"(select max(RoomVariants.Price) from RoomVariants where RoomVariants.RentalObjectId = r.Id) >= {options.MinPrice}");
+
+        if(options.MaxPrice.HasValue && options.MaxPrice > 0)
+            query.Where($@"(select min(RoomVariants.Price) from RoomVariants where RoomVariants.RentalObjectId = r.Id) <= {options.MaxPrice}");
+
         if (options.Ids != null && options.Ids.Any())
             query.Where($@"Id = any({options.Ids})");
 
