@@ -10,7 +10,7 @@ interface Props {
 }
 
 const imageStyle: CSSProperties = {
-    objectFit: "contain"
+    objectFit: "cover"
 };
 
 export const RentalObjectShortInfoComponent = function (props: Props): JSX.Element {
@@ -124,54 +124,5 @@ export const RentalObjectDetailedInfoSkeleton = function (): JSX.Element {
                 <Button disabled>Посмотреть варианты</Button>
             </Grid>
         </Stack>
-    );
-}
-
-export const MobileRentalObjectInfoComponent = function (props: Props): JSX.Element {
-    const { model, onShowVariants } = props;
-
-    const [sliding, setSliding] = useState<boolean>(false);
-
-    if (!model) {
-        return (<Typography variant="subtitle1">Ошибка при загрузке базы отдыха или дачи</Typography>)
-    }
-
-    return (
-        <Paper key={model.id} onClick={() => onShowVariants(model.id || '')}>
-            {model.photos.length ? (
-                <Grid
-                    onMouseEnter={() => setSliding(true)}
-                    onMouseLeave={() => setSliding(false)}>
-                    <Carousel
-                        height="55.55vw"
-                        autoPlay={false}
-                        animation="slide"
-                        indicators={true}
-                        stopAutoPlayOnHover={true}
-                        navButtonsAlwaysInvisible={true}
-                        cycleNavigation={true}
-                    >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
-                    </Carousel>
-                </Grid>
-            ) : (
-                <Paper variant="outlined">
-                    <Skeleton variant="rectangular" width='100%' height="55.55vw" />
-                </Paper>
-            )}
-            <Stack paddingX={2} paddingBottom={1}>
-                <Stack direction="row" alignItems="center">
-                    <Typography variant="h6">{model.name}</Typography>
-                    <Grid item xs />
-                    <Typography variant="body2">От: {Math.min(...(model.roomVariants.map(o => o.price)) || 0)}</Typography>
-                    <CurrencyRuble fontSize="small" />
-                    <Typography variant="body2"> за ночь</Typography>
-                </Stack>
-                <Stack direction="row">
-                    <LocationOn color="primary" fontSize="small" />
-                    <Typography alignContent="center" variant="caption">{model.address}</Typography>
-                </Stack>
-            </Stack>
-        </Paper>
     );
 }

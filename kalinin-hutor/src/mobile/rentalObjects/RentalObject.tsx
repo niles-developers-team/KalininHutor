@@ -4,11 +4,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import { Puller } from "../common";
-import { HideOnScroll } from "../../desktop/common";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
+import { HideOnScroll } from "../../commonComponents";
 
 const drawerBleeding = 56;
 

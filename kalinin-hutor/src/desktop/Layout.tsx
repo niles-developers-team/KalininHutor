@@ -4,9 +4,10 @@ import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon }
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { AppState, NotificationActions } from "../store";
 import { NotificationVariant, Notification, NotificationStatus } from "../models";
-import { HideOnScroll, MessageSnackbar } from "./common";
+import { MessageSnackbar } from "./common";
 import { useEffect } from "react";
 import { sessionService } from "../services";
+import { HideOnScroll } from "../commonComponents";
 
 interface Props {
     onSigninDialogOpen: () => void;

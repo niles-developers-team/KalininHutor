@@ -4,4 +4,3 @@ export * from './NotAuthorized';
 export * from './PrivateRoute';
 export * from './MessageSnackbar';
 export * from './RangeCalendar';
-export * from './HideOnScroll';

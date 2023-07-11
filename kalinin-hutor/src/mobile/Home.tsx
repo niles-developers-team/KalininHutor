@@ -8,9 +8,9 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { useQuery } from "../hooks/useQuery";
 import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
-import { HideOnScroll } from "../desktop/common";
-import { RentalObjectShortInfoSkeleton, MobileRentalObjectInfoComponent } from "../desktop/rentalObjects/RentalObjectInfo";
-import { CategoryItemFilters } from "../desktop/rentalObjects/RentalObjectsFilter";
+import { HideOnScroll } from "../commonComponents";
+import { RentalObjectInfoSkeleton, RentalObjectInfoComponent } from "./rentalObjects";
+import { CategoryItemFilters } from "../commonComponents";
 
 const drawerBleeding = 56;
 interface Props { }
@@ -135,8 +135,8 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                 {rentalObjects.map((ro, index) =>
                 (
                     rentalObjectState.modelsLoading
-                        ? <RentalObjectShortInfoSkeleton />
-                        : <MobileRentalObjectInfoComponent key={ro.id} model={ro} onShowVariants={handleShowVariants} />
+                        ? <RentalObjectInfoSkeleton />
+                        : <RentalObjectInfoComponent key={ro.id} model={ro} onShowVariants={handleShowVariants} />
                 ))}
             </Stack>
             <SwipeableDrawer
