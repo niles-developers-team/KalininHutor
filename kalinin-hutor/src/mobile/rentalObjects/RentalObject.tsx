@@ -1,15 +1,25 @@
 import { Tune, Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
-import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, Checkbox, ListItem, ListItemIcon, ListItemText, ListItemButton, Button, Grid, SwipeableDrawer } from "@mui/material";
+import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, Checkbox, ListItem, ListItemIcon, ListItemText, ListItemButton, Button, Grid, SwipeableDrawer, Box, styled } from "@mui/material";
 import { HideOnScroll } from "../../components/common";
 import { useNavigate, useParams } from "react-router-dom";
 import { appName } from "../..";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { CharacteristicTypes, RentalObject, RoomCharacteristic } from "../../models";
+import { CharacteristicTypes, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
 import { AppState, AppThunkAction, RentalObjectActions } from "../../store";
 import { CSSProperties, useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
+import { grey } from "@mui/material/colors";
 
 const drawerBleeding = 56;
+
+const Puller = styled(Box)(({ theme }) => ({
+    width: 30,
+    height: 6,
+    backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
+    borderRadius: 3,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+}));
 
 export const RentalObjectComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -19,6 +29,9 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     const [state, setState] = useState({
         allServicesOpened: false,
+        descriptionOpened: false,
+        roomVariantInfoOpened: false,
+        roomVariantInfo: undefined as RoomVariant | undefined
     })
 
     function handleGoBack() {
@@ -45,7 +58,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
 
     const container = window !== undefined ? () => window.document.body : undefined;
-    
+
     return (
         <Stack marginBottom={2}>
             <HideOnScroll>
@@ -90,7 +103,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                         <LocationOn color="primary" fontSize="small" />
                         <Typography alignContent="center" variant="body1">{model.address}</Typography>
                     </Stack>
-                    <Typography>{model.description}</Typography>
+                    <Button size="small" onClick={() => setState({ ...state, descriptionOpened: true })}>Читать описание</Button>
                     <Typography variant="h6">Услуги и сервисы</Typography>
                 </Stack>
                 <List>
@@ -103,7 +116,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                         </ListItem>
                     ))}
                 </List>
-                {roCharacteristics.length > 5 && <Button size="small" onClick={() => setState({...state, allServicesOpened: true})}>Все услуги</Button>}
+                {roCharacteristics.length > 5 && <Button size="small" onClick={() => setState({ ...state, allServicesOpened: true })}>Все услуги</Button>}
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Варианты размещения</Typography>
                     {model.roomVariants.map(rv => (
@@ -131,6 +144,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                                     <Typography >{rv.price}</Typography>
                                     <CurrencyRuble fontSize="small" />
                                 </Stack>
+                                <Button size="small" onClick={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })}>Подробнее</Button>
                                 <Grid container direction="row" spacing={1} rowSpacing={2}>
                                     {rv.characteristics.map(o => o.roomCharacteristic).map(rc => (<Stack direction="row" marginX={1}>{CharacteristicTypes.getIcon(rc.type)}<Typography>{rc.name}</Typography></Stack>))}
                                 </Grid>
@@ -152,6 +166,46 @@ export const RentalObjectComponent = function (): JSX.Element {
                 }}
                 sx={{
                     ".MuiDrawer-paper ": {
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                    }
+                }}
+                allowSwipeInChildren={true}
+            >
+                <Stack padding={2}
+                    sx={{
+                        bgcolor: 'white',
+                        visibility: 'visible',
+                        right: 0,
+                        left: 0
+                    }}>
+                    <Puller />
+                </Stack>
+                <List>
+                    {roCharacteristics.map(ch => (
+                        <ListItem key={`item-${ch.id}`}>
+                            <ListItemIcon>
+                                {CharacteristicTypes.getIcon(ch.type)}
+                            </ListItemIcon>
+                            <ListItemText primary={ch.name} />
+                        </ListItem>
+                    ))}
+                </List>
+            </SwipeableDrawer>
+
+            <SwipeableDrawer
+                container={container}
+                anchor="bottom"
+                open={state.roomVariantInfoOpened}
+                onClose={() => setState({ ...state, roomVariantInfoOpened: false })}
+                onOpen={() => setState({ ...state, roomVariantInfoOpened: true })}
+                swipeAreaWidth={drawerBleeding}
+                disableSwipeToOpen={false}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    ".MuiDrawer-paper ": {
                         height: `calc(100% - ${drawerBleeding}px)`,
                         borderTopLeftRadius: 8,
                         borderTopRightRadius: 8,
@@ -159,16 +213,58 @@ export const RentalObjectComponent = function (): JSX.Element {
                 }}
                 allowSwipeInChildren={true}
             >
-            <List>
-                {roCharacteristics.map(ch => (
-                    <ListItem key={`item-${ch.id}`}>
-                        <ListItemIcon>
-                            {CharacteristicTypes.getIcon(ch.type)}
-                        </ListItemIcon>
-                        <ListItemText primary={ch.name} />
-                    </ListItem>
-                ))}
-            </List>
+                <Stack padding={2} spacing={1}
+                    sx={{
+                        bgcolor: 'white',
+                        visibility: 'visible',
+                        right: 0,
+                        left: 0
+                    }}>
+                    <Puller />
+                    <Typography sx={{ flexGrow: 1 }} variant="h6">{state.roomVariantInfo?.name}</Typography>
+                    <List>
+                        {state.roomVariantInfo?.characteristics.map(ch => (
+                            <ListItem key={`item-${ch.id}`}>
+                                <ListItemIcon>
+                                    {CharacteristicTypes.getIcon(ch.roomCharacteristic.type)}
+                                </ListItemIcon>
+                                <ListItemText primary={ch.roomCharacteristic.name} />
+                            </ListItem>
+                        ))}
+                    </List>
+                    <Typography>{state.roomVariantInfo?.description}</Typography>
+                </Stack>
+            </SwipeableDrawer>
+            <SwipeableDrawer
+                container={container}
+                anchor="bottom"
+                open={state.descriptionOpened}
+                onClose={() => setState({ ...state, descriptionOpened: false })}
+                onOpen={() => setState({ ...state, descriptionOpened: true })}
+                swipeAreaWidth={drawerBleeding}
+                disableSwipeToOpen={false}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+                sx={{
+                    ".MuiDrawer-paper ": {
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                    }
+                }}
+                allowSwipeInChildren={true}
+            >
+                <Stack padding={2} spacing={1}
+                    sx={{
+                        bgcolor: 'white',
+                        visibility: 'visible',
+                        right: 0,
+                        left: 0
+                    }}>
+                    <Puller />
+                    <Typography>Описание</Typography>
+                    <Typography>{model.description}</Typography>
+                </Stack>
             </SwipeableDrawer>
         </Stack>
     );

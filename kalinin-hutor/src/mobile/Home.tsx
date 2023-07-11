@@ -171,7 +171,6 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                 <Stack padding={2}
                     sx={{
                         bgcolor: 'white',
-                        visibility: 'visible',
                         right: 0,
                         left: 0
                     }}>
