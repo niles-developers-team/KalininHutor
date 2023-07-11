@@ -2,7 +2,7 @@ import { Circle, MarkEmailRead } from "@mui/icons-material";
 import { Card, IconButton, Stack, Typography } from "@mui/material";
 import { GridColDef, DataGrid, GridOverlay } from "@mui/x-data-grid";
 import moment from "moment";
-import { Notification } from "../../../models"
+import { Notification } from "../../models"
 
 interface Props {
     notifications: Notification[];

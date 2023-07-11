@@ -1,10 +1,10 @@
 import { People, CalendarMonth, Remove, Add } from "@mui/icons-material"
-import { Stack, Divider, Grid, Input, Button, Typography, Popover, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Checkbox, ListSubheader, PopoverProps, InputBase } from "@mui/material"
+import { Stack, Divider, Grid, Button, Typography, Popover, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, Checkbox, ListSubheader, PopoverProps, InputBase } from "@mui/material"
 import moment from "moment"
 import { Search } from "@mui/icons-material"
-import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../../models"
-import React, { useState } from "react"
+import { useState } from "react"
 import { RangeCalendarPopoverComponent } from "../common"
+import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../../models"
 
 interface VisitorsPopoverProps extends PopoverProps {
     adultsCount: number;

@@ -1,25 +1,16 @@
-import { Tune, Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
-import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, Checkbox, ListItem, ListItemIcon, ListItemText, ListItemButton, Button, Grid, SwipeableDrawer, Box, styled } from "@mui/material";
-import { HideOnScroll } from "../../components/common";
+import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
+import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { appName } from "../..";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { CharacteristicTypes, RentalObject, RoomCharacteristic, RoomVariant } from "../../models";
-import { AppState, AppThunkAction, RentalObjectActions } from "../../store";
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
-import { grey } from "@mui/material/colors";
+import { Puller } from "../common";
+import { HideOnScroll } from "../../desktop/common";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { appName } from "../..";
+import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes } from "../../models";
+import { AppState, RentalObjectActions } from "../../store";
 
 const drawerBleeding = 56;
-
-const Puller = styled(Box)(({ theme }) => ({
-    width: 30,
-    height: 6,
-    backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
-    borderRadius: 3,
-    marginLeft: 'auto',
-    marginRight: 'auto'
-}));
 
 export const RentalObjectComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();

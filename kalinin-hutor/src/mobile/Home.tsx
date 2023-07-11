@@ -1,28 +1,19 @@
-import { AppBar, Box, Button, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { AppBar, Button, Container, Divider, IconButton, InputAdornment, List, Stack, SwipeableDrawer, TextField, Toolbar, Typography } from "@mui/material"
 import { ChangeEvent, useEffect, useState } from "react";
-import { MobileRentalObjectInfoComponent, RentalObjectShortInfoSkeleton } from "../components/rentalObjects/RentalObjectInfo";
-import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
 import { RouteProps, useNavigate, useSearchParams } from "react-router-dom";
-import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../models";
-import { HideOnScroll } from "../components/common";
 import { CurrencyRuble, Favorite, Menu, Tune } from "@mui/icons-material";
-import { grey } from "@mui/material/colors";
-import { CategoryItemFilters } from "../components/rentalObjects/RentalObjectsFilter";
 import moment from "moment";
+import { Puller } from "./common";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { useQuery } from "../hooks/useQuery";
+import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../models";
+import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
+import { HideOnScroll } from "../desktop/common";
+import { RentalObjectShortInfoSkeleton, MobileRentalObjectInfoComponent } from "../desktop/rentalObjects/RentalObjectInfo";
+import { CategoryItemFilters } from "../desktop/rentalObjects/RentalObjectsFilter";
 
 const drawerBleeding = 56;
 interface Props { }
-
-const Puller = styled(Box)(({ theme }) => ({
-    width: 30,
-    height: 6,
-    backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
-    borderRadius: 3,
-    marginLeft: 'auto',
-    marginRight: 'auto'
-}));
 
 export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
     const navigate = useNavigate();

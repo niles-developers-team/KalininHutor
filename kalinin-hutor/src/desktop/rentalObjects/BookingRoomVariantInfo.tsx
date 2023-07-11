@@ -1,5 +1,4 @@
 import { Stack, Typography, Skeleton, Divider, Chip, Grid } from "@mui/material";
-import Carousel from "react-material-ui-carousel";
 import { BedTypes, BookingRoomVariant, CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
 
 interface Props {

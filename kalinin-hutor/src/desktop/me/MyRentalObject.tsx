@@ -9,8 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { EntityStatus, RentalObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
-import { RentalObjectActions } from "../../store/rentalObjectStore";
-import { RoomVariantActions } from "../../store/roomVariantStore";
+import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 
 

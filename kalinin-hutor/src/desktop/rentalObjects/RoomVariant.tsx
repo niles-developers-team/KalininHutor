@@ -1,8 +1,7 @@
 import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
 import { Button, Chip, Divider, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import pluralize from "plural-ru";
-import Carousel from "react-material-ui-carousel";
-import { CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
+import { RoomVariant, RoomCharacteristic, CharacteristicTypes } from "../../models";
 
 interface Props {
     model: RoomVariant;

@@ -1,18 +1,13 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { Booking, EntityStatus, FileObject, NotificationStatus, RentalObject } from "../../models";
-import { AppState, BookingActions, NotificationActions, RoomCharacteristicActions } from "../../store";
-import { UserActions } from "../../store/userStore";
+import { useEffect } from "react";
 import moment from "moment";
-import { UserDetailsComponent } from "./UserDetails";
-import { MyRentalObjectsComponent } from "./MyRentalObjects";
-import { RentalObjectActions } from "../../store/rentalObjectStore";
 import { useNavigate } from "react-router-dom";
-import { MyRentalObjectsBookingsComponent } from "./MyRentalObjectsBookings";
-import { MyNotificationsComponent } from "./notifications/MyNotifications";
 import { v4 as guid } from 'uuid';
 import { appName } from "../..";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { NotificationStatus, RentalObject, Booking, FileObject, EntityStatus } from "../../models";
+import { AppState, RentalObjectActions, BookingActions, NotificationActions, RoomCharacteristicActions, UserActions } from "../../store";
+import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent,UserDetailsComponent } from "./";
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();

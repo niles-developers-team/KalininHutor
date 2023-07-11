@@ -1,5 +1,5 @@
 import { Edit, Delete } from "@mui/icons-material";
-import { Typography, Stack, Grid, CircularProgress, Button, IconButton, CardContent, Card } from "@mui/material";
+import { Typography, Stack, Grid, CircularProgress, Button, IconButton, Card } from "@mui/material";
 import { GridOverlay, DataGrid, GridColDef } from "@mui/x-data-grid";
 import { BedTypes, RoomVariantBedType } from "../../../models";
 

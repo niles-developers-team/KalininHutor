@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject, RentalObject } from "../../models";
+import { ApplicationError, EntityStatus, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
 import { localStorageService, roomVariantService } from "../../services";
 import { AppState, AppThunkAction, AppThunkDispatch } from "../appState";
 import { NotificationActions } from "../notificationStore";
