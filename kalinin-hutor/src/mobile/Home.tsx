@@ -1,20 +1,19 @@
-import { AppBar, Box, Button, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Paper, Skeleton, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
+import { AppBar, Box, Button, Container, CssBaseline, Divider, IconButton, InputAdornment, List, Stack, SwipeableDrawer, TextField, Toolbar, Typography, styled } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { MobileRentalObjectInfoComponent, RentalObjectShortInfoSkeleton } from "../components/rentalObjects/RentalObjectInfo";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
-import { RouteProps, useNavigate } from "react-router-dom";
+import { RouteProps, useNavigate, useSearchParams } from "react-router-dom";
 import { CharacteristicTypes, RentalObject, RoomCharacteristicFilter } from "../models";
 import { HideOnScroll } from "../components/common";
-import { CurrencyRuble, Favorite, Menu, Satellite, Tune } from "@mui/icons-material";
+import { CurrencyRuble, Favorite, Menu, Tune } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
-import { Global } from "@emotion/react";
 import { CategoryItemFilters } from "../components/rentalObjects/RentalObjectsFilter";
+import moment from "moment";
+import { useQuery } from "../hooks/useQuery";
 
 const drawerBleeding = 56;
-interface Props {
-
-}
+interface Props { }
 
 const Puller = styled(Box)(({ theme }) => ({
     width: 30,
@@ -28,13 +27,40 @@ const Puller = styled(Box)(({ theme }) => ({
 export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const query = useQuery();
+    let [searchParams, setSearchParams] = useSearchParams();
     const { rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
+    const initialFilter: RentalObject.GetQuery = {
+        minPrice: 0,
+        maxPrice: 0,
+        getRoomVariants: true,
+        adultsCount: 1,
+        childsCount: 0,
+        roomsCount: 1,
+        searchText: '',
+        checkinDate: moment().format('YYYY-MM-DD'),
+        checkoutDate: moment().add(14, 'days').format('YYYY-MM-DD')
+    };
+
     const [state, setState] = useState({
-        filterOpened: false
+        filterOpened: false,
+        filter: initialFilter
     });
 
     useEffect(() => {
+        const filterFromUrl = {
+            searchText: query.get('searchText') || undefined,
+            adultsCount: parseInt(query.get('adultsCount') || '') || 1,
+            childsCount: parseInt(query.get('childsCount') || '') || 0,
+            roomsCount: parseInt(query.get('roomsCount') || '') || 1,
+            checkinDate: query.get('checkinDate') || undefined,
+            checkoutDate: query.get('checkoutDate') || undefined
+        };
+
+        const extendedFilter = { ...filterFromUrl, ...state.filter };
+
+        setState({ ...state, filter: extendedFilter });
 
         dispatch(RentalObjectActions.getRentalObjects({ getRoomVariants: true }));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
@@ -53,6 +79,38 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
     }
 
     function handleFilterSelected(id: string, selected: boolean) {
+        dispatch(RoomCharacteristicActions.selectRoomCharacteristic(id, selected));
+    }
+
+    function handleFilterConfirm() {
+        const { filter } = state;
+        if (filter.searchText) query.set('searchText', filter.searchText);
+        else query.delete('searchText');
+
+        if (filter.adultsCount) query.set('adultsCount', filter.adultsCount.toString());
+        else query.delete('adultsCount');
+
+        if (filter.childsCount) query.set('childsCount', filter.childsCount.toString());
+        else query.delete('childsCount');
+
+        if (filter.roomsCount) query.set('roomsCount', filter.roomsCount.toString());
+        else query.delete('roomsCount');
+
+        if (filter.checkinDate) query.set('checkinDate', moment(filter.checkinDate).format('YYYY-MM-DD'));
+        else query.delete('checkinDate');
+
+        if (filter.checkoutDate) query.set('checkoutDate', moment(filter.checkoutDate).format('YYYY-MM-DD'));
+        else query.delete('checkoutDate');
+
+        setSearchParams(query.toString());
+        setState({ ...state, filterOpened: false });
+        dispatch(RentalObjectActions.getRentalObjects({ ...state.filter, selectedCharacteristicsIds: characteristics.filter(o => o.selected).map(o => o.id) }));
+    }
+
+    function handleFilterDiscard() {
+        setState({ ...state, filterOpened: false, filter: { ...initialFilter } });
+        dispatch(RoomCharacteristicActions.unselectAllRoomCharacteristics());
+        dispatch(RentalObjectActions.getRentalObjects({ ...initialFilter, selectedCharacteristicsIds: [] }));
     }
 
     const characteristics = roomCharacteristicState.models || [];
@@ -61,17 +119,13 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
 
     const groupedCharacteristics = !characteristics.length ? undefined : characteristics.reduce(function (r: Array<{ key: CharacteristicTypes, values: RoomCharacteristicFilter[] }>, a) {
         const keyValue = r.find(o => o.key === a.type);
-        if (keyValue) {
-            keyValue.values.push(a);
-        } else {
-            r.push({ key: a.type, values: [a] });
-        }
+        if (keyValue) { keyValue.values.push(a); }
+        else { r.push({ key: a.type, values: [a] }); }
         return r;
     }, []);
 
     return (
         <Stack>
-            <CssBaseline />
             <HideOnScroll>
                 <AppBar position="sticky" color="default">
                     <Container maxWidth="xl">
@@ -80,7 +134,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                                 <IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>
                                 <Typography sx={{ flexGrow: 1 }}>Калинин Хутор</Typography>
                                 <IconButton disabled><Favorite /></IconButton>
-                                <IconButton><Menu /></IconButton>
+                                <IconButton disabled><Menu /></IconButton>
                             </Stack>
                         </Toolbar>
                     </Container>
@@ -124,19 +178,25 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                     <Puller />
                     <Stack direction="row" alignItems="center">
                         <Typography sx={{ flexGrow: 1 }} variant="h6">Фильтры</Typography>
-                        <Button size="small">Сбросить</Button>
+                        <Button onClick={handleFilterDiscard} size="small">Сбросить</Button>
                     </Stack>
                 </Stack>
                 <Stack spacing={2} height='100%' overflow='auto'>
                     <Typography paddingX={2} variant="body1">Цена за 1 ночь</Typography>
                     <Stack paddingX={2} direction="row" spacing={3}>
-                        <TextField type="number" size="small"
+                        <TextField type="number" size="small" value={state.filter.minPrice}
+                            inputMode="decimal"
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => setState({ ...state, filter: { ...state.filter, minPrice: event.target.value ? Number.parseFloat(event.target.value) : undefined } })}
                             InputProps={{
+                                inputProps: { min: 0 },
                                 startAdornment: <InputAdornment position="start">от</InputAdornment>,
                                 endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
                             }} />
-                        <TextField type="number" size="small"
+                        <TextField type="number" size="small" value={state.filter.maxPrice}
+                            inputMode="decimal"
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => setState({ ...state, filter: { ...state.filter, maxPrice: event.target.value ? Number.parseFloat(event.target.value) : undefined } })}
                             InputProps={{
+                                inputProps: { min: state.filter.minPrice || 0 },
                                 startAdornment: <InputAdornment position="start">до</InputAdornment>,
                                 endAdornment: <InputAdornment position="end"><CurrencyRuble /></InputAdornment>
                             }} />
@@ -159,7 +219,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                     </List>
                 </Stack>
                 <Stack padding={2}>
-                    <Button> Показать варианты </Button>
+                    <Button onClick={handleFilterConfirm}> Показать варианты </Button>
                 </Stack>
             </SwipeableDrawer>
         </Stack>
