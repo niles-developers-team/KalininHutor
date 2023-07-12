@@ -12,8 +12,7 @@ import { RoomVariantDetailsComponent } from "./RoomVariantDetails";
 import { ArrowBack, Delete, OpenWith } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { appName } from "../../..";
-
-
+import ym from 'react-yandex-metrika';
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     // some basic styles to make the items look a bit nicer
@@ -51,6 +50,8 @@ export const RoomVariantComponent = function (): JSX.Element {
 
         setBedType({ ...RoomVariantBedType.initial });
         setRoomCharacteristic({ ...RoomVariantCharacteristic.initial });
+
+        ym('reachGoal', 'desktop_enter_my_room_variant');
     }
 
     useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics({ searchText: debouncedSearch, take: 10 })); }, [debouncedSearch]);

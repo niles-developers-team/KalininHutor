@@ -9,6 +9,7 @@ import { RentalObjectShortInfoComponent, RentalObjectShortInfoSkeleton } from ".
 import { RentalObjectsBaseFilterComponent } from "../rentalObjects/RentalObjectsFilter";
 import { useQuery } from "../../hooks/useQuery";
 import { appName } from "../..";
+import ym from 'react-yandex-metrika';
 
 
 export const HomeComponent = function (): JSX.Element {
@@ -48,7 +49,10 @@ export const HomeComponent = function (): JSX.Element {
         navigate(`/rental-objects/${id}`)
     }
 
-    useEffect(() => { dispatch(RentalObjectActions.getRentalObjects()); }, [])
+    useEffect(() => {
+        dispatch(RentalObjectActions.getRentalObjects());
+        ym('reachGoal', 'desktop_enter_home');
+    }, [])
 
     let top10RentalObjects: RentalObject[] = [];
 
@@ -68,8 +72,8 @@ export const HomeComponent = function (): JSX.Element {
                 {top10RentalObjects.map((ro, index) =>
                 (<Grid xs item key={index}>
                     {rentalObjectState.modelsLoading
-                    ? <RentalObjectShortInfoSkeleton />
-                    : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => handleGoToRentalObject(ro.id || '')} />
+                        ? <RentalObjectShortInfoSkeleton />
+                        : <RentalObjectShortInfoComponent model={ro} onShowVariants={() => handleGoToRentalObject(ro.id || '')} />
                     }
                 </Grid>)
                 )}

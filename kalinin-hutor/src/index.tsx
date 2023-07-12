@@ -23,6 +23,7 @@ import '@fontsource/roboto/700.css';
 import "moment/locale/ru";
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { RoutesSwitch } from './routes';
+import { YMInitializer } from 'react-yandex-metrika';
 
 sessionService.init();
 
@@ -46,6 +47,11 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <ThemeProvider theme={theme}>
+    <YMInitializer accounts={[94277254]} options={{
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+    }} />
     <CssBaseline />
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Provider store={store}>

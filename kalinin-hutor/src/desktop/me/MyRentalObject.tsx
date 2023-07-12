@@ -11,6 +11,7 @@ import { EntityStatus, RentalObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
 import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
+import ym from 'react-yandex-metrika';
 
 
 function NoRoomVariants(): JSX.Element {
@@ -61,6 +62,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         } else {
             await dispatch(RentalObjectActions.getRentalObject(id));
         }
+        ym('reachGoal', 'desktop_enter_my_rental_object');
     }
 
     function handleRoomVariantCreate() {

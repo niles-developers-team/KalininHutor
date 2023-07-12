@@ -11,6 +11,7 @@ import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../sto
 import { HideOnScroll } from "../commonComponents";
 import { RentalObjectInfoSkeleton, RentalObjectInfoComponent } from "./rentalObjects";
 import { CategoryItemFilters } from "../commonComponents";
+import ym from 'react-yandex-metrika';
 
 const drawerBleeding = 56;
 interface Props { }
@@ -55,6 +56,8 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
 
         dispatch(RentalObjectActions.getRentalObjects({ getRoomVariants: true }));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+
+        ym('reachGoal', 'mobile_enter');
     }, []);
 
     let rentalObjects: RentalObject[] = [];

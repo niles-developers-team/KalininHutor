@@ -10,6 +10,7 @@ import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes } fr
 import { AppState, RentalObjectActions } from "../../store";
 import { HideOnScroll } from "../../commonComponents";
 import { RoomVariantComponent } from "./roomVariant";
+import ym from 'react-yandex-metrika';
 
 const drawerBleeding = 56;
 
@@ -30,8 +31,10 @@ export const RentalObjectComponent = function (): JSX.Element {
         navigate(`/`)
     }
     useEffect(() => {
-        if (id)
+        if (id) {
             dispatch(RentalObjectActions.getRentalObject(id));
+            ym('reachGoal', 'mobile_enter_rental_object');
+        }
     }, [id]);
 
     if (!rentalObjectState.model)
@@ -111,7 +114,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 {roCharacteristics.length > 5 && <Button size="small" onClick={() => setState({ ...state, allServicesOpened: true })}>Все услуги</Button>}
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Варианты размещения</Typography>
-                    {model.roomVariants.map(rv => (<RoomVariantComponent roomVariant={rv} onShowDetails={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })}/>))}
+                    {model.roomVariants.map(rv => (<RoomVariantComponent roomVariant={rv} onShowDetails={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })} />))}
                 </Stack>
             </Stack>
             <SwipeableDrawer
