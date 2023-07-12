@@ -12,7 +12,7 @@ import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
 import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
 import { appName } from "../..";
-
+import ym from 'react-yandex-metrika';
 
 const imageStyle: CSSProperties = {
     objectFit: "contain"
@@ -43,6 +43,8 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         dispatch(RentalObjectActions.loadRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+
+        ym('reachGoal', 'desktop_enter_create_booking');
     }, [userState.currentUser !== undefined]);
 
     useEffect(() => {

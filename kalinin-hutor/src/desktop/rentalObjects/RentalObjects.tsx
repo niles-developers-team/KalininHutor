@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useQuery } from "../../hooks/useQuery";
 import { RentalObject, RoomCharacteristicFilter } from "../../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../../store";
+import ym from 'react-yandex-metrika';
 
 export const RentalObjectsComponent = function (): JSX.Element {
     const navigate = useNavigate();
@@ -44,6 +45,8 @@ export const RentalObjectsComponent = function (): JSX.Element {
 
         dispatch(RentalObjectActions.getRentalObjects(extendedFilter));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+
+        ym('reachGoal', 'desktop_enter_rental_objects');
     }, []);
 
     useEffect(() => {

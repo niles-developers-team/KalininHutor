@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { NotificationStatus, RentalObject, Booking, FileObject, EntityStatus } from "../../models";
 import { AppState, RentalObjectActions, BookingActions, NotificationActions, RoomCharacteristicActions, UserActions } from "../../store";
 import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent,UserDetailsComponent } from "./";
+import ym from 'react-yandex-metrika';
 
 export const MeComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -24,6 +25,7 @@ export const MeComponent = function (): JSX.Element {
             dispatch(RentalObjectActions.getRentalObjects({ landlordId: currentUser.id, getRoomVariants: true }));
             dispatch(BookingActions.getLandlordBookings(true));
             dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
+            ym('reachGoal', 'desktop_enter_account');
         }
     }, [userState.modelLoading]);
 

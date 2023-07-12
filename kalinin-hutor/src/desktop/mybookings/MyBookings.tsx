@@ -6,13 +6,17 @@ import { BookingStatuses } from "../../models";
 import { AppState, BookingActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { BookingRoomVariantInfo } from "../rentalObjects/BookingRoomVariantInfo";
 import { appName } from "../..";
+import ym from 'react-yandex-metrika';
 
 export const MyBookingsComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
     const { bookingState, userState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => { dispatch(RoomCharacteristicActions.getRoomCharacteristics()); }, []);
-    useEffect(() => { getCurrentUserBookings(); }, [userState.modelLoading]);
+    useEffect(() => {
+        getCurrentUserBookings();        
+        ym('reachGoal', 'desktop_enter_my_bookings');
+    }, [userState.modelLoading]);
 
     function getCurrentUserBookings() {
         if (userState.currentUser)

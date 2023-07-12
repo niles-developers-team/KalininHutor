@@ -10,6 +10,7 @@ import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicAction
 import { BookingDetailsComponent } from "./BookingDetails";
 import { BookingRoomVariantInfo } from "./BookingRoomVariantInfo";
 import { appName } from "../..";
+import ym from 'react-yandex-metrika';
 
 export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -27,6 +28,8 @@ export const BookingComponent = function (): JSX.Element {
         dispatch(BookingActions.getBooking(id));
         dispatch(RentalObjectActions.loadRentalObject(rentalObjectId));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
+
+        ym('reachGoal', 'desktop_enter_approve_booking');
     }, [id, rentalObjectId]);
 
     function handleChangeBooking() {
