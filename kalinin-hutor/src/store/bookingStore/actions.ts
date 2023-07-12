@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { ApplicationError, Booking, BookingStatuses, EntityStatus, NotificationVariant } from "../../models";
-import { bookingService } from "../../services/bookingService";
+import { bookingService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';

@@ -43,8 +43,11 @@ public class RentalObjectSearchOptions
     public int? ChildsCount { get; set; }
     ///<summary> Количество комнат </summary>
     public int? RoomsCount { get; set; }
-
-    public bool ShowHidden {get;set;}
+    ///<summary> Минимальная цена </summary>
+    public decimal? MinPrice { get; set; }
+    ///<summary> Максимальная цена </summary>
+    public decimal? MaxPrice { get; set; }
+    public bool ShowHidden { get; set; }
 
     public IReadOnlyList<Guid> SelectedCharacteristicsIds { get; set; } = new List<Guid>();
     public IReadOnlyList<Guid> Ids { get; set; } = new List<Guid>();

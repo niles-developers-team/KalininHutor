@@ -42,6 +42,10 @@ class RentalObjectService {
                 url += `${conditionIndex++ === 0 ? '?' : '&'}checkoutDate=${query.checkoutDate}`;
             if (query.id !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}id=${query.id}`;
+            if (query.minPrice !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}minPrice=${query.minPrice}`;
+            if (query.maxPrice !== undefined)
+                url += `${conditionIndex++ === 0 ? '?' : '&'}maxPrice=${query.maxPrice}`;
 
             if (query.getBestDemands !== undefined)
                 url += `${conditionIndex++ === 0 ? '?' : '&'}getBestDemands=${query.getBestDemands}`;

@@ -48,6 +48,10 @@ export namespace RentalObject {
         childsCount?: number;
         //Количество комнат
         roomsCount?: number;
+        /** Минимальная цена */
+        minPrice?: number;
+        /** Максимальная цена */
+        maxPrice?: number;
 
         getBestDemands?: boolean;
         getRoomVariants?: boolean;
