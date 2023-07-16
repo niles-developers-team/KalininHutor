@@ -203,9 +203,9 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                         index={index}
                                     >
                                         {(provided, snapshot) => (
-                                            <Paper
+                                            <Grid
+                                                height={200}
                                                 className="editable-image"
-                                                variant="outlined"
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
@@ -218,8 +218,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
-                                                <img className="image" height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
-                                            </Paper>
+                                                <img className="image" style={{ width: '100%', objectFit: 'cover' }} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                            </Grid>
                                         )}
                                     </Draggable>
                                 ))}

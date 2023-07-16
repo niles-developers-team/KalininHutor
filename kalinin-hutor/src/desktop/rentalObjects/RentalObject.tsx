@@ -38,14 +38,14 @@ export const RentalObjectComponent = function (): JSX.Element {
     const datesPopoverId = datesPopoverOpen ? 'dates-popover' : undefined;
 
     useEffect(() => {
-        if (!id || !userState.currentUser)
+        if (!id)
             return;
 
         dispatch(RentalObjectActions.loadRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
 
         ym('reachGoal', 'desktop_enter_create_booking');
-    }, [userState.currentUser !== undefined]);
+    }, [id]);
 
     useEffect(() => {
         if (!rentalObjectState.model)
@@ -295,7 +295,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                         <Stack direction="row" spacing={2}>
                             {model.photos?.length ?
                                 model.photos.slice(0, 5).map(photo =>
-                                    <img style={imageStyle} width={120} height={120} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                    <img style={{ width: '100%', objectFit: 'cover' }} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                 )
                                 :
                                 [...new Array(5)].map(() =>
