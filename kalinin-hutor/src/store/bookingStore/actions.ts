@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, Booking, BookingStatuses, EntityStatus, NotificationVariant } from "../../models";
+import { ApplicationError, Booking, BookingStatuses, EntityStatus, NotificationVariant, User } from "../../models";
 import { bookingService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
@@ -143,6 +143,10 @@ export namespace BookingActions {
             dispatch(request());
 
             try {
+                if (!model.tenant) {
+                    throw new ApplicationError("Попытка создать бронь с неизвестным арендатором");
+                }
+
                 const result = await bookingService.create({
                     adultCount: model.adultCount,
                     childCount: model.childCount,
@@ -200,13 +204,7 @@ export namespace BookingActions {
         return (dispatch: AppThunkDispatch, getState: () => AppState) => {
             const { userState, rentalObjectState } = getState();
 
-
-            if (userState.currentUser === undefined) {
-                dispatch(NotificationActions.showSnackbar("Попытка создать бронь неавторизованным пользователем", NotificationVariant.error));
-                return { type: ActionTypes.clearEditionState };
-            }
-
-            if(!rentalObjectState.model){
+            if (!rentalObjectState.model) {
                 dispatch(NotificationActions.showSnackbar("Попытка создать бронь в неизвестном объекте аренды", NotificationVariant.error));
                 return { type: ActionTypes.clearEditionState };
             }
@@ -214,7 +212,7 @@ export namespace BookingActions {
             const draft: Booking = {
                 id: uuidv4(),
                 entityStatus: EntityStatus.Draft,
-                tenant: userState.currentUser,
+                tenant: userState.currentUser || User.initial,
                 adultCount: 1,
                 checkinDate: moment().format('YYYY-MM-DD'),
                 checkoutDate: moment().add(10, 'days').format('YYYY-MM-DD'),
@@ -321,7 +319,7 @@ export namespace BookingActions {
             }
 
             const draft = localStorageService.get<Booking>(draftName);
-            if(!draft)
+            if (!draft)
                 return dispatch(createDraft());
 
             return dispatch({ type: ActionTypes.getBookingSuccess, booking: draft });
