@@ -2,6 +2,7 @@ using AutoMapper;
 using KalininHutor.API.DTO;
 using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
+using KalininHutor.DAL.Common;
 using MediatR;
 
 namespace KalininHutor.API.Commands;
@@ -10,13 +11,15 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.Ge
 {
     private readonly RentalObjectRepository _repository;
     private readonly FileObjectRepository _fileObjectRepository;
+    private readonly FeedbackRepository _feedbackRepository;
     private readonly ISender _sender;
     private readonly IMapper _mapper;
 
-    public GetRentalObjectsHandler(RentalObjectRepository repository, FileObjectRepository fileObjectRepository, ISender sender, IMapper mapper)
+    public GetRentalObjectsHandler(RentalObjectRepository repository, FileObjectRepository fileObjectRepository, FeedbackRepository feedbackRepository, ISender sender, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _fileObjectRepository = fileObjectRepository ?? throw new ArgumentNullException(nameof(fileObjectRepository));
+        _feedbackRepository = feedbackRepository ?? throw new ArgumentNullException(nameof(feedbackRepository));
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -49,6 +52,15 @@ internal class GetRentalObjectsHandler : IRequestHandler<RentalObjectCommands.Ge
             var roomVariants = await _sender.Send(new RoomVariantCommands.GetQuery { RentalObjectsIds = result.Select(o => o.Id) });
             result.ForEach(ro => ro.RoomVariants = roomVariants.Where(o => o.RentalObjectId == ro.Id));
         }
+
+        var feedback = await _feedbackRepository.Get(new FeedbackEntitySearchOptions { FeedbackObjectsIds = result.Select(o => o.Id) });
+
+        if (feedback?.Any() ?? false)
+            result.ForEach(ro =>
+            {
+                ro.Feedback = feedback.Where(o => o.FeedbackObjectId == ro.Id).Select(_mapper.Map<FeedbackDTO>);
+                ro.Rate = feedback.Any() ? (float)feedback.Sum(o => o.Rate) / (float)feedback.Count() : 0;
+            });
 
         var photos = await _fileObjectRepository.Get(new FileObjectSearchOptions { ParentsIds = result.Select(o => o.Id).ToList() });
 
