@@ -74,6 +74,16 @@ class RentalObjectService {
         })
             .then(handleResponse);
     }
+
+    public async sendFeedback(request: RentalObject.SendFeedbackRequest): Promise<void> {
+        return fetch('api/rentalobject/send-feedback', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request)
+        })
+            .then(handleResponse);
+    }
 }
 
 export const rentalObjectService = new RentalObjectService();

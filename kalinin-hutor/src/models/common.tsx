@@ -36,6 +36,16 @@ export interface IEntity {
     entityStatus: EntityStatus;
 }
 
+export interface Feedback extends IEntity {
+    readonly id: string;
+    feedbackObjectId: string;
+    comment?: string;
+    rate: number;
+    userId?: string;
+    phoneNumber?: string;
+    createdAt: string;
+}
+
 export interface FileObject extends IEntity {
     readonly id: string;
     name: string;
