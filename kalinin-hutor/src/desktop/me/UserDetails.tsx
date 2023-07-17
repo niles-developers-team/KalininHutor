@@ -1,5 +1,5 @@
 import { Face } from "@mui/icons-material";
-import { Button, Card, CircularProgress, Grid, Stack, TextField, Typography } from "@mui/material"
+import { Button, Card, CircularProgress, Grid, Skeleton, Stack, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import { createRef } from "react";
 import { User } from "../../models"
@@ -15,6 +15,52 @@ export interface UserDetailsProps {
     onBirthdayAccepted: (value: string | null | undefined) => void;
     onAvatarChanged: (file: File) => void;
     onUpdateConfirm: () => void;
+}
+
+export const UserDetailsSkeleton = function (): JSX.Element {
+    return (
+        <Stack spacing={2}>
+            <Typography color="GrayText" variant="h6">Личные данные</Typography>
+            <Stack direction="row" spacing={3}>
+                <Stack spacing={1}>
+                    <Skeleton variant="circular" height={200} width={200} />
+                    <Skeleton width="100%" variant="rounded"><Button fullWidth /></Skeleton>
+                </Stack>
+                <Card >
+                    <Stack spacing={2} margin={2}>
+                        <Stack direction="row" spacing={3}>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Номер телефона</Typography>
+                                <Skeleton width="100%" variant="rounded" />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">E-mail</Typography>
+                                <Skeleton width="100%" variant="rounded" />
+                            </Stack>
+                        </Stack>
+                        <Stack direction="row" spacing={3}>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Имя</Typography>
+                                <Skeleton width="100%" variant="rounded" />
+                            </Stack>
+                            <Stack>
+                                <Typography variant="body2" color="GrayText">Фамилия</Typography>
+                                <Skeleton width="100%" variant="rounded" />
+                            </Stack>
+                        </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Дата рождения</Typography>
+                            <Stack direction="row" spacing={3}>
+                                <Skeleton width="100%" variant="rounded" />
+                                <Grid item xs />
+                                <Skeleton variant="rounded"><Button fullWidth /></Skeleton>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                </Card>
+            </Stack >
+        </Stack >
+    );
 }
 
 export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Element {

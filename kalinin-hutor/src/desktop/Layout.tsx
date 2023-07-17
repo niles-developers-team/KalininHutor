@@ -111,7 +111,7 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
     const notificationsCount = notificationState.models.filter(o => !o.read)?.length ?? 0;
 
     return (
-        <Grid container>
+        <Grid container marginBottom={2}>
             <HideOnScroll {...props}>
                 <AppBar position="sticky" color="default">
                     <Container>

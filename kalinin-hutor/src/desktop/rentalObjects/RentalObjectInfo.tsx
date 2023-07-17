@@ -1,8 +1,9 @@
 import { CurrencyRuble, FavoriteBorder, LocationCityOutlined, LocationOn } from "@mui/icons-material";
-import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
+import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton, Badge, Chip } from "@mui/material";
 import { useState, CSSProperties } from "react";
 import Carousel from "react-material-ui-carousel";
 import { RentalObject } from "../../models";
+import pluralize from "plural-ru";
 
 interface Props {
     model: RentalObject;
@@ -47,6 +48,13 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
             )}
             <Stack paddingX={2} paddingBottom={1} spacing={2}>
                 <Typography variant="h6">{model.name}</Typography>
+                {(model.feedback && model.feedback.length > 0) ?
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                    </Stack>
+                    : <Typography color="GrayText">Ещё нет отзывов</Typography>
+                }
                 <Typography variant="caption">{model.address}</Typography>
                 <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
             </Stack>
