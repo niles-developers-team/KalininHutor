@@ -1,52 +1,14 @@
-import { Dialog, DialogContent, DialogTitle, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import { forwardRef, useState } from "react";
+import { Dialog, DialogContent, Grid, InputAdornment, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import LoadingButton from '@mui/lab/LoadingButton';
+import { PasswordMaskCustom, PhoneMaskCustom } from "../../commonComponents";
 
-import { IMaskInput } from 'react-imask';
-
-export interface DialogProps {
+interface DialogProps {
     isOpen: boolean;
     authenticating: boolean;
     onSignin: (phoneNumber: string, password: string) => void;
     onClose: () => void;
 }
-
-interface MaskedInputProps {
-    onChange: (event: { target: { name: string; value: string } }) => void;
-    name: string;
-}
-
-const PhoneMaskCustom = forwardRef<HTMLElement | null, MaskedInputProps>(
-    function PhoneMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        return (
-            <IMaskInput
-                {...other}
-                mask="(###) ###-##-##"
-                definitions={{ '#': /[0-9]/, }}
-                inputRef={ref as any}
-                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-                overwrite
-            />
-        );
-    },
-);
-
-const PasswordMaskCustom = forwardRef<HTMLElement, MaskedInputProps>(
-    function PasswordMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        return (
-            <IMaskInput
-                {...other}
-                mask="#####"
-                definitions={{ '#': /[0-9]/, }}
-                inputRef={ref as any}
-                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-                overwrite
-            />
-        );
-    },
-);
 
 export const SigninDialog = function (props: DialogProps) {
 
