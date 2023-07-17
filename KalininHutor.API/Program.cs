@@ -15,6 +15,7 @@ using System.Text;
 using KalininHutor.API.Hubs;
 using KalininHutor.DAL;
 using KalininHutor.API.Providers;
+using KalininHutor.DAL.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,6 +152,11 @@ builder.Services.AddScoped<JWTHelper>();
     {
         var logger = provider.GetRequiredService<ILogger<FileObjectRepository>>();
         return new FileObjectRepository(connectionString, logger);
+    });
+    builder.Services.AddScoped<FeedbackRepository>(provider =>
+    {
+        var logger = provider.GetRequiredService<ILogger<FeedbackRepository>>();
+        return new FeedbackRepository(connectionString, logger);
     });
 }
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
