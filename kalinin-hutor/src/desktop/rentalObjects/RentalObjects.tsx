@@ -23,6 +23,7 @@ export const RentalObjectsComponent = function (): JSX.Element {
         roomsCount: 1,
         searchText: '',
         getBestDemands: true,
+        getRoomVariants: true,
         checkinDate: moment().format('YYYY-MM-DD'),
         checkoutDate: moment().add(14, 'days').format('YYYY-MM-DD')
     });

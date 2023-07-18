@@ -1,5 +1,5 @@
 import { Edit, Delete, ArrowBack, OpenWith } from "@mui/icons-material";
-import { Button, Card, Grid, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardContent, Grid, IconButton, Paper, Rating, Stack, TextField, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
@@ -12,6 +12,7 @@ import { AppState } from "../../store";
 import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
+import { imageStyle } from "../../commonComponents";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -218,7 +219,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
-                                                <img className="image" style={{ width: '100%', objectFit: 'cover' }} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                                <img className="image" style={imageStyle} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                             </Grid>
                                         )}
                                     </Draggable>
@@ -249,6 +250,20 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         disableColumnMenu
                     />
                 </Card>
+            </Stack>
+            <Stack spacing={2}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                    <Typography color="GrayText" variant="h6">Отзывы</Typography>
+                    <Rating value={model.rate} precision={0.1} readOnly/>
+                </Stack>
+                {model.feedback ? model.feedback.map(f => (
+                    <Card>
+                        <CardContent>
+                            <Typography>{f.comment}</Typography>
+                            <Rating value={f.rate} readOnly />
+                        </CardContent>
+                    </Card>
+                )) : <Typography alignSelf="center" color="GrayText">Отзывов еще нет</Typography>}
             </Stack>
         </Stack>
     );

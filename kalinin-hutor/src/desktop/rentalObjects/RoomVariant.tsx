@@ -50,9 +50,15 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
                     <Typography>{model?.description}</Typography>
                     <Stack direction="row" spacing={1}>
                         {
-                            model.characteristics.slice(0, 5).map(ch => {
+                            model.characteristics.slice(0, 5).map((ch, index) => {
                                 const characteristic = roomCharacteristics.find(o => o.id === ch.roomCharacteristicId);
-                                return (<Chip key={characteristic?.id} icon={CharacteristicTypes.getIcon(characteristic?.type)} label={characteristic?.name} variant="outlined"></Chip>)
+                                return (
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        {CharacteristicTypes.getIcon(characteristic?.type)}
+                                        <Typography variant="body2">{characteristic?.name}</Typography>
+                                        {model.characteristics.length > 1 && index < 4 && <Divider orientation="vertical" variant="middle"/>}
+                                    </Stack>
+                                )
                             })
                         }
                         {

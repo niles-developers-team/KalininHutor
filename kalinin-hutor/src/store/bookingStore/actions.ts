@@ -34,7 +34,7 @@ export enum ActionTypes {
     deleteSuccess = 'DELETE_BOOKING_SUCCESS',
     deleteFailure = 'DELETE_BOOKING_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
+    clearEditionState = 'CLEAR_BOOKING_EDITION_STATE',
 }
 
 export namespace BookingActions {

@@ -24,6 +24,10 @@ public class RentalObjectDTO
     public IEnumerable<RoomVariantDTO> RoomVariants { get; set; } = new List<RoomVariantDTO>();
     ///<summary> Фотографии объекта аренды </summary>
     public IEnumerable<FileObjectDTO> Photos { get; set; } = new List<FileObjectDTO>();
+    ///<summary> Отзывы </summary>
+    public IEnumerable<FeedbackDTO> Feedback { get; set; } = new List<FeedbackDTO>();
+    ///<summary> Рейтинг объекта аренды </summary>
+    public float Rate { get; set; }
 }
 
 ///<summary> Лучшее предложение по фильтру </summary>

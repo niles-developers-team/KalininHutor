@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject } from "../../models";
+import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject, Feedback } from "../../models";
 import { localStorageService, rentalObjectService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
@@ -8,6 +8,7 @@ import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
 import { roomVariantService } from "../../services";
+import { async } from "q";
 
 const draftName = 'rental-object-draft';
 
@@ -35,7 +36,7 @@ export enum ActionTypes {
     deleteSuccess = 'DELETE_RENTALOBJECT_SUCCESS',
     deleteFailure = 'DELETE_RENTALOBJECT_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
+    clearEditionState = 'CLEAR_RENTALOBJECT_EDITION_STATE',
 }
 
 export namespace RentalObjectActions {
@@ -451,10 +452,10 @@ export namespace RentalObjectActions {
                 if (!rentalObjectState.model) {
                     throw new ApplicationError('Не удалось найти объект аренды');
                 }
-                
-                const roomVariants = await roomVariantService.get({rentalObjectId: id})
 
-                return dispatch(success({...rentalObjectState.model, roomVariants: roomVariants}));
+                const roomVariants = await roomVariantService.get({ rentalObjectId: id })
+
+                return dispatch(success({ ...rentalObjectState.model, roomVariants: roomVariants }));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
@@ -579,6 +580,24 @@ export namespace RentalObjectActions {
             const result = draft.photos.map(o => o.id === id ? { ...o, entityStatus: EntityStatus.Deleted } : o);
 
             dispatch({ type: ActionTypes.updateDraft, draft: { ...draft, photos: [...result] } });
+        }
+    }
+
+    export function sendFeedback(feedback: Feedback): AppThunkAction {
+        return async (dispatch, getState) => {
+            const { rentalObjectState, userState } = getState();
+
+            if (!rentalObjectState.model) return;
+
+            await rentalObjectService.sendFeedback({
+                rate: feedback.rate,
+                rentalObjectId: rentalObjectState.model.id,
+                comment: feedback.comment,
+                phoneNumber: feedback.phoneNumber,
+                userId: userState.currentUser?.id
+            });
+
+            dispatch({ type: ActionTypes.updateSuccess, model: { ...rentalObjectState.model, feedback: [...rentalObjectState.model.feedback || [], feedback] } });
         }
     }
 }

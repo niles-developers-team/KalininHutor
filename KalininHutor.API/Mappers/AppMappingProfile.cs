@@ -8,6 +8,7 @@ using KalininHutor.DAL.Identity;
 using KalininHutor.Domain;
 using KalininHutor.Domain.Booking;
 using KalininHutor.Domain.Identity;
+using KalininHutor.DAL.Common;
 
 namespace KalininHutor.API.Mappers;
 
@@ -93,5 +94,9 @@ public class AppMappingProfile : Profile
             .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
         CreateMap<FileObject, FileObjectDTO>()
             .ReverseMap();
+        
+        CreateMap<FeedbackEntity, FeedbackDTO>().ReverseMap();
+        CreateMap<Feedback, FeedbackDTO>().ReverseMap();
+        CreateMap<FeedbackEntity, Feedback>().ReverseMap();
     }
 }

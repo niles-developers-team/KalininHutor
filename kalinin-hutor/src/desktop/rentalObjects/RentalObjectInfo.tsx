@@ -1,17 +1,15 @@
-import { CurrencyRuble, FavoriteBorder, LocationCityOutlined, LocationOn } from "@mui/icons-material";
-import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton } from "@mui/material";
-import { useState, CSSProperties } from "react";
+import { CurrencyRuble, FavoriteBorder, LocationOn } from "@mui/icons-material";
+import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton, Chip, Divider } from "@mui/material";
+import { useState } from "react";
 import Carousel from "react-material-ui-carousel";
-import { RentalObject } from "../../models";
+import { RentalObject, RoomCharacteristic } from "../../models";
+import pluralize from "plural-ru";
+import { imageStyle } from "../../commonComponents";
 
 interface Props {
     model: RentalObject;
     onShowVariants: (id: string) => void;
 }
-
-const imageStyle: CSSProperties = {
-    objectFit: "cover"
-};
 
 export const RentalObjectShortInfoComponent = function (props: Props): JSX.Element {
     const { model, onShowVariants } = props;
@@ -37,7 +35,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                     </Carousel>
                 </Grid>
             ) : (
@@ -47,6 +45,13 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
             )}
             <Stack paddingX={2} paddingBottom={1} spacing={2}>
                 <Typography variant="h6">{model.name}</Typography>
+                {(model.feedback && model.feedback.length > 0) ?
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                    </Stack>
+                    : <Typography color="GrayText">Ещё нет отзывов</Typography>
+                }
                 <Typography variant="caption">{model.address}</Typography>
                 <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
             </Stack>
@@ -76,19 +81,45 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
         return (<Typography variant="subtitle1">Ошибка при загрузке базы отдыха или дачи</Typography>)
     }
 
+    function onlyUnique(value: RoomCharacteristic, index: number, array: RoomCharacteristic[]) {
+        return array.indexOf(value) === index;
+    }
+
+    const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
+
     return (
-        <Stack padding={2} spacing={2} direction="row" width="100%">
+        <Stack padding={2} spacing={2} direction="row">
             {model.photos && model.photos.length ?
                 <img height={200} width={200} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
                 <Skeleton variant="rectangular" width={200} height={200} />
             }
-            <Grid item xs>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="h6">{model.name}</Typography>
-                    <IconButton><FavoriteBorder /></IconButton>
+            <Grid item xs style={{ height: '100%' }}>
+                <Stack spacing={1} style={{ height: '100%' }}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <Typography variant="h6">{model.name}</Typography>
+                        <IconButton disabled><FavoriteBorder /></IconButton>
+                    </Stack>
+                    {(model.feedback && model.feedback.length > 0) ?
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                            <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                        </Stack>
+                        : <Typography color="GrayText">Ещё нет отзывов</Typography>
+                    }
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <LocationOn color="disabled" />
+                        <Typography variant="body2" color="GrayText">{model.address}</Typography>
+                    </Stack>
+                    <Grid item xs />
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {roCharacteristics.slice(0, 5).map((ch, index) => (
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography variant="body2">{ch.name}</Typography>
+                                {index < 4 && roCharacteristics.length > 1 && <Divider variant="middle" orientation="vertical" />}
+                            </Stack>
+                        ))}
+                    </Stack>
                 </Stack>
-                <Typography variant="caption" color="GrayText">{model.address}</Typography>
-                <Typography marginTop="1em">{model.description}</Typography>
             </Grid>
             <Grid direction="column" alignItems="end">
                 <Stack alignItems="end" spacing={1}>
