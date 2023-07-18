@@ -1,5 +1,5 @@
 import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
-import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer, Chip, Rating, TextField } from "@mui/material";
+import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
@@ -128,13 +128,14 @@ export const RentalObjectComponent = function (): JSX.Element {
                     {model.roomVariants.map(rv => (<RoomVariantComponent roomVariant={rv} onShowDetails={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })} />))}
                 </Stack>
                 <Button onClick={() => setState({ ...state, newFeedbackOpened: true, newFeedback: {} as Feedback })}>Оставьте ваш отзыв</Button>
-                {model.feedback && model.feedback.map(f => (
+                {model.feedback && model.feedback.map((f, index) => (
                     <Stack spacing={1} paddingX={2}>
                         <Stack direction="row" spacing={2} alignItems="center">
                             <Rating sx={{ flexGrow: 1 }} value={f.rate} readOnly />
                             <Typography color="GrayText" variant="body2">{moment(f.createdAt).format('DD.MM.YYYY')}</Typography>
                         </Stack>
                         <Typography>{f.comment}</Typography>
+                        {model.feedback && model.feedback.length > 1 && index < model.feedback.length - 1 && <Divider variant="middle" />}
                     </Stack>
                 ))}
             </Stack>
