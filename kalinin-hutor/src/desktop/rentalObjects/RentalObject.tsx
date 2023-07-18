@@ -1,8 +1,8 @@
 import { AspectRatio, CurrencyRuble, FavoriteBorder, People } from "@mui/icons-material";
-import { Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, Paper, Radio, RadioGroup, Rating, Skeleton, Stack, TextField, Typography } from "@mui/material"
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, Paper, Radio, RadioGroup, Rating, Skeleton, Stack, TextField, Typography } from "@mui/material"
 import moment from "moment";
 import pluralize from "plural-ru";
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useQuery } from "../../hooks";
 import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, Feedback } from "../../models"
@@ -13,12 +13,7 @@ import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-import { PhoneMaskCustom } from "../../commonComponents";
-
-const imageStyle: CSSProperties = {
-    objectFit: "cover",
-    borderRadius: 8
-};
+import { PhoneMaskCustom, imageStyle } from "../../commonComponents";
 
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
@@ -180,7 +175,7 @@ export const RentalObjectComponent = function (): JSX.Element {
         setState({ ...state, datesAnchorEl: null })
     }
 
-    if (!rentalObjectState.model) {
+    if (rentalObjectState.modelLoading) {
         return (<Typography>Возникла ошибка при загрузке объекта аренды</Typography>);
     }
 
@@ -284,21 +279,17 @@ export const RentalObjectComponent = function (): JSX.Element {
                     </Stack>
                     <Stack spacing={2} direction="row">
                         {model.photos?.length > 0 ?
-                            <img height={325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
                             :
-                            <Paper variant="outlined">
-                                <Skeleton variant="rectangular" height={325} />
-                            </Paper>
+                            <Skeleton variant="rounded" height={325} width={325} />
                         }
                         <Grid spacing={2}>
                             {model.photos?.length ?
                                 model.photos.slice(1, 2).map(photo =>
-                                    <img style={{ ...imageStyle, width: '100%' }} height={160} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                 )
                                 :
-                                [...new Array(4)].map(() =>
-                                    <Skeleton variant="rectangular" width='100%' height={160} />
-                                )
+                                <Skeleton variant="rounded" height={160} width={325} />
                             }
                             {model.photos?.length > 2 && <Button onClick={() => setState({ ...state, allPhotoOpen: true })} variant="outlined">Ещё {model.photos.length - 2} фото</Button>}
                         </Grid>
@@ -319,9 +310,13 @@ export const RentalObjectComponent = function (): JSX.Element {
                 {formatRoomVariants()}
             </Stack>
             <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <Typography color="GrayText" variant="h6">Отзывы</Typography>
-                </Stack>
+                {(model.feedback && model.feedback.length > 0) ?
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                    </Stack>
+                    : <Typography color="GrayText">Ещё нет отзывов</Typography>
+                }
                 {model.feedback && model.feedback.map(f => (
                     <Stack spacing={1}>
                         <Stack direction="row" spacing={2} alignItems="center">

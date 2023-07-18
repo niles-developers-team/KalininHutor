@@ -12,6 +12,7 @@ import { AppState } from "../../store";
 import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
+import { imageStyle } from "../../commonComponents";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -218,7 +219,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
-                                                <img className="image" style={{ width: '100%', objectFit: 'cover' }} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                                <img className="image" style={imageStyle} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                             </Grid>
                                         )}
                                     </Draggable>

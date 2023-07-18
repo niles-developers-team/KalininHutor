@@ -153,7 +153,7 @@ export const RentalObjectsDetailedFilterComponent = function (props: DetailedPro
     }, []);
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} minWidth={230}>
             <Typography variant="h5">Фильтры</Typography>
             <Paper variant="outlined">
                 <List

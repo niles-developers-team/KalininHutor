@@ -36,7 +36,7 @@ export enum ActionTypes {
     deleteSuccess = 'DELETE_RENTALOBJECT_SUCCESS',
     deleteFailure = 'DELETE_RENTALOBJECT_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
+    clearEditionState = 'CLEAR_RENTALOBJECT_EDITION_STATE',
 }
 
 export namespace RentalObjectActions {
