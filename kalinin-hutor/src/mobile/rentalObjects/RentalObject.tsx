@@ -146,7 +146,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, allServicesOpened: false })}
                 onOpen={() => setState({ ...state, allServicesOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -186,7 +186,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, roomVariantInfoOpened: false })}
                 onOpen={() => setState({ ...state, roomVariantInfoOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -228,7 +228,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, descriptionOpened: false })}
                 onOpen={() => setState({ ...state, descriptionOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -259,7 +259,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, newFeedbackOpened: false })}
                 onOpen={() => setState({ ...state, newFeedbackOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -280,7 +280,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     }}>
                     <Puller />
                     <Rating onChange={(event, newValue) => setState({ ...state, newFeedback: { ...state.newFeedback, rate: newValue ?? 0 } })} value={state.newFeedback.rate || 0} />
-                    <TextField style={{height: state.newFeedbackOpened ? 'auto' : 0}} onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" size="small" value={state.newFeedback.comment || ''} multiline />
+                    <TextField style={{ height: state.newFeedbackOpened ? 'auto' : 0 }} onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" size="small" value={state.newFeedback.comment || ''} multiline />
 
                     <Button onClick={() => { dispatch(RentalObjectActions.sendFeedback(state.newFeedback)); setState({ ...state, newFeedbackOpened: false, newFeedback: {} as Feedback }) }}>Оставить отзыв</Button>
                 </Stack>
