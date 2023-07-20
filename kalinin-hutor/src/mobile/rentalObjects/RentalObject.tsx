@@ -280,7 +280,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     }}>
                     <Puller />
                     <Rating onChange={(event, newValue) => setState({ ...state, newFeedback: { ...state.newFeedback, rate: newValue ?? 0 } })} value={state.newFeedback.rate || 0} />
-                    <TextField onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" fullWidth size="small" value={state.newFeedback.comment || ''} multiline />
+                    <TextField style={{height: state.newFeedbackOpened ? 'auto' : 0}} onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" size="small" value={state.newFeedback.comment || ''} multiline />
 
                     <Button onClick={() => { dispatch(RentalObjectActions.sendFeedback(state.newFeedback)); setState({ ...state, newFeedbackOpened: false, newFeedback: {} as Feedback }) }}>Оставить отзыв</Button>
                 </Stack>
