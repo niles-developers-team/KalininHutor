@@ -44,7 +44,7 @@ public class RentalObjectController : ControllerBase
         }
         catch (Exception exc)
         {
-            return StatusCode(500, exc.Message);
+            return BadRequest(exc.Message);
         }
     }
 
@@ -59,7 +59,7 @@ public class RentalObjectController : ControllerBase
         }
         catch (Exception exc)
         {
-            return StatusCode(500, exc.Message);
+            return BadRequest(exc.Message);
         }
     }
 
@@ -67,6 +67,20 @@ public class RentalObjectController : ControllerBase
     [HttpDelete()]
     [Authorize]
     public async Task<IActionResult> Delete([FromBody] RentalObjectCommands.DeleteRequest request)
+    {
+        try
+        {
+           return Ok(await _sender.Send(request));
+        }
+        catch (Exception exc)
+        {
+            return BadRequest(exc.Message);
+        }
+    }
+
+    [HttpPost("send-feedback")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SendFeedback([FromBody] RentalObjectCommands.SendFeedbackRequest request)
     {
         try
         {

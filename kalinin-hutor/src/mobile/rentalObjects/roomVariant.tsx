@@ -1,5 +1,5 @@
 import { CurrencyRuble } from "@mui/icons-material";
-import { Paper, Skeleton, Stack, Typography, Button, Grid } from "@mui/material";
+import { Paper, Skeleton, Stack, Typography, Button, Grid, Divider } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import { CharacteristicTypes, RoomVariant } from "../../models"
 
@@ -23,7 +23,7 @@ export const RoomVariantComponent = function (props: Props): JSX.Element {
                     navButtonsAlwaysInvisible={true}
                     cycleNavigation={true}
                 >
-                    {roomVariant.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                    {roomVariant.photos?.map(photo => <img style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} key={photo.id} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                 </Carousel>
             ) : (
                 <Paper variant="outlined">
@@ -38,7 +38,13 @@ export const RoomVariantComponent = function (props: Props): JSX.Element {
                 </Stack>
                 <Button size="small" onClick={onShowDetails}>Подробнее</Button>
                 <Grid container direction="row" spacing={1} rowSpacing={2}>
-                    {roomVariant.characteristics.map(o => o.roomCharacteristic).map(rc => (<Stack direction="row" marginX={1}>{CharacteristicTypes.getIcon(rc.type)}<Typography>{rc.name}</Typography></Stack>))}
+                    {roomVariant.characteristics.map(o => o.roomCharacteristic).map((rc, index) => (
+                        <Stack direction="row" marginX={1} spacing={1}>
+                            {CharacteristicTypes.getIcon(rc.type)}
+                            <Typography>{rc.name}</Typography>
+                            {roomVariant.characteristics.length > 1 && index < roomVariant.characteristics.length - 1 && <Divider orientation="vertical" variant="middle" />}
+                        </Stack>
+                    ))}
                 </Grid>
             </Stack>
         </Paper>

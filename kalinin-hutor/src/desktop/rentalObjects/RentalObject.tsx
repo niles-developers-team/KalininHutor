@@ -1,11 +1,11 @@
 import { AspectRatio, CurrencyRuble, FavoriteBorder, People } from "@mui/icons-material";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, Paper, Radio, RadioGroup, Skeleton, Stack, Typography } from "@mui/material"
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, Paper, Radio, RadioGroup, Rating, Skeleton, Stack, TextField, Typography } from "@mui/material"
 import moment from "moment";
 import pluralize from "plural-ru";
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useQuery } from "../../hooks";
-import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant } from "../../models"
+import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, Feedback } from "../../models"
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { RangeCalendarPopoverComponent } from "../common";
 import { VisitorsPopoverComponent } from "./RentalObjectsFilter";
@@ -13,10 +13,7 @@ import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-
-const imageStyle: CSSProperties = {
-    objectFit: "contain"
-};
+import { PhoneMaskCustom, imageStyle } from "../../commonComponents";
 
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
@@ -25,33 +22,36 @@ export const RentalObjectComponent = function (): JSX.Element {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { id } = useParams();
-    const [specifyBedsOpen, setSpecifyBedsOpen] = useState<boolean>(false);
-    const [specifyBedsRoomVariant, setSpecifyBedsRoomVariant] = useState<RoomVariant>();
-    const [specifiedBedType, setSpecifiedBetType] = useState<RoomVariantBedType>();
-    const [allPhotoOpen, setAllPhotoOpen] = useState<boolean>(false);
+    const [state, setState] = useState({
+        specifyBedsOpen: false,
+        specifyBedsRoomVariant: undefined as RoomVariant | undefined,
+        specifiedBedType: undefined as RoomVariantBedType | undefined,
+        allPhotoOpen: false,
+        newFeedback: {} as Feedback,
+        personsAnchorEl: null as HTMLButtonElement | null,
+        datesAnchorEl: null as HTMLButtonElement | null
+    });
 
-    const [personsAnchorEl, setPersonsAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const [datesAnchorEl, setDatesAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const personsPopoverOpen = Boolean(personsAnchorEl);
+    const personsPopoverOpen = Boolean(state.personsAnchorEl);
     const personsPopoverId = personsPopoverOpen ? 'persons-popover' : undefined;
-    const datesPopoverOpen = Boolean(datesAnchorEl);
+    const datesPopoverOpen = Boolean(state.datesAnchorEl);
     const datesPopoverId = datesPopoverOpen ? 'dates-popover' : undefined;
 
     useEffect(() => {
-        if (!id || !userState.currentUser)
+        if (!id)
             return;
 
         dispatch(RentalObjectActions.loadRentalObject(id));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
 
         ym('reachGoal', 'desktop_enter_create_booking');
-    }, [userState.currentUser !== undefined]);
+    }, [id]);
 
     useEffect(() => {
         if (!rentalObjectState.model)
             return;
 
-        if (!!rentalObjectState.model.roomVariants && !!id) {
+        if (!rentalObjectState.model.roomVariants.length && !!id) {
             dispatch(RentalObjectActions.loadRentalObjectRoomVariants(id));
         }
 
@@ -59,10 +59,10 @@ export const RentalObjectComponent = function (): JSX.Element {
     }, [rentalObjectState.model])
 
     useEffect(() => {
-        if(!bookingState.model)
+        if (!bookingState.model)
             return;
 
-        if(bookingState.model.rentalObject?.id !== id) {
+        if (bookingState.model.rentalObject?.id !== id) {
             dispatch(BookingActions.clearEditionState());
         }
     }, [bookingState.model])
@@ -123,16 +123,13 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     function handleSpecifyBeds(roomVariant: RoomVariant) {
-        setSpecifyBedsOpen(true);
-        setSpecifyBedsRoomVariant(roomVariant);
         const bookingRoomVariant = booking?.roomVariants?.find(o => o.roomVariantId === roomVariant?.id);
         const roomVariantBedType = roomVariant.bedTypes.find(o => o.bedType === bookingRoomVariant?.bedType) || roomVariant.bedTypes[0];
-        setSpecifiedBetType({ ...roomVariantBedType });
+        setState({ ...state, specifyBedsOpen: true, specifyBedsRoomVariant: roomVariant, specifiedBedType: { ...roomVariantBedType } });
     }
 
     function discardSpecifyBeds() {
-        setSpecifyBedsRoomVariant(undefined);
-        setSpecifyBedsOpen(false);
+        setState({ ...state, specifyBedsRoomVariant: undefined, specifyBedsOpen: false });
     }
 
     function confirmSpecifyBeds() {
@@ -141,20 +138,17 @@ export const RentalObjectComponent = function (): JSX.Element {
 
         let bookingRoomVariants = [...booking.roomVariants];
 
-        if (!specifiedBedType) {
+        const sbt = state.specifiedBedType;
+        if (!sbt) {
             dispatch(NotificationActions.showSnackbar("Не указан вариант кровати.", NotificationVariant.error));
             return;
         }
 
-        const roomVariant = bookingRoomVariants.find(o => o.roomVariantId === specifyBedsRoomVariant?.id)
-        if (!roomVariant)
-            return;
+        bookingRoomVariants = bookingRoomVariants.map(o => o.roomVariantId === state.specifyBedsRoomVariant?.id ? { ...o, bedType: sbt.bedType } : o);
 
-        bookingRoomVariants = bookingRoomVariants.map(o => o.roomVariantId === specifyBedsRoomVariant?.id ? { ...roomVariant, bedType: specifiedBedType.bedType } : o);
-
-        setSpecifyBedsRoomVariant(undefined);
-        setSpecifyBedsOpen(false);
+        setState({ ...state, specifyBedsRoomVariant: undefined, specifyBedsOpen: false })
         dispatch(BookingActions.saveDraft({ ...booking, roomVariants: bookingRoomVariants }));
+        return;
     }
 
     function handleCreateBooking() {
@@ -178,10 +172,10 @@ export const RentalObjectComponent = function (): JSX.Element {
             checkoutDate: endDate
         }));
 
-        setDatesAnchorEl(null);
+        setState({ ...state, datesAnchorEl: null })
     }
 
-    if (!rentalObjectState.model) {
+    if (rentalObjectState.modelLoading) {
         return (<Typography>Возникла ошибка при загрузке объекта аренды</Typography>);
     }
 
@@ -203,7 +197,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     document.title = `${appName} / ${model.name}`;
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
                 <Stack spacing={2}>
                     <Typography variant="h6"><b>Параметры</b></Typography>
@@ -211,7 +205,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                         <Stack spacing={1} padding=".5em">
                             <Button
                                 aria-describedby={datesPopoverId}
-                                onClick={(event) => setDatesAnchorEl(datesAnchorEl ? null : event.currentTarget)}
+                                onClick={(event) => setState({ ...state, datesAnchorEl: state.datesAnchorEl ? null : event.currentTarget })}
                             >
                                 <Stack direction="row" spacing={2}>
                                     <Stack>
@@ -230,7 +224,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                             <Divider flexItem />
                             <Button
                                 aria-describedby={personsPopoverId}
-                                onClick={(event) => setPersonsAnchorEl(personsAnchorEl ? null : event.currentTarget)}
+                                onClick={(event) => setState({ ...state, personsAnchorEl: state.personsAnchorEl ? null : event.currentTarget })}
                             >
                                 <Stack direction="row" alignItems="center" spacing={1}>
                                     <People color="disabled" />
@@ -256,20 +250,20 @@ export const RentalObjectComponent = function (): JSX.Element {
                         <RangeCalendarPopoverComponent
                             id={datesPopoverId}
                             open={datesPopoverOpen}
-                            anchorEl={datesAnchorEl}
+                            anchorEl={state.datesAnchorEl}
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                            onClose={() => setDatesAnchorEl(null)}
+                            onClose={() => setState({ ...state, datesAnchorEl: null })}
                             startDate={booking?.checkinDate}
                             endDate={booking?.checkoutDate}
                             onConfirm={handleDatesChanged}
-                            onDiscard={() => setDatesAnchorEl(null)}
+                            onDiscard={() => setState({ ...state, datesAnchorEl: null })}
                         />
                         <VisitorsPopoverComponent
                             id={personsPopoverId}
                             open={personsPopoverOpen}
-                            anchorEl={personsAnchorEl}
+                            anchorEl={state.personsAnchorEl}
                             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                            onClose={() => setPersonsAnchorEl(null)}
+                            onClose={() => setState({ ...state, personsAnchorEl: null })}
                             adultsCount={booking?.adultCount || 0}
                             childsCount={booking?.childCount || 0}
                             onAdultsCountChanged={(adultsCount: number) => dispatch(BookingActions.saveDraft({ ...booking, adultCount: adultsCount }))}
@@ -279,37 +273,33 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Button variant="outlined" color="success" size="small" disabled={!booking?.roomVariants?.length} onClick={handleCreateBooking}>Забронировать</Button>
                 </Stack>
                 <Stack className="w-100">
-                    <Stack direction="row">
+                    <Stack direction="row" alignItems="center">
                         <Typography variant="h6">{model ? model.name : <Skeleton />}</Typography>
                         <IconButton disabled><FavoriteBorder /></IconButton>
                     </Stack>
-                    <Typography color="GrayText">{model ? model.address : <Skeleton />}</Typography>
-                    <Stack spacing={2}>
+                    <Stack spacing={2} direction="row">
                         {model.photos?.length > 0 ?
-                            <img height={325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
                             :
-                            <Paper variant="outlined">
-                                <Skeleton variant="rectangular" height={325} />
-                            </Paper>
+                            <Skeleton variant="rounded" height={325} width={325} />
                         }
-                        <Stack direction="row" spacing={2}>
+                        <Grid spacing={2}>
                             {model.photos?.length ?
-                                model.photos.slice(0, 5).map(photo =>
-                                    <img style={imageStyle} width={120} height={120} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                model.photos.slice(1, 2).map(photo =>
+                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={`data:${photo.extension};base64,${photo.body}`}></img>
                                 )
                                 :
-                                [...new Array(5)].map(() =>
-                                    <Skeleton variant="rectangular" width={120} height={120} />
-                                )
+                                <Skeleton variant="rounded" height={160} width={325} />
                             }
-                            {model.photos?.length > 5 && <Button onClick={() => setAllPhotoOpen(true)} variant="outlined" className="h-100">Ещё {model.photos.length - 5} фото</Button>}
-                        </Stack>
+                            {model.photos?.length > 2 && <Button onClick={() => setState({ ...state, allPhotoOpen: true })} variant="outlined">Ещё {model.photos.length - 2} фото</Button>}
+                        </Grid>
                     </Stack>
                 </Stack>
             </Stack>
-            <Grid item xs>
+            <Stack spacing={2}>
+                <Typography color="GrayText">{model ? model.address : <Skeleton />}</Typography>
                 <Typography>{model ? model.description : <Skeleton />}</Typography>
-            </Grid>
+            </Stack>
             <Stack marginTop="1em" spacing={1}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h5">Доступные варианты</Typography>
@@ -319,8 +309,49 @@ export const RentalObjectComponent = function (): JSX.Element {
                 </Stack>
                 {formatRoomVariants()}
             </Stack>
+            <Stack spacing={2}>
+                {(model.feedback && model.feedback.length > 0) ?
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                    </Stack>
+                    : <Typography color="GrayText">Ещё нет отзывов</Typography>
+                }
+                {model.feedback && model.feedback.map(f => (
+                    <Stack spacing={1}>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <Rating value={f.rate} readOnly />
+                            <Typography color="GrayText" variant="body2">{moment(f.createdAt).format('DD.MM.YYYY')}</Typography>
+                        </Stack>
+                        <Typography>{f.comment}</Typography>
+                    </Stack>
+                ))}
+                <Stack spacing={2} direction="row">
+                    <Stack spacing={2} sx={{ flexGrow: 1 }}>
+                        <Stack spacing={2} direction="row">
+                            <Typography>Оставьте ваш отзыв:</Typography>
+                            <Rating onChange={(event, newValue) => setState({ ...state, newFeedback: { ...state.newFeedback, rate: newValue ?? 0 } })} value={state.newFeedback.rate || 0} />
+                        </Stack>
+                        <TextField onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" fullWidth size="small" value={state.newFeedback.comment || ''} multiline />
+                    </Stack>
+                    <Stack spacing={2}>
+                        {!userState.currentUser && <Typography>Ваш номер телефона:</Typography>}
+                        {!userState.currentUser && <TextField size="small"
+                            placeholder="(999) 999-99-99"
+                            onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, phoneNumber: event.target.value } })} value={state.newFeedback.phoneNumber || ''}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">+7</InputAdornment>,
+                                inputComponent: PhoneMaskCustom as any
+                            }} />}
+                        <Button onClick={async () => {
+                            await dispatch(RentalObjectActions.sendFeedback(state.newFeedback))
+                            setState({ ...state, newFeedback: {} as Feedback })
+                        }}>Оставить отзыв</Button>
+                    </Stack>
+                </Stack>
+            </Stack>
 
-            <Dialog open={allPhotoOpen} fullWidth={true} maxWidth="md" onClose={() => setAllPhotoOpen(false)}>
+            <Dialog open={state.allPhotoOpen} fullWidth={true} maxWidth="md" onClose={() => setState({ ...state, allPhotoOpen: false })}>
                 <DialogContent>
                     <Grid container>
                         <Masonry columns={4} spacing={2}>
@@ -330,12 +361,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                                         src={`data:${photo.extension};base64,${photo.body}`}
                                         width={200}
                                         alt={photo.name}
-                                        style={{
-                                            borderBottomLeftRadius: 4,
-                                            borderBottomRightRadius: 4,
-                                            borderTopLeftRadius: 4,
-                                            borderTopRightRadius: 4,
-                                        }}
+                                        style={imageStyle}
                                     />
                                 </div>
                             ))}
@@ -344,14 +370,14 @@ export const RentalObjectComponent = function (): JSX.Element {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={specifyBedsOpen} maxWidth="xs" onClose={discardSpecifyBeds}>
+            <Dialog open={state.specifyBedsOpen} maxWidth="xs" onClose={discardSpecifyBeds}>
                 <DialogTitle>Уточните кровати</DialogTitle>
                 <DialogContent>
                     <FormControl>
-                        <RadioGroup value={specifiedBedType?.id} onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string) => {
-                            setSpecifiedBetType(specifyBedsRoomVariant?.bedTypes?.find(o => o.id === value));
+                        <RadioGroup value={state.specifiedBedType?.id} onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string) => {
+                            setState({ ...state, specifiedBedType: state.specifyBedsRoomVariant?.bedTypes?.find(o => o.id === value) })
                         }}>
-                            {specifyBedsRoomVariant?.bedTypes?.map(bt =>
+                            {state.specifyBedsRoomVariant?.bedTypes?.map(bt =>
                                 <FormControlLabel key={bt.bedType} value={bt.id} control={<Radio />} label={
                                     (<Stack direction="row">
                                         {BedTypes.getIcon(bt.bedType)}
@@ -366,7 +392,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 </DialogContent>
                 <DialogActions>
                     <Button color="inherit" onClick={discardSpecifyBeds}>Отмена</Button>
-                    <Button disabled={!specifiedBedType} color="primary" onClick={confirmSpecifyBeds} autoFocus>Принять</Button>
+                    <Button disabled={!state.specifiedBedType} color="primary" onClick={confirmSpecifyBeds} autoFocus>Принять</Button>
                 </DialogActions>
             </Dialog>
         </Stack >

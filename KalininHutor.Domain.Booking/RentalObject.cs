@@ -6,6 +6,7 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
     private HashSet<FileObject> _photos = new HashSet<FileObject>();
     private HashSet<RoomVariant> _roomVariants = new HashSet<RoomVariant>();
     private HashSet<Booking> _bookings = new HashSet<Booking>();
+    private HashSet<Feedback> _feedback = new HashSet<Feedback>();
 
     public Guid Id { get; protected set; }
 
@@ -27,6 +28,10 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
 
     public IEnumerable<Booking> Bookings { get => _bookings; protected set => _bookings = value.ToHashSet(); }
 
+    public IEnumerable<Feedback> Feedback { get => _feedback; protected set => _feedback = value.ToHashSet(); }
+
+    public float Rate  => _feedback.Any() ? _feedback.Sum(o => o.Rate) / _feedback.Count() : 0;
+    
     protected RentalObject() { }
 
     public RentalObject(string name, string description, string? address,
@@ -126,6 +131,15 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
         booking.CalculateTotal();
 
         return booking;
+    }
+
+    public Feedback CreateFeedback(string? comment, uint rate, Guid? userId, string? phomeNumber)
+    {
+        var feedback = new Feedback(Id, rate, comment, userId, phomeNumber);
+
+        _feedback.Add(feedback);
+
+        return feedback;
     }
 
     private void ValidateBookingRoomVariants(DateOnly checkInDate, DateOnly checkOutDate, int adultCount, int childsCount,

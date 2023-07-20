@@ -36,7 +36,7 @@ export enum ActionTypes {
     updateSuccess = 'UPDATE_USER_SUCCESS',
     updateFailure = 'UPDATE_USER_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
+    clearEditionState = 'CLEAR_USER_EDITION_STATE',
 
     deleteRequest = 'DELETE_USER_REQUEST',
     deleteSuccess = 'DELETE_USER_SUCCESS',

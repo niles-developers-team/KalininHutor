@@ -1,4 +1,4 @@
-import { FileObject, IEntity } from "./common";
+import { Feedback, FileObject, IEntity } from "./common";
 import { RoomVariant } from "./roomVariant";
 import { User } from "./user";
 
@@ -17,9 +17,12 @@ export interface RentalObject extends IEntity {
 
     landlord: User;
 
+    rate?: number;
+
     bestDemand?: RentalObjectBestDemand;
     roomVariants: RoomVariant[];
     photos: FileObject[];
+    feedback?: Feedback[];
 }
 
 export interface RentalObjectBestDemand {
@@ -87,5 +90,13 @@ export namespace RentalObject {
 
     export interface DeleteRequest {
         ids: string[];
+    }
+
+    export interface SendFeedbackRequest {
+        rentalObjectId: string;
+        comment?: string;
+        rate: number;
+        userId?: string;
+        phoneNumber?: string;
     }
 }

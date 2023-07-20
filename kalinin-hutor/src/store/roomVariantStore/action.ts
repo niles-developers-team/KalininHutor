@@ -35,7 +35,7 @@ export enum ActionTypes {
     deleteSuccess = 'DELETE_ROOMVARIANT_SUCCESS',
     deleteFailure = 'DELETE_ROOMVARIANT_FAILURE',
 
-    clearEditionState = 'CLEAR_EDITION_STATE',
+    clearEditionState = 'CLEAR_ROOMVARIANT_EDITION_STATE',
 }
 
 export namespace RoomVariantActions {

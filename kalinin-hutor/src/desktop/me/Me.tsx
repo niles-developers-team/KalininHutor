@@ -7,7 +7,7 @@ import { appName } from "../..";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { NotificationStatus, RentalObject, Booking, FileObject, EntityStatus } from "../../models";
 import { AppState, RentalObjectActions, BookingActions, NotificationActions, RoomCharacteristicActions, UserActions } from "../../store";
-import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent,UserDetailsComponent } from "./";
+import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent, UserDetailsComponent, UserDetailsSkeleton } from "./";
 import ym from 'react-yandex-metrika';
 
 export const MeComponent = function (): JSX.Element {
@@ -114,8 +114,9 @@ export const MeComponent = function (): JSX.Element {
         };
     }
 
-    if (!userState.currentUser)
+    if (!userState.currentUser) {
         return (<Typography>Ошибка авторизации</Typography>);
+    }
 
     const currentUser = userState.currentUser;
     const rentalObjects: RentalObject[] = rentalObjectState.models || [];
