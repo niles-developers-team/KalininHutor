@@ -1,7 +1,7 @@
 using KalininHutor.Domain.Booking.Enums;
 
 namespace KalininHutor.Domain.Booking;
-public class RentalObject : IEntity<Guid>, IEntityWithPhotos
+public class RentalObject : IEntity<Guid>, IEntityWithPhotos, IEntityWithCoordinates
 {
     private HashSet<FileObject> _photos = new HashSet<FileObject>();
     private HashSet<RoomVariant> _roomVariants = new HashSet<RoomVariant>();
@@ -30,12 +30,15 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
 
     public IEnumerable<Feedback> Feedback { get => _feedback; protected set => _feedback = value.ToHashSet(); }
 
-    public float Rate  => _feedback.Any() ? _feedback.Sum(o => o.Rate) / _feedback.Count() : 0;
-    
+    public float Rate => _feedback.Any() ? _feedback.Sum(o => o.Rate) / _feedback.Count() : 0;
+
+    public Coordinates? Coordinates { get; protected set; }
+
     protected RentalObject() { }
 
     public RentalObject(string name, string description, string? address,
-                        TimeOnly? checkinTime, TimeOnly? checkoutTime, Guid ownerId)
+                        TimeOnly? checkinTime, TimeOnly? checkoutTime,
+                        Guid ownerId, float? latitude, float? longitude)
     {
         CheckInfo(name, description);
 
@@ -54,6 +57,9 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
         CheckinTime = checkinTime;
         CheckoutTime = checkoutTime;
         LandlordId = ownerId;
+
+        if (latitude.HasValue && longitude.HasValue)
+            Coordinates = new Coordinates(latitude.Value, longitude.Value);
     }
 
     public void SetPhotos(ICollection<FileObject> photos) => _photos = photos.ToHashSet();
@@ -95,6 +101,16 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos
     {
         CheckinTime = checkinTime;
         CheckoutTime = checkoutTime;
+    }
+
+    /// <summary> Задать координаты </summary>
+    /// <param name="latitude">Широта</param>
+    /// <param name="longitude">Долгота</param>
+    public void SetCoordinates(Coordinates? coordinates)
+    {
+        if (coordinates != null)
+            Coordinates = new Coordinates(coordinates.Latitude, coordinates.Longitude);
+        else Coordinates = null;
     }
 
     public void CreatePhoto(string name, string extension, string body, uint sortOrder)
