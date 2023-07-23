@@ -39,3 +39,20 @@ export const PasswordMaskCustom = forwardRef<HTMLElement, MaskedInputProps>(
         );
     },
 );
+
+/** Маска для контрола координат */
+export const CoordinatesMaskCustom = forwardRef<HTMLElement, MaskedInputProps> (
+    function CoordinatesMaskCustom(props, ref) {
+        const { onChange, ...other } = props;
+        return (
+            <IMaskInput
+                {...other}
+                mask="##.######, ##.######"
+                definitions={{ '#': /[0-9]/, }}
+                inputRef={ref as any}
+                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+                overwrite
+            />
+        );
+    },
+)

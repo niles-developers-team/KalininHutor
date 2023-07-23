@@ -1,6 +1,6 @@
 namespace KalininHutor.DAL.Booking;
 
-public class RentalObjectEntity : IHideableEntity
+public class RentalObjectEntity : IHideableEntity, IEntityWithCoordinates
 {
     private TimeSpan _checkinTimeSpan;
     private TimeSpan _checkoutTimeSpan;
@@ -18,6 +18,9 @@ public class RentalObjectEntity : IHideableEntity
     public bool IsHidden { get; protected set; }
 
     public List<RentalObjectFileObjectEntity> FileObjects { get; protected set; } = new List<RentalObjectFileObjectEntity>();
+
+    public float? Latitude { get; protected set; }
+    public float? Longitude { get; protected set; }
 }
 
 public class RentalObjectFileObjectEntity : IEntity<Guid>

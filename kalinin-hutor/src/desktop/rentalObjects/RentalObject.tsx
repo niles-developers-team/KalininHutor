@@ -1,4 +1,4 @@
-import { AspectRatio, CurrencyRuble, FavoriteBorder, People } from "@mui/icons-material";
+import { AspectRatio, CurrencyRuble, FavoriteBorder, NearMe, People } from "@mui/icons-material";
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, Paper, Radio, RadioGroup, Rating, Skeleton, Stack, TextField, Typography } from "@mui/material"
 import moment from "moment";
 import pluralize from "plural-ru";
@@ -195,6 +195,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     const nightsCount = checkoutDate.dayOfYear() - checkinDate.dayOfYear();
 
     document.title = `${appName} / ${model.name}`;
+    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
 
     return (
         <Stack spacing={2}>
@@ -276,6 +277,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Stack direction="row" alignItems="center">
                         <Typography variant="h6">{model ? model.name : <Skeleton />}</Typography>
                         <IconButton disabled><FavoriteBorder /></IconButton>
+                        {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     <Stack spacing={2} direction="row">
                         {model.photos?.length > 0 ?
