@@ -1,5 +1,5 @@
-import { Edit, Delete, ArrowBack, OpenWith } from "@mui/icons-material";
-import { Button, Card, CardContent, Grid, IconButton, Paper, Rating, Stack, TextField, Typography } from "@mui/material";
+import { Edit, Delete, ArrowBack, OpenWith, Info, Help, HelpOutline } from "@mui/icons-material";
+import { Button, Card, CardContent, Grid, IconButton, Paper, Rating, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
@@ -200,13 +200,18 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         </Stack>
                         <Stack>
                             <Typography variant="body2" color="GrayText">Координаты</Typography>
-                            <TextField
-                                value={model.coordinates ? `${model.coordinates?.latitude}, ${model.coordinates?.longitude}` : undefined}
-                                onChange={handleCoordinatesChanged}
-                                size="small"
-                                placeholder="##.######, ##.######"
-                                InputProps={{ inputComponent: CoordinatesMaskCustom as any }}
-                            />
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <TextField
+                                    value={model.coordinates ? `${model.coordinates?.latitude}, ${model.coordinates?.longitude}` : undefined}
+                                    onChange={handleCoordinatesChanged}
+                                    size="small"
+                                    placeholder="##.######, ##.######"
+                                    InputProps={{ inputComponent: CoordinatesMaskCustom as any }}
+                                />
+                                <Tooltip title="Информацию о координатах можно взять, например, из навигатора или Яндекс Карт">
+                                    <HelpOutline />
+                                </Tooltip>
+                            </Stack>
                         </Stack>
                     </Stack>
                     <Stack>
