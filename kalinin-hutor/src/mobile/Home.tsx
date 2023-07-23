@@ -134,7 +134,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                     </Container>
                 </AppBar>
             </HideOnScroll>
-            <Stack marginTop={2} spacing={2}>
+            <Stack marginTop={2} marginBottom={2} spacing={2}>
                 {rentalObjects.map((ro, index) =>
                 (
                     rentalObjectState.modelsLoading
@@ -149,7 +149,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
                 onClose={() => setState({ ...state, filterOpened: false })}
                 onOpen={() => setState({ ...state, filterOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
