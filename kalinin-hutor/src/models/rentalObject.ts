@@ -1,7 +1,8 @@
-import { Feedback, FileObject, IEntity } from "./common";
+import { Coordinates, Feedback, FileObject, IEntity } from "./common";
 import { RoomVariant } from "./roomVariant";
 import { User } from "./user";
 
+/** Интерфейс объекта аренды */
 export interface RentalObject extends IEntity {
     // Идентификатор объекта аренды
     id: string;
@@ -23,6 +24,9 @@ export interface RentalObject extends IEntity {
     roomVariants: RoomVariant[];
     photos: FileObject[];
     feedback?: Feedback[];
+
+    /** Координаты объекта аренды */
+    coordinates?: Coordinates;
 }
 
 export interface RentalObjectBestDemand {
@@ -71,6 +75,8 @@ export namespace RentalObject {
         checkoutTime: string;
         createRoomVariantsRequests: RoomVariant.CreateRequest[];
         createPhotos: FileObject[];
+        /** Координаты объекта аренды */
+        coordinates?: Coordinates;
     }
 
     export interface UpdateRequest {
@@ -86,6 +92,8 @@ export namespace RentalObject {
         createPhotos?: FileObject[];
         updatePhotos?: FileObject[];
         deletePhotos?: FileObject[];
+        /** Координаты объекта аренды */
+        coordinates?: Coordinates;
     }
 
     export interface DeleteRequest {

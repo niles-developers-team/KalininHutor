@@ -7,12 +7,12 @@ import { ChangeEvent, createRef, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { EntityStatus, RentalObject, RoomVariant } from "../../models";
+import { Coordinates, EntityStatus, RentalObject, RoomVariant } from "../../models";
 import { AppState } from "../../store";
 import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-import { imageStyle } from "../../commonComponents";
+import { CoordinatesMaskCustom, imageStyle } from "../../commonComponents";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -106,6 +106,25 @@ export const MyRentalObjectComponent = function (): JSX.Element {
         fileInput.current?.click();
     }
 
+    function handleCoordinatesChanged(event: ChangeEvent<HTMLInputElement>) {
+        if (!event.target?.value)
+            return;
+
+        const [latitude, longitude] = event.target.value.split(", ");
+
+        if (!latitude && !longitude) {
+            dispatch(RentalObjectActions.saveDraft({ ...model, coordinates: undefined }));
+            return;
+        }
+
+        const coordinates: Coordinates = {
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude)
+        };
+
+        dispatch(RentalObjectActions.saveDraft({ ...model, coordinates: coordinates }));
+    }
+
     async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
         event.preventDefault();
         if (!event?.target?.files?.length) return;
@@ -151,14 +170,16 @@ export const MyRentalObjectComponent = function (): JSX.Element {
             <Card>
                 <Stack spacing={2} margin={2}>
                     <Stack direction="row" spacing={3}>
-                        <Stack>
+                        <Grid container direction="column">
                             <Typography variant="body2" color="GrayText">Название</Typography>
                             <TextField size="small" disabled={loading} value={model.name} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, name: event.target.value }))} />
-                        </Stack>
-                        <Stack>
+                        </Grid>
+                        <Grid container direction="column">
                             <Typography variant="body2" color="GrayText">Адрес</Typography>
                             <TextField size="small" disabled={loading} value={model.address} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, address: event.target.value }))} />
-                        </Stack>
+                        </Grid>
+                    </Stack>
+                    <Stack direction="row" spacing={3}>
                         <Stack>
                             <Typography variant="body2" color="GrayText">Время заезда</Typography>
                             <TimePicker
@@ -177,10 +198,21 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                 renderInput={(params) => <TextField size="small" {...params} />}
                             />
                         </Stack>
+                        <Stack>
+                            <Typography variant="body2" color="GrayText">Координаты</Typography>
+                            <TextField
+                                value={model.coordinates ? `${model.coordinates?.latitude}, ${model.coordinates?.longitude}` : undefined}
+                                onChange={handleCoordinatesChanged}
+                                size="small"
+                                placeholder="##.######, ##.######"
+                                InputProps={{ inputComponent: CoordinatesMaskCustom as any }}
+                            />
+                        </Stack>
                     </Stack>
                     <Stack>
                         <Typography variant="body2" color="GrayText">Описание</Typography>
-                        <TextField disabled={loading} value={model.description} onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, description: event.target.value }))}
+                        <TextField disabled={loading} value={model.description}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => dispatch(RentalObjectActions.saveDraft({ ...model, description: event.target.value }))}
                             multiline
                             rows={5} />
                     </Stack>
@@ -254,7 +286,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
             <Stack spacing={2}>
                 <Stack direction="row" spacing={2} alignItems="center">
                     <Typography color="GrayText" variant="h6">Отзывы</Typography>
-                    <Rating value={model.rate} precision={0.1} readOnly/>
+                    <Rating value={model.rate} precision={0.1} readOnly />
                 </Stack>
                 {model.feedback ? model.feedback.map(f => (
                     <Card>
