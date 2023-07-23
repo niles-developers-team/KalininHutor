@@ -19,9 +19,22 @@ public class AppMappingProfile : Profile
     public AppMappingProfile()
     {
         CreateMap<RentalObject, RentalObjectDTO>().ReverseMap();
-        CreateMap<RentalObject, RentalObjectEntity>().ReverseMap();
+        CreateMap<RentalObject, RentalObjectEntity>()
+        .ForMember(o => o.Latitude, options => options.MapFrom(o => o.Coordinates == null ? null : (float?)o.Coordinates.Latitude))
+        .ForMember(o => o.Longitude, options => options.MapFrom(o => o.Coordinates == null ? null : (float?)o.Coordinates.Longitude))
+        .ReverseMap()
+        .ForMember(o => o.Coordinates, options => options.MapFrom(o =>
+             o.Latitude.HasValue && o.Longitude.HasValue ?
+                new Coordinates(o.Latitude.Value, o.Longitude.Value) :
+                null
+        ));
         CreateMap<RentalObjectCommands.GetQuery, RentalObjectSearchOptions>().ReverseMap();
-        CreateMap<RentalObjectEntity, RentalObjectDTO>();
+        CreateMap<RentalObjectEntity, RentalObjectDTO>()
+        .ForMember(o => o.Coordinates, options => options.MapFrom(o =>
+             o.Latitude.HasValue && o.Longitude.HasValue ?
+                new CoordinatesDTO { Latitude = o.Latitude.Value, Longitude = o.Longitude.Value } :
+                null
+        ));
 
         CreateMap<Booking, BookingDTO>()
             .ForMember(o => o.Tenant, o => o.MapFrom(b =>
@@ -37,16 +50,16 @@ public class AppMappingProfile : Profile
         CreateMap<Booking, BookingEntity>().ReverseMap();
         CreateMap<BookingCommands.GetQuery, BookingSearchOptions>().ReverseMap();
         CreateMap<BookingEntity, BookingDTO>()
-            .ForMember(o => o.Tenant, o => o.MapFrom(b =>
-                new UserDTO
-                {
-                    Name = b.TenantName,
-                    Id = b.TenantId,
-                    Email = b.TenantEmail,
-                    Lastname = b.TenantLastname,
-                    PhoneNumber = b.TenantPhone
-                }
-            )).ReverseMap();
+                    .ForMember(o => o.Tenant, o => o.MapFrom(b =>
+                        new UserDTO
+                        {
+                            Name = b.TenantName,
+                            Id = b.TenantId,
+                            Email = b.TenantEmail,
+                            Lastname = b.TenantLastname,
+                            PhoneNumber = b.TenantPhone
+                        }
+                    )).ReverseMap();
 
         CreateMap<User, UserEntity>().ReverseMap();
         CreateMap<User, UserDetailsDTO>().ReverseMap();
@@ -77,7 +90,7 @@ public class AppMappingProfile : Profile
         CreateMap<BookingRoomVariantEntity, BookingRoomVariant>().ReverseMap();
         CreateMap<BookingRoomVariantEntity, BookingRoomVariantDTO>().ReverseMap();
         CreateMap<BookingRoomVariant, BookingRoomVariantDTO>().ReverseMap();
-        
+
         CreateMap<NotificationCommands.Create, Notification>().ReverseMap();
         CreateMap<NotificationCommands.Get, NotificationSearchOptions>().ReverseMap();
         CreateMap<NotificationEntity, Notification>().ReverseMap();
@@ -94,9 +107,11 @@ public class AppMappingProfile : Profile
             .ForMember(o => o.CompressedBody, o => o.MapFrom(s => GZIP.ZipFromBase64(s.Body)));
         CreateMap<FileObject, FileObjectDTO>()
             .ReverseMap();
-        
+
         CreateMap<FeedbackEntity, FeedbackDTO>().ReverseMap();
         CreateMap<Feedback, FeedbackDTO>().ReverseMap();
         CreateMap<FeedbackEntity, Feedback>().ReverseMap();
+
+        CreateMap<Coordinates, CoordinatesDTO>().ReverseMap();
     }
 }

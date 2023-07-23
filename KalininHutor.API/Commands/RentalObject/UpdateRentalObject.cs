@@ -2,6 +2,7 @@ using AutoMapper;
 using KalininHutor.API.DTO;
 using KalininHutor.DAL;
 using KalininHutor.DAL.Booking;
+using KalininHutor.Domain;
 using KalininHutor.Domain.Booking;
 using MediatR;
 
@@ -27,6 +28,7 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         var entity = _mapper.Map<RentalObject>(await _repository.Get(request.Id));
         entity.SetInfo(request.Name, request.Description, request.Address);
         entity.SetCheckTime(request.CheckinTime, request.CheckoutTime);
+        entity.SetCoordinates(_mapper.Map<Coordinates>(request.Coordinates));
 
         await _repository.Update(_mapper.Map<RentalObjectEntity>(entity));
 
@@ -44,12 +46,11 @@ internal class UpdateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
         if (request.DeleteRoomVariantsRequest != null)
             await _sender.Send(request.DeleteRoomVariantsRequest);
 
-
         if (request.CreatePhotos.Any())
         {
             foreach (var photoEntity in request.CreatePhotos)
                 entity.CreatePhoto(photoEntity.Name, photoEntity.Extension, photoEntity.Body, photoEntity.SortOrder);
-                
+
             await _fileObjectRepository.CreateBulk(entity.Photos.Select(_mapper.Map<FileObjectEntity>).ToList());
         }
 
@@ -77,16 +78,22 @@ public partial class RentalObjectCommands
         ///<summary> Название объекта аренды </summary>
         public string Name { get; set; } = string.Empty;
 
+        /// <summary> Адрес объекта аренды </summary>
+        /// <value></value>
         public string Address { get; set; }
 
-        ///<summary> Идентификатор объекта аренды </summary>
+        ///<summary> Описание объекта аренды </summary>
         public string Description { get; set; } = string.Empty;
 
-        ///<summary> Идентификатор объекта аренды </summary>
+        ///<summary> Время заезда </summary>
         public TimeOnly CheckinTime { get; set; }
 
-        ///<summary> Идентификатор объекта аренды </summary>
+        ///<summary> Время выезда </summary>
         public TimeOnly CheckoutTime { get; set; }
+
+        /// <summary> Координаты </summary>
+        /// <value></value>
+        public CoordinatesDTO? Coordinates { get; set; }
 
         ///<summary> Коллекция создания вариантов номеров </summary>
         public IReadOnlyList<RoomVariantCommands.CreateRequest>? CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();

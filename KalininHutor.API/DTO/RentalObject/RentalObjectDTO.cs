@@ -18,6 +18,10 @@ public class RentalObjectDTO
     ///<summary> Время отъезда объекта аренды </summary>
     public TimeOnly CheckoutTime { get; protected set; }
 
+    /// <summary> Координаты объекта аренды </summary>
+    /// <value></value>
+    public CoordinatesDTO Coordinates { get; protected set; }
+
     ///<summary> Лучшие предложения </summary>
     public RentalObjectBestDemandDTO? BestDemand { get; set; }
     ///<summary> Варианты номеров </summary>

@@ -29,7 +29,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 {entity.Name}, 
                 {entity.Description}, 
                 {entity.CheckinTimeSpan}, 
-                {entity.CheckoutTimeSpan}
+                {entity.CheckoutTimeSpan},
+                {entity.Latitude},
+                {entity.Longitude}
             );
         ").ExecuteAsync();
     }
@@ -51,7 +53,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
                 Address = {entity.Address},
                 Description = {entity.Description}, 
                 CheckinTime = {entity.CheckinTimeSpan}, 
-                CheckoutTime = {entity.CheckoutTimeSpan}
+                CheckoutTime = {entity.CheckoutTimeSpan},
+                Latitude = {entity.Latitude},
+                Longitude = {entity.Longitude}
             where Id = {entity.Id}
         ").ExecuteAsync();
     }
@@ -68,7 +72,9 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
             	r.Address,
             	r.Description,
             	r.CheckinTime as CheckinTimeSpan,
-            	r.CheckoutTime as CheckoutTimeSpan
+            	r.CheckoutTime as CheckoutTimeSpan,
+                r.Latitude,
+                r.Longitude
             from RentalObjects r     
             /**where**/
         ");

@@ -226,6 +226,7 @@ export namespace RentalObjectActions {
                         paymentOption: rv.paymentOption,
                         price: rv.price,
                         width: rv.width,
+                        coordinates: model.coordinates,
                         freeCancellationPeriod: rv.freeCancellationPeriod,
                         createBedTypesRequests: rv.bedTypes.map<RoomVariantBedType.CreateRequest>(bt => ({
                             bedType: bt.bedType,
@@ -269,6 +270,7 @@ export namespace RentalObjectActions {
                     description: model.description,
                     name: model.name,
                     address: model.address,
+                    coordinates: model.coordinates,
                     createRoomVariantsRequests: model.roomVariants
                         ?.filter(o => o.entityStatus === EntityStatus.Draft)
                         .map<RoomVariant.CreateRequest>(rv => ({

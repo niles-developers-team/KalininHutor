@@ -1,4 +1,4 @@
-import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
+import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble, NearMe } from "@mui/icons-material";
 import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -55,6 +55,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
+    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
 
     const container = window !== undefined ? () => window.document.body : undefined;
 
@@ -105,9 +106,10 @@ export const RentalObjectComponent = function (): JSX.Element {
                 }
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Описание</Typography>
-                    <Stack direction="row">
+                    <Stack direction="row" alignItems="center">
                         <LocationOn color="primary" fontSize="small" />
-                        <Typography alignContent="center" variant="body1">{model.address}</Typography>
+                        <Typography sx={{flexGrow: 1}} alignContent="center" variant="body1">{model.address}</Typography>
+                        {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     <Button size="small" onClick={() => setState({ ...state, descriptionOpened: true })}>Читать описание</Button>
                     <Typography variant="h6">Услуги и сервисы</Typography>
