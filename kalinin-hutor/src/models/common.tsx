@@ -53,3 +53,9 @@ export interface FileObject extends IEntity {
     extension: string;
     sortOrder: number;
 }
+
+/** Координаты */
+export interface Coordinates {
+    latitude: number;
+    longitude: number;
+}

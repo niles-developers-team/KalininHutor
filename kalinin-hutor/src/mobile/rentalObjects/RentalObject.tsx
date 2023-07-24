@@ -1,4 +1,4 @@
-import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble } from "@mui/icons-material";
+import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble, NearMe } from "@mui/icons-material";
 import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -55,6 +55,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
 
     const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
+    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
 
     const container = window !== undefined ? () => window.document.body : undefined;
 
@@ -105,9 +106,10 @@ export const RentalObjectComponent = function (): JSX.Element {
                 }
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Описание</Typography>
-                    <Stack direction="row">
+                    <Stack direction="row" alignItems="center">
                         <LocationOn color="primary" fontSize="small" />
-                        <Typography alignContent="center" variant="body1">{model.address}</Typography>
+                        <Typography sx={{flexGrow: 1}} alignContent="center" variant="body1">{model.address}</Typography>
+                        {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     <Button size="small" onClick={() => setState({ ...state, descriptionOpened: true })}>Читать описание</Button>
                     <Typography variant="h6">Услуги и сервисы</Typography>
@@ -146,7 +148,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, allServicesOpened: false })}
                 onOpen={() => setState({ ...state, allServicesOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -186,7 +188,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, roomVariantInfoOpened: false })}
                 onOpen={() => setState({ ...state, roomVariantInfoOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -228,7 +230,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, descriptionOpened: false })}
                 onOpen={() => setState({ ...state, descriptionOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -259,7 +261,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                 onClose={() => setState({ ...state, newFeedbackOpened: false })}
                 onOpen={() => setState({ ...state, newFeedbackOpened: true })}
                 swipeAreaWidth={drawerBleeding}
-                disableSwipeToOpen={false}
+                disableSwipeToOpen={true}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -280,7 +282,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     }}>
                     <Puller />
                     <Rating onChange={(event, newValue) => setState({ ...state, newFeedback: { ...state.newFeedback, rate: newValue ?? 0 } })} value={state.newFeedback.rate || 0} />
-                    <TextField onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" fullWidth size="small" value={state.newFeedback.comment || ''} multiline />
+                    <TextField style={{ height: state.newFeedbackOpened ? 'auto' : 0 }} onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" size="small" value={state.newFeedback.comment || ''} multiline />
 
                     <Button onClick={() => { dispatch(RentalObjectActions.sendFeedback(state.newFeedback)); setState({ ...state, newFeedbackOpened: false, newFeedback: {} as Feedback }) }}>Оставить отзыв</Button>
                 </Stack>

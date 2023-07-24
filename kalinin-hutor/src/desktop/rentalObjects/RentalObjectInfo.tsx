@@ -1,4 +1,4 @@
-import { CurrencyRuble, FavoriteBorder, LocationOn } from "@mui/icons-material";
+import { CurrencyRuble, FavoriteBorder, LocationOn, NearMe } from "@mui/icons-material";
 import { Stack, Paper, Skeleton, Typography, Button, Grid, IconButton, Chip, Divider } from "@mui/material";
 import { useState } from "react";
 import Carousel from "react-material-ui-carousel";
@@ -20,42 +20,49 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
         return (<Typography variant="subtitle1">Ошибка при загрузке базы отдыха или дачи</Typography>)
     }
 
+    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
+
     return (
-        <Paper key={model.id}>
-            {model.photos.length ? (
-                <Grid
-                    onMouseEnter={() => setSliding(true)}
-                    onMouseLeave={() => setSliding(false)}>
-                    <Carousel
-                        height="200px"
-                        autoPlay={sliding}
-                        animation="slide"
-                        indicators={false}
-                        stopAutoPlayOnHover={false}
-                        navButtonsAlwaysInvisible={true}
-                        cycleNavigation={true}
-                    >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
-                    </Carousel>
-                </Grid>
-            ) : (
-                <Paper variant="outlined">
-                    <Skeleton variant="rectangular" width='100%' height={200} />
-                </Paper>
-            )}
-            <Stack paddingX={2} paddingBottom={1} spacing={2}>
-                <Typography variant="h6">{model.name}</Typography>
-                {(model.feedback && model.feedback.length > 0) ?
+        <Grid minWidth={210}>
+            <Paper key={model.id}>
+                {model.photos.length ? (
+                    <Grid
+                        onMouseEnter={() => setSliding(true)}
+                        onMouseLeave={() => setSliding(false)}>
+                        <Carousel
+                            height="200px"
+                            autoPlay={sliding}
+                            animation="slide"
+                            indicators={false}
+                            stopAutoPlayOnHover={false}
+                            navButtonsAlwaysInvisible={true}
+                            cycleNavigation={true}
+                        >
+                            {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        </Carousel>
+                    </Grid>
+                ) : (
+                    <Paper variant="outlined">
+                        <Skeleton variant="rectangular" width='100%' height={200} />
+                    </Paper>
+                )}
+                <Stack paddingX={2} paddingBottom={1} spacing={2}>
+                    <Typography variant="h6">{model.name}</Typography>
                     <Stack direction="row" alignItems="center" spacing={2}>
-                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
-                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                        {(model.feedback && model.feedback.length > 0) ?
+                            <>
+                                <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
+                                <Typography sx={{ flexGrow: 1 }} variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
+                            </>
+                            : <Typography sx={{ flexGrow: 1 }} color="GrayText">Ещё нет отзывов</Typography>
+                        }
+                        {model.coordinates && <IconButton sx={{padding: 0}} color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
-                    : <Typography color="GrayText">Ещё нет отзывов</Typography>
-                }
-                <Typography variant="caption">{model.address}</Typography>
-                <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
-            </Stack>
-        </Paper>
+                    <Typography variant="caption">{model.address}</Typography>
+                    <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
+                </Stack>
+            </Paper>
+        </Grid>
     );
 }
 
@@ -86,6 +93,7 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     }
 
     const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
+    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
 
     return (
         <Stack padding={2} spacing={2} direction="row">
@@ -98,6 +106,7 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <Typography variant="h6">{model.name}</Typography>
                         <IconButton disabled><FavoriteBorder /></IconButton>
+                        {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     {(model.feedback && model.feedback.length > 0) ?
                         <Stack direction="row" alignItems="center" spacing={1}>
