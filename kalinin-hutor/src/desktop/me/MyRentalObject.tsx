@@ -202,6 +202,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                             <Typography variant="body2" color="GrayText">Координаты</Typography>
                             <Stack direction="row" spacing={1} alignItems="center">
                                 <TextField
+                                    disabled={loading}
                                     value={model.coordinates ? `${model.coordinates?.latitude}, ${model.coordinates?.longitude}` : undefined}
                                     onChange={handleCoordinatesChanged}
                                     size="small"
