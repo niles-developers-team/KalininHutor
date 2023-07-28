@@ -27,7 +27,7 @@ internal class CreateRentalObjectHandler : IRequestHandler<RentalObjectCommands.
     {
         var rentalObject = new RentalObject(request.Name, request.Description,
                         request.Address, request.CheckinTime, request.CheckoutTime,
-                         request.LandlordId, request.Coordinates.Latitude, request.Coordinates.Longitude);
+                         request.LandlordId, request.Coordinates?.Latitude, request.Coordinates?.Longitude);
         await _repository.Create(_mapper.Map<RentalObjectEntity>(rentalObject));
 
         foreach (var createRoomVariantsRequest in request.CreateRoomVariantsRequests)
@@ -69,7 +69,7 @@ public partial class RentalObjectCommands
 
         /// <summary> Координаты </summary>
         /// <value></value>
-        public CoordinatesDTO Coordinates { get; set; }
+        public CoordinatesDTO? Coordinates { get; set; }
 
         ///<summary> Коллекция вариантов номеров к созданию </summary>
         public IReadOnlyList<RoomVariantCommands.CreateRequest> CreateRoomVariantsRequests { get; set; } = new List<RoomVariantCommands.CreateRequest>();

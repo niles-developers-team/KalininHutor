@@ -59,15 +59,13 @@ export const MyRentalObjectsBookingsComponent = function (props: Props): JSX.Ele
             <Card style={{ height: '100%' }}>
                 <DataGrid
                     autoHeight
-                    components={{
-                        NoRowsOverlay: NoBookings
+                    slots={{
+                        noRowsOverlay: NoBookings
                     }}
                     rows={bookings}
                     columns={columns}
-                    pageSize={10}
-                    rowsPerPageOptions={[10]}
+                    pageSizeOptions={[10]}
                     loading={props.loading}
-                    disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
                 />

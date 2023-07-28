@@ -21,7 +21,7 @@ public class RentalObjectRepository : IRepository<RentalObjectEntity, RentalObje
         using var connection = new NpgsqlConnection(_connectionString);
 
         await connection.QueryBuilder($@"
-            insert into RentalObjects(Id, LandlordId, Address, Name, Description, CheckinTime, CheckoutTime)
+            insert into RentalObjects(Id, LandlordId, Address, Name, Description, CheckinTime, CheckoutTime, Latitude, Longitude)
             values (
                 {entity.Id}, 
                 {entity.LandlordId}, 

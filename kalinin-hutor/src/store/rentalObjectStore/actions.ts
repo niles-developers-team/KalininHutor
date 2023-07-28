@@ -7,8 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
-import { roomVariantService } from "../../services";
-import { async } from "q";
+import { roomVariantService, filesService } from "../../services";
 
 const draftName = 'rental-object-draft';
 
@@ -196,7 +195,7 @@ export namespace RentalObjectActions {
                 draft.landlord = userState.currentUser;
             }
 
-            localStorageService.set(draftName, draft);
+            localStorageService.set(draftName, { ...draft, photos: null, roomVariants: draft.roomVariants.map(o => ({ ...o, photos: null })) });
             return dispatch({ type: ActionTypes.updateDraft, draft: draft });
         }
     }
@@ -369,6 +368,7 @@ export namespace RentalObjectActions {
                     deletePhotos: model.photos.filter(o => o.entityStatus === EntityStatus.Deleted)
                 });
                 dispatch(NotificationActions.showSnackbar('Объект аренды успешно сохранен', NotificationVariant.success));
+                localStorageService.set(draftName, undefined);
                 return dispatch(success(model));
             }
             catch (error: any) {
@@ -409,20 +409,11 @@ export namespace RentalObjectActions {
     }
 
     export function loadRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
-        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
-            const { rentalObjectState } = getState();
-
+        return async (dispatch: AppThunkDispatch) => {
             dispatch(request(id));
 
-            let models: RentalObject[] = [];
-
             try {
-                if (rentalObjectState.modelsLoading) {
-                    models = await rentalObjectService.get({ id, getRoomVariants: true });
-                }
-                else {
-                    models = rentalObjectState.models;
-                }
+                const models = await rentalObjectService.get({ id, getRoomVariants: true });
 
                 let model = models.find(o => o.id === id);
 
@@ -472,15 +463,17 @@ export namespace RentalObjectActions {
     }
 
     export function getRentalObject(id: string): AppThunkAction<Promise<GetSuccessAction | GetFailureAction>> {
-        return async (dispatch: AppThunkDispatch, getState: () => AppState) => {
+        return async (dispatch: AppThunkDispatch) => {
             dispatch(request(id));
 
             try {
-                const draft = localStorageService.get<RentalObject>(draftName);
-                if (draft)
-                    return dispatch(success(draft));
+                let draft = localStorageService.get<RentalObject>(draftName);
+                if (!draft)
+                    return dispatch(loadRentalObject(id));
 
-                return dispatch(loadRentalObject(id));
+                draft.photos = await filesService.get({ parentId: id });
+
+                return dispatch(success(draft));
             }
             catch (error: any) {
                 dispatch(NotificationActions.showSnackbar(error.message, NotificationVariant.error));
@@ -566,7 +559,6 @@ export namespace RentalObjectActions {
                     entityStatus: result[i].entityStatus !== EntityStatus.Deleted || result[i].entityStatus !== EntityStatus.Draft ? EntityStatus.Updated : result[i].entityStatus
                 };
 
-            localStorageService.set(draftName, { ...rentalObjectState.model, photos: result });
             dispatch({ type: ActionTypes.updateDraft, draft: { ...rentalObjectState.model, photos: result } });
         }
     }

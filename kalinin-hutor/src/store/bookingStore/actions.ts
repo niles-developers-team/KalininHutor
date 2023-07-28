@@ -224,7 +224,7 @@ export namespace BookingActions {
                 total: 0
             };
 
-            localStorageService.set(draftName, draft);
+            localStorageService.set(draftName, { ...draft, rentalObject: { ...draft.rentalObject, photos: [], roomVariants: draft.rentalObject.roomVariants.map(o => ({ ...o, photos: [] })) } });
             return dispatch({ type: ActionTypes.createDraft, draft });
         }
     }

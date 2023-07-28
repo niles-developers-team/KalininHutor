@@ -1,8 +1,8 @@
 import { Stack } from "@mui/material";
 import { useEffect } from "react";
-import { RouteProps, useNavigate } from "react-router-dom";
+import { RouteProps } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { NotificationStatus, NotificationVariant, Notification } from "../models";
+import { NotificationStatus, Notification } from "../models";
 import { sessionService } from "../services";
 import { AppState, NotificationActions } from "../store";
 
@@ -12,8 +12,7 @@ interface Props {
 
 export const MobileLayoutComponent = function (props: Props & RouteProps): JSX.Element {
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-    const { userState, notificationState } = useAppSelector((state: AppState) => state);
+    const { userState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
         const connection = sessionService.initSignalR();
@@ -37,14 +36,6 @@ export const MobileLayoutComponent = function (props: Props & RouteProps): JSX.E
         dispatch(NotificationActions.getCurrentUserNotifications({ status: NotificationStatus.OnlyUnread }));
     }, [userState.currentUser]);
 
-    function handleAccountClick(event: React.MouseEvent<HTMLAnchorElement>) {
-        if (!userState.authenticating && !userState.authenticated) {
-            event.preventDefault();
-            props.onSigninDialogOpen();
-            return;
-        }
-    }
-
     let profilePageText = 'Войти';
     if (userState.authenticating === false) {
         const user = userState.currentUser;
@@ -52,13 +43,6 @@ export const MobileLayoutComponent = function (props: Props & RouteProps): JSX.E
             profilePageText = `${user.name} ${user.lastname[0].toUpperCase()}.`;
         else
             profilePageText = 'Личный кабинет';
-    }
-
-    let variant: NotificationVariant = NotificationVariant.info;
-    let message: string = '';
-    if (notificationState.show) {
-        variant = notificationState.variant;
-        message = notificationState.message;
     }
 
     return (

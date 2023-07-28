@@ -54,14 +54,12 @@ export const RoomVariantCharacteristicsComponent = function (props: Props) {
             <Card>
                     <DataGrid
                         autoHeight
-                        components={{ NoRowsOverlay: NoCharacteristics }}
+                        slots={{ noRowsOverlay: NoCharacteristics }}
                         rows={props.models}
                         columns={columns}
-                        pageSize={10}
-                        rowsPerPageOptions={[10]}
+                        pageSizeOptions={[10]}
                         loading={props.loading}
                         checkboxSelection={false}
-                        disableSelectionOnClick
                         disableColumnSelector
                         disableColumnFilter
                         disableColumnMenu

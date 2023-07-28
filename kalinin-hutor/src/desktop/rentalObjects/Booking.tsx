@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Button, Grid, Skeleton, Stack, TextField, Typography } from "@mui/material";
 
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
@@ -19,18 +19,21 @@ export const BookingComponent = function (): JSX.Element {
     const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
-        if (!id)
-            return;
-
         if (!rentalObjectId)
             return;
 
-        dispatch(BookingActions.getBooking(id));
         dispatch(RentalObjectActions.loadRentalObject(rentalObjectId));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
 
         ym('reachGoal', 'desktop_enter_approve_booking');
-    }, [id, rentalObjectId]);
+    }, [rentalObjectId]);
+
+    useEffect(() => {
+        if (!id)
+            return;
+        dispatch(BookingActions.getBooking(id));
+
+    }, [id, rentalObjectState.modelLoading == false]);
 
     function handleChangeBooking() {
         if (!model)
