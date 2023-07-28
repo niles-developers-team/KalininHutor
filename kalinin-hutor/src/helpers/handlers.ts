@@ -56,8 +56,7 @@ async function handleNotOkResponse(response: Response, messageFormatter: ((text:
         if (messageFormatter) {
             text = messageFormatter(text);
         }
-        const message = `Error ${response.status}: ${text}`
-        throw new ApplicationError(message);
+        throw new ApplicationError(text);
     }
 }
 

@@ -28,7 +28,7 @@ export const VisitorsPopoverComponent = function (props: VisitorsPopoverProps): 
     } = props;
     return (
         <Popover {...rest}>
-            <Stack padding={1}>
+            <Stack padding={2}>
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography width="100%">Взрослых</Typography>
                     <IconButton onClick={() => onAdultsCountChanged(adultsCount - 1)} disabled={adultsCount === 1}><Remove /></IconButton>

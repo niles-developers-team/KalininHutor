@@ -38,7 +38,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                             navButtonsAlwaysInvisible={true}
                             cycleNavigation={true}
                         >
-                            {model.photos?.map(photo => <img key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                            {model.photos?.map(photo => <img alt="NO_PHOTO" key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                         </Carousel>
                     </Grid>
                 ) : (
@@ -98,7 +98,7 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     return (
         <Stack padding={2} spacing={2} direction="row">
             {model.photos && model.photos.length ?
-                <img height={200} width={200} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                <img alt="NO_PHOTO" height={200} width={200} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
                 <Skeleton variant="rectangular" width={200} height={200} />
             }
             <Grid item xs style={{ height: '100%' }}>

@@ -4,7 +4,7 @@ import moment from "moment";
 import pluralize from "plural-ru";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useQuery } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, Feedback } from "../../models"
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { RangeCalendarPopoverComponent } from "../common";
@@ -18,7 +18,6 @@ import { PhoneMaskCustom, imageStyle } from "../../commonComponents";
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
-    const query = useQuery();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { id } = useParams();
@@ -51,21 +50,13 @@ export const RentalObjectComponent = function (): JSX.Element {
         if (!rentalObjectState.model)
             return;
 
-        if (!rentalObjectState.model.roomVariants.length && !!id) {
+        if (!rentalObjectState.model.roomVariants.length && !!id) 
             dispatch(RentalObjectActions.loadRentalObjectRoomVariants(id));
-        }
 
         dispatch(BookingActions.getDraft());
-    }, [rentalObjectState.model])
+    }, [rentalObjectState.modelLoading])
 
-    useEffect(() => {
-        if (!bookingState.model)
-            return;
-
-        if (bookingState.model.rentalObject?.id !== id) {
-            dispatch(BookingActions.clearEditionState());
-        }
-    }, [bookingState.model])
+    useEffect(() => { bookingState.model?.rentalObject?.id !== id && dispatch(BookingActions.clearEditionState()); }, [bookingState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)

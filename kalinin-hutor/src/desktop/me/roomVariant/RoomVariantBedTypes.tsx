@@ -49,14 +49,12 @@ export const RoomVariantBedTypesComponent = function (props: Props) {
             <Card>
                     <DataGrid
                         autoHeight
-                        components={{ NoRowsOverlay: NoBedTypes }}
+                        slots={{ noRowsOverlay: NoBedTypes }}
                         rows={props.models}
                         columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
+                        pageSizeOptions={[5]}
                         loading={props.loading}
                         checkboxSelection={false}
-                        disableSelectionOnClick
                         disableColumnFilter
                         disableColumnMenu
                     />

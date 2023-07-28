@@ -23,7 +23,7 @@ export const RoomVariantComponent = function (props: Props): JSX.Element {
                     navButtonsAlwaysInvisible={true}
                     cycleNavigation={true}
                 >
-                    {roomVariant.photos?.map(photo => <img style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} key={photo.id} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                    {roomVariant.photos?.map(photo => <img alt="NO_PHOTO" style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} key={photo.id} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                 </Carousel>
             ) : (
                 <Paper variant="outlined">

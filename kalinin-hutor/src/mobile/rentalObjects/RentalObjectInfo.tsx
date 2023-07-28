@@ -50,7 +50,7 @@ export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
                     navButtonsAlwaysInvisible={true}
                     cycleNavigation={true}
                 >
-                    {model.photos?.map(photo => <img key={photo.id} style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                    {model.photos?.map(photo => <img alt="NO_PHOTO" key={photo.id} style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
                 </Carousel>
             ) : (
                 <Paper variant="outlined">

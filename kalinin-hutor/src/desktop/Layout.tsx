@@ -1,4 +1,4 @@
-import { AppBar, Badge, Box, Button, Container, Grid, IconButton, InputBase, Slide, Stack, TextField, Toolbar, Tooltip, alpha, styled, useScrollTrigger } from "@mui/material";
+import { AppBar, Badge, Button, Container, Grid, IconButton, InputBase, Stack, Toolbar, Tooltip, alpha, styled } from "@mui/material";
 import { RouteProps, useNavigate } from "react-router-dom";
 import { Face, Favorite, ShoppingBag, ShoppingCart, Gite, Search as SearchIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from "../hooks";

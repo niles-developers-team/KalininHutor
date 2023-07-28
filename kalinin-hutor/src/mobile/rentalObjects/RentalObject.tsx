@@ -1,5 +1,5 @@
-import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, CurrencyRuble, NearMe } from "@mui/icons-material";
-import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Grid, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
+import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, NearMe } from "@mui/icons-material";
+import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes, Feedback } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
-import { HideOnScroll, imageStyle } from "../../commonComponents";
+import { HideOnScroll } from "../../commonComponents";
 import { RoomVariantComponent } from "./roomVariant";
 import ym from 'react-yandex-metrika';
 import pluralize from "plural-ru";

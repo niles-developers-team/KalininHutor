@@ -42,15 +42,13 @@ export const MyNotificationsComponent = function (props: Props): JSX.Element {
             <Card style={{ height: '100%' }}>
                 <DataGrid
                     autoHeight
-                    components={{
-                        NoRowsOverlay: NoBookings
+                    slots={{
+                        noRowsOverlay: NoBookings
                     }}
                     rows={props.notifications}
                     columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
+                    pageSizeOptions={[5]}
                     loading={props.loading}
-                    disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
                 />

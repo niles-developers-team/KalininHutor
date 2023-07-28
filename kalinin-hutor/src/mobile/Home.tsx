@@ -20,7 +20,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const query = useQuery();
-    let [searchParams, setSearchParams] = useSearchParams();
+    let [, setSearchParams] = useSearchParams();
     const { rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     const initialFilter: RentalObject.GetQuery = {

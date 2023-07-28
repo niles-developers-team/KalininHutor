@@ -1,8 +1,7 @@
-import { Edit, Delete, ArrowBack, OpenWith, Info, Help, HelpOutline } from "@mui/icons-material";
-import { Button, Card, CardContent, Grid, IconButton, Paper, Rating, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Edit, Delete, ArrowBack, OpenWith, HelpOutline, Help } from "@mui/icons-material";
+import { Button, Card, CardContent, Grid, IconButton, Rating, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
-import moment from "moment";
 import { ChangeEvent, createRef, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,6 +12,7 @@ import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
 import { CoordinatesMaskCustom, imageStyle } from "../../commonComponents";
+import moment from "moment";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -183,19 +183,19 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                         <Stack>
                             <Typography variant="body2" color="GrayText">Время заезда</Typography>
                             <TimePicker
+                                slotProps={{ textField: { size: 'small' } }}
                                 disabled={loading}
                                 value={moment(model.checkinTime, 'hh:mm:ss')}
-                                onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkinTime: value || '12:00' })) }}
-                                renderInput={(params) => <TextField size="small" {...params} />}
+                                onChange={(value: moment.Moment | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkinTime: value?.format('hh:mm:ss') || '12:00' })) }}
                             />
                         </Stack>
                         <Stack>
                             <Typography variant="body2" color="GrayText">Время отъезда</Typography>
                             <TimePicker
+                                slotProps={{ textField: { size: 'small' } }}
                                 disabled={loading}
                                 value={moment(model.checkoutTime, 'hh:mm:ss')}
-                                onChange={(value: string | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkoutTime: value || '12:00' })) }}
-                                renderInput={(params) => <TextField size="small" {...params} />}
+                                onChange={(value: moment.Moment | null) => { dispatch(RentalObjectActions.saveDraft({ ...model, checkoutTime: value?.format('hh:mm:ss') || '12:00' })) }}
                             />
                         </Stack>
                         <Stack>
@@ -225,8 +225,11 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                 </Stack>
             </Card>
             <Stack spacing={2}>
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={2} alignItems="center">
                     <Typography color="GrayText" variant="h6">Фотографии объекта</Typography>
+                    <Tooltip title="Несохраненные изображения удалятся при обновлении страницы">
+                        <HelpOutline />
+                    </Tooltip>
                     <Grid item xs></Grid>
                     <Button onClick={handleAddPhoto}>Добавить</Button>
                     <input accept=".png,.jpeg,.jpg" hidden multiple type="file" ref={fileInput} onChange={(event) => handlePhotoChange(event)} />
@@ -277,13 +280,11 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                 <Card>
                     <DataGrid
                         autoHeight
-                        components={{ NoRowsOverlay: NoRoomVariants }}
+                        slots={{ noRowsOverlay: NoRoomVariants }}
                         rows={roomVariants}
                         columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
+                        pageSizeOptions={[5]}
                         loading={loading}
-                        disableSelectionOnClick
                         disableColumnFilter
                         disableColumnMenu
                     />
