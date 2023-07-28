@@ -1,5 +1,5 @@
 import { Edit, Delete, ArrowBack, OpenWith, HelpOutline, Help } from "@mui/icons-material";
-import { Button, Card, CardContent, Grid, IconButton, Rating, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Card, CardContent, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar, Rating, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import { TimePicker } from "@mui/x-date-pickers";
 import { ChangeEvent, createRef, useEffect } from "react";
@@ -13,6 +13,7 @@ import { appName } from "../..";
 import ym from 'react-yandex-metrika';
 import { CoordinatesMaskCustom, imageStyle } from "../../commonComponents";
 import moment from "moment";
+import { Masonry } from "@mui/lab";
 
 
 function NoRoomVariants(): JSX.Element {
@@ -237,7 +238,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                 <DragDropContext onDragEnd={photosReorder}>
                     <Droppable droppableId="droppable" direction="horizontal">
                         {(provided, snapshot) => (
-                            <Stack spacing={2} direction="row" ref={provided.innerRef} {...provided.droppableProps}>
+                            <ImageList cols={5} rowHeight={220} gap={5} ref={provided.innerRef} {...provided.droppableProps}>
                                 {model.photos?.filter(o => o.entityStatus !== EntityStatus.Deleted).sort((curr, next) => curr.sortOrder - next.sortOrder).map((photo, index) => (
                                     <Draggable
                                         key={`item-${index}`}
@@ -245,8 +246,8 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                         index={index}
                                     >
                                         {(provided, snapshot) => (
-                                            <Grid
-                                                height={200}
+                                            <ImageListItem
+                                                sx={{width: 220, height: 220}}
                                                 className="editable-image"
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
@@ -256,17 +257,20 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     provided.draggableProps.style
                                                 )}
                                             >
-                                                <Grid className="alternate-actions" container direction="row" alignItems="start" justifyContent="space-between">
-                                                    <OpenWith className="padding-1" />
-                                                    <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
-                                                </Grid>
-                                                <img className="image" style={imageStyle} height={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
-                                            </Grid>
+                                                <img className="image" style={imageStyle} src={`data:${photo.extension};base64,${photo.body}`}></img>
+
+                                                <ImageListItemBar
+                                                    position="top"
+                                                    sx={{ borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
+                                                    actionIcon={
+                                                        <IconButton color="error" className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
+                                                    } />
+                                            </ImageListItem >
                                         )}
                                     </Draggable>
                                 ))}
                                 {provided.placeholder}
-                            </Stack>
+                            </ImageList>
                         )}
                     </Droppable>
                 </DragDropContext>

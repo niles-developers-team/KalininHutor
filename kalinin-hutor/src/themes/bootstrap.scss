@@ -19,22 +19,6 @@
     transition: filter .5s;
 }
 
-.alternate-actions {
-    display: none;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    position: absolute;
-    background-color: #787878ad;
-    transition: display .5s, opacity .5s;
-    opacity: 0;
-}
-
 .editable-image:hover .image {
     filter: blur(2px);
-}
-
-.editable-image:hover .alternate-actions {
-    display: flex;
-    opacity: 1;
 }

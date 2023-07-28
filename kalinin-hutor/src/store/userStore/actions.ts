@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { AuthenticatedUser, ApplicationError, User, NotificationVariant, Notification } from "../../models";
+import { AuthenticatedUser, ApplicationError, User, NotificationVariant } from "../../models";
 import { sessionService } from "../../services";
 import { userService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";

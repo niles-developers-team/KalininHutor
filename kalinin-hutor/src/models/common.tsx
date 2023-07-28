@@ -1,3 +1,5 @@
+import { namespace } from "stylis";
+
 export class UnauthorizedError extends Error { }
 
 export class ApplicationError extends Error {
@@ -52,6 +54,15 @@ export interface FileObject extends IEntity {
     body: string;
     extension: string;
     sortOrder: number;
+}
+
+export namespace FileObject {
+    
+    // Очередь получения брони
+    export interface GetQuery {        
+        // Идентификатор брони
+        parentId: string;
+    }
 }
 
 /** Координаты */
