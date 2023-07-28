@@ -87,7 +87,7 @@ public class User : IUser, IEntityWithAvatar
             throw new ArgumentException("Неверный формат номера телефона.");
     }
 
-    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+    public void CreatePhoto(string name, string extension, byte[] body, uint sortOrder)
     {
         Avatar = new FileObject(name, extension, body, sortOrder, Id);
         AvatarId = Avatar.Id;

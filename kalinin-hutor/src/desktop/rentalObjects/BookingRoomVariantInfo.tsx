@@ -1,5 +1,6 @@
 import { Stack, Typography, Skeleton, Divider, Chip } from "@mui/material";
 import { BedTypes, BookingRoomVariant, CharacteristicTypes, RoomCharacteristic, RoomVariant } from "../../models";
+import { formatImgUrl } from "../../commonComponents";
 
 interface Props {
     bookingRoomVariant: BookingRoomVariant;
@@ -21,7 +22,7 @@ export const BookingRoomVariantInfo = function (props: Props): JSX.Element {
             <Stack paddingY=".5em" direction="row" spacing={2}>
                 {
                     roomVariant.photos.length > 0 ?
-                        <img alt="NO_PHOTO" height={100} width={100} src={`data:${roomVariant.photos[0].extension};base64,${roomVariant.photos[0].body}`}></img> :
+                        <img alt="NO_PHOTO" height={100} width={100} src={formatImgUrl(roomVariant.photos[0])}></img> :
                         <Skeleton variant="rectangular" width={100} height={100} />
                 }
                 <Stack>

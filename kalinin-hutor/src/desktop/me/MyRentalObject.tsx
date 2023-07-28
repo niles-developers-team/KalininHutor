@@ -11,7 +11,7 @@ import { AppState } from "../../store";
 import { RentalObjectActions, RoomVariantActions } from "../../store";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-import { CoordinatesMaskCustom, imageStyle } from "../../commonComponents";
+import { CoordinatesMaskCustom, formatImgUrl, imageStyle } from "../../commonComponents";
 import moment from "moment";
 import { Masonry } from "@mui/lab";
 
@@ -257,7 +257,7 @@ export const MyRentalObjectComponent = function (): JSX.Element {
                                                     provided.draggableProps.style
                                                 )}
                                             >
-                                                <img className="image" style={imageStyle} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                                <img className="image" style={imageStyle} src={formatImgUrl(photo)}></img>
 
                                                 <ImageListItemBar
                                                     position="top"

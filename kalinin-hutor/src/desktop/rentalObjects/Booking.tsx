@@ -11,6 +11,7 @@ import { BookingDetailsComponent } from "./BookingDetails";
 import { BookingRoomVariantInfo } from "./BookingRoomVariantInfo";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
+import { formatImgUrl } from "../../commonComponents";
 
 export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -91,7 +92,7 @@ export const BookingComponent = function (): JSX.Element {
                 <Stack spacing={2}>
                     <Stack direction="row" spacing={2}>
                         {rentalObject && rentalObject.photos && rentalObject.photos.length > 0 ?
-                            <img height={100} width={100} src={`data:${rentalObject.photos[0].extension};base64,${rentalObject.photos[0].body}`}></img> :
+                            <img height={100} width={100} src={formatImgUrl(rentalObject.photos[0])}></img> :
                             <Skeleton variant="rectangular" width={100} height={100} />
                         }
                         <Stack>

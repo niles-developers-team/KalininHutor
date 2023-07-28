@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes, Feedback } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
-import { HideOnScroll } from "../../commonComponents";
+import { HideOnScroll, formatImgUrl } from "../../commonComponents";
 import { RoomVariantComponent } from "./roomVariant";
 import ym from 'react-yandex-metrika';
 import pluralize from "plural-ru";
@@ -36,7 +36,7 @@ export const RentalObjectComponent = function (): JSX.Element {
     }
     useEffect(() => {
         if (id) {
-            dispatch(RentalObjectActions.getRentalObject(id));
+            dispatch(RentalObjectActions.loadRentalObject(id));
             ym('reachGoal', 'mobile_enter_rental_object');
         }
     }, [id]);
@@ -97,7 +97,10 @@ export const RentalObjectComponent = function (): JSX.Element {
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >
-                        {model.photos?.map(photo => <img key={photo.id} style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                        {model.photos?.map(photo => <img
+                            key={photo.id}
+                            style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
+                            src={formatImgUrl(photo)}></img>)}
                     </Carousel>
                     :
                     <Paper variant="outlined">
@@ -108,7 +111,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Typography variant="h6">Описание</Typography>
                     <Stack direction="row" alignItems="center">
                         <LocationOn color="primary" fontSize="small" />
-                        <Typography sx={{flexGrow: 1}} alignContent="center" variant="body1">{model.address}</Typography>
+                        <Typography sx={{ flexGrow: 1 }} alignContent="center" variant="body1">{model.address}</Typography>
                         {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     <Button size="small" onClick={() => setState({ ...state, descriptionOpened: true })}>Читать описание</Button>

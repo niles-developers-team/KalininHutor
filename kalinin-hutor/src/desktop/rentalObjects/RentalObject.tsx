@@ -13,7 +13,7 @@ import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-import { PhoneMaskCustom, imageStyle } from "../../commonComponents";
+import { PhoneMaskCustom, formatImgUrl, imageStyle } from "../../commonComponents";
 
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
@@ -272,14 +272,14 @@ export const RentalObjectComponent = function (): JSX.Element {
                     </Stack>
                     <Stack spacing={2} direction="row">
                         {model.photos?.length > 0 ?
-                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={formatImgUrl(model.photos[0])}></img>
                             :
                             <Skeleton variant="rounded" height={325} width={325} />
                         }
                         <Grid spacing={2}>
                             {model.photos?.length ?
                                 model.photos.slice(1, 2).map(photo =>
-                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={formatImgUrl(photo)}></img>
                                 )
                                 :
                                 <Skeleton variant="rounded" height={160} width={325} />
@@ -351,7 +351,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                             {model.photos.map((photo, index) => (
                                 <div key={index}>
                                     <img
-                                        src={`data:${photo.extension};base64,${photo.body}`}
+                                        src={formatImgUrl(photo)}
                                         width={200}
                                         alt={photo.name}
                                         style={imageStyle}

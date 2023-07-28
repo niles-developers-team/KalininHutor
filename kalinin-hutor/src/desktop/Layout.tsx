@@ -7,7 +7,7 @@ import { NotificationVariant, Notification, NotificationStatus } from "../models
 import { MessageSnackbar } from "./common";
 import { useEffect } from "react";
 import { sessionService } from "../services";
-import { HideOnScroll } from "../commonComponents";
+import { HideOnScroll, formatImgUrl } from "../commonComponents";
 
 interface Props {
     onSigninDialogOpen: () => void;
@@ -128,11 +128,11 @@ export const LayoutComponent = function (props: Props & RouteProps): JSX.Element
                                         inputProps={{ 'aria-label': 'Поиск' }}
                                     />
                                 </Search>
-                                <Grid item xs/>
+                                <Grid item xs />
                                 <Tooltip title={profilePageText}>
                                     <IconButton color="primary" size="small" href="/me" onClick={handleAccountClick}>
                                         {notificationsCount ? (<Badge badgeContent={notificationsCount} color="error">
-                                            {user?.avatar ? <img height={24} width={24} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${user.avatar.extension};base64,${user.avatar.body}`}></img> : <Face />}
+                                            {user?.avatar ? <img height={24} width={24} style={{ borderRadius: '50%', objectFit: "cover" }} src={formatImgUrl(user.avatar)}></img> : <Face />}
                                         </Badge>) : (<Face />)}
                                     </IconButton>
                                 </Tooltip>

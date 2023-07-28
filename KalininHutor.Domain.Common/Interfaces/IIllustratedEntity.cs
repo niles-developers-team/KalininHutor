@@ -2,7 +2,7 @@ namespace KalininHutor.Domain;
 
 public interface IIllustratedEntity
 {
-    public void CreatePhoto(string fileName, string extension, string body, uint sortOrder = 0);
+    public void CreatePhoto(string fileName, string extension, byte[] body, uint sortOrder = 0);
 }
 
 public interface IEntityWithPhotos : IIllustratedEntity
