@@ -2,6 +2,7 @@ import { CurrencyRuble } from "@mui/icons-material";
 import { Paper, Skeleton, Stack, Typography, Button, Grid, Divider } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import { CharacteristicTypes, RoomVariant } from "../../models"
+import { formatImgUrl } from "../../commonComponents";
 
 interface Props {
     roomVariant: RoomVariant;
@@ -23,7 +24,11 @@ export const RoomVariantComponent = function (props: Props): JSX.Element {
                     navButtonsAlwaysInvisible={true}
                     cycleNavigation={true}
                 >
-                    {roomVariant.photos?.map(photo => <img alt="NO_PHOTO" style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }} key={photo.id} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                    {roomVariant.photos?.map(photo => <img
+                        alt="NO_PHOTO"
+                        style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
+                        key={photo.id}
+                        src={formatImgUrl(photo)}></img>)}
                 </Carousel>
             ) : (
                 <Paper variant="outlined">

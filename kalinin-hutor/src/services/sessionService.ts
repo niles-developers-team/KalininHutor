@@ -6,7 +6,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signal
 class SessionService {
     private originalFetch: typeof fetch = fetch.bind(window);
 
-    private readonly apiUrl = process.env.REACT_APP_API_URL;
+    public readonly apiUrl = process.env.REACT_APP_API_URL;
     private readonly storageKey: string = 'kalinin_hutor_auth';
     private readonly noInit = {};
 

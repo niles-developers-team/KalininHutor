@@ -79,7 +79,6 @@ public class FileObjectRepository : BaseRepository<FileObjectEntity, FileObjectS
                 Id, 
                 Name,
                 Extension,
-                CompressedBody,
                 CreatedAt, 
                 SortOrder, 
                 ParentId

@@ -13,7 +13,7 @@ public class FileObject : IEntity<Guid>
     public string Extension { get; protected set; } = string.Empty;
 
     ///<summary> Данные файла </summary>
-    public string Body { get; protected set; } = string.Empty;
+    public byte[] Body { get; protected set; }
 
     ///<summary> Дата создания </summary>
     public DateTime CreatedAt { get; protected set; }
@@ -27,7 +27,7 @@ public class FileObject : IEntity<Guid>
     ///<summary> Закрытый конструктор для ORM </summary>
     protected FileObject() { }
 
-    public FileObject(string name, string extension, string body, uint sortOrder, Guid parentId)
+    public FileObject(string name, string extension, byte[] body, uint sortOrder, Guid parentId)
     {
         if (string.IsNullOrEmpty(name))
             throw new ArgumentNullException(nameof(name));

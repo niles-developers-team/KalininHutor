@@ -113,7 +113,7 @@ public class RentalObject : IEntity<Guid>, IEntityWithPhotos, IEntityWithCoordin
         else Coordinates = null;
     }
 
-    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+    public void CreatePhoto(string name, string extension, byte[] body, uint sortOrder)
     => _photos.Add(new FileObject(name, extension, body, sortOrder, Id));
 
     public RoomVariant CreateRoomVariant(string name, string description, decimal price,

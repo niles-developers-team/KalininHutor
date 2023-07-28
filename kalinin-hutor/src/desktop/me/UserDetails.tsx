@@ -4,6 +4,7 @@ import { DateCalendar, DatePicker } from "@mui/x-date-pickers"
 import { createRef } from "react";
 import { User } from "../../models"
 import moment from "moment";
+import { formatImgUrl } from "../../commonComponents";
 
 export interface UserDetailsProps {
     loading: boolean;
@@ -87,7 +88,7 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
             <Stack direction="row" spacing={3}>
                 <Stack spacing={1}>
                     {props.user.avatar ? (
-                        <img alt="NO_PHOTO" height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
+                        <img alt="NO_PHOTO" height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={formatImgUrl(props.user.avatar)}></img>
                     ) : (
                         <Face color="primary" sx={{ fontSize: 200 }} />
                     )}

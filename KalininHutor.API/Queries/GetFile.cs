@@ -5,14 +5,14 @@ using MediatR;
 
 namespace KalininHutor.API.Commands;
 
-internal class GetPhotosHandler : IRequestHandler<FileCommands.GetQuery, IEnumerable<FileObjectDTO>>
+internal class GetFileHandler : IRequestHandler<FileCommands.GetFile, FileObjectDTO>
 {
     private readonly FileObjectRepository _repository;
     private readonly ISender _sender;
 
     private readonly IMapper _mapper;
 
-    public GetPhotosHandler(
+    public GetFileHandler(
         ISender sender,
         FileObjectRepository repository,
         IMapper mapper
@@ -23,20 +23,17 @@ internal class GetPhotosHandler : IRequestHandler<FileCommands.GetQuery, IEnumer
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<IEnumerable<FileObjectDTO>> Handle(FileCommands.GetQuery request, CancellationToken cancellationToken)
-    {
-        var photos = await _repository.Get(new FileObjectSearchOptions { ParentId = request.ParentId });
-        return photos.Select(_mapper.Map<FileObjectDTO>).ToList();
-    }
+    public async Task<FileObjectDTO> Handle(FileCommands.GetFile request, CancellationToken cancellationToken) =>
+         _mapper.Map<FileObjectDTO>(await _repository.Get(request.Id));
 }
 
 ///<summary> Запросы и очереди файлов </summary>
 public partial class FileCommands
 {
     ///<summary> Очередь получения файлов </summary>
-    public class GetQuery : IRequest<IEnumerable<FileObjectDTO>>
+    public class GetFile : IRequest<FileObjectDTO>
     {
         ///<summary> Идентификатор родительского объекта </summary>
-        public Guid ParentId { get; set; }        
+        public Guid Id { get; set; }
     }
 }

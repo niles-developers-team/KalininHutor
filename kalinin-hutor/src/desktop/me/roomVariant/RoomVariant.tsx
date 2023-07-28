@@ -13,6 +13,7 @@ import { ArrowBack, Delete, OpenWith } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { appName } from "../../..";
 import ym from 'react-yandex-metrika';
+import { formatImgUrl } from "../../../commonComponents";
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     // some basic styles to make the items look a bit nicer
@@ -211,7 +212,7 @@ export const RoomVariantComponent = function (): JSX.Element {
                                                     <OpenWith className="padding-1" />
                                                     <IconButton className="padding-1" onClick={() => handleImageDelete(photo.id)}><Delete /></IconButton>
                                                 </Grid>
-                                                <img className="image" height={200} width={200} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                                <img className="image" height={200} width={200} src={formatImgUrl(photo)}></img>
                                             </Paper>
                                         )}
                                     </Draggable>

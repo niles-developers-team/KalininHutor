@@ -157,6 +157,6 @@ public class RoomVariant : IEntity<Guid>, IEntityWithPhotos
         return (int)(Size / bedSize);
     }
 
-    public void CreatePhoto(string name, string extension, string body, uint sortOrder)
+    public void CreatePhoto(string name, string extension, byte[] body, uint sortOrder)
      => _photos.Add(new FileObject(name, extension, body, sortOrder, Id));
 }

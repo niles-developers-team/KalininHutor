@@ -4,7 +4,7 @@ import { useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import { RentalObject, RoomCharacteristic } from "../../models";
 import pluralize from "plural-ru";
-import { imageStyle } from "../../commonComponents";
+import { formatImgUrl, imageStyle } from "../../commonComponents";
 
 interface Props {
     model: RentalObject;
@@ -38,7 +38,9 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                             navButtonsAlwaysInvisible={true}
                             cycleNavigation={true}
                         >
-                            {model.photos?.map(photo => <img alt="NO_PHOTO" key={photo.id} style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }} src={`data:${photo.extension};base64,${photo.body}`}></img>)}
+                            {model.photos?.map(photo => <img alt="NO_PHOTO" key={photo.id}
+                                style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }}
+                                src={formatImgUrl(photo)}></img>)}
                         </Carousel>
                     </Grid>
                 ) : (
@@ -56,7 +58,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                             </>
                             : <Typography sx={{ flexGrow: 1 }} color="GrayText">Ещё нет отзывов</Typography>
                         }
-                        {model.coordinates && <IconButton sx={{padding: 0}} color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
+                        {model.coordinates && <IconButton sx={{ padding: 0 }} color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                     </Stack>
                     <Typography variant="caption">{model.address}</Typography>
                     <Button size="small" onClick={() => onShowVariants(model.id || '')}>Посмотреть варианты</Button>
@@ -98,7 +100,7 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     return (
         <Stack padding={2} spacing={2} direction="row">
             {model.photos && model.photos.length ?
-                <img alt="NO_PHOTO" height={200} width={200} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                <img alt="NO_PHOTO" height={200} width={200} style={imageStyle} src={formatImgUrl(model.photos[0])}></img> :
                 <Skeleton variant="rectangular" width={200} height={200} />
             }
             <Grid item xs style={{ height: '100%' }}>

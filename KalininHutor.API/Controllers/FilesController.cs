@@ -16,8 +16,18 @@ public class FilesController : ControllerBase
     {
         _sender = sender ?? throw new ArgumentNullException(nameof(sender));
     }
-    
+
     ///<summary> Метод получения коллекции броней </summary>
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FileCommands.GetQuery query) => Ok(await _sender.Send(query));
+
+    [HttpGet(nameof(Download))]
+    public async Task<IActionResult> Download(Guid id)
+    {
+        var file = await _sender.Send(new FileCommands.GetFile() { Id = id });
+        if(file == null)
+            return NotFound();
+
+        return File(file.Body, file.Extension, file.Name);
+    }
 }

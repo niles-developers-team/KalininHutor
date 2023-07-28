@@ -1,7 +1,8 @@
 import { Add, CurrencyRuble, Remove } from "@mui/icons-material";
 import { Button, Divider, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import pluralize from "plural-ru";
-import { RoomVariant, RoomCharacteristic, CharacteristicTypes } from "../../models";
+import { RoomVariant, RoomCharacteristic, CharacteristicTypes, EntityStatus } from "../../models";
+import { formatImgUrl } from "../../commonComponents";
 
 interface Props {
     model: RoomVariant;
@@ -36,8 +37,8 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
             </Stack>
             <Stack direction="row" spacing={2}>
                 {
-                    model.photos.length > 0 ?
-                        <img alt="NO_PHOTO" height={100} width={100} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img> :
+                    model.photos?.length > 0 ?
+                        <img alt="NO_PHOTO" height={100} width={100} src={formatImgUrl(model.photos[0])}></img> :
                         <Skeleton variant="rectangular" width={100} height={100} />
                 }
                 <Stack spacing={1}>
