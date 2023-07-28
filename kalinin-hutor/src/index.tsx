@@ -41,7 +41,7 @@ const theme = createTheme(
   ruRU,
 );
 
-export const appName = 'Калини Хутор';
+export const appName = 'Калинин Хутор';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
