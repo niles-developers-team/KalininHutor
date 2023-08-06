@@ -1,24 +1,26 @@
-import { Favorite, ArrowBack, Menu, FavoriteBorder, LocationOn, NearMe } from "@mui/icons-material";
-import { Stack, AppBar, Container, Toolbar, IconButton, Typography, Skeleton, Paper, List, ListItem, ListItemIcon, ListItemText, Button, SwipeableDrawer, Chip, Rating, TextField, Divider } from "@mui/material";
+import { Stack, Typography, List, ListItem, ListItemIcon, ListItemText, Button, SwipeableDrawer, Rating, TextField, Divider, IconButton } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Carousel from "react-material-ui-carousel";
-import { Puller } from "../common";
+import { AppBarComponent, Puller } from "../common";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes, Feedback } from "../../models";
 import { AppState, RentalObjectActions } from "../../store";
-import { HideOnScroll, formatImgUrl } from "../../commonComponents";
-import { RoomVariantComponent } from "./roomVariant";
 import ym from 'react-yandex-metrika';
-import pluralize from "plural-ru";
 import moment from "moment";
+import { RentalObjectDetailsComponent } from "./RentalObjectInfo";
+import { RentalObjectSkeleton } from "./RentalObjectSkeleton";
+import { RoomVariantComponent } from "./roomVariant";
+import { ArrowBack } from "@mui/icons-material";
 
 const drawerBleeding = 56;
 
 export const RentalObjectComponent = function (): JSX.Element {
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    function handleGoBack() {
+        navigate(`/`)
+    }
+    const dispatch = useAppDispatch();
     const { rentalObjectState } = useAppSelector((state: AppState) => state);
     const { id } = useParams();
 
@@ -31,9 +33,6 @@ export const RentalObjectComponent = function (): JSX.Element {
         newFeedback: {} as Feedback
     })
 
-    function handleGoBack() {
-        navigate(`/`)
-    }
     useEffect(() => {
         if (id) {
             dispatch(RentalObjectActions.loadRentalObject(id));
@@ -42,92 +41,28 @@ export const RentalObjectComponent = function (): JSX.Element {
     }, [id]);
 
     if (!rentalObjectState.model)
-        return (<Typography>Не найден объект аренды</Typography>);
-
-    const loading = rentalObjectState.modelLoading;
+        return (<RentalObjectSkeleton />)
 
     const model: RentalObject = rentalObjectState.model;
 
     document.title = `${appName} / Личный Кабинет / ${model.name || 'Новый объект аренды'}`;
+
+    const container = window !== undefined ? () => window.document.body : undefined;
 
     function onlyUnique(value: RoomCharacteristic, index: number, array: RoomCharacteristic[]) {
         return array.indexOf(value) === index;
     }
 
     const roCharacteristics = model.roomVariants.map(o => o.characteristics).reduce((prev, curr) => prev.concat(curr), []).map(o => o.roomCharacteristic).filter(onlyUnique);
-    const navigationRef = `https://yandex.ru/navi/?whatshere%5Bpoint%5D=${model.coordinates?.longitude}%2C${model.coordinates?.latitude}&whatshere%5Bzoom%5D=18&lang=ru&from=navi`;
-
-    const container = window !== undefined ? () => window.document.body : undefined;
 
     return (
         <Stack marginBottom={2}>
-            <HideOnScroll>
-                <AppBar position="sticky" color="default">
-                    <Container maxWidth="xl">
-                        <Toolbar disableGutters>
-                            <Stack width="100%" spacing={2} direction="row" alignItems="center">
-                                <IconButton onClick={handleGoBack}><ArrowBack /></IconButton>
-                                <Typography sx={{ flexGrow: 1 }}>Калинин Хутор</Typography>
-                                <IconButton disabled><Favorite /></IconButton>
-                                <IconButton disabled><Menu /></IconButton>
-                            </Stack>
-                        </Toolbar>
-                    </Container>
-                </AppBar>
-            </HideOnScroll>
+            <AppBarComponent leftActionButton={(<IconButton onClick={handleGoBack}><ArrowBack /></IconButton>)} />
             <Stack spacing={1}>
-                <Stack direction="row" alignItems="center" paddingX={2} paddingTop={2}>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>{!loading ? model.name : <Skeleton />}</Typography>
-                    <IconButton disabled><FavoriteBorder /></IconButton>
-                </Stack>
-                {(model.feedback && model.feedback.length > 0) ?
-                    <Stack direction="row" alignItems="center" paddingX={2} spacing={2}>
-                        <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
-                        <Typography variant="body2">{model.feedback.length} {pluralize(model.feedback.length, 'отзыв', 'отзыва', 'отзывов')}</Typography>
-                    </Stack>
-                    : <Typography paddingX={2} color="GrayText" variant="body2">Ещё нет отзывов</Typography>
-                }
-                {model.photos?.length > 0 ?
-                    <Carousel
-                        height="55.55vw"
-                        autoPlay={false}
-                        animation="slide"
-                        indicators={true}
-                        stopAutoPlayOnHover={true}
-                        navButtonsAlwaysInvisible={true}
-                        cycleNavigation={true}
-                    >
-                        {model.photos?.map(photo => <img
-                            key={photo.id}
-                            style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
-                            src={formatImgUrl(photo)}></img>)}
-                    </Carousel>
-                    :
-                    <Paper variant="outlined">
-                        <Skeleton variant="rectangular" width='100%' height="55.55vw" />
-                    </Paper>
-                }
-                <Stack paddingX={2} spacing={1}>
-                    <Typography variant="h6">Описание</Typography>
-                    <Stack direction="row" alignItems="center">
-                        <LocationOn color="primary" fontSize="small" />
-                        <Typography sx={{ flexGrow: 1 }} alignContent="center" variant="body1">{model.address}</Typography>
-                        {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
-                    </Stack>
-                    <Button size="small" onClick={() => setState({ ...state, descriptionOpened: true })}>Читать описание</Button>
-                    <Typography variant="h6">Услуги и сервисы</Typography>
-                </Stack>
-                <List>
-                    {roCharacteristics.slice(0, 5).map(ch => (
-                        <ListItem key={`item-${ch.id}`}>
-                            <ListItemIcon>
-                                {CharacteristicTypes.getIcon(ch.type)}
-                            </ListItemIcon>
-                            <ListItemText primary={ch.name} />
-                        </ListItem>
-                    ))}
-                </List>
-                {roCharacteristics.length > 5 && <Button size="small" onClick={() => setState({ ...state, allServicesOpened: true })}>Все услуги</Button>}
+                <RentalObjectDetailsComponent
+                    model={model}
+                    openDescription={() => setState({ ...state, descriptionOpened: true })}
+                    openAllServices={() => setState({ ...state, allServicesOpened: true })} />
                 <Stack paddingX={2} spacing={1}>
                     <Typography variant="h6">Варианты размещения</Typography>
                     {model.roomVariants.map(rv => (<RoomVariantComponent roomVariant={rv} onShowDetails={() => setState({ ...state, roomVariantInfoOpened: true, roomVariantInfo: rv })} />))}
@@ -183,7 +118,6 @@ export const RentalObjectComponent = function (): JSX.Element {
                     ))}
                 </List>
             </SwipeableDrawer>
-
             <SwipeableDrawer
                 container={container}
                 anchor="bottom"
@@ -287,7 +221,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                     <Rating onChange={(event, newValue) => setState({ ...state, newFeedback: { ...state.newFeedback, rate: newValue ?? 0 } })} value={state.newFeedback.rate || 0} />
                     <TextField style={{ height: state.newFeedbackOpened ? 'auto' : 0 }} onChange={(event) => setState({ ...state, newFeedback: { ...state.newFeedback, comment: event.target.value } })} rows={5} placeholder="Расскажите ваши впечатления" size="small" value={state.newFeedback.comment || ''} multiline />
 
-                    <Button onClick={() => { dispatch(RentalObjectActions.sendFeedback(state.newFeedback)); setState({ ...state, newFeedbackOpened: false, newFeedback: {} as Feedback }) }}>Оставить отзыв</Button>
+                    <Button disabled={!state.newFeedback.comment} onClick={() => { dispatch(RentalObjectActions.sendFeedback(state.newFeedback)); setState({ ...state, newFeedbackOpened: false, newFeedback: {} as Feedback }) }}>Оставить отзыв</Button>
                 </Stack>
             </SwipeableDrawer>
         </Stack>

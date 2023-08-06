@@ -121,8 +121,8 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
                             <Typography variant="body2" color="GrayText">Дата рождения</Typography>
                             <Stack direction="row" spacing={3}>
                                 <DatePicker
-                                    value={moment(props.user.birthday)}
-                                    onChange={(newDate: any) => props.onBirthdayChanged(newDate.format('yyyy-mm-dd'))}
+                                    value={props.user.birthday ? moment(props.user.birthday) : ''}
+                                    onChange={(newDate: any) => props.onBirthdayChanged(newDate ? newDate.format('yyyy-mm-dd') : '')}
                                     disableFuture
                                     slotProps={{ textField: { size: 'small' } }}
                                 />
