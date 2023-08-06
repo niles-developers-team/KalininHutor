@@ -10,26 +10,6 @@ interface Props {
     onShowVariants: (id: string) => void;
 }
 
-export const RentalObjectInfoSkeleton = function (): JSX.Element {
-    return (
-        <Paper>
-            <Paper variant="outlined">
-                <Skeleton variant="rectangular" width='100%' height="55.55vw" />
-            </Paper>
-            <Stack paddingX={2} paddingBottom={1}>
-                <Stack direction="row" alignItems="center">
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}><Skeleton /></Typography>
-                    <Typography variant="body2"><Skeleton /></Typography>
-                </Stack>
-                <Stack direction="row">
-                    <LocationOn color="primary" fontSize="small" />
-                    <Typography alignContent="center" variant="caption"><Skeleton /></Typography>
-                </Stack>
-            </Stack>
-        </Paper>
-    );
-}
-
 export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
     const { model, onShowVariants } = props;
 
@@ -54,13 +34,11 @@ export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
                     {model.photos?.map(photo => <img
                         alt="NO_PHOTO"
                         key={photo.id}
-                        style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '55.55vw' }}
                         src={formatImgUrl(photo)}></img>)}
                 </Carousel>
             ) : (
-                <Paper variant="outlined">
-                    <Skeleton variant="rectangular" width='100%' height="55.55vw" />
-                </Paper>
+                <Skeleton variant="rectangular" width='100%' height="55.55vw" />
             )}
             <Stack paddingX={2} paddingBottom={1} spacing={1}>
                 <Stack direction="row" alignItems="center">
@@ -70,11 +48,13 @@ export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
                     <CurrencyRuble fontSize="small" />
                     <Typography variant="body2"> за ночь</Typography>
                 </Stack>
-                <Stack direction="row">
+                <Stack direction="row" alignItems="center">
                     <LocationOn color="primary" fontSize="small" />
                     <Typography alignContent="center" variant="caption">{model.address}</Typography>
+                    <Grid item xs />
+                    {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                 </Stack>
-                <Stack direction="row" alignItems="center" spacing={2}>
+                <Stack direction="row" spacing={2} alignItems="center">
                     {(model.feedback && model.feedback.length > 0) ?
                         <>
                             <Chip color="info" label={model.rate?.toFixed(1)} size="small" />
@@ -82,8 +62,6 @@ export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
                         </>
                         : <Typography color="GrayText" variant="body2">Ещё нет отзывов</Typography>
                     }
-                    <Grid item xs />
-                    {model.coordinates && <IconButton color="info" href={navigationRef} onClick={(event) => { event.stopPropagation(); }} target="_blank" size="small"><NearMe /></IconButton>}
                 </Stack>
             </Stack>
         </Paper>
@@ -133,8 +111,8 @@ export const RentalObjectDetailsComponent = function (props: DetailsProps): JSX.
                     >
                         {model.photos?.map(photo => <img
                             key={photo.id}
-                            style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
-                            src={formatImgUrl(photo)}></img>)}
+                            style={{ width: '100%', height: '55.55vw' }}
+                            src={formatImgUrl(photo)} />)}
                     </Carousel>
                     :
                     <Paper variant="outlined">

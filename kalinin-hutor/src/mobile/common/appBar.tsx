@@ -1,7 +1,6 @@
-import { ArrowBack, Favorite, Menu } from "@mui/icons-material";
+import { Favorite, Menu } from "@mui/icons-material";
 import { AppBar, Container, Toolbar, Stack, IconButton, Typography } from "@mui/material";
 import { HideOnScroll } from "../../commonComponents";
-import { useNavigate } from "react-router-dom";
 
 interface AppBarProps {
     leftActionButton: JSX.Element;

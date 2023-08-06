@@ -1,7 +1,34 @@
 import { Stack, Typography, IconButton, Paper, Skeleton, Button, Grid, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material"
-import { ArrowBack, CurrencyRuble, FavoriteBorder, LocationOn } from "@mui/icons-material"
+import { ArrowBack, CurrencyRuble, FavoriteBorder, LocationOn, NearMe } from "@mui/icons-material"
 import { useNavigate } from "react-router-dom";
 import { AppBarComponent } from "../common";
+
+
+export const RentalObjectInfoSkeleton = function (): JSX.Element {
+    let min = 40;
+    let max = 70;
+    return (
+        <Paper>
+            <Paper variant="outlined">
+                <Skeleton variant="rectangular" width='100%' height="55.55vw" />
+            </Paper>
+            <Stack paddingX={2} paddingBottom={1}>
+                <Stack direction="row" alignItems="center">
+                    <Skeleton  sx={{ fontSize: '1.25rem' }} width={`${(Math.random() * (+max - +min) + +min)}%`} />
+                    <Grid xs />
+                    <Skeleton width="25%" />
+                </Stack>
+                <Stack direction="row" alignItems="center">
+                    <LocationOn color="disabled" fontSize="small" />
+                    <Skeleton variant="text" width="30%" />
+                    <Grid item xs />
+                    <IconButton color="info" disabled size="small"><NearMe /></IconButton>
+                </Stack>
+                <Skeleton variant="text" width="30%" sx={{ fontSize: '1rem', lineHeight: "1.5" }} />
+            </Stack>
+        </Paper>
+    );
+}
 
 export const RentalObjectSkeleton = function (): JSX.Element {
     const navigate = useNavigate();
@@ -40,8 +67,7 @@ export const RentalObjectSkeleton = function (): JSX.Element {
                 <Stack direction="row" alignItems="center">
                     <Skeleton variant="text" sx={{ fontSize: '1.25rem' }} width="50%" />
                     <Grid xs />
-                    <Skeleton variant="text" sx={{ fontSize: '1.25rem' }} width="10%" />
-                    <CurrencyRuble color="disabled" fontSize="small" />
+                    <Skeleton variant="text" sx={{ fontSize: '1.25rem' }} width="15%" />
                 </Stack>
                 <Button disabled size="small">Подробнее</Button>
                 <Stack direction="row" alignItems="center" marginX={1} spacing={1}>

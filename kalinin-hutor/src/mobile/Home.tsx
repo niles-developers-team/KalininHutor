@@ -8,9 +8,10 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { useQuery } from "../hooks/useQuery";
 import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
-import { RentalObjectInfoSkeleton, RentalObjectInfoComponent } from "./rentalObjects";
+import { RentalObjectInfoComponent } from "./rentalObjects";
 import { CategoryItemFilters } from "../commonComponents";
 import ym from 'react-yandex-metrika';
+import { RentalObjectInfoSkeleton } from "./rentalObjects/RentalObjectSkeleton";
 
 const drawerBleeding = 56;
 interface Props { }
