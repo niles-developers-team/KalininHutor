@@ -46,7 +46,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     const model: RentalObject = rentalObjectState.model;
 
-    document.title = `${appName} / Личный Кабинет / ${model.name || 'Новый объект аренды'}`;
+    document.title = `${appName} / ${model.name}`;
 
     const container = window !== undefined ? () => window.document.body : undefined;
 
