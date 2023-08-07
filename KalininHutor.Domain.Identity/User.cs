@@ -4,6 +4,8 @@ namespace KalininHutor.Domain.Identity;
 
 public class User : IUser, IEntityWithAvatar
 {
+    private HashSet<UsersRoles>? _roles;
+
     public Guid Id { get; protected set; }
     public string PhoneNumber { get; protected set; } = string.Empty;
     public string Name { get; protected set; } = string.Empty;
@@ -16,7 +18,14 @@ public class User : IUser, IEntityWithAvatar
 
     public string Password { get; protected set; } = string.Empty;
 
+    /// <summary> Роли пользователя </summary>
+    public ICollection<UsersRoles> Roles => _roles ?? throw new Exception("Не были выгружены роли пользователя");
+
+    /// <summary> Конструктор для ORM </summary>
     protected User() { }
+    /// <summary> Конструктор пользователя </summary>
+    /// <param name="phoneNumber">Номер телефона</param>
+    /// <param name="password">Пароль</param>
     public User(string phoneNumber, string password)
     {
         ValidatePhoneNumber(phoneNumber);
@@ -38,6 +47,8 @@ public class User : IUser, IEntityWithAvatar
         Email = email;
         BirthDay = birthday;
     }
+
+    public void SetRoles(IEnumerable<UsersRoles> roles) => _roles = roles.ToHashSet() ?? throw new ArgumentNullException("Невозможно присвоить пустой список ролей");
 
     public string GenPassword()
     {
