@@ -32,7 +32,7 @@ export const RentalObjectInfoComponent = function (props: Props): JSX.Element {
                     cycleNavigation={true}
                 >
                     {model.photos?.map(photo => <img
-                        alt="NO_PHOTO"
+                        alt={photo.name}
                         key={photo.id}
                         style={{ width: '100%', height: '55.55vw' }}
                         src={formatImgUrl(photo)}></img>)}
@@ -105,7 +105,6 @@ export const RentalObjectDetailsComponent = function (props: DetailsProps): JSX.
                         autoPlay={false}
                         animation="slide"
                         indicators={true}
-                        stopAutoPlayOnHover={true}
                         navButtonsAlwaysInvisible={true}
                         cycleNavigation={true}
                     >

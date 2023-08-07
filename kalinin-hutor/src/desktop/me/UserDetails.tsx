@@ -88,7 +88,7 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
             <Stack direction="row" spacing={3}>
                 <Stack spacing={1}>
                     {props.user.avatar ? (
-                        <img alt="NO_PHOTO" height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={formatImgUrl(props.user.avatar)}></img>
+                        <img alt={props.user.avatar.name} height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={formatImgUrl(props.user.avatar)}></img>
                     ) : (
                         <Face color="primary" sx={{ fontSize: 200 }} />
                     )}

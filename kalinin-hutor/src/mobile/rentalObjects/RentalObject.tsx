@@ -18,7 +18,8 @@ const drawerBleeding = 56;
 export const RentalObjectComponent = function (): JSX.Element {
     const navigate = useNavigate();
     function handleGoBack() {
-        navigate(`/`)
+        dispatch(RentalObjectActions.clearEditionState());
+        navigate(`/`);
     }
     const dispatch = useAppDispatch();
     const { rentalObjectState } = useAppSelector((state: AppState) => state);
