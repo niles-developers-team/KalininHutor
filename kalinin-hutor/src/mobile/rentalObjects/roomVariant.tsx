@@ -25,7 +25,7 @@ export const RoomVariantComponent = function (props: Props): JSX.Element {
                     cycleNavigation={true}
                 >
                     {roomVariant.photos?.map(photo => <img
-                        alt="NO_PHOTO"
+                        alt={photo.name}
                         style={{ borderTopLeftRadius: '4px', borderTopRightRadius: '4px', width: '100%', height: '55.55vw', objectFit: 'cover' }}
                         key={photo.id}
                         src={formatImgUrl(photo)}></img>)}

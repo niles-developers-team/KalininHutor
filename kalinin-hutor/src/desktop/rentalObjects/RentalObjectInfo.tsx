@@ -38,7 +38,7 @@ export const RentalObjectShortInfoComponent = function (props: Props): JSX.Eleme
                             navButtonsAlwaysInvisible={true}
                             cycleNavigation={true}
                         >
-                            {model.photos?.map(photo => <img alt="NO_PHOTO" key={photo.id}
+                            {model.photos?.map(photo => <img alt={photo.name} key={photo.id}
                                 style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px', borderTopRightRadius: '4px', objectFit: 'cover' }}
                                 src={formatImgUrl(photo)}></img>)}
                         </Carousel>
@@ -100,7 +100,7 @@ export const RentalObjectDetailedInfoComponent = function (props: Props): JSX.El
     return (
         <Stack padding={2} spacing={2} direction="row">
             {model.photos && model.photos.length ?
-                <img alt="NO_PHOTO" height={200} width={200} style={imageStyle} src={formatImgUrl(model.photos[0])}></img> :
+                <img alt={model.photos[0].name} height={200} width={200} style={imageStyle} src={formatImgUrl(model.photos[0])}></img> :
                 <Skeleton variant="rectangular" width={200} height={200} />
             }
             <Grid item xs style={{ height: '100%' }}>

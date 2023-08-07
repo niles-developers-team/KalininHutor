@@ -1,17 +1,17 @@
-import { AppBar, Button, Container, Divider, IconButton, InputAdornment, List, Stack, SwipeableDrawer, TextField, Toolbar, Typography } from "@mui/material"
+import { Button, Divider, IconButton, InputAdornment, List, Stack, SwipeableDrawer, TextField, Typography } from "@mui/material"
 import { ChangeEvent, useEffect, useState } from "react";
 import { RouteProps, useNavigate, useSearchParams } from "react-router-dom";
-import { CurrencyRuble, Favorite, Menu, Tune } from "@mui/icons-material";
+import { CurrencyRuble, Tune } from "@mui/icons-material";
 import moment from "moment";
-import { Puller } from "./common";
+import { AppBarComponent, Puller } from "./common";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useQuery } from "../hooks/useQuery";
 import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../models";
 import { AppState, RentalObjectActions, RoomCharacteristicActions } from "../store";
-import { HideOnScroll } from "../commonComponents";
-import { RentalObjectInfoSkeleton, RentalObjectInfoComponent } from "./rentalObjects";
+import { RentalObjectInfoComponent } from "./rentalObjects";
 import { CategoryItemFilters } from "../commonComponents";
 import ym from 'react-yandex-metrika';
+import { RentalObjectInfoSkeleton } from "./rentalObjects/RentalObjectSkeleton";
 
 const drawerBleeding = 56;
 interface Props { }
@@ -120,20 +120,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
 
     return (
         <Stack>
-            <HideOnScroll>
-                <AppBar position="sticky" color="default">
-                    <Container maxWidth="xl">
-                        <Toolbar disableGutters>
-                            <Stack width="100%" spacing={2} direction="row" alignItems="center">
-                                <IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>
-                                <Typography sx={{ flexGrow: 1 }}>Калинин Хутор</Typography>
-                                <IconButton disabled><Favorite /></IconButton>
-                                <IconButton disabled><Menu /></IconButton>
-                            </Stack>
-                        </Toolbar>
-                    </Container>
-                </AppBar>
-            </HideOnScroll>
+            <AppBarComponent leftActionButton={(<IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>)} />
             <Stack marginTop={2} marginBottom={2} spacing={2}>
                 {rentalObjects.map((ro, index) =>
                 (

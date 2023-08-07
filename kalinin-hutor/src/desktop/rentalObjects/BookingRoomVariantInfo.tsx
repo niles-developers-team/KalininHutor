@@ -22,7 +22,7 @@ export const BookingRoomVariantInfo = function (props: Props): JSX.Element {
             <Stack paddingY=".5em" direction="row" spacing={2}>
                 {
                     roomVariant.photos.length > 0 ?
-                        <img alt="NO_PHOTO" height={100} width={100} src={formatImgUrl(roomVariant.photos[0])}></img> :
+                        <img alt={roomVariant.photos[0].name} height={100} width={100} src={formatImgUrl(roomVariant.photos[0])}></img> :
                         <Skeleton variant="rectangular" width={100} height={100} />
                 }
                 <Stack>

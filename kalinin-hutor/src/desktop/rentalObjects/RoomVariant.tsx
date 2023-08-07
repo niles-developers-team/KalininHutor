@@ -38,7 +38,7 @@ export const RoomVariantInfoComponent = function (props: Props): JSX.Element {
             <Stack direction="row" spacing={2}>
                 {
                     model.photos?.length > 0 ?
-                        <img alt="NO_PHOTO" height={100} width={100} src={formatImgUrl(model.photos[0])}></img> :
+                        <img alt={model.photos[0].name} height={100} width={100} src={formatImgUrl(model.photos[0])}></img> :
                         <Skeleton variant="rectangular" width={100} height={100} />
                 }
                 <Stack spacing={1}>

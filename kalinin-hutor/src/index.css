@@ -24,3 +24,9 @@ a[href] {
 a[href]:hover {
   text-decoration: underline;
 }
+
+img {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  object-fit: cover;
+}
