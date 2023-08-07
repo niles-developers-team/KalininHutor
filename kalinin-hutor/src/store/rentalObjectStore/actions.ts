@@ -1,13 +1,12 @@
 import { Action } from "redux";
 import { ApplicationError, EntityStatus, RentalObject, RoomVariant, RoomVariantBedType, RoomVariantCharacteristic, NotificationVariant, FileObject, Feedback } from "../../models";
-import { localStorageService, rentalObjectService } from "../../services";
+import { filesService, localStorageService, rentalObjectService, roomVariantService } from "../../services";
 import { AppThunkAction, AppThunkDispatch, AppState } from "../appState";
 import { NotificationActions } from "../notificationStore/actions";
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment";
 import { readAsDataURL } from "../../helpers/fileHelpers";
 import { v4 as guid } from 'uuid';
-import { roomVariantService, filesService } from "../../services";
 
 const draftName = 'rental-object-draft';
 
