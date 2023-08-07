@@ -1,7 +1,7 @@
 import { Stack, Typography, List, ListItem, ListItemIcon, ListItemText, Button, SwipeableDrawer, Rating, TextField, Divider, IconButton } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { AppBarComponent, Puller } from "../common";
+import { MobileAppBarComponent, Puller } from "../common";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { appName } from "../..";
 import { RoomVariant, RentalObject, RoomCharacteristic, CharacteristicTypes, Feedback } from "../../models";
@@ -58,7 +58,7 @@ export const RentalObjectComponent = function (): JSX.Element {
 
     return (
         <Stack marginBottom={2}>
-            <AppBarComponent leftActionButton={(<IconButton onClick={handleGoBack}><ArrowBack /></IconButton>)} />
+            <MobileAppBarComponent leftActionButton={(<IconButton onClick={handleGoBack}><ArrowBack /></IconButton>)} />
             <Stack spacing={1}>
                 <RentalObjectDetailsComponent
                     model={model}

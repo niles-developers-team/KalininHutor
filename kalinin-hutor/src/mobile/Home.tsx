@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { RouteProps, useNavigate, useSearchParams } from "react-router-dom";
 import { CurrencyRuble, Tune } from "@mui/icons-material";
 import moment from "moment";
-import { AppBarComponent, Puller } from "./common";
+import { MobileAppBarComponent, Puller } from "./common";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useQuery } from "../hooks/useQuery";
 import { RentalObject, CharacteristicTypes, RoomCharacteristicFilter } from "../models";
@@ -119,7 +119,7 @@ export const HomeComponent = function (props: Props & RouteProps): JSX.Element {
 
     return (
         <Stack>
-            <AppBarComponent leftActionButton={(<IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>)} />
+            <MobileAppBarComponent leftActionButton={(<IconButton onClick={() => setState({ ...state, filterOpened: true })}><Tune /></IconButton>)} />
             <Stack marginTop={2} marginBottom={2} spacing={2}>
                 {rentalObjects.map((ro, index) =>
                 (

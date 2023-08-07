@@ -6,7 +6,7 @@ interface AppBarProps {
     leftActionButton: JSX.Element;
 }
 
-export const AppBarComponent = function(props: AppBarProps) {
+export const MobileAppBarComponent = function(props: AppBarProps) {
     return (        
         <HideOnScroll>
         <AppBar position="sticky" color="default">

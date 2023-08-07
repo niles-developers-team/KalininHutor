@@ -1,7 +1,7 @@
 import { Stack, Typography, IconButton, Paper, Skeleton, Button, Grid, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material"
 import { ArrowBack, CurrencyRuble, FavoriteBorder, LocationOn, NearMe } from "@mui/icons-material"
 import { useNavigate } from "react-router-dom";
-import { AppBarComponent } from "../common";
+import { MobileAppBarComponent } from "../common";
 
 
 export const RentalObjectInfoSkeleton = function (): JSX.Element {
@@ -80,7 +80,7 @@ export const RentalObjectSkeleton = function (): JSX.Element {
 
     return (
         <Stack>
-            <AppBarComponent leftActionButton={(<IconButton onClick={handleGoBack}><ArrowBack /></IconButton>)} />
+            <MobileAppBarComponent leftActionButton={(<IconButton onClick={handleGoBack}><ArrowBack /></IconButton>)} />
             <Stack spacing={1} paddingX={2}>
                 <Stack direction="row" alignItems="center" paddingTop={2} >
                     <Skeleton variant="text" sx={{ flexGrow: 1, fontSize: '1.25rem' }} />
