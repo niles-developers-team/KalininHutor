@@ -7,7 +7,7 @@ import { appName } from "../..";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { NotificationStatus, RentalObject, Booking, FileObject, EntityStatus } from "../../models";
 import { AppState, RentalObjectActions, BookingActions, NotificationActions, RoomCharacteristicActions, UserActions } from "../../store";
-import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent, UserDetailsComponent, UserDetailsSkeleton } from "./";
+import { MyNotificationsComponent, MyRentalObjectsComponent, MyRentalObjectsBookingsComponent, UserDetailsComponent } from "./";
 import ym from 'react-yandex-metrika';
 
 export const MeComponent = function (): JSX.Element {
@@ -51,11 +51,7 @@ export const MeComponent = function (): JSX.Element {
         dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, lastname: event.currentTarget && event.currentTarget.value }));
     }
 
-    function handleBirthdayChanged(value: string | null | undefined, keyboardInputValue: string | undefined) {
-        dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
-    }
-
-    function handleBirthdayAccepted(value: string | null | undefined) {
+    function handleBirthdayChanged(value: string | null) {
         dispatch(UserActions.updateCurrentUserDraft({ ...currentUser, birthday: value ? moment(value).format('yyyy-MM-DD') : null }));
     }
 
@@ -127,7 +123,6 @@ export const MeComponent = function (): JSX.Element {
             <UserDetailsComponent
                 loading={userState.modelLoading}
                 user={currentUser}
-                onBirthdayAccepted={handleBirthdayAccepted}
                 onBirthdayChanged={handleBirthdayChanged}
                 onEmailChanged={handleEmailChanged}
                 onLastnameChanged={handleLastnameChanged}

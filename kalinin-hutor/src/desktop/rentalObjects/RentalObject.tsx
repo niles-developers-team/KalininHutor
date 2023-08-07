@@ -4,7 +4,7 @@ import moment from "moment";
 import pluralize from "plural-ru";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useQuery } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { BedTypes, Booking, RentalObject, RoomVariant, RoomVariantBedType, NotificationVariant, Feedback } from "../../models"
 import { AppState, BookingActions, RentalObjectActions, RoomCharacteristicActions, NotificationActions } from "../../store";
 import { RangeCalendarPopoverComponent } from "../common";
@@ -13,12 +13,11 @@ import { RoomVariantInfoComponent } from "./RoomVariant";
 import { Masonry } from "@mui/lab";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
-import { PhoneMaskCustom, imageStyle } from "../../commonComponents";
+import { PhoneMaskCustom, formatImgUrl, imageStyle } from "../../commonComponents";
 
 export const RentalObjectComponent = function (): JSX.Element {
     const { roomCharacteristicState, userState, rentalObjectState, bookingState } = useAppSelector((state: AppState) => state);
 
-    const query = useQuery();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { id } = useParams();
@@ -51,21 +50,13 @@ export const RentalObjectComponent = function (): JSX.Element {
         if (!rentalObjectState.model)
             return;
 
-        if (!rentalObjectState.model.roomVariants.length && !!id) {
+        if (!rentalObjectState.model.roomVariants.length && !!id) 
             dispatch(RentalObjectActions.loadRentalObjectRoomVariants(id));
-        }
 
         dispatch(BookingActions.getDraft());
-    }, [rentalObjectState.model])
+    }, [rentalObjectState.modelLoading])
 
-    useEffect(() => {
-        if (!bookingState.model)
-            return;
-
-        if (bookingState.model.rentalObject?.id !== id) {
-            dispatch(BookingActions.clearEditionState());
-        }
-    }, [bookingState.model])
+    useEffect(() => { bookingState.model?.rentalObject?.id !== id && dispatch(BookingActions.clearEditionState()); }, [bookingState.model])
 
     function handleRoomsCountChanged(roomVariantId: string, newCount: number) {
         if (!booking)
@@ -281,14 +272,14 @@ export const RentalObjectComponent = function (): JSX.Element {
                     </Stack>
                     <Stack spacing={2} direction="row">
                         {model.photos?.length > 0 ?
-                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={`data:${model.photos[0].extension};base64,${model.photos[0].body}`}></img>
+                            <img height={325} width={model.photos?.length === 1 ? '100%' : 325} style={imageStyle} src={formatImgUrl(model.photos[0])}></img>
                             :
                             <Skeleton variant="rounded" height={325} width={325} />
                         }
                         <Grid spacing={2}>
                             {model.photos?.length ?
                                 model.photos.slice(1, 2).map(photo =>
-                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={`data:${photo.extension};base64,${photo.body}`}></img>
+                                    <img style={{ ...imageStyle, width: '100%' }} height={160} width={325} src={formatImgUrl(photo)}></img>
                                 )
                                 :
                                 <Skeleton variant="rounded" height={160} width={325} />
@@ -360,7 +351,7 @@ export const RentalObjectComponent = function (): JSX.Element {
                             {model.photos.map((photo, index) => (
                                 <div key={index}>
                                     <img
-                                        src={`data:${photo.extension};base64,${photo.body}`}
+                                        src={formatImgUrl(photo)}
                                         width={200}
                                         alt={photo.name}
                                         style={imageStyle}

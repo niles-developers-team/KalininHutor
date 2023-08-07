@@ -1,8 +1,10 @@
 import { Face } from "@mui/icons-material";
-import { Button, Card, CircularProgress, Grid, Skeleton, Stack, TextField, Typography } from "@mui/material"
-import { DatePicker } from "@mui/x-date-pickers"
+import { Button, Card, Grid, InputBase, Skeleton, Stack, TextField, Typography } from "@mui/material"
+import { DateCalendar, DatePicker } from "@mui/x-date-pickers"
 import { createRef } from "react";
 import { User } from "../../models"
+import moment from "moment";
+import { formatImgUrl } from "../../commonComponents";
 
 export interface UserDetailsProps {
     loading: boolean;
@@ -11,8 +13,7 @@ export interface UserDetailsProps {
     onEmailChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onNameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onLastnameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onBirthdayChanged: (value: string | null | undefined, keyboardInputValue: string | undefined) => void;
-    onBirthdayAccepted: (value: string | null | undefined) => void;
+    onBirthdayChanged: (value: string | null) => void;
     onAvatarChanged: (file: File) => void;
     onUpdateConfirm: () => void;
 }
@@ -87,7 +88,7 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
             <Stack direction="row" spacing={3}>
                 <Stack spacing={1}>
                     {props.user.avatar ? (
-                        <img height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={`data:${props.user.avatar.extension};base64,${props.user.avatar.body}`}></img>
+                        <img alt={props.user.avatar.name} height={200} width={200} style={{ borderRadius: '50%', objectFit: "cover" }} src={formatImgUrl(props.user.avatar)}></img>
                     ) : (
                         <Face color="primary" sx={{ fontSize: 200 }} />
                     )}
@@ -120,10 +121,10 @@ export const UserDetailsComponent = function (props: UserDetailsProps): JSX.Elem
                             <Typography variant="body2" color="GrayText">Дата рождения</Typography>
                             <Stack direction="row" spacing={3}>
                                 <DatePicker
-                                    value={props.user.birthday || null}
-                                    onAccept={props.onBirthdayAccepted}
-                                    onChange={props.onBirthdayChanged}
-                                    renderInput={(params) => <TextField size="small" type="date" {...params} />}
+                                    value={props.user.birthday ? moment(props.user.birthday) : ''}
+                                    onChange={(newDate: any) => props.onBirthdayChanged(newDate ? newDate.format('yyyy-mm-dd') : '')}
+                                    disableFuture
+                                    slotProps={{ textField: { size: 'small' } }}
                                 />
                                 <Grid item xs />
                                 <Button onClick={props.onUpdateConfirm}>Сохранить</Button>

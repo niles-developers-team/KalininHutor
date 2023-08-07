@@ -45,15 +45,13 @@ export const MyRentalObjectsComponent = function (props: Props): JSX.Element {
             <Card style={{ height: '100%' }}>
                 <DataGrid
                     autoHeight
-                    components={{
-                        NoRowsOverlay: NoRentalObjects
+                    slots={{
+                        noRowsOverlay: NoRentalObjects
                     }}
                     rows={props.models}
                     columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
+                    pageSizeOptions={[5]}
                     loading={props.loading}
-                    disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
                 />

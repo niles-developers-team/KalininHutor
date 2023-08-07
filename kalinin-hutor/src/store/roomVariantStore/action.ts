@@ -536,7 +536,6 @@ export namespace RoomVariantActions {
                     entityStatus: result[i].entityStatus !== EntityStatus.Deleted || result[i].entityStatus !== EntityStatus.Draft ? EntityStatus.Updated : result[i].entityStatus
                 };
 
-            localStorageService.set(draftName, { ...roomVariantState.model, photos: result });
             dispatch({ type: ActionTypes.updateDraft, draft: { ...roomVariantState.model, photos: result } });
         }
     }

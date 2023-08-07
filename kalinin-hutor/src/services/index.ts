@@ -6,3 +6,4 @@ export * from './roomCharacteristicService';
 export * from './roomVariantService';
 export * from './cookiesService';
 export * from './notificationService';
+export * from './filesService';

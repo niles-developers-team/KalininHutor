@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Button, Grid, Paper, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Button, Grid, Skeleton, Stack, TextField, Typography } from "@mui/material";
 
 import { useNavigate, useParams, createSearchParams } from "react-router-dom";
 import moment from "moment";
@@ -11,6 +11,7 @@ import { BookingDetailsComponent } from "./BookingDetails";
 import { BookingRoomVariantInfo } from "./BookingRoomVariantInfo";
 import { appName } from "../..";
 import ym from 'react-yandex-metrika';
+import { formatImgUrl } from "../../commonComponents";
 
 export const BookingComponent = function (): JSX.Element {
     const dispatch = useAppDispatch();
@@ -19,18 +20,21 @@ export const BookingComponent = function (): JSX.Element {
     const { bookingState, rentalObjectState, roomCharacteristicState } = useAppSelector((state: AppState) => state);
 
     useEffect(() => {
-        if (!id)
-            return;
-
         if (!rentalObjectId)
             return;
 
-        dispatch(BookingActions.getBooking(id));
         dispatch(RentalObjectActions.loadRentalObject(rentalObjectId));
         dispatch(RoomCharacteristicActions.getRoomCharacteristics());
 
         ym('reachGoal', 'desktop_enter_approve_booking');
-    }, [id, rentalObjectId]);
+    }, [rentalObjectId]);
+
+    useEffect(() => {
+        if (!id)
+            return;
+        dispatch(BookingActions.getBooking(id));
+
+    }, [id, rentalObjectState.modelLoading == false]);
 
     function handleChangeBooking() {
         if (!model)
@@ -88,7 +92,7 @@ export const BookingComponent = function (): JSX.Element {
                 <Stack spacing={2}>
                     <Stack direction="row" spacing={2}>
                         {rentalObject && rentalObject.photos && rentalObject.photos.length > 0 ?
-                            <img height={100} width={100} src={`data:${rentalObject.photos[0].extension};base64,${rentalObject.photos[0].body}`}></img> :
+                            <img height={100} width={100} src={formatImgUrl(rentalObject.photos[0])}></img> :
                             <Skeleton variant="rectangular" width={100} height={100} />
                         }
                         <Stack>

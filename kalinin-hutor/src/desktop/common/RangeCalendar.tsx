@@ -1,6 +1,6 @@
-import { Cancel, CancelOutlined, CancelRounded, Check, Close } from "@mui/icons-material";
+import { Check, Close } from "@mui/icons-material";
 import { Grid, IconButton, Popover, PopoverProps, Stack } from "@mui/material";
-import { CalendarPicker } from "@mui/x-date-pickers";
+import { DateCalendar } from "@mui/x-date-pickers";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
@@ -37,12 +37,12 @@ export const RangeCalendarPopoverComponent = function (props: Props): JSX.Elemen
     return (
         <Popover {...rest}>
             <Stack direction="row" spacing={1}>
-                <CalendarPicker minDate={moment()} date={startStateDate} onChange={(newDate) => handleStateDateChanged(newDate)} />
-                <CalendarPicker minDate={startStateDate} date={endStateDate} onChange={(newDate) => setEndStateDate(newDate)} />
+                <DateCalendar minDate={moment()} value={startStateDate} onChange={(newDate: any) => handleStateDateChanged(newDate)} />
+                <DateCalendar minDate={startStateDate} value={endStateDate} onChange={(newDate: any) => setEndStateDate(newDate)} />
             </Stack>
             <Stack direction="row" spacing={1} marginBottom={1} marginRight={1}>
                 <Grid item xs />
-                <IconButton color="primary" onClick={handleConfirm}><Check /></IconButton>
+                <IconButton color="primary" disabled={!endStateDate} onClick={handleConfirm}><Check /></IconButton>
                 <IconButton onClick={props.onDiscard}><Close /></IconButton>
             </Stack>
         </Popover>

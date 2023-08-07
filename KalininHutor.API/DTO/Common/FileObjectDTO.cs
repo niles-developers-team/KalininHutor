@@ -13,7 +13,7 @@ public class FileObjectDTO
     public string Extension { get; set; } = string.Empty;
 
     ///<summary> Данные (строка base64) </summary>
-    public string Body { get; set; } = string.Empty;
+    public byte[] Body { get; set; }
 
     ///<summary> Порядок сортировки </summary>
     public uint SortOrder { get; set; }
